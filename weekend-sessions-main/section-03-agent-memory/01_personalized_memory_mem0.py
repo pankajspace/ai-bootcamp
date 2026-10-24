@@ -23,20 +23,19 @@ import os
 import re
 import shutil
 import warnings
-from dotenv import load_dotenv
+from dotenv import find_dotenv, load_dotenv
 
-load_dotenv()
+load_dotenv(find_dotenv())
 warnings.filterwarnings("ignore")
 
-# Model & Region settings
-MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "global.anthropic.claude-sonnet-4-6")
+# Model & Region settings: Amazon Nova only
+MODEL_ID = "amazon.nova-lite-v1:0"
 REGION = os.getenv("AWS_REGION", os.getenv("AWS_DEFAULT_REGION", "us-east-1"))
 os.environ["AWS_REGION"] = REGION
 
-# Mem0 calls Bedrock twice: an embedding model to index memories, and a small LLM
-# that extracts facts from what the user says. Point both at active models.
-os.environ.setdefault("MEM0_LLM_MODEL", "global.anthropic.claude-haiku-4-5-20251001-v1:0")
-os.environ.setdefault("MEM0_EMBEDDER_MODEL", "amazon.titan-embed-text-v2:0")
+# Mem0 models: Nova Lite for LLM extraction, Titan for embeddings
+os.environ["MEM0_LLM_MODEL"] = "amazon.nova-lite-v1:0"
+os.environ["MEM0_EMBEDDER_MODEL"] = "amazon.titan-embed-text-v2:0"
 
 # Skip the interactive "are you sure?" prompt when the agent stores memories
 os.environ["BYPASS_TOOL_CONSENT"] = "true"
@@ -54,29 +53,29 @@ shutil.rmtree(os.environ["MEM0_DIR"], ignore_errors=True)
 # Recreate the folder right away so history.db has an existing folder to write to
 os.makedirs(os.environ["MEM0_DIR"], exist_ok=True)
 
-# Compatibility shim for Mem0 + current Claude models
-# Current Claude models accept either temperature OR topP, not both.
+# Compatibility shim for Mem0 + Amazon Nova:
+# Mem0's built-in Bedrock handler has a bug with Nova Converse API (it formats messages
+# as strings with role 'system' in messages, and tries to parse .read() on the response).
+# This minimal patch formats the Converse request correctly and extracts the response.
 import mem0.llms.aws_bedrock as mem0_bedrock
 
 mem0_bedrock = importlib.reload(mem0_bedrock)
 BedrockLLM = mem0_bedrock.AWSBedrockLLM
-original_init_client = BedrockLLM._initialize_aws_client
 
 
-def _init_client_without_top_p(self, _original=original_init_client):
-    _original(self)
-    original_converse = self.client.converse
+def _generate_standard_nova(self, messages, stream=False):
+    system = [{"text": m["content"]} for m in messages if m.get("role") == "system"]
+    msgs = [{"role": m["role"], "content": [{"text": m["content"]}]} for m in messages if m.get("role") != "system"]
+    resp = self.client.converse(
+        modelId=self.config.model,
+        messages=msgs,
+        system=system,
+        inferenceConfig={"maxTokens": 2000, "temperature": 0.1},
+    )
+    return resp["output"]["message"]["content"][0]["text"]
 
-    def converse(**kwargs):
-        config = kwargs.get("inferenceConfig", {})
-        if "temperature" in config:
-            config.pop("topP", None)
-        return original_converse(**kwargs)
 
-    self.client.converse = converse
-
-
-BedrockLLM._initialize_aws_client = _init_client_without_top_p
+BedrockLLM._generate_standard = _generate_standard_nova
 
 from ddgs import DDGS
 from strands import Agent, tool
