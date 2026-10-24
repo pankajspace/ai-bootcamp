@@ -1,0 +1,12 @@
+# Section 1 - LangChain Foundations
+python-dotenv
+langchain-core
+langchain-openai
+langchain-ollama
+
+# Section 2 - First Agent (Tools, Tavily & Structured Output)
+pydantic
+langchain
+langchain-tavily
+tavily-python
+
