@@ -1,10 +1,6 @@
 # AI Projects
 
-Hands-on AI and LLM development projects, experiments, and agent workflows.
-
----
-
-## 🚀 Environment Setup
+## 1. 🚀 Environment Setup
 
 ### 1. Create and Activate Virtual Environment (`venv`)
 
@@ -27,7 +23,7 @@ Activate it:
 
 ---
 
-## 📦 Installing Requirements
+## 2. 📦 Installing Requirements
 
 Once your virtual environment is active, install the dependencies:
 
@@ -48,7 +44,7 @@ pip install -r requirements.txt
 
 ---
 
-## ⚙️ Configuration (`.env`)
+## 3. ⚙️ Configuration (`.env`)
 
 Before running API-based scripts, ensure you have your `.env` configured in the project root:
 
@@ -71,7 +67,7 @@ LANGSMITH_PROJECT=section-01-langchain-foundations
 
 ---
 
-## ▶️ Running Python Scripts
+## 4. ▶️ Running Python Scripts
 
 ### Method 1: With Activated `venv` (Standard)
 ```bash
@@ -89,7 +85,7 @@ You can directly invoke Python using the virtual environment's binary:
 
 ---
 
-## 🦙 Running Local Models (Ollama)
+## 5. 🦙 Running Local Models (Ollama)
 
 For scripts that use local models (e.g. `day1/section1/03_summary_chain_ollama.py`):
 
@@ -108,5 +104,5 @@ For scripts that use local models (e.g. `day1/section1/03_summary_chain_ollama.p
 
 ---
 
-## 📚 Reference Material
+# 📚 Reference Material
 1. [AI Reusable Snippets](refer/ai-reusable-snippets.md)
