@@ -105,4 +105,4 @@ For scripts that use local models (e.g. `day1/section1/03_summary_chain_ollama.p
 ---
 
 # 📚 Reference Material
-1. [AI Reusable Snippets](refer/ai-reusable-snippets.md)
+1. [AI Reusable Snippets](snippets/ai-reusable-snippets.md)
