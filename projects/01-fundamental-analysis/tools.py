@@ -245,3 +245,143 @@ def get_financial_data(symbol: str = "AAPL") -> str:
         return json.dumps(overview, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Failed to get full financial data for {ticker}: {str(e)}"})
+
+
+# =============================================================================
+# News and Sentiment Tools (Shared & Cached: *)
+# Reference: architecture.png (* = shared tool, cached across agents)
+# =============================================================================
+
+@lru_cache(maxsize=32)
+def _fetch_cached_news(ticker: str) -> list[Dict[str, Any]]:
+    """Internal cached news fetcher using Tavily API."""
+    api_key = os.getenv("TAVILY_API_KEY")
+    if not api_key:
+        raise ValueError("TAVILY_API_KEY environment variable is not set.")
+
+    from tavily import TavilyClient
+
+    client = TavilyClient(api_key=api_key)
+    query = f"{ticker} stock company news financial performance earnings"
+    response = client.search(query=query, max_results=6, topic="news")
+    results = response.get("results", [])
+
+    articles = []
+    for item in results:
+        articles.append({
+            "title": item.get("title", ""),
+            "url": item.get("url", ""),
+            "content": item.get("content", ""),
+            "score": item.get("score", 0.0),
+        })
+    return articles
+
+
+@tool
+def search_recent_news(symbol: str = "AAPL") -> str:
+    """Fetch recent news articles and market developments for a given stock symbol.
+
+    Args:
+        symbol: Stock ticker symbol (e.g. 'AAPL', 'MSFT', 'NVDA'). Defaults to 'AAPL'.
+
+    Returns:
+        JSON string containing recent news articles, headlines, sources, and summaries.
+    """
+    ticker = _clean_symbol(symbol)
+    try:
+        articles = _fetch_cached_news(ticker)
+        if not articles:
+            return json.dumps({
+                "symbol": ticker,
+                "message": f"No recent news articles found for {ticker}",
+                "articles": [],
+            })
+
+        return json.dumps({
+            "symbol": ticker,
+            "count": len(articles),
+            "articles": articles,
+        }, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to fetch news for {ticker}: {str(e)}"})
+
+
+@tool
+def analyze_sentiment(symbol: str = "AAPL") -> str:
+    """Analyze recent market and investor sentiment for a given stock based on recent news headlines.
+
+    Args:
+        symbol: Stock ticker symbol (e.g. 'AAPL', 'MSFT', 'NVDA'). Defaults to 'AAPL'.
+
+    Returns:
+        JSON string with sentiment classification (BULLISH, NEUTRAL, or BEARISH), sentiment score (-1.0 to 1.0), and key sentiment drivers.
+    """
+    ticker = _clean_symbol(symbol)
+    try:
+        articles = _fetch_cached_news(ticker)
+        if not articles:
+            return json.dumps({
+                "symbol": ticker,
+                "sentiment": "NEUTRAL",
+                "sentiment_score": 0.0,
+                "confidence": 0.5,
+                "summary": f"Insufficient recent news coverage to compute reliable sentiment for {ticker}.",
+                "bullish_signals": [],
+                "bearish_signals": [],
+            }, indent=2)
+
+        # Quantitative sentiment lexicon scoring
+        positive_keywords = {
+            "growth", "surge", "beat", "rally", "record", "profit", "gain", "buy",
+            "upgrade", "bullish", "innovative", "expansion", "dividend", "revenue",
+            "outperform", "strong", "raised", "positive", "high", "success", "lead"
+        }
+        negative_keywords = {
+            "drop", "fall", "decline", "miss", "loss", "slump", "bearish", "downgrade",
+            "investigation", "lawsuit", "antitrust", "sell", "probe", "plunge", "risk",
+            "warning", "headwind", "cut", "weak", "penalty", "debt", "tariff", "fine"
+        }
+
+        pos_matches = []
+        neg_matches = []
+        total_text = ""
+
+        for a in articles:
+            text = f"{a.get('title', '')} {a.get('content', '')}".lower()
+            total_text += " " + text
+            for kw in positive_keywords:
+                if kw in text and kw not in pos_matches:
+                    pos_matches.append(kw)
+            for kw in negative_keywords:
+                if kw in text and kw not in neg_matches:
+                    neg_matches.append(kw)
+
+        pos_count = len(pos_matches)
+        neg_count = len(neg_matches)
+        total = pos_count + neg_count
+
+        if total == 0:
+            score = 0.0
+            sentiment = "NEUTRAL"
+        else:
+            score = round((pos_count - neg_count) / total, 2)
+            if score > 0.15:
+                sentiment = "BULLISH"
+            elif score < -0.15:
+                sentiment = "BEARISH"
+            else:
+                sentiment = "NEUTRAL"
+
+        result = {
+            "symbol": ticker,
+            "sentiment": sentiment,
+            "sentiment_score": score,
+            "articles_analyzed": len(articles),
+            "bullish_signals": pos_matches[:5],
+            "bearish_signals": neg_matches[:5],
+            "summary": f"Market sentiment for {ticker} is {sentiment} with a net score of {score:+.2f} across {len(articles)} analyzed news articles.",
+        }
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to analyze sentiment for {ticker}: {str(e)}"})
+
