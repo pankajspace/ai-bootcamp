@@ -1,0 +1,12 @@
+# Fundamental Analysis System - Multi-Agent Graph Orchestration
+# AWS Strands SDK and dependencies
+
+strands-agents>=1.60.0,<2.0.0
+strands-agents-tools>=0.8.9,<0.9.0
+python-dotenv>=1.0.0
+yfinance>=0.2.50
+pandas>=2.0.0
+requests>=2.31.0
+boto3>=1.40.0
+openai>=1.40.0
+
