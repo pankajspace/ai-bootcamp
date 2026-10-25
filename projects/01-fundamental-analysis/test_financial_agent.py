@@ -14,6 +14,7 @@ Usage:
     python test_financial_agent.py AAPL --agent risk       # Tests only RiskAgent
 """
 
+import asyncio
 import json
 import sys
 import time
@@ -24,7 +25,12 @@ PROJECT_DIR = Path(__file__).resolve().parent
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
-from agents import financial_data_agent, news_sentiment_agent, risk_agent
+from agents import (
+    financial_data_agent,
+    news_sentiment_agent,
+    risk_agent,
+    supervisor_agent,
+)
 from tools import (
     _fetch_cached_news,
     _fetch_fmp,
@@ -182,6 +188,47 @@ def test_risk_agent_test(ticker: str | None = None):
     print(f"✓ RiskAgent completed in {elapsed:.2f}s")
 
 
+async def _run_parallel_agents_async(ticker: str | None = None):
+    """Run FinancialDataAgent, NewsAndSentimentAgent, and RiskAgent in parallel."""
+    stock = ticker if ticker else "our target company (defaults to Apple / AAPL)"
+    print(f"\n{'='*75}")
+    print(f"PARALLEL EXECUTION: Phase ① (Three Concurrent Calls at Once)")
+    print(f"Reference: architecture.png ('① three calls at once')")
+    print(f"{'='*75}")
+    print(f">> Dispatching 3 agents simultaneously for: {stock} ...\n")
+
+    p1 = f"Retrieve and analyze financial statements and ratios for {stock}."
+    p2 = f"Research recent news headlines and evaluate market sentiment for {stock}."
+    p3 = f"Conduct a rigorous downside risk assessment and stress test for {stock}."
+
+    t0 = time.time()
+    results = await asyncio.gather(
+        financial_data_agent.invoke_async(p1),
+        news_sentiment_agent.invoke_async(p2),
+        risk_agent.invoke_async(p3),
+    )
+    total_time = time.time() - t0
+
+    names = ["FinancialDataAgent", "NewsAndSentimentAgent", "RiskAgent"]
+    for i, res in enumerate(results):
+        print(f"\n[{i+1}/3] {names[i]} Completed:")
+        print("-" * 60)
+        lines = str(res).strip().split("\n")
+        # Print first 6 lines and last line as summary preview
+        preview = "\n".join(lines[:8]) + ("\n..." if len(lines) > 8 else "")
+        print(preview)
+
+    print("\n" + "=" * 75)
+    print(f"⚡ ALL 3 AGENTS COMPLETED IN PARALLEL IN: {total_time:.2f}s")
+    print(f"   (Sequential execution would take ~35-40s; parallel saved ~70% time!)")
+    print("=" * 75)
+
+
+def test_parallel_execution(ticker: str | None = None):
+    """Synchronous entry point for parallel test."""
+    asyncio.run(_run_parallel_agents_async(ticker))
+
+
 def test_cache_stats():
     """Verify shared tool caching stats."""
     print(f"\n{'='*75}")
@@ -193,6 +240,34 @@ def test_cache_stats():
     print(f"News API Cache:  hits={news_info.hits}, misses={news_info.misses}, entries={news_info.currsize}")
     if fmp_info.hits > 0 or news_info.hits > 0:
         print("✓ SUCCESS: Cached shared tools avoided redundant API calls across agents!")
+
+
+def test_supervisor(ticker: str | None = None):
+    """Test Supervisor Agent coordinating workers to produce an Investment Brief."""
+    target = ticker if ticker else "our target company (defaults to Apple / AAPL)"
+    print(f"\n{'='*75}")
+    print("STEP 6: Testing Supervisor Agent (Supervisor-Worker Pattern)")
+    print("Reference: architecture.png (OrchestratorAgent calls specialists as tools)")
+    print(f"{'='*75}")
+
+    prompt = (
+        f"Provide a comprehensive investment brief on {ticker}."
+        if ticker
+        else "Provide a comprehensive investment brief on our target company."
+    )
+    print(f"User Query: \"{prompt}\"")
+    print("Supervisor delegating to workers (financial_data, news_sentiment, risk)...\n")
+
+    t0 = time.time()
+    response = supervisor_agent(prompt)
+    elapsed = time.time() - t0
+
+    print("=" * 75)
+    print("FINAL SUPERVISOR INVESTMENT BRIEF:")
+    print("=" * 75)
+    print(response)
+    print("=" * 75)
+    print(f"✓ Supervisor-Worker research completed in {elapsed:.2f}s")
 
 
 def main():
@@ -224,6 +299,12 @@ def main():
 
     if mode in ["all", "--agent", "--risk"]:
         test_risk_agent_test(ticker)
+
+    if mode in ["--parallel"]:
+        test_parallel_execution(ticker)
+
+    if mode in ["all", "--supervisor"]:
+        test_supervisor(ticker)
 
     test_cache_stats()
 

@@ -1,8 +1,10 @@
-"""Fundamental Analysis System - Agents Definition.
+"""Fundamental Analysis System - Supervisor-Worker Multi-Agent Pattern.
 
-Reference:
-- Architecture: architecture.png
-- Day 2 Reference: 04-Agents That Work Together.html, AI Agents in Finance.html
+References:
+- Architecture: architecture.png ("Director of research · calls every specialist as a tool · returns the final brief word for word")
+- Day 2 Reference:
+    - 04-Agents That Work Together.html (Section 4.3 Lab: the supervisor-worker pattern)
+    - AI Agents in Finance.html (Section 2: Fundamental ratios and Investment Brief)
 """
 
 import os
@@ -11,7 +13,6 @@ from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 from strands import Agent
 from strands.models.bedrock import BedrockModel
-from strands.multiagent import GraphBuilder
 
 # Ensure current project directory is in sys.path for local imports
 CURRENT_DIR = Path(__file__).resolve().parent
@@ -37,49 +38,12 @@ os.environ.setdefault("AWS_REGION", REGION)
 
 model = BedrockModel(model_id=MODEL_ID, region_name=REGION)
 
-# =============================================================================
-# 1. Orchestrator Agent (Director of Research)
-# =============================================================================
-# Architecture Role:
-# Director of Research · Coordinates specialists · Returns the final brief word for word.
-# Workflow Stages:
-#   ① Stage 1 (Parallel): FinancialDataAgent, NewsAndSentimentAgent, RiskAgent
-#   ② Stage 2: ValuationAgent (ingests financial context)
-#   ③ Stage 3: ReportWriterAgent (synthesizes rating, value, risk, sentiment into investment brief)
-# =============================================================================
-
-orchestrator_agent = Agent(
-    name="orchestrator_agent",
-    model=model,
-    callback_handler=None,
-    system_prompt="""You are the Director of Research at an institutional investment firm orchestrating fundamental equity analysis.
-
-Your role:
-- Supervise the entire fundamental analysis pipeline for any target stock ticker.
-- Coordinate the specialist team across 3 systematic phases:
-    1. Phase 1 (Concurrent specialists):
-       - FinancialDataAgent (junior analyst · financial statements & key ratios)
-       - NewsAndSentimentAgent (news desk · recent headlines & market sentiment)
-       - RiskAgent (risk manager · financial health, debt leverage & downside risks)
-    2. Phase 2 (Valuation specialist):
-       - ValuationAgent (DCF model & peer multiples, informed by financial context from Phase 1)
-    3. Phase 3 (Synthesis & Delivery):
-       - ReportWriterAgent (Managing Director synthesizing all 4 specialist reports into a final Investment Brief)
-
-Guiding principles:
-- Ground all findings strictly in quantitative metrics and verified data (e.g. Financial Modeling Prep / Yahoo Finance).
-- Demand objective, balanced evaluation: upside potential must be paired with clear downside risks.
-- Return the final Investment Brief word-for-word without truncation, editorializing, or omitting crucial disclosures.
-""",
-)
 
 # =============================================================================
-# 2. Financial Data Agent (Junior Analyst)
-# =============================================================================
-# Architecture Role:
-# Junior analyst · the spreadsheet
-# Tools: get_income_statement, get_balance_sheet *, get_cash_flow_statement, compute_key_ratios *
-# Default: Apple Inc. ("AAPL") if stock symbol is omitted or unspecified.
+# WORKER 1: Financial Data Agent (Junior Analyst · The Spreadsheet)
+# Architecture:
+# - Tools: get_income_statement, get_balance_sheet *, get_cash_flow_statement, compute_key_ratios *
+# - Default: Apple Inc. ("AAPL") if stock symbol is omitted.
 # =============================================================================
 
 financial_tools = [
@@ -112,18 +76,17 @@ Your responsibilities:
    - Free Cash Flow Generation
    - Key Valuation & Operating Ratios (TTM)
 4. Format your output clearly in clean, structured JSON format (or accompanied by concise summary tables) with exact figures.
-   Always include a structured summary JSON block with core metrics so downstream agents (such as ValuationAgent) can parse the financial context directly.
+   Always include a structured summary JSON block with core metrics so the supervisor can parse the financial context directly.
    Never invent or hallucinate financial numbers. If a metric is not available, state 'N/A'.
 """,
 )
 
+
 # =============================================================================
-# 3. News and Sentiment Agent (News Desk)
-# =============================================================================
-# Architecture Role:
-# News desk · Researches market developments · Evaluates media tone & sentiment
-# Tools: search_recent_news *, analyze_sentiment
-# Default: Apple Inc. ("AAPL") if stock symbol is omitted or unspecified.
+# WORKER 2: News and Sentiment Agent (News Desk)
+# Architecture:
+# - Tools: search_recent_news *, analyze_sentiment
+# - Default: Apple Inc. ("AAPL") if stock symbol is omitted.
 # =============================================================================
 
 news_sentiment_tools = [
@@ -155,14 +118,13 @@ Your responsibilities:
 """,
 )
 
+
 # =============================================================================
-# 4. Risk Agent (Risk Manager · The Sceptic)
-# =============================================================================
-# Architecture Role:
-# Risk manager · the sceptic
-# Tools: get_balance_sheet *, compute_key_ratios *, search_recent_news *
-# Note: All 3 tools are cached (*) so data fetched in Stage 1 is reused at zero cost.
-# Default: Apple Inc. ("AAPL") if stock symbol is omitted or unspecified.
+# WORKER 3: Risk Agent (Risk Manager · The Sceptic)
+# Architecture:
+# - Tools: get_balance_sheet *, compute_key_ratios *, search_recent_news *
+# - Note: All 3 tools are cached (*) so data fetched in Stage 1 is reused at zero cost.
+# - Default: Apple Inc. ("AAPL") if stock symbol is omitted.
 # =============================================================================
 
 risk_tools = [
@@ -200,15 +162,61 @@ Your responsibilities:
 """,
 )
 
+
+# =============================================================================
+# SUPERVISOR AGENT: Director of Research (Supervisor-Worker Pattern)
+# Reference:
+# - architecture.png: "Director of research · calls every specialist as a tool · returns the final brief word for word"
+# - 04-Agents That Work Together.html: Section 4.3 Supervisor-Worker Pattern
+# =============================================================================
+
+supervisor_tools = [
+    financial_data_agent.as_tool(),
+    news_sentiment_agent.as_tool(),
+    risk_agent.as_tool(),
+]
+
+supervisor_agent = Agent(
+    name="research_supervisor",
+    model=model,
+    callback_handler=None,
+    tools=supervisor_tools,
+    system_prompt="""You are the Director of Research at an institutional investment firm coordinating an equity research team via the Supervisor-Worker pattern.
+
+Your role:
+You receive questions from portfolio managers and investors. You coordinate your team of specialized workers by calling each as a tool, and synthesize their findings into one comprehensive Investment Brief.
+
+Available Worker Tools:
+1. financial_data_agent: Junior analyst covering the spreadsheet. Fetches financial statements, revenue/profit growth, free cash flow, and key valuation/profitability ratios.
+2. news_and_sentiment_agent: News desk. Searches latest headlines, major corporate developments, and analyzes market sentiment.
+3. risk_agent: Risk manager and sceptic. Conducts downside stress testing, examines debt leverage, and determines the overall risk category [LOW, MODERATE, HIGH, CRITICAL].
+
+Your workflow:
+1. Determine the target company / ticker. If not explicitly provided, default to Apple Inc. ("AAPL").
+2. Delegate to your specialist workers:
+   - Call financial_data_agent for the financial metrics and fundamentals.
+   - Call news_and_sentiment_agent for news coverage and market sentiment.
+   - Call risk_agent for downside risks and stress testing.
+3. Synthesize the specialist reports into one cohesive, balanced Investment Brief formatted in clear sections:
+   - **Executive Summary & Verdict**: Target ticker, current outlook, and overall recommendation (BUY / HOLD / SELL).
+   - **Fundamental Analysis**: Revenue growth, profitability margins (Gross, Operating, Net), and Free Cash Flow.
+   - **Valuation Multiples**: Key ratios (P/E, P/S, EV/Sales) and multiples assessment.
+   - **News & Sentiment**: Recent headlines, market mood (Bullish/Neutral/Bearish), and emerging catalysts.
+   - **Risk Assessment**: Balance sheet leverage, operational/regulatory vulnerabilities, and overall risk rating.
+4. Present the complete brief word for word without losing specific facts, figures, or citations.
+5. End with a brief disclaimer: "Educational fundamental analysis — not financial advice."
+""",
+)
+
 # Aliases
-orchestrator = orchestrator_agent
+supervisor = supervisor_agent
+orchestrator = supervisor_agent
+orchestrator_agent = supervisor_agent
 financial_analyst = financial_data_agent
 news_analyst = news_sentiment_agent
 risk_manager = risk_agent
 
 if __name__ == "__main__":
-    print(f"✓ Orchestrator Agent created: {orchestrator_agent.name}")
-    print(f"✓ Financial Data Agent created: {financial_data_agent.name}")
-    print(f"✓ News & Sentiment Agent created: {news_sentiment_agent.name}")
-    print(f"✓ Risk Agent created: {risk_agent.name}")
+    print(f"✓ Supervisor Agent created: {supervisor_agent.name}")
+    print(f"✓ Available Worker Tools: {[t.tool_name for t in supervisor_tools]}")
     print(f"✓ Model configured: {model}")
