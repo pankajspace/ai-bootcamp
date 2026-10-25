@@ -106,3 +106,6 @@ For scripts that use local models (e.g. `day1/section1/03_summary_chain_ollama.p
 
 # 📚 Reference Material
 1. [AI Reusable Snippets](snippets/ai-reusable-snippets.md)
+
+# Notes
+1. Alphavantage API key may be required for certain financial data scripts.
