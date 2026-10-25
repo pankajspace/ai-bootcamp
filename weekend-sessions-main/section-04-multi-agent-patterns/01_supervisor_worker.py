@@ -37,7 +37,7 @@ from strands_tools.tavily import tavily_search
 
 load_dotenv(find_dotenv())
 
-MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "global.anthropic.claude-sonnet-4-6")
+MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "amazon.nova-lite-v1:0")
 REGION = os.getenv("AWS_REGION", os.getenv("AWS_DEFAULT_REGION", "us-east-1"))
 os.environ.setdefault("AWS_REGION", REGION)
 
