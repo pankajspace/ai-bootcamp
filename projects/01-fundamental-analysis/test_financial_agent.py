@@ -254,7 +254,7 @@ Synthesize the findings from all specialists into the definitive board-ready Inv
 3. News & Sentiment: Bullish sentiment (+0.33), $100B buyback authorized, Services business expansion, solid earnings.
 4. Risk Audit: Overall risk category MODERATE, balance sheet net debt $76.4B (0.26x EBITDA), multiple compression risk.
 
-Produce the full Investment Brief with the Executive Rating Table, thesis, and decision."""
+Produce the full Investment Brief with Executive Pillar Ratings formatted strictly as numbered bullet points (do NOT use markdown tables), strategic thesis, and decision."""
 
     print(f"Submitting 4-part specialist report summary for {target} to ReportWriterAgent...")
     t0 = time.time()
@@ -365,6 +365,16 @@ def main():
     print("\n" + "#" * 75)
     print(" FUNDAMENTAL ANALYSIS - UNIFIED TEST SUITE")
     print("#" * 75)
+
+    # Prompt user for stock ticker if not provided via command line
+    if not ticker:
+        try:
+            user_input = input("Enter stock ticker symbol (press Enter to default to AAPL / Apple): ").strip().upper()
+            if user_input:
+                ticker = user_input
+        except (EOFError, KeyboardInterrupt):
+            ticker = None
+
     target_str = ticker if ticker else "default (Apple / AAPL)"
     print(f">> Target Stock: {target_str} | Mode: {mode}")
 
