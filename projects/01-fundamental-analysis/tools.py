@@ -10,6 +10,7 @@ from functools import lru_cache
 from typing import Any, Dict
 from dotenv import find_dotenv, load_dotenv
 import requests
+import yfinance as yf
 from strands import tool
 
 load_dotenv(find_dotenv())
@@ -384,4 +385,172 @@ def analyze_sentiment(symbol: str = "AAPL") -> str:
         return json.dumps(result, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Failed to analyze sentiment for {ticker}: {str(e)}"})
+
+
+# =============================================================================
+# Valuation Tools
+# Reference: architecture.png (ValuationAgent · run_dcf_model, get_peer_multiples)
+# =============================================================================
+
+@tool
+def run_dcf_model(
+    symbol: str = "AAPL",
+    discount_rate: float = 0.09,
+    terminal_growth_rate: float = 0.03,
+    growth_rate: float = 0.08,
+) -> str:
+    """Run a 5-year Discounted Cash Flow (DCF) model to estimate the intrinsic share price.
+
+    Args:
+        symbol: Stock ticker symbol (e.g. 'AAPL', 'MSFT'). Defaults to 'AAPL'.
+        discount_rate: Cost of capital / WACC (e.g. 0.09 for 9%). Defaults to 0.09.
+        terminal_growth_rate: Perpetual terminal growth rate (e.g. 0.03 for 3%). Defaults to 0.03.
+        growth_rate: Projected annual FCF growth rate for the next 5 years. Defaults to 0.08 (8%).
+
+    Returns:
+        JSON string containing projected cash flows, terminal value, enterprise value, implied share price, and margin of safety.
+    """
+    ticker = _clean_symbol(symbol)
+    try:
+        cf_data = json.loads(get_cash_flow_statement(ticker))
+        bs_data = json.loads(get_balance_sheet(ticker))
+
+        fcf_base = cf_data.get("freeCashFlow")
+        if not fcf_base or fcf_base <= 0:
+            # Fallback to operating cash flow - capex or default
+            fcf_base = (cf_data.get("operatingCashFlow") or 0) + (cf_data.get("capitalExpenditure") or 0)
+        if not fcf_base or fcf_base <= 0:
+            fcf_base = 50_000_000_000  # Conservative institutional default
+
+        cash = bs_data.get("totalCashAndInvestments") or bs_data.get("cashAndCashEquivalents") or 0
+        debt = bs_data.get("totalDebt") or 0
+
+        # Retrieve market share price and shares outstanding
+        info = yf.Ticker(ticker).info
+        shares = info.get("sharesOutstanding") or 15_000_000_000
+        current_price = info.get("currentPrice") or info.get("regularMarketPrice") or 250.0
+
+        # 5-Year Cash Flow Projections
+        projected_fcf = []
+        pv_fcf_sum = 0.0
+        cur_fcf = float(fcf_base)
+
+        for year in range(1, 6):
+            cur_fcf *= (1.0 + growth_rate)
+            discount_factor = (1.0 + discount_rate) ** year
+            pv = cur_fcf / discount_factor
+            pv_fcf_sum += pv
+            projected_fcf.append({
+                "year": year,
+                "projected_fcf": round(cur_fcf, 0),
+                "present_value": round(pv, 0),
+            })
+
+        # Terminal Value Calculation
+        terminal_value = (cur_fcf * (1.0 + terminal_growth_rate)) / (discount_rate - terminal_growth_rate)
+        pv_terminal_value = terminal_value / ((1.0 + discount_rate) ** 5)
+
+        # Enterprise Value & Equity Value
+        enterprise_value = pv_fcf_sum + pv_terminal_value
+        equity_value = enterprise_value + cash - debt
+        implied_share_price = equity_value / shares
+
+        upside_pct = ((implied_share_price - current_price) / current_price) * 100.0
+        valuation_verdict = "UNDERVALUED" if upside_pct > 10 else ("OVERVALUED" if upside_pct < -10 else "FAIRLY_VALUED")
+
+        dcf_summary = {
+            "symbol": ticker,
+            "inputs": {
+                "base_fcf": fcf_base,
+                "projected_growth_rate": f"{growth_rate:.1%}",
+                "discount_rate_wacc": f"{discount_rate:.1%}",
+                "terminal_growth_rate": f"{terminal_growth_rate:.1%}",
+                "cash_and_investments": cash,
+                "total_debt": debt,
+                "shares_outstanding": shares,
+                "current_market_price": round(current_price, 2),
+            },
+            "projected_cash_flows": projected_fcf,
+            "pv_of_5yr_cash_flows": round(pv_fcf_sum, 0),
+            "terminal_value": round(terminal_value, 0),
+            "pv_of_terminal_value": round(pv_terminal_value, 0),
+            "enterprise_value": round(enterprise_value, 0),
+            "implied_equity_value": round(equity_value, 0),
+            "implied_fair_share_price": round(implied_share_price, 2),
+            "upside_potential_pct": f"{upside_pct:+.2f}%",
+            "valuation_verdict": valuation_verdict,
+        }
+        return json.dumps(dcf_summary, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to run DCF model for {ticker}: {str(e)}"})
+
+
+@tool
+def get_peer_multiples(symbol: str = "AAPL") -> str:
+    """Compare valuation multiples of the target stock against top industry peers.
+
+    Args:
+        symbol: Stock ticker symbol (e.g. 'AAPL', 'MSFT', 'NVDA'). Defaults to 'AAPL'.
+
+    Returns:
+        JSON string comparing P/E, P/S, EV/EBITDA, and P/B multiples against peers.
+    """
+    ticker = _clean_symbol(symbol)
+    peer_map = {
+        "AAPL": ["MSFT", "GOOGL", "AMZN"],
+        "MSFT": ["AAPL", "GOOGL", "AMZN"],
+        "GOOGL": ["META", "MSFT", "AMZN"],
+        "NVDA": ["AMD", "INTC", "TSM"],
+        "TSLA": ["F", "GM", "RIVN"],
+    }
+    peers = peer_map.get(ticker, ["MSFT", "GOOGL", "AMZN"])
+
+    try:
+        def fetch_multiples(sym):
+            try:
+                info = yf.Ticker(sym).info
+                return {
+                    "symbol": sym,
+                    "price": info.get("currentPrice") or info.get("regularMarketPrice"),
+                    "trailingPE": round(info.get("trailingPE"), 2) if info.get("trailingPE") else None,
+                    "forwardPE": round(info.get("forwardPE"), 2) if info.get("forwardPE") else None,
+                    "evToEbitda": round(info.get("enterpriseToEbitda"), 2) if info.get("enterpriseToEbitda") else None,
+                    "priceToSales": round(info.get("priceToSalesTrailing12Months"), 2) if info.get("priceToSalesTrailing12Months") else None,
+                    "priceToBook": round(info.get("priceToBook"), 2) if info.get("priceToBook") else None,
+                }
+            except Exception:
+                return {"symbol": sym}
+
+        target_metrics = fetch_multiples(ticker)
+        peer_metrics = [fetch_multiples(p) for p in peers]
+
+        # Calculate averages for peer group
+        pe_list = [p["trailingPE"] for p in peer_metrics if p.get("trailingPE")]
+        ev_ebitda_list = [p["evToEbitda"] for p in peer_metrics if p.get("evToEbitda")]
+        ps_list = [p["priceToSales"] for p in peer_metrics if p.get("priceToSales")]
+
+        avg_pe = round(sum(pe_list) / len(pe_list), 2) if pe_list else None
+        avg_ev_ebitda = round(sum(ev_ebitda_list) / len(ev_ebitda_list), 2) if ev_ebitda_list else None
+        avg_ps = round(sum(ps_list) / len(ps_list), 2) if ps_list else None
+
+        target_pe = target_metrics.get("trailingPE")
+        pe_premium = round(((target_pe - avg_pe) / avg_pe) * 100, 1) if target_pe and avg_pe else None
+
+        result = {
+            "target": target_metrics,
+            "peers": peer_metrics,
+            "peer_averages": {
+                "avgTrailingPE": avg_pe,
+                "avgEVtoEBITDA": avg_ev_ebitda,
+                "avgPriceToSales": avg_ps,
+            },
+            "comparison": {
+                "pe_premium_vs_peers_pct": f"{pe_premium:+.1f}%" if pe_premium is not None else "N/A",
+                "relative_valuation": "PREMIUM" if (pe_premium and pe_premium > 10) else ("DISCOUNT" if (pe_premium and pe_premium < -10) else "IN_LINE"),
+            },
+        }
+        return json.dumps(result, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to compute peer multiples for {ticker}: {str(e)}"})
+
 

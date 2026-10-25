@@ -28,8 +28,10 @@ if str(PROJECT_DIR) not in sys.path:
 from agents import (
     financial_data_agent,
     news_sentiment_agent,
+    report_writer_agent,
     risk_agent,
     supervisor_agent,
+    valuation_agent,
 )
 from tools import (
     _fetch_cached_news,
@@ -39,6 +41,8 @@ from tools import (
     get_balance_sheet,
     get_cash_flow_statement,
     get_income_statement,
+    get_peer_multiples,
+    run_dcf_model,
     search_recent_news,
 )
 
@@ -118,6 +122,24 @@ def test_tools(ticker: str | None = None):
     print(f"   ✓ Bearish Signals:   {sentiment.get('bearish_signals', [])[:3]}")
     print(f"   ⏱ Time taken:        {time.time() - t0:.2f}s")
 
+    # 7. Run DCF Model
+    print("\n7. [Tool] run_dcf_model...")
+    t0 = time.time()
+    dcf = json.loads(run_dcf_model(symbol=ticker) if ticker else run_dcf_model())
+    print(f"   ✓ Implied Fair Price: ${_fmt_money(dcf.get('implied_fair_share_price'))}")
+    print(f"   ✓ Market Price:      ${_fmt_money(dcf.get('inputs', {}).get('current_market_price'))}")
+    print(f"   ✓ Valuation Verdict: {dcf.get('valuation_verdict')}")
+    print(f"   ⏱ Time taken:        {time.time() - t0:.2f}s")
+
+    # 8. Get Peer Multiples
+    print("\n8. [Tool] get_peer_multiples...")
+    t0 = time.time()
+    pm = json.loads(get_peer_multiples(symbol=ticker) if ticker else get_peer_multiples())
+    print(f"   ✓ Target P/E:        {pm.get('target', {}).get('trailingPE')}")
+    print(f"   ✓ Peer Avg P/E:      {pm.get('peer_averages', {}).get('avgTrailingPE')}")
+    print(f"   ✓ Relative Premium:  {pm.get('comparison', {}).get('pe_premium_vs_peers_pct')}")
+    print(f"   ⏱ Time taken:        {time.time() - t0:.2f}s")
+
 
 def test_financial_agent(ticker: str | None = None):
     """Test FinancialDataAgent ('junior analyst · the spreadsheet')."""
@@ -186,6 +208,64 @@ def test_risk_agent_test(ticker: str | None = None):
     print(response)
     print("-" * 75)
     print(f"✓ RiskAgent completed in {elapsed:.2f}s")
+
+
+def test_valuation_agent(ticker: str | None = None):
+    """Test ValuationAgent ('valuation specialist · DCF & peer multiples')."""
+    print(f"\n{'='*75}")
+    print("STEP 5: Testing ValuationAgent (Valuation Specialist)")
+    print("Reference: architecture.png (receives financial context → DCF & peer multiples)")
+    print(f"{'='*75}")
+
+    # First fetch financial context (emulating FinancialDataAgent baton)
+    target = ticker if ticker else "AAPL"
+    print(f"Retrieving financial context for {target}...")
+    f_data = json.loads(get_cash_flow_statement(target))
+    fcf = f_data.get("freeCashFlow", 98_000_000_000)
+
+    prompt = (
+        f"Target stock: {target}. Financial Context: Latest Free Cash Flow is ${_fmt_money(fcf)}. "
+        "Run the 5-year DCF model and analyze peer multiples to determine if the stock is undervalued, fairly valued, or overvalued."
+    )
+    print(f"Prompt: \"{prompt}\"")
+    t0 = time.time()
+    response = valuation_agent(prompt)
+    elapsed = time.time() - t0
+
+    print("\nAGENT RESPONSE:")
+    print("-" * 75)
+    print(response)
+    print("-" * 75)
+    print(f"✓ ValuationAgent completed in {elapsed:.2f}s")
+
+
+def test_report_writer(ticker: str | None = None):
+    """Test ReportWriterAgent ('managing director · synthesis only · no tools')."""
+    print(f"\n{'='*75}")
+    print("STEP 6: Testing ReportWriterAgent (Managing Director · Synthesis Only)")
+    print("Reference: architecture.png ('all four reports go in → Investment brief')")
+    print(f"{'='*75}")
+
+    target = ticker if ticker else "AAPL"
+    prompt = f"""Target Company: {target}
+Synthesize the findings from all specialists into the definitive board-ready Investment Brief:
+1. Financial Health: Revenue $416B, Gross Margin 46.9%, Operating Margin 32.0%, Net Margin 27.0%, Free Cash Flow $98.8B.
+2. Valuation: DCF intrinsic price $139.91 vs market price $347.73 (premium multiple), P/E 39.74 vs peer average 21.75.
+3. News & Sentiment: Bullish sentiment (+0.33), $100B buyback authorized, Services business expansion, solid earnings.
+4. Risk Audit: Overall risk category MODERATE, balance sheet net debt $76.4B (0.26x EBITDA), multiple compression risk.
+
+Produce the full Investment Brief with the Executive Rating Table, thesis, and decision."""
+
+    print(f"Submitting 4-part specialist report summary for {target} to ReportWriterAgent...")
+    t0 = time.time()
+    response = report_writer_agent(prompt)
+    elapsed = time.time() - t0
+
+    print("\nMANAGING DIRECTOR INVESTMENT BRIEF:")
+    print("-" * 75)
+    print(response)
+    print("-" * 75)
+    print(f"✓ ReportWriterAgent completed in {elapsed:.2f}s")
 
 
 async def _run_parallel_agents_async(ticker: str | None = None):
@@ -299,6 +379,12 @@ def main():
 
     if mode in ["all", "--agent", "--risk"]:
         test_risk_agent_test(ticker)
+
+    if mode in ["all", "--agent", "--valuation"]:
+        test_valuation_agent(ticker)
+
+    if mode in ["all", "--agent", "--writer"]:
+        test_report_writer(ticker)
 
     if mode in ["--parallel"]:
         test_parallel_execution(ticker)

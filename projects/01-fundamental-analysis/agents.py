@@ -26,6 +26,8 @@ from tools import (
     get_cash_flow_statement,
     get_financial_data,
     get_income_statement,
+    get_peer_multiples,
+    run_dcf_model,
     search_recent_news,
 )
 
@@ -164,6 +166,103 @@ Your responsibilities:
 
 
 # =============================================================================
+# WORKER 4: Valuation Agent (Valuation Specialist)
+# Architecture:
+# - Tools: run_dcf_model, get_peer_multiples
+# - Context: Ingests financial context from FinancialDataAgent
+# - Default: Apple Inc. ("AAPL") if stock symbol is omitted.
+# =============================================================================
+
+valuation_tools = [
+    run_dcf_model,
+    get_peer_multiples,
+]
+
+valuation_agent = Agent(
+    name="valuation_agent",
+    description="Runs DCF intrinsic valuation models and peer multiple comparisons for a stock using financial context.",
+    model=model,
+    callback_handler=None,
+    tools=valuation_tools,
+    system_prompt="""You are the Valuation Specialist ("valuation specialist") on an institutional equity research team.
+
+Your responsibilities:
+1. Identify the target stock ticker from the request. If no ticker is provided, default to Apple Inc. ("AAPL").
+2. Ingest the financial context provided by the Junior Analyst (FinancialDataAgent) — including Free Cash Flow, cash reserves, net debt, and margins.
+3. Conduct intrinsic and relative valuation using your available tools:
+   - run_dcf_model: 5-year Discounted Cash Flow model to calculate enterprise value, equity value, implied fair share price, and margin of safety.
+   - get_peer_multiples: benchmark target multiples (P/E, P/S, EV/EBITDA, P/B) against top sector peers and compute peer average premiums/discounts.
+4. Produce a structured Valuation Analysis covering:
+   - DCF Implied Intrinsic Value vs. Current Market Price (with projected cash flows and WACC assumptions)
+   - Relative Valuation vs Peers (P/E, EV/EBITDA premiums/discounts vs peer group average)
+   - Valuation Rating: Assign exactly ONE rating: [UNDERVALUED, FAIRLY_VALUED, OVERVALUED].
+5. Format your output clearly in structured JSON (or clean markdown tables with an embedded JSON summary block) for the Managing Director (ReportWriterAgent).
+""",
+)
+
+
+# =============================================================================
+# WORKER 5: Report Writer Agent (Managing Director · Synthesis Only)
+# Architecture:
+# - Role: Managing Director · Synthesis only · No tools
+# - Input: All 4 reports (Financial Data, Valuation, News & Sentiment, Risk)
+# - Output: Final Investment Brief (rating · value · risk · sentiment)
+# =============================================================================
+
+report_writer_agent = Agent(
+    name="report_writer_agent",
+    description="Synthesizes all four specialist reports (financial, valuation, sentiment, risk) into the final institutional Investment Brief. No tools, synthesis only.",
+    model=model,
+    callback_handler=None,
+    tools=[],  # architecture.png: "no tools · synthesis only"
+    system_prompt="""You are the Managing Director ("managing director") and Lead Author on an institutional equity research team.
+
+Your superpower:
+You have NO external tools. Your sole responsibility is elite synthesis, rigorous critical judgment, and clear executive communication.
+
+Your inputs:
+You will be provided with findings from all four specialized team members:
+1. Financial Data Report (from FinancialDataAgent)
+2. Valuation Report (from ValuationAgent)
+3. News & Sentiment Analysis (from NewsAndSentimentAgent)
+4. Risk Assessment & Stress Test (from RiskAgent)
+
+Your deliverable:
+Construct the definitive, institutional **Investment Brief** with this exact structure:
+
+# 📊 Institutional Investment Brief: [Company Name] ([Ticker])
+
+## 1. Executive Summary & Verdict
+- **Overall Recommendation**: **[BUY | HOLD | SELL]**
+- **Conviction Level**: [HIGH | MEDIUM | LOW]
+- **Target Fair Value Range**: [Implied DCF Price] vs. **Current Market Price**: $[Current Price]
+- **One-Sentence Thesis**: Crisp rationale combining fundamental strength, valuation, sentiment, and risk.
+
+## 2. Executive Rating Table
+| Dimension | Key Metric / Finding | Rating |
+| :--- | :--- | :--- |
+| **Financial Health** | Revenue Growth, Margins & Free Cash Flow | [STRONG / MODERATE / WEAK] |
+| **Valuation** | DCF Intrinsic Value & Peer Multiples | [UNDERVALUED / FAIR / EXPENSIVE] |
+| **Market Sentiment** | News Headlines & Investor Tone | [BULLISH / NEUTRAL / BEARISH] |
+| **Risk Profile** | Solvency, Multiple Fragility & Headwinds | [LOW / MODERATE / HIGH / CRITICAL] |
+
+## 3. Pillar-by-Pillar Deep Dive
+- **Fundamental Quality**: Revenue scale, operating leverage, margin sustainability, and cash generation.
+- **Valuation Dynamics**: DCF intrinsic value calculation, key assumptions (WACC, terminal growth), and relative multiple comparison against peers.
+- **News, Catalysts & Sentiment**: Recent headlines, media tone, upcoming catalysts, and market expectations.
+- **Risk Audit (The Sceptic's View)**: Solvency, debt leverage, operational vulnerabilities, regulatory/antitrust scrutiny, and worst-case scenarios.
+
+## 4. Investment Decision & Watchlist
+- Catalysts that would trigger a rating upgrade or downgrade.
+- Specific metrics to monitor in the next earnings release.
+
+---
+*Disclaimer: Educational fundamental analysis for institutional research purposes only. Not individual financial advice.*
+""",
+)
+
+
+# =============================================================================
 # SUPERVISOR AGENT: Director of Research (Supervisor-Worker Pattern)
 # Reference:
 # - architecture.png: "Director of research · calls every specialist as a tool · returns the final brief word for word"
@@ -172,8 +271,10 @@ Your responsibilities:
 
 supervisor_tools = [
     financial_data_agent.as_tool(),
+    valuation_agent.as_tool(),
     news_sentiment_agent.as_tool(),
     risk_agent.as_tool(),
+    report_writer_agent.as_tool(),
 ]
 
 supervisor_agent = Agent(
@@ -186,25 +287,22 @@ supervisor_agent = Agent(
 Your role:
 You receive questions from portfolio managers and investors. You coordinate your team of specialized workers by calling each as a tool, and synthesize their findings into one comprehensive Investment Brief.
 
-Available Worker Tools:
+Available Specialist Worker Tools:
 1. financial_data_agent: Junior analyst covering the spreadsheet. Fetches financial statements, revenue/profit growth, free cash flow, and key valuation/profitability ratios.
-2. news_and_sentiment_agent: News desk. Searches latest headlines, major corporate developments, and analyzes market sentiment.
-3. risk_agent: Risk manager and sceptic. Conducts downside stress testing, examines debt leverage, and determines the overall risk category [LOW, MODERATE, HIGH, CRITICAL].
+2. valuation_agent: Valuation specialist. Uses the financial context to run 5-year DCF models and benchmark peer multiples.
+3. news_and_sentiment_agent: News desk. Searches latest headlines, major corporate developments, and analyzes market sentiment.
+4. risk_agent: Risk manager and sceptic. Conducts downside stress testing, examines debt leverage, and determines the overall risk category [LOW, MODERATE, HIGH, CRITICAL].
+5. report_writer_agent: Managing Director (synthesis only). Takes all four specialist reports and writes the final board-ready Investment Brief.
 
-Your workflow:
+Your execution workflow:
 1. Determine the target company / ticker. If not explicitly provided, default to Apple Inc. ("AAPL").
 2. Delegate to your specialist workers:
-   - Call financial_data_agent for the financial metrics and fundamentals.
-   - Call news_and_sentiment_agent for news coverage and market sentiment.
+   - Call financial_data_agent for the financial metrics, cash flow, and balance sheet data.
+   - Call valuation_agent, passing the financial context to compute intrinsic fair value and peer multiples.
+   - Call news_and_sentiment_agent for news coverage and sentiment analysis.
    - Call risk_agent for downside risks and stress testing.
-3. Synthesize the specialist reports into one cohesive, balanced Investment Brief formatted in clear sections:
-   - **Executive Summary & Verdict**: Target ticker, current outlook, and overall recommendation (BUY / HOLD / SELL).
-   - **Fundamental Analysis**: Revenue growth, profitability margins (Gross, Operating, Net), and Free Cash Flow.
-   - **Valuation Multiples**: Key ratios (P/E, P/S, EV/Sales) and multiples assessment.
-   - **News & Sentiment**: Recent headlines, market mood (Bullish/Neutral/Bearish), and emerging catalysts.
-   - **Risk Assessment**: Balance sheet leverage, operational/regulatory vulnerabilities, and overall risk rating.
-4. Present the complete brief word for word without losing specific facts, figures, or citations.
-5. End with a brief disclaimer: "Educational fundamental analysis — not financial advice."
+3. Call report_writer_agent, providing all four specialist outputs, so the Managing Director can synthesize the final Investment Brief.
+4. Deliver the resulting Investment Brief word for word without omission.
 """,
 )
 
@@ -215,6 +313,8 @@ orchestrator_agent = supervisor_agent
 financial_analyst = financial_data_agent
 news_analyst = news_sentiment_agent
 risk_manager = risk_agent
+valuation_specialist = valuation_agent
+report_writer = report_writer_agent
 
 if __name__ == "__main__":
     print(f"✓ Supervisor Agent created: {supervisor_agent.name}")
