@@ -111,3 +111,4 @@ For scripts that use local models (e.g. `day1/section1/03_summary_chain_ollama.p
 1. Alphavantage API key may be required for certain financial data scripts.
 2. https://site.financialmodelingprep.com/
 3. https://docs.google.com/document/d/1Re1O9cOPGeOsDKiznx-YNxl0NCrZuMf7bHujUCrIB_U/edit?tab=t.0
+4. https://strandsagents.com/docs/user-guide/migrate/langgraph/
