@@ -4,9 +4,3 @@
 __pycache__/
 *.py[cod]
 .venv/
-.env.*
-!.env.example
-__pycache__/
-*.py[cod]
-.venv/
-.env
