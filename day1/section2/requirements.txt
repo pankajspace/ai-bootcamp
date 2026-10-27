@@ -1,8 +1,8 @@
-python-dotenv
-pydantic
-langchain
-langchain-core
-langchain-openai
-langchain-tavily
-tavily-python
-
+# Day 1 · Section 2 — First Agent (Tools, Tavily Web Search & Structured Output)
+python-dotenv>=1.0.0
+pydantic>=2.11.0,<3.0.0
+langchain>=1.4.0,<2.0.0
+langchain-core>=1.6.0,<2.0.0
+langchain-openai>=1.1.0,<2.0.0
+langchain-tavily>=0.2.0
+tavily-python>=0.3.0

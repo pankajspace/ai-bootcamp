@@ -41,6 +41,16 @@ pip install -r requirements.txt
   ```bash
   pip install -r day1/section2/requirements.txt
   ```
+- **Project 01 · Fundamental Equity Analysis System:**
+  ```bash
+  pip install -r projects/01-fundamental-analysis/requirements.txt
+  ```
+- **Weekend Sessions (per section, Bedrock or Groq edition):**
+  ```bash
+  pip install -r weekend-sessions-main/<section-folder>/requirements.txt
+  # or for Groq editions:
+  pip install -r weekend-sessions-main/<section-folder>/requirements-groq.txt
+  ```
 
 ---
 

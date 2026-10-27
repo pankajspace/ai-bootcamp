@@ -1,0 +1,3 @@
+# Environment setup verification (Amazon Bedrock)
+boto3>=1.40.0
+

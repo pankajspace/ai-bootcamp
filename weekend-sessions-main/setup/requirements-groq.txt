@@ -1,0 +1,5 @@
+# Environment setup verification (Groq + optional AWS/AgentCore)
+boto3>=1.40.0
+openai>=1.40.0
+python-dotenv>=1.0.0
+

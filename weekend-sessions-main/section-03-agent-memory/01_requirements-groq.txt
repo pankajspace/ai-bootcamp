@@ -9,3 +9,6 @@ groq>=0.30.0
 # ... and embeds them locally (Groq has no embeddings API): fastembed, wrapped as a LangChain Embeddings
 fastembed>=0.5.0
 langchain>=1.4.0,<2.0.0
+langchain-core>=1.6.0,<2.0.0
+langchain-core>=1.6.0,<2.0.0
+
