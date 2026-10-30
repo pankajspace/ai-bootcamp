@@ -1,0 +1,601 @@
+response_id,date,month,product,tenure,channel,score,comment,annual_revenue_inr
+R0001,2026-07-01,2026-07,Savings Account,3+ yrs,Branch,10,Opening the account was smooth and fully online.,12200
+R0002,2026-07-01,2026-07,Credit Card,<1 yr,Mobile App,10,Mobile recharge and bill payments are super quick.,9200
+R0003,2026-07-01,2026-07,Savings Account,3+ yrs,Branch,0,"Amazing support from the branch team, thank you.",9500
+R0004,2026-07-01,2026-07,Credit Card,<1 yr,Call Centre,5,App crashes when I open the statements page.,28300
+R0005,2026-07-01,2026-07,Wealth,<1 yr,Call Centre,8,App works but it is slow during peak hours.,142700
+R0006,2026-07-01,2026-07,Wealth,3+ yrs,Mobile App,8,"Decent app, but it freezes sometimes.",169200
+R0007,2026-07-01,2026-07,Savings Account,1-3 yrs,Call Centre,10,Branch staff are helpful and patient with my parents.,13100
+R0008,2026-07-02,2026-07,Credit Card,<1 yr,Mobile App,8,Customer care solves the problem but the waiting time is long.,26300
+R0009,2026-07-02,2026-07,Savings Account,1-3 yrs,Mobile App,9,Mobile recharge and bill payments are super quick.,3500
+R0010,2026-07-02,2026-07,Credit Card,3+ yrs,Mobile App,10,Great cashback on the credit card every month.,11800
+R0011,2026-07-02,2026-07,Credit Card,1-3 yrs,Branch,9,,24300
+R0012,2026-07-03,2026-07,Savings Account,1-3 yrs,Mobile App,10,I feel safe banking here and transfers are fast.,5600
+R0013,2026-07-03,2026-07,Credit Card,1-3 yrs,Mobile App,10,I feel safe banking here and transfers are fast.,7000
+R0014,2026-07-03,2026-07,Wealth,3+ yrs,Branch,7,Average experience.,198900
+R0015,2026-07-03,2026-07,Credit Card,3+ yrs,Branch,10,"Good bank, no complaints.",21200
+R0016,2026-07-03,2026-07,Credit Card,<1 yr,Mobile App,9,The branch team sorted my KYC update in ten minutes.,27900
+R0017,2026-07-03,2026-07,Savings Account,1-3 yrs,Branch,9,Branch staff are helpful and patient with my parents.,14600
+R0018,2026-07-04,2026-07,Credit Card,1-3 yrs,Mobile App,7,"Decent app, but it freezes sometimes.",29300
+R0019,2026-07-04,2026-07,Credit Card,1-3 yrs,Mobile App,1,I was charged an annual fee on my credit card even after reaching the spend target.,15100
+R0020,2026-07-04,2026-07,Savings Account,3+ yrs,Call Centre,8,FD rates could be better.,2500
+R0021,2026-07-04,2026-07,Savings Account,<1 yr,Mobile App,10,Opening the account was smooth and fully online.,4900
+R0022,2026-07-04,2026-07,Wealth,<1 yr,Branch,0,Hidden costs in the portfolio statement. Fees are much higher than other banks.,291700
+R0023,2026-07-04,2026-07,Credit Card,1-3 yrs,Branch,5,App crashes when I open the statements page.,23100
+R0024,2026-07-04,2026-07,Credit Card,3+ yrs,Mobile App,9,UPI payments are quick and the app is easy to use.,12300
+R0025,2026-07-04,2026-07,Wealth,3+ yrs,Mobile App,7,FD rates could be better.,268100
+R0026,2026-07-04,2026-07,Savings Account,1-3 yrs,Mobile App,9,I feel safe banking here and transfers are fast.,7400
+R0027,2026-07-05,2026-07,Wealth,1-3 yrs,Branch,10,Opening the account was smooth and fully online.,165700
+R0028,2026-07-05,2026-07,Savings Account,<1 yr,Branch,9,Happy with the overall service.,8600
+R0029,2026-07-05,2026-07,Savings Account,3+ yrs,Mobile App,6,Customer care kept me on hold for 40 minutes and the call dropped.,2200
+R0030,2026-07-05,2026-07,Savings Account,1-3 yrs,Call Centre,10,UPI payments are quick and the app is easy to use.,2600
+R0031,2026-07-06,2026-07,Credit Card,<1 yr,Mobile App,10,Reward points on my card are actually useful.,26100
+R0032,2026-07-06,2026-07,Wealth,1-3 yrs,Branch,8,"Had to wait a long time on the call centre line, otherwise fine.",287000
+R0033,2026-07-06,2026-07,Savings Account,3+ yrs,Call Centre,8,"Had to wait a long time on the call centre line, otherwise fine.",14600
+R0034,2026-07-06,2026-07,Savings Account,3+ yrs,Call Centre,9,UPI payments are quick and the app is easy to use.,3800
+R0035,2026-07-06,2026-07,Credit Card,3+ yrs,Branch,10,"My RM explained every product clearly, no pushy selling.",22000
+R0036,2026-07-06,2026-07,Savings Account,1-3 yrs,Mobile App,9,Mobile recharge and bill payments are super quick.,11000
+R0037,2026-07-07,2026-07,Credit Card,<1 yr,Branch,10,"Good bank, no complaints.",20900
+R0038,2026-07-07,2026-07,Wealth,3+ yrs,Mobile App,9,UPI payments are quick and the app is easy to use.,392500
+R0039,2026-07-07,2026-07,Wealth,1-3 yrs,Branch,7,Customer care solves the problem but the waiting time is long.,141100
+R0040,2026-07-07,2026-07,Savings Account,<1 yr,Call Centre,10,Mobile recharge and bill payments are super quick.,8700
+R0041,2026-07-08,2026-07,Wealth,3+ yrs,Mobile App,7,"It is okay, nothing special.",284300
+R0042,2026-07-08,2026-07,Wealth,<1 yr,Mobile App,5,Customer care kept me on hold for 40 minutes and the call dropped.,304200
+R0043,2026-07-08,2026-07,Credit Card,1-3 yrs,Branch,10,The branch team sorted my KYC update in ten minutes.,24900
+R0044,2026-07-08,2026-07,Savings Account,1-3 yrs,Mobile App,8,My money earns more at other banks.,13700
+R0045,2026-07-08,2026-07,Credit Card,1-3 yrs,Branch,10,Opening the account was smooth and fully online.,20700
+R0046,2026-07-08,2026-07,Wealth,<1 yr,Branch,8,Average experience.,307000
+R0047,2026-07-08,2026-07,Wealth,<1 yr,Branch,8,App works but it is slow during peak hours.,389200
+R0048,2026-07-09,2026-07,Savings Account,<1 yr,Mobile App,7,Customer care solves the problem but the waiting time is long.,14700
+R0049,2026-07-09,2026-07,Savings Account,<1 yr,Mobile App,5,,2200
+R0050,2026-07-09,2026-07,Credit Card,3+ yrs,Mobile App,7,Callback was promised and came a day late.,19500
+R0051,2026-07-09,2026-07,Savings Account,1-3 yrs,Branch,8,Does the job.,10100
+R0052,2026-07-09,2026-07,Savings Account,3+ yrs,Mobile App,8,Callback was promised and came a day late.,14200
+R0053,2026-07-09,2026-07,Wealth,3+ yrs,Branch,8,My money earns more at other banks.,110200
+R0054,2026-07-10,2026-07,Savings Account,1-3 yrs,Call Centre,9,Opening the account was smooth and fully online.,2800
+R0055,2026-07-10,2026-07,Savings Account,1-3 yrs,Mobile App,10,"Seamless experience, everything works on the app.",8400
+R0056,2026-07-10,2026-07,Credit Card,<1 yr,Branch,3,I was charged an annual fee on my credit card even after reaching the spend target.,26600
+R0057,2026-07-10,2026-07,Credit Card,1-3 yrs,Mobile App,2,Not happy with the service lately.,29200
+R0058,2026-07-10,2026-07,Credit Card,1-3 yrs,Mobile App,10,Mobile recharge and bill payments are super quick.,6900
+R0059,2026-07-10,2026-07,Savings Account,3+ yrs,Call Centre,7,"Had to wait a long time on the call centre line, otherwise fine.",6000
+R0060,2026-07-10,2026-07,Savings Account,1-3 yrs,Mobile App,10,UPI payments are quick and the app is easy to use.,14400
+R0061,2026-07-10,2026-07,Savings Account,<1 yr,Mobile App,9,UPI payments are quick and the app is easy to use.,9800
+R0062,2026-07-10,2026-07,Credit Card,3+ yrs,Mobile App,6,"Interest rates are poor compared to other banks, thinking of moving my FD.",15000
+R0063,2026-07-11,2026-07,Wealth,<1 yr,Mobile App,7,Customer care solves the problem but the waiting time is long.,210700
+R0064,2026-07-11,2026-07,Savings Account,1-3 yrs,Branch,10,"Good bank, no complaints.",8100
+R0065,2026-07-11,2026-07,Savings Account,1-3 yrs,Call Centre,8,"Had to wait a long time on the call centre line, otherwise fine.",8400
+R0066,2026-07-11,2026-07,Wealth,<1 yr,Branch,10,UPI payments are quick and the app is easy to use.,303500
+R0067,2026-07-11,2026-07,Wealth,1-3 yrs,Branch,8,Average experience.,149900
+R0068,2026-07-12,2026-07,Wealth,1-3 yrs,Branch,8,Average experience.,159700
+R0069,2026-07-12,2026-07,Wealth,3+ yrs,Mobile App,10,My relationship manager is very helpful and always picks up the call.,287100
+R0070,2026-07-12,2026-07,Wealth,3+ yrs,Branch,3,,455300
+R0071,2026-07-12,2026-07,Savings Account,<1 yr,Mobile App,7,"Had to wait a long time on the call centre line, otherwise fine.",10100
+R0072,2026-07-12,2026-07,Credit Card,<1 yr,Mobile App,9,Great cashback on the credit card every month.,16900
+R0073,2026-07-12,2026-07,Credit Card,1-3 yrs,Branch,10,UPI payments are quick and the app is easy to use.,13800
+R0074,2026-07-12,2026-07,Savings Account,<1 yr,Mobile App,9,I feel safe banking here and transfers are fast.,5600
+R0075,2026-07-13,2026-07,Wealth,1-3 yrs,Mobile App,7,Callback was promised and came a day late.,248300
+R0076,2026-07-13,2026-07,Credit Card,1-3 yrs,Mobile App,7,Credit card reward points expire too quickly.,15200
+R0077,2026-07-13,2026-07,Savings Account,<1 yr,Branch,10,,7500
+R0078,2026-07-13,2026-07,Wealth,<1 yr,Mobile App,6,,229100
+R0079,2026-07-13,2026-07,Savings Account,1-3 yrs,Mobile App,8,,10800
+R0080,2026-07-13,2026-07,Wealth,3+ yrs,Branch,9,"Seamless experience, everything works on the app.",283000
+R0081,2026-07-14,2026-07,Savings Account,1-3 yrs,Mobile App,4,"Interest rates are poor compared to other banks, thinking of moving my FD.",13100
+R0082,2026-07-14,2026-07,Savings Account,3+ yrs,Call Centre,8,My money earns more at other banks.,13500
+R0083,2026-07-14,2026-07,Savings Account,1-3 yrs,Mobile App,9,Branch staff are helpful and patient with my parents.,10900
+R0084,2026-07-14,2026-07,Savings Account,1-3 yrs,Branch,8,Does the job.,3300
+R0085,2026-07-14,2026-07,Wealth,3+ yrs,Branch,8,Callback was promised and came a day late.,150900
+R0086,2026-07-14,2026-07,Savings Account,1-3 yrs,Branch,10,,13200
+R0087,2026-07-14,2026-07,Wealth,<1 yr,Call Centre,4,Hidden costs in the portfolio statement. Fees are much higher than other banks.,501300
+R0088,2026-07-15,2026-07,Savings Account,3+ yrs,Mobile App,10,,12200
+R0089,2026-07-15,2026-07,Savings Account,<1 yr,Mobile App,9,The branch team sorted my KYC update in ten minutes.,2600
+R0090,2026-07-15,2026-07,Savings Account,3+ yrs,Mobile App,8,,6400
+R0091,2026-07-16,2026-07,Savings Account,3+ yrs,Mobile App,9,I feel safe banking here and transfers are fast.,7600
+R0092,2026-07-16,2026-07,Savings Account,3+ yrs,Call Centre,9,"Seamless experience, everything works on the app.",5700
+R0093,2026-07-16,2026-07,Savings Account,1-3 yrs,Branch,7,My money earns more at other banks.,12600
+R0094,2026-07-16,2026-07,Savings Account,3+ yrs,Mobile App,10,The branch team sorted my KYC update in ten minutes.,10700
+R0095,2026-07-16,2026-07,Savings Account,<1 yr,Mobile App,10,Happy with the overall service.,10700
+R0096,2026-07-16,2026-07,Savings Account,<1 yr,Mobile App,10,Opening the account was smooth and fully online.,11000
+R0097,2026-07-16,2026-07,Savings Account,1-3 yrs,Call Centre,4,App crashes when I open the statements page.,13600
+R0098,2026-07-17,2026-07,Savings Account,3+ yrs,Mobile App,9,Opening the account was smooth and fully online.,6700
+R0099,2026-07-17,2026-07,Savings Account,1-3 yrs,Mobile App,10,I feel safe banking here and transfers are fast.,4900
+R0100,2026-07-17,2026-07,Credit Card,3+ yrs,Mobile App,8,"It is okay, nothing special.",11400
+R0101,2026-07-17,2026-07,Savings Account,1-3 yrs,Mobile App,9,Mobile recharge and bill payments are super quick.,12300
+R0102,2026-07-17,2026-07,Savings Account,<1 yr,Mobile App,8,FD rates could be better.,6300
+R0103,2026-07-18,2026-07,Savings Account,1-3 yrs,Call Centre,9,Mobile recharge and bill payments are super quick.,5700
+R0104,2026-07-18,2026-07,Credit Card,3+ yrs,Call Centre,8,My money earns more at other banks.,27400
+R0105,2026-07-18,2026-07,Savings Account,1-3 yrs,Mobile App,10,UPI payments are quick and the app is easy to use.,5400
+R0106,2026-07-18,2026-07,Credit Card,1-3 yrs,Branch,9,The branch team sorted my KYC update in ten minutes.,27000
+R0107,2026-07-18,2026-07,Savings Account,<1 yr,Mobile App,7,Callback was promised and came a day late.,13200
+R0108,2026-07-18,2026-07,Savings Account,<1 yr,Mobile App,10,Great cashback on the credit card every month.,10500
+R0109,2026-07-18,2026-07,Savings Account,<1 yr,Mobile App,8,,5500
+R0110,2026-07-18,2026-07,Wealth,3+ yrs,Mobile App,10,Opening the account was smooth and fully online.,121500
+R0111,2026-07-18,2026-07,Credit Card,3+ yrs,Mobile App,10,The branch team sorted my KYC update in ten minutes.,23700
+R0112,2026-07-19,2026-07,Savings Account,<1 yr,Call Centre,7,,10200
+R0113,2026-07-19,2026-07,Savings Account,<1 yr,Branch,10,,5100
+R0114,2026-07-19,2026-07,Credit Card,1-3 yrs,Mobile App,10,"Seamless experience, everything works on the app.",7600
+R0115,2026-07-19,2026-07,Savings Account,1-3 yrs,Mobile App,5,"IVR goes in circles, never reached a human. Complaint still open.",5300
+R0116,2026-07-19,2026-07,Credit Card,<1 yr,Mobile App,7,,24100
+R0117,2026-07-19,2026-07,Credit Card,3+ yrs,Mobile App,7,"Had to wait a long time on the call centre line, otherwise fine.",17100
+R0118,2026-07-19,2026-07,Savings Account,<1 yr,Call Centre,3,,10200
+R0119,2026-07-19,2026-07,Wealth,1-3 yrs,Mobile App,10,"Good bank, no complaints.",356800
+R0120,2026-07-20,2026-07,Wealth,3+ yrs,Branch,9,"My RM explained every product clearly, no pushy selling.",194900
+R0121,2026-07-20,2026-07,Credit Card,1-3 yrs,Branch,10,"My RM explained every product clearly, no pushy selling.",12600
+R0122,2026-07-20,2026-07,Savings Account,3+ yrs,Mobile App,8,,5100
+R0123,2026-07-20,2026-07,Savings Account,3+ yrs,Mobile App,9,UPI payments are quick and the app is easy to use.,3700
+R0124,2026-07-20,2026-07,Credit Card,<1 yr,Mobile App,10,Happy with the overall service.,11900
+R0125,2026-07-20,2026-07,Wealth,1-3 yrs,Branch,8,"Decent app, but it freezes sometimes.",319700
+R0126,2026-07-20,2026-07,Credit Card,<1 yr,Call Centre,8,App works but it is slow during peak hours.,10000
+R0127,2026-07-20,2026-07,Savings Account,1-3 yrs,Branch,8,My money earns more at other banks.,11200
+R0128,2026-07-21,2026-07,Savings Account,3+ yrs,Mobile App,9,"My RM explained every product clearly, no pushy selling.",2400
+R0129,2026-07-21,2026-07,Credit Card,3+ yrs,Mobile App,7,Customer care solves the problem but the waiting time is long.,26400
+R0130,2026-07-21,2026-07,Wealth,3+ yrs,Mobile App,7,Does the job.,99500
+R0131,2026-07-21,2026-07,Wealth,<1 yr,Branch,10,The branch team sorted my KYC update in ten minutes.,324100
+R0132,2026-07-21,2026-07,Credit Card,1-3 yrs,Mobile App,4,Customer care kept me on hold for 40 minutes and the call dropped.,21800
+R0133,2026-07-21,2026-07,Credit Card,1-3 yrs,Mobile App,5,App is slow and hangs while making a payment.,23000
+R0134,2026-07-21,2026-07,Savings Account,1-3 yrs,Mobile App,10,Opening the account was smooth and fully online.,7600
+R0135,2026-07-21,2026-07,Credit Card,<1 yr,Mobile App,8,Callback was promised and came a day late.,12200
+R0136,2026-07-21,2026-07,Savings Account,3+ yrs,Branch,0,"Amazing support from the branch team, thank you.",14000
+R0137,2026-07-22,2026-07,Savings Account,1-3 yrs,Branch,5,App crashes when I open the statements page.,4500
+R0138,2026-07-22,2026-07,Credit Card,1-3 yrs,Call Centre,10,Mobile recharge and bill payments are super quick.,16400
+R0139,2026-07-22,2026-07,Savings Account,1-3 yrs,Call Centre,4,Too many charges on a basic savings account.,14200
+R0140,2026-07-22,2026-07,Savings Account,<1 yr,Mobile App,10,Mobile recharge and bill payments are super quick.,13300
+R0141,2026-07-22,2026-07,Credit Card,1-3 yrs,Mobile App,2,Not happy with the service lately.,26900
+R0142,2026-07-22,2026-07,Credit Card,<1 yr,Call Centre,4,Not happy with the service lately.,26100
+R0143,2026-07-22,2026-07,Savings Account,<1 yr,Call Centre,6,Not happy with the service lately.,12100
+R0144,2026-07-22,2026-07,Credit Card,<1 yr,Mobile App,4,Customer care kept me on hold for 40 minutes and the call dropped.,22000
+R0145,2026-07-22,2026-07,Savings Account,1-3 yrs,Branch,9,Branch staff are helpful and patient with my parents.,7300
+R0146,2026-07-23,2026-07,Wealth,3+ yrs,Branch,7,Callback was promised and came a day late.,310200
+R0147,2026-07-23,2026-07,Savings Account,1-3 yrs,Branch,10,My relationship manager is very helpful and always picks up the call.,12400
+R0148,2026-07-23,2026-07,Savings Account,1-3 yrs,Mobile App,7,Credit card reward points expire too quickly.,9800
+R0149,2026-07-23,2026-07,Savings Account,1-3 yrs,Call Centre,7,"Decent app, but it freezes sometimes.",7000
+R0150,2026-07-23,2026-07,Credit Card,3+ yrs,Mobile App,9,Reward points on my card are actually useful.,20300
+R0151,2026-07-23,2026-07,Savings Account,1-3 yrs,Call Centre,6,Not happy with the service lately.,8600
+R0152,2026-07-24,2026-07,Wealth,1-3 yrs,Branch,4,"IVR goes in circles, never reached a human. Complaint still open.",86300
+R0153,2026-07-24,2026-07,Credit Card,3+ yrs,Mobile App,8,FD rates could be better.,10000
+R0154,2026-07-24,2026-07,Savings Account,3+ yrs,Mobile App,10,Mobile recharge and bill payments are super quick.,12400
+R0155,2026-07-24,2026-07,Savings Account,1-3 yrs,Call Centre,9,Mobile recharge and bill payments are super quick.,6000
+R0156,2026-07-24,2026-07,Savings Account,<1 yr,Mobile App,5,"Too many glitches in the app, had to retry payments.",5100
+R0157,2026-07-25,2026-07,Savings Account,3+ yrs,Branch,9,Happy with the overall service.,4800
+R0158,2026-07-25,2026-07,Savings Account,3+ yrs,Call Centre,10,Opening the account was smooth and fully online.,9000
+R0159,2026-07-25,2026-07,Wealth,3+ yrs,Branch,9,The branch team sorted my KYC update in ten minutes.,141400
+R0160,2026-07-25,2026-07,Credit Card,1-3 yrs,Call Centre,9,Great cashback on the credit card every month.,17200
+R0161,2026-07-25,2026-07,Savings Account,1-3 yrs,Branch,9,Branch staff are helpful and patient with my parents.,6000
+R0162,2026-07-25,2026-07,Credit Card,<1 yr,Mobile App,9,,18400
+R0163,2026-07-25,2026-07,Credit Card,1-3 yrs,Branch,3,Late payment charges were added even though I paid on the due date.,29200
+R0164,2026-07-25,2026-07,Savings Account,1-3 yrs,Mobile App,10,The branch team sorted my KYC update in ten minutes.,8000
+R0165,2026-07-25,2026-07,Credit Card,1-3 yrs,Mobile App,10,Mobile recharge and bill payments are super quick.,22000
+R0166,2026-07-25,2026-07,Credit Card,<1 yr,Call Centre,10,"Seamless experience, everything works on the app.",27200
+R0167,2026-07-25,2026-07,Credit Card,1-3 yrs,Branch,8,My money earns more at other banks.,18100
+R0168,2026-07-26,2026-07,Credit Card,1-3 yrs,Mobile App,8,Customer care solves the problem but the waiting time is long.,22000
+R0169,2026-07-26,2026-07,Wealth,3+ yrs,Mobile App,10,Branch staff are helpful and patient with my parents.,288800
+R0170,2026-07-26,2026-07,Credit Card,<1 yr,Mobile App,9,Mobile recharge and bill payments are super quick.,19600
+R0171,2026-07-26,2026-07,Credit Card,<1 yr,Branch,9,"Good bank, no complaints.",24700
+R0172,2026-07-26,2026-07,Credit Card,<1 yr,Branch,10,The branch team sorted my KYC update in ten minutes.,29600
+R0173,2026-07-26,2026-07,Wealth,<1 yr,Branch,10,Opening the account was smooth and fully online.,348500
+R0174,2026-07-27,2026-07,Savings Account,<1 yr,Branch,7,My money earns more at other banks.,9300
+R0175,2026-07-27,2026-07,Savings Account,<1 yr,Mobile App,8,App works but it is slow during peak hours.,8600
+R0176,2026-07-27,2026-07,Credit Card,1-3 yrs,Branch,10,"Good bank, no complaints.",21200
+R0177,2026-07-27,2026-07,Wealth,3+ yrs,Call Centre,10,,165000
+R0178,2026-07-28,2026-07,Savings Account,3+ yrs,Branch,9,"Good bank, no complaints.",6900
+R0179,2026-07-28,2026-07,Savings Account,<1 yr,Branch,9,My relationship manager is very helpful and always picks up the call.,9900
+R0180,2026-07-28,2026-07,Wealth,<1 yr,Branch,7,Customer care solves the problem but the waiting time is long.,116500
+R0181,2026-07-28,2026-07,Wealth,<1 yr,Branch,10,"Good bank, no complaints.",212900
+R0182,2026-07-29,2026-07,Wealth,3+ yrs,Branch,3,Charges on my wealth account keep going up and nobody explains them.,503600
+R0183,2026-07-29,2026-07,Credit Card,3+ yrs,Mobile App,10,"Good bank, no complaints.",15800
+R0184,2026-07-29,2026-07,Credit Card,<1 yr,Branch,9,The branch team sorted my KYC update in ten minutes.,23700
+R0185,2026-07-29,2026-07,Savings Account,<1 yr,Mobile App,10,"Seamless experience, everything works on the app.",7800
+R0186,2026-07-29,2026-07,Credit Card,1-3 yrs,Branch,8,,16100
+R0187,2026-07-29,2026-07,Credit Card,3+ yrs,Mobile App,6,Couldn't get into my account for two days after the update.,6300
+R0188,2026-07-29,2026-07,Savings Account,<1 yr,Call Centre,8,Customer care solves the problem but the waiting time is long.,5700
+R0189,2026-07-30,2026-07,Credit Card,<1 yr,Mobile App,6,App crashes when I open the statements page.,8300
+R0190,2026-07-30,2026-07,Savings Account,<1 yr,Mobile App,5,"Interest rates are poor compared to other banks, thinking of moving my FD.",3600
+R0191,2026-07-30,2026-07,Wealth,3+ yrs,Branch,0,"Amazing support from the branch team, thank you.",347600
+R0192,2026-07-31,2026-07,Credit Card,<1 yr,Call Centre,7,FD rates could be better.,22800
+R0193,2026-07-31,2026-07,Savings Account,3+ yrs,Mobile App,9,I feel safe banking here and transfers are fast.,12500
+R0194,2026-07-31,2026-07,Wealth,1-3 yrs,Branch,8,Customer care solves the problem but the waiting time is long.,396200
+R0195,2026-07-31,2026-07,Savings Account,3+ yrs,Branch,1,"Amazing support from the branch team, thank you.",6200
+R0196,2026-07-31,2026-07,Savings Account,3+ yrs,Mobile App,9,UPI payments are quick and the app is easy to use.,8600
+R0197,2026-07-31,2026-07,Savings Account,<1 yr,Mobile App,9,Happy with the overall service.,5300
+R0198,2026-07-31,2026-07,Savings Account,1-3 yrs,Mobile App,9,UPI payments are quick and the app is easy to use.,2300
+R0199,2026-07-31,2026-07,Savings Account,<1 yr,Branch,10,"Seamless experience, everything works on the app.",8300
+R0200,2026-07-31,2026-07,Wealth,<1 yr,Mobile App,7,Average experience.,218700
+R0201,2026-08-01,2026-08,Savings Account,1-3 yrs,Mobile App,10,The branch team sorted my KYC update in ten minutes.,2700
+R0202,2026-08-01,2026-08,Credit Card,1-3 yrs,Mobile App,9,UPI payments are quick and the app is easy to use.,28100
+R0203,2026-08-01,2026-08,Credit Card,1-3 yrs,Branch,10,Happy with the overall service.,18000
+R0204,2026-08-02,2026-08,Savings Account,<1 yr,Mobile App,1,"IVR goes in circles, never reached a human. Complaint still open.",9500
+R0205,2026-08-02,2026-08,Savings Account,1-3 yrs,Mobile App,9,I feel safe banking here and transfers are fast.,8200
+R0206,2026-08-02,2026-08,Credit Card,1-3 yrs,Mobile App,8,Callback was promised and came a day late.,5200
+R0207,2026-08-02,2026-08,Wealth,1-3 yrs,Branch,7,Customer care solves the problem but the waiting time is long.,376300
+R0208,2026-08-02,2026-08,Wealth,1-3 yrs,Call Centre,4,,203600
+R0209,2026-08-03,2026-08,Wealth,1-3 yrs,Mobile App,9,"My RM explained every product clearly, no pushy selling.",187300
+R0210,2026-08-03,2026-08,Savings Account,3+ yrs,Branch,10,My relationship manager is very helpful and always picks up the call.,14300
+R0211,2026-08-03,2026-08,Credit Card,<1 yr,Mobile App,9,Opening the account was smooth and fully online.,23300
+R0212,2026-08-03,2026-08,Savings Account,1-3 yrs,Mobile App,8,Average experience.,4700
+R0213,2026-08-04,2026-08,Savings Account,<1 yr,Mobile App,9,Mobile recharge and bill payments are super quick.,5900
+R0214,2026-08-04,2026-08,Savings Account,3+ yrs,Mobile App,8,Customer care solves the problem but the waiting time is long.,2900
+R0215,2026-08-04,2026-08,Savings Account,3+ yrs,Mobile App,8,Credit card reward points expire too quickly.,5100
+R0216,2026-08-04,2026-08,Savings Account,<1 yr,Mobile App,10,"Seamless experience, everything works on the app.",13600
+R0217,2026-08-04,2026-08,Savings Account,3+ yrs,Mobile App,8,Does the job.,11100
+R0218,2026-08-04,2026-08,Wealth,1-3 yrs,Mobile App,10,,147000
+R0219,2026-08-04,2026-08,Savings Account,1-3 yrs,Mobile App,10,The branch team sorted my KYC update in ten minutes.,11100
+R0220,2026-08-05,2026-08,Savings Account,3+ yrs,Mobile App,9,"Seamless experience, everything works on the app.",6700
+R0221,2026-08-05,2026-08,Savings Account,3+ yrs,Branch,8,"Decent app, but it freezes sometimes.",10200
+R0222,2026-08-06,2026-08,Credit Card,<1 yr,Mobile App,9,Mobile recharge and bill payments are super quick.,17100
+R0223,2026-08-06,2026-08,Savings Account,<1 yr,Mobile App,8,Does the job.,9900
+R0224,2026-08-06,2026-08,Savings Account,<1 yr,Call Centre,10,Opening the account was smooth and fully online.,13400
+R0225,2026-08-06,2026-08,Savings Account,<1 yr,Mobile App,10,Opening the account was smooth and fully online.,12500
+R0226,2026-08-06,2026-08,Wealth,3+ yrs,Mobile App,8,App works but it is slow during peak hours.,343600
+R0227,2026-08-06,2026-08,Credit Card,1-3 yrs,Branch,10,Branch staff are helpful and patient with my parents.,19400
+R0228,2026-08-06,2026-08,Savings Account,3+ yrs,Mobile App,8,"Decent app, but it freezes sometimes.",2100
+R0229,2026-08-07,2026-08,Wealth,<1 yr,Call Centre,7,FD rates could be better.,247700
+R0230,2026-08-07,2026-08,Savings Account,<1 yr,Branch,9,"Good bank, no complaints.",5200
+R0231,2026-08-07,2026-08,Wealth,1-3 yrs,Branch,9,My relationship manager is very helpful and always picks up the call.,165800
+R0232,2026-08-07,2026-08,Savings Account,1-3 yrs,Branch,9,The branch team sorted my KYC update in ten minutes.,9300
+R0233,2026-08-08,2026-08,Savings Account,3+ yrs,Branch,8,App works but it is slow during peak hours.,12600
+R0234,2026-08-08,2026-08,Savings Account,3+ yrs,Mobile App,5,"IVR goes in circles, never reached a human. Complaint still open.",8000
+R0235,2026-08-08,2026-08,Credit Card,1-3 yrs,Branch,9,"My RM explained every product clearly, no pushy selling.",6300
+R0236,2026-08-08,2026-08,Savings Account,3+ yrs,Mobile App,10,Reward points on my card are actually useful.,12400
+R0237,2026-08-08,2026-08,Savings Account,<1 yr,Mobile App,7,,7800
+R0238,2026-08-09,2026-08,Savings Account,<1 yr,Mobile App,8,,9200
+R0239,2026-08-09,2026-08,Savings Account,3+ yrs,Mobile App,7,"Had to wait a long time on the call centre line, otherwise fine.",7300
+R0240,2026-08-09,2026-08,Wealth,<1 yr,Call Centre,5,,132500
+R0241,2026-08-09,2026-08,Wealth,<1 yr,Call Centre,10,,348100
+R0242,2026-08-09,2026-08,Savings Account,1-3 yrs,Mobile App,4,"IVR goes in circles, never reached a human. Complaint still open.",5400
+R0243,2026-08-09,2026-08,Savings Account,3+ yrs,Branch,1,"Excellent service, very happy with my bank!",13900
+R0244,2026-08-09,2026-08,Savings Account,1-3 yrs,Branch,9,"Good bank, no complaints.",11700
+R0245,2026-08-09,2026-08,Credit Card,<1 yr,Mobile App,10,Great cashback on the credit card every month.,14000
+R0246,2026-08-09,2026-08,Credit Card,<1 yr,Mobile App,9,Great cashback on the credit card every month.,28200
+R0247,2026-08-10,2026-08,Savings Account,1-3 yrs,Branch,8,,12100
+R0248,2026-08-10,2026-08,Savings Account,1-3 yrs,Mobile App,10,"Seamless experience, everything works on the app.",6800
+R0249,2026-08-10,2026-08,Savings Account,1-3 yrs,Call Centre,8,,3200
+R0250,2026-08-10,2026-08,Savings Account,<1 yr,Mobile App,8,"Had to wait a long time on the call centre line, otherwise fine.",11300
+R0251,2026-08-11,2026-08,Credit Card,1-3 yrs,Mobile App,10,Opening the account was smooth and fully online.,25100
+R0252,2026-08-11,2026-08,Wealth,1-3 yrs,Mobile App,7,Callback was promised and came a day late.,256900
+R0253,2026-08-11,2026-08,Wealth,1-3 yrs,Branch,9,"Good bank, no complaints.",162100
+R0254,2026-08-11,2026-08,Credit Card,1-3 yrs,Mobile App,3,"Too many glitches in the app, had to retry payments.",15700
+R0255,2026-08-11,2026-08,Savings Account,1-3 yrs,Mobile App,8,"Decent app, but it freezes sometimes.",7500
+R0256,2026-08-11,2026-08,Credit Card,3+ yrs,Branch,9,My relationship manager is very helpful and always picks up the call.,26200
+R0257,2026-08-11,2026-08,Savings Account,<1 yr,Call Centre,0,App crashes when I open the statements page.,6600
+R0258,2026-08-11,2026-08,Savings Account,<1 yr,Branch,10,"Good bank, no complaints.",3500
+R0259,2026-08-12,2026-08,Savings Account,1-3 yrs,Mobile App,10,"Good bank, no complaints.",10500
+R0260,2026-08-12,2026-08,Credit Card,3+ yrs,Branch,9,"Good bank, no complaints.",24300
+R0261,2026-08-12,2026-08,Credit Card,1-3 yrs,Mobile App,10,Mobile recharge and bill payments are super quick.,7600
+R0262,2026-08-12,2026-08,Wealth,3+ yrs,Branch,0,"Amazing support from the branch team, thank you.",303400
+R0263,2026-08-12,2026-08,Savings Account,3+ yrs,Branch,10,UPI payments are quick and the app is easy to use.,7000
+R0264,2026-08-13,2026-08,Savings Account,<1 yr,Mobile App,9,My relationship manager is very helpful and always picks up the call.,14100
+R0265,2026-08-13,2026-08,Savings Account,1-3 yrs,Call Centre,10,Mobile recharge and bill payments are super quick.,7900
+R0266,2026-08-13,2026-08,Savings Account,<1 yr,Mobile App,10,"Seamless experience, everything works on the app.",8900
+R0267,2026-08-13,2026-08,Credit Card,1-3 yrs,Mobile App,3,App is slow and hangs while making a payment.,7600
+R0268,2026-08-13,2026-08,Savings Account,3+ yrs,Mobile App,10,I feel safe banking here and transfers are fast.,3600
+R0269,2026-08-14,2026-08,Savings Account,<1 yr,Mobile App,7,Credit card reward points expire too quickly.,5300
+R0270,2026-08-14,2026-08,Credit Card,1-3 yrs,Call Centre,6,Not happy with the service lately.,11800
+R0271,2026-08-14,2026-08,Savings Account,3+ yrs,Mobile App,8,,13300
+R0272,2026-08-14,2026-08,Savings Account,<1 yr,Mobile App,10,Opening the account was smooth and fully online.,10400
+R0273,2026-08-14,2026-08,Credit Card,3+ yrs,Branch,0,"Excellent service, very happy with my bank!",10600
+R0274,2026-08-14,2026-08,Wealth,3+ yrs,Branch,10,Branch staff are helpful and patient with my parents.,115300
+R0275,2026-08-14,2026-08,Credit Card,1-3 yrs,Mobile App,7,,23000
+R0276,2026-08-15,2026-08,Credit Card,1-3 yrs,Mobile App,8,FD rates could be better.,24000
+R0277,2026-08-15,2026-08,Savings Account,1-3 yrs,Mobile App,7,Customer care solves the problem but the waiting time is long.,7800
+R0278,2026-08-15,2026-08,Savings Account,<1 yr,Branch,10,,7700
+R0279,2026-08-15,2026-08,Savings Account,1-3 yrs,Mobile App,10,UPI payments are quick and the app is easy to use.,5100
+R0280,2026-08-15,2026-08,Wealth,<1 yr,Branch,9,"My RM explained every product clearly, no pushy selling.",152400
+R0281,2026-08-15,2026-08,Savings Account,3+ yrs,Branch,8,Credit card reward points expire too quickly.,11000
+R0282,2026-08-16,2026-08,Savings Account,1-3 yrs,Call Centre,10,"Seamless experience, everything works on the app.",12200
+R0283,2026-08-16,2026-08,Credit Card,1-3 yrs,Branch,5,"IVR goes in circles, never reached a human. Complaint still open.",26000
+R0284,2026-08-16,2026-08,Savings Account,3+ yrs,Mobile App,9,The branch team sorted my KYC update in ten minutes.,4900
+R0285,2026-08-16,2026-08,Savings Account,<1 yr,Branch,8,"Decent app, but it freezes sometimes.",13100
+R0286,2026-08-16,2026-08,Credit Card,3+ yrs,Branch,10,,28200
+R0287,2026-08-16,2026-08,Wealth,3+ yrs,Branch,8,Customer care solves the problem but the waiting time is long.,139200
+R0288,2026-08-16,2026-08,Savings Account,1-3 yrs,Mobile App,9,I feel safe banking here and transfers are fast.,5200
+R0289,2026-08-16,2026-08,Credit Card,<1 yr,Call Centre,7,Callback was promised and came a day late.,25800
+R0290,2026-08-16,2026-08,Savings Account,<1 yr,Branch,7,Interest rate on savings is lower than other banks.,4900
+R0291,2026-08-17,2026-08,Savings Account,1-3 yrs,Mobile App,7,App works but it is slow during peak hours.,2300
+R0292,2026-08-17,2026-08,Wealth,1-3 yrs,Mobile App,6,Not happy with the service lately.,298500
+R0293,2026-08-17,2026-08,Credit Card,<1 yr,Mobile App,7,"Decent app, but it freezes sometimes.",24300
+R0294,2026-08-17,2026-08,Wealth,1-3 yrs,Call Centre,2,,194200
+R0295,2026-08-17,2026-08,Savings Account,3+ yrs,Mobile App,7,"It is okay, nothing special.",5200
+R0296,2026-08-17,2026-08,Credit Card,1-3 yrs,Call Centre,4,Not happy with the service lately.,9100
+R0297,2026-08-18,2026-08,Savings Account,<1 yr,Call Centre,6,Not happy with the service lately.,8900
+R0298,2026-08-18,2026-08,Savings Account,3+ yrs,Call Centre,10,,13000
+R0299,2026-08-18,2026-08,Credit Card,1-3 yrs,Mobile App,10,The branch team sorted my KYC update in ten minutes.,29900
+R0300,2026-08-18,2026-08,Credit Card,3+ yrs,Call Centre,0,App is slow and hangs while making a payment.,28100
+R0301,2026-08-18,2026-08,Savings Account,3+ yrs,Mobile App,10,Mobile recharge and bill payments are super quick.,12700
+R0302,2026-08-18,2026-08,Wealth,3+ yrs,Mobile App,6,"IVR goes in circles, never reached a human. Complaint still open.",113400
+R0303,2026-08-18,2026-08,Savings Account,1-3 yrs,Mobile App,10,Opening the account was smooth and fully online.,4900
+R0304,2026-08-18,2026-08,Credit Card,3+ yrs,Branch,5,The app keeps asking for a code that never comes.,28800
+R0305,2026-08-19,2026-08,Wealth,3+ yrs,Branch,10,Happy with the overall service.,327200
+R0306,2026-08-19,2026-08,Savings Account,1-3 yrs,Mobile App,10,My relationship manager is very helpful and always picks up the call.,10700
+R0307,2026-08-19,2026-08,Savings Account,1-3 yrs,Mobile App,8,Callback was promised and came a day late.,7800
+R0308,2026-08-19,2026-08,Savings Account,1-3 yrs,Mobile App,10,Happy with the overall service.,6100
+R0309,2026-08-19,2026-08,Wealth,1-3 yrs,Branch,9,"My RM explained every product clearly, no pushy selling.",349300
+R0310,2026-08-19,2026-08,Credit Card,3+ yrs,Call Centre,6,"IVR goes in circles, never reached a human. Complaint still open.",5900
+R0311,2026-08-19,2026-08,Savings Account,3+ yrs,Mobile App,10,,7400
+R0312,2026-08-20,2026-08,Credit Card,3+ yrs,Mobile App,9,UPI payments are quick and the app is easy to use.,11100
+R0313,2026-08-20,2026-08,Credit Card,1-3 yrs,Mobile App,9,Opening the account was smooth and fully online.,19300
+R0314,2026-08-20,2026-08,Wealth,<1 yr,Mobile App,6,The fee structure is confusing and nobody could explain it to me.,544700
+R0315,2026-08-20,2026-08,Savings Account,1-3 yrs,Mobile App,5,"IVR goes in circles, never reached a human. Complaint still open.",11100
+R0316,2026-08-20,2026-08,Savings Account,1-3 yrs,Mobile App,10,Happy with the overall service.,7300
+R0317,2026-08-20,2026-08,Credit Card,3+ yrs,Mobile App,10,"Good bank, no complaints.",11000
+R0318,2026-08-20,2026-08,Savings Account,<1 yr,Mobile App,6,"Too many glitches in the app, had to retry payments.",10200
+R0319,2026-08-20,2026-08,Credit Card,1-3 yrs,Branch,7,FD rates could be better.,17400
+R0320,2026-08-20,2026-08,Credit Card,<1 yr,Mobile App,10,The branch team sorted my KYC update in ten minutes.,21400
+R0321,2026-08-20,2026-08,Savings Account,1-3 yrs,Mobile App,6,,8400
+R0322,2026-08-20,2026-08,Credit Card,1-3 yrs,Call Centre,8,My money earns more at other banks.,29100
+R0323,2026-08-20,2026-08,Wealth,3+ yrs,Mobile App,10,Branch staff are helpful and patient with my parents.,323900
+R0324,2026-08-20,2026-08,Savings Account,3+ yrs,Branch,8,Credit card reward points expire too quickly.,8800
+R0325,2026-08-21,2026-08,Credit Card,1-3 yrs,Branch,4,"Too many glitches in the app, had to retry payments.",23700
+R0326,2026-08-21,2026-08,Savings Account,1-3 yrs,Branch,10,Mobile recharge and bill payments are super quick.,4700
+R0327,2026-08-21,2026-08,Credit Card,1-3 yrs,Call Centre,6,"Too many glitches in the app, had to retry payments.",15500
+R0328,2026-08-21,2026-08,Savings Account,<1 yr,Branch,7,Average experience.,12400
+R0329,2026-08-21,2026-08,Credit Card,3+ yrs,Mobile App,5,"Verification code does not come on time, so transactions fail. Very frustrating.",15300
+R0330,2026-08-22,2026-08,Credit Card,3+ yrs,Mobile App,10,UPI payments are quick and the app is easy to use.,25700
+R0331,2026-08-22,2026-08,Savings Account,<1 yr,Mobile App,10,UPI payments are quick and the app is easy to use.,8500
+R0332,2026-08-23,2026-08,Credit Card,3+ yrs,Call Centre,9,I feel safe banking here and transfers are fast.,11300
+R0333,2026-08-23,2026-08,Savings Account,<1 yr,Call Centre,8,,12500
+R0334,2026-08-23,2026-08,Credit Card,1-3 yrs,Mobile App,10,,14300
+R0335,2026-08-23,2026-08,Credit Card,<1 yr,Call Centre,10,"Good bank, no complaints.",21900
+R0336,2026-08-23,2026-08,Savings Account,1-3 yrs,Branch,10,"My RM explained every product clearly, no pushy selling.",9000
+R0337,2026-08-23,2026-08,Savings Account,1-3 yrs,Branch,5,Customer care kept me on hold for 40 minutes and the call dropped.,5800
+R0338,2026-08-23,2026-08,Credit Card,<1 yr,Branch,9,I feel safe banking here and transfers are fast.,27300
+R0339,2026-08-24,2026-08,Credit Card,<1 yr,Mobile App,10,I feel safe banking here and transfers are fast.,28100
+R0340,2026-08-24,2026-08,Savings Account,3+ yrs,Branch,10,My relationship manager is very helpful and always picks up the call.,6400
+R0341,2026-08-24,2026-08,Savings Account,1-3 yrs,Mobile App,8,Average experience.,13500
+R0342,2026-08-24,2026-08,Savings Account,1-3 yrs,Mobile App,4,Penalty deducted for minimum balance without any SMS alert.,6500
+R0343,2026-08-25,2026-08,Credit Card,1-3 yrs,Mobile App,10,UPI payments are quick and the app is easy to use.,18900
+R0344,2026-08-25,2026-08,Savings Account,1-3 yrs,Branch,9,Happy with the overall service.,11900
+R0345,2026-08-25,2026-08,Wealth,3+ yrs,Call Centre,8,Credit card reward points expire too quickly.,190500
+R0346,2026-08-25,2026-08,Credit Card,1-3 yrs,Call Centre,10,Great cashback on the credit card every month.,13900
+R0347,2026-08-25,2026-08,Savings Account,3+ yrs,Mobile App,10,UPI payments are quick and the app is easy to use.,12100
+R0348,2026-08-25,2026-08,Savings Account,1-3 yrs,Branch,10,"My RM explained every product clearly, no pushy selling.",2100
+R0349,2026-08-25,2026-08,Credit Card,<1 yr,Mobile App,9,My relationship manager is very helpful and always picks up the call.,24100
+R0350,2026-08-25,2026-08,Wealth,<1 yr,Branch,6,The fee structure is confusing and nobody could explain it to me.,150900
+R0351,2026-08-26,2026-08,Credit Card,3+ yrs,Mobile App,10,UPI payments are quick and the app is easy to use.,10300
+R0352,2026-08-26,2026-08,Savings Account,1-3 yrs,Branch,9,Branch staff are helpful and patient with my parents.,10900
+R0353,2026-08-26,2026-08,Savings Account,1-3 yrs,Branch,10,UPI payments are quick and the app is easy to use.,7800
+R0354,2026-08-26,2026-08,Credit Card,1-3 yrs,Mobile App,8,App works but it is slow during peak hours.,19100
+R0355,2026-08-26,2026-08,Savings Account,1-3 yrs,Mobile App,7,Credit card reward points expire too quickly.,14400
+R0356,2026-08-26,2026-08,Credit Card,<1 yr,Mobile App,9,Great cashback on the credit card every month.,19200
+R0357,2026-08-26,2026-08,Savings Account,<1 yr,Branch,2,"Interest rates are poor compared to other banks, thinking of moving my FD.",9600
+R0358,2026-08-26,2026-08,Savings Account,<1 yr,Mobile App,10,Great cashback on the credit card every month.,7000
+R0359,2026-08-26,2026-08,Credit Card,<1 yr,Mobile App,8,Average experience.,17600
+R0360,2026-08-26,2026-08,Savings Account,3+ yrs,Mobile App,7,Average experience.,12900
+R0361,2026-08-27,2026-08,Savings Account,1-3 yrs,Mobile App,10,,10600
+R0362,2026-08-27,2026-08,Savings Account,3+ yrs,Branch,0,"Amazing support from the branch team, thank you.",4400
+R0363,2026-08-27,2026-08,Credit Card,<1 yr,Mobile App,10,I feel safe banking here and transfers are fast.,27800
+R0364,2026-08-27,2026-08,Wealth,1-3 yrs,Branch,4,Why am I paying so much every quarter for advice I never get?,479100
+R0365,2026-08-27,2026-08,Credit Card,1-3 yrs,Mobile App,10,"Seamless experience, everything works on the app.",7900
+R0366,2026-08-27,2026-08,Savings Account,<1 yr,Branch,7,App works but it is slow during peak hours.,9200
+R0367,2026-08-27,2026-08,Savings Account,1-3 yrs,Call Centre,8,Credit card reward points expire too quickly.,3000
+R0368,2026-08-27,2026-08,Credit Card,3+ yrs,Mobile App,10,,21400
+R0369,2026-08-27,2026-08,Credit Card,3+ yrs,Branch,5,App is slow and hangs while making a payment.,14700
+R0370,2026-08-28,2026-08,Savings Account,1-3 yrs,Branch,9,,2900
+R0371,2026-08-28,2026-08,Credit Card,<1 yr,Mobile App,10,My relationship manager is very helpful and always picks up the call.,17500
+R0372,2026-08-28,2026-08,Credit Card,1-3 yrs,Mobile App,10,Great cashback on the credit card every month.,6100
+R0373,2026-08-28,2026-08,Savings Account,<1 yr,Mobile App,3,,12400
+R0374,2026-08-28,2026-08,Credit Card,3+ yrs,Mobile App,2,App crashes when I open the statements page.,6900
+R0375,2026-08-28,2026-08,Savings Account,<1 yr,Branch,8,App works but it is slow during peak hours.,11500
+R0376,2026-08-28,2026-08,Savings Account,1-3 yrs,Branch,7,Interest rate on savings is lower than other banks.,4400
+R0377,2026-08-28,2026-08,Wealth,<1 yr,Mobile App,8,Does the job.,353200
+R0378,2026-08-29,2026-08,Credit Card,1-3 yrs,Mobile App,4,I was charged an annual fee on my credit card even after reaching the spend target.,17000
+R0379,2026-08-29,2026-08,Credit Card,1-3 yrs,Mobile App,10,I feel safe banking here and transfers are fast.,17200
+R0380,2026-08-29,2026-08,Credit Card,3+ yrs,Mobile App,10,Mobile recharge and bill payments are super quick.,23100
+R0381,2026-08-29,2026-08,Savings Account,3+ yrs,Call Centre,8,Credit card reward points expire too quickly.,3500
+R0382,2026-08-29,2026-08,Credit Card,1-3 yrs,Mobile App,10,"Good bank, no complaints.",15300
+R0383,2026-08-29,2026-08,Savings Account,1-3 yrs,Mobile App,10,Mobile recharge and bill payments are super quick.,11400
+R0384,2026-08-29,2026-08,Wealth,<1 yr,Branch,8,Does the job.,118800
+R0385,2026-08-29,2026-08,Savings Account,<1 yr,Mobile App,7,Does the job.,7900
+R0386,2026-08-29,2026-08,Savings Account,1-3 yrs,Call Centre,10,,14200
+R0387,2026-08-29,2026-08,Wealth,<1 yr,Branch,5,Why am I paying so much every quarter for advice I never get?,110900
+R0388,2026-08-30,2026-08,Savings Account,1-3 yrs,Mobile App,7,Customer care solves the problem but the waiting time is long.,14000
+R0389,2026-08-30,2026-08,Savings Account,3+ yrs,Call Centre,7,"It is okay, nothing special.",9600
+R0390,2026-08-30,2026-08,Savings Account,1-3 yrs,Mobile App,7,Average experience.,3300
+R0391,2026-08-30,2026-08,Wealth,1-3 yrs,Mobile App,2,Too many charges on a basic savings account.,301800
+R0392,2026-08-30,2026-08,Credit Card,3+ yrs,Branch,9,,22100
+R0393,2026-08-30,2026-08,Credit Card,<1 yr,Mobile App,8,Average experience.,21300
+R0394,2026-08-31,2026-08,Savings Account,<1 yr,Mobile App,10,UPI payments are quick and the app is easy to use.,3100
+R0395,2026-08-31,2026-08,Credit Card,1-3 yrs,Branch,9,,18400
+R0396,2026-08-31,2026-08,Savings Account,3+ yrs,Branch,10,Happy with the overall service.,12500
+R0397,2026-08-31,2026-08,Wealth,<1 yr,Mobile App,6,"Interest rates are poor compared to other banks, thinking of moving my FD.",291500
+R0398,2026-08-31,2026-08,Savings Account,1-3 yrs,Branch,8,My money earns more at other banks.,10800
+R0399,2026-08-31,2026-08,Savings Account,1-3 yrs,Call Centre,10,,2500
+R0400,2026-08-31,2026-08,Savings Account,<1 yr,Mobile App,10,Opening the account was smooth and fully online.,10600
+R0401,2026-09-01,2026-09,Credit Card,<1 yr,Mobile App,6,I was charged an annual fee on my credit card even after reaching the spend target.,10000
+R0402,2026-09-01,2026-09,Savings Account,3+ yrs,Mobile App,5,Too many charges on a basic savings account.,13300
+R0403,2026-09-01,2026-09,Credit Card,3+ yrs,Mobile App,10,Reward points on my card are actually useful.,8600
+R0404,2026-09-01,2026-09,Credit Card,1-3 yrs,Call Centre,8,App works but it is slow during peak hours.,17100
+R0405,2026-09-02,2026-09,Wealth,1-3 yrs,Branch,8,Average experience.,253900
+R0406,2026-09-02,2026-09,Wealth,<1 yr,Mobile App,5,Why am I paying so much every quarter for advice I never get?,92900
+R0407,2026-09-02,2026-09,Savings Account,<1 yr,Mobile App,10,"Seamless experience, everything works on the app.",10000
+R0408,2026-09-02,2026-09,Savings Account,1-3 yrs,Call Centre,9,I feel safe banking here and transfers are fast.,7100
+R0409,2026-09-03,2026-09,Credit Card,<1 yr,Mobile App,9,I feel safe banking here and transfers are fast.,6800
+R0410,2026-09-03,2026-09,Savings Account,1-3 yrs,Branch,8,FD rates could be better.,7800
+R0411,2026-09-03,2026-09,Savings Account,1-3 yrs,Mobile App,10,Opening the account was smooth and fully online.,9900
+R0412,2026-09-03,2026-09,Savings Account,3+ yrs,Mobile App,7,"Decent app, but it freezes sometimes.",4400
+R0413,2026-09-03,2026-09,Credit Card,3+ yrs,Branch,10,,16100
+R0414,2026-09-03,2026-09,Credit Card,1-3 yrs,Mobile App,6,,13500
+R0415,2026-09-04,2026-09,Savings Account,1-3 yrs,Branch,7,Interest rate on savings is lower than other banks.,11500
+R0416,2026-09-04,2026-09,Credit Card,1-3 yrs,Mobile App,4,"Verification code does not come on time, so transactions fail. Very frustrating.",11500
+R0417,2026-09-04,2026-09,Credit Card,1-3 yrs,Branch,9,The branch team sorted my KYC update in ten minutes.,9700
+R0418,2026-09-04,2026-09,Savings Account,1-3 yrs,Branch,10,The branch team sorted my KYC update in ten minutes.,6600
+R0419,2026-09-04,2026-09,Savings Account,3+ yrs,Branch,10,I feel safe banking here and transfers are fast.,14300
+R0420,2026-09-04,2026-09,Credit Card,1-3 yrs,Branch,9,The branch team sorted my KYC update in ten minutes.,28100
+R0421,2026-09-04,2026-09,Savings Account,<1 yr,Branch,7,App works but it is slow during peak hours.,14100
+R0422,2026-09-05,2026-09,Savings Account,1-3 yrs,Mobile App,6,"Interest rates are poor compared to other banks, thinking of moving my FD.",4900
+R0423,2026-09-05,2026-09,Credit Card,1-3 yrs,Mobile App,8,"It is okay, nothing special.",6800
+R0424,2026-09-05,2026-09,Wealth,1-3 yrs,Branch,10,Branch staff are helpful and patient with my parents.,114900
+R0425,2026-09-05,2026-09,Savings Account,3+ yrs,Mobile App,10,"Seamless experience, everything works on the app.",14700
+R0426,2026-09-05,2026-09,Savings Account,1-3 yrs,Mobile App,8,"Decent app, but it freezes sometimes.",9200
+R0427,2026-09-06,2026-09,Credit Card,1-3 yrs,Call Centre,10,,24000
+R0428,2026-09-06,2026-09,Savings Account,1-3 yrs,Mobile App,5,Locked out of my account three times this week. Login with OTP is broken.,13700
+R0429,2026-09-06,2026-09,Credit Card,1-3 yrs,Branch,2,"IVR goes in circles, never reached a human. Complaint still open.",15100
+R0430,2026-09-06,2026-09,Credit Card,1-3 yrs,Branch,8,My money earns more at other banks.,27100
+R0431,2026-09-06,2026-09,Credit Card,1-3 yrs,Mobile App,5,The OTP issue is still not fixed. I am moving my salary account.,18800
+R0432,2026-09-06,2026-09,Savings Account,<1 yr,Branch,9,Branch staff are helpful and patient with my parents.,14300
+R0433,2026-09-07,2026-09,Savings Account,<1 yr,Mobile App,6,"Login fails every morning after the update, had to visit the branch just to check my balance.",10700
+R0434,2026-09-07,2026-09,Savings Account,<1 yr,Branch,8,App works but it is slow during peak hours.,8300
+R0435,2026-09-07,2026-09,Credit Card,3+ yrs,Mobile App,9,Reward points on my card are actually useful.,13700
+R0436,2026-09-07,2026-09,Savings Account,1-3 yrs,Mobile App,10,Mobile recharge and bill payments are super quick.,3000
+R0437,2026-09-07,2026-09,Savings Account,1-3 yrs,Branch,5,"Interest rates are poor compared to other banks, thinking of moving my FD.",2700
+R0438,2026-09-07,2026-09,Savings Account,<1 yr,Branch,3,,12300
+R0439,2026-09-07,2026-09,Savings Account,1-3 yrs,Branch,8,Credit card reward points expire too quickly.,4900
+R0440,2026-09-07,2026-09,Savings Account,<1 yr,Branch,10,Happy with the overall service.,2600
+R0441,2026-09-07,2026-09,Credit Card,<1 yr,Mobile App,10,"Seamless experience, everything works on the app.",22900
+R0442,2026-09-08,2026-09,Savings Account,1-3 yrs,Mobile App,10,"Seamless experience, everything works on the app.",13500
+R0443,2026-09-08,2026-09,Wealth,1-3 yrs,Branch,10,"Good bank, no complaints.",204700
+R0444,2026-09-08,2026-09,Wealth,1-3 yrs,Mobile App,7,Login was a problem after the update but it works now.,176900
+R0445,2026-09-08,2026-09,Savings Account,<1 yr,Branch,6,,10400
+R0446,2026-09-08,2026-09,Savings Account,<1 yr,Call Centre,3,Penalty deducted for minimum balance without any SMS alert.,10000
+R0447,2026-09-08,2026-09,Credit Card,3+ yrs,Call Centre,8,"Had to wait a long time on the call centre line, otherwise fine.",18500
+R0448,2026-09-08,2026-09,Savings Account,3+ yrs,Mobile App,9,Branch staff are helpful and patient with my parents.,2900
+R0449,2026-09-08,2026-09,Savings Account,3+ yrs,Mobile App,7,Customer care solves the problem but the waiting time is long.,7800
+R0450,2026-09-08,2026-09,Credit Card,3+ yrs,Mobile App,6,After the new version the app keeps logging me out and the OTP comes after 10 minutes.,6300
+R0451,2026-09-08,2026-09,Wealth,<1 yr,Mobile App,5,Charges on my wealth account keep going up and nobody explains them.,90800
+R0452,2026-09-09,2026-09,Savings Account,<1 yr,Call Centre,10,UPI payments are quick and the app is easy to use.,9500
+R0453,2026-09-09,2026-09,Savings Account,1-3 yrs,Branch,10,The branch team sorted my KYC update in ten minutes.,6700
+R0454,2026-09-09,2026-09,Savings Account,1-3 yrs,Mobile App,9,I feel safe banking here and transfers are fast.,14800
+R0455,2026-09-09,2026-09,Savings Account,<1 yr,Mobile App,5,Not happy with the service lately.,3100
+R0456,2026-09-10,2026-09,Credit Card,1-3 yrs,Mobile App,5,Couldn't get into my account for two days after the update.,24900
+R0457,2026-09-10,2026-09,Wealth,1-3 yrs,Branch,5,The OTP issue is still not fixed. I am moving my salary account.,323800
+R0458,2026-09-10,2026-09,Savings Account,<1 yr,Mobile App,9,Opening the account was smooth and fully online.,9400
+R0459,2026-09-10,2026-09,Credit Card,<1 yr,Mobile App,8,"Had to wait a long time on the call centre line, otherwise fine.",24300
+R0460,2026-09-10,2026-09,Savings Account,1-3 yrs,Mobile App,8,"OTP was delayed for a few days in September, otherwise okay.",13200
+R0461,2026-09-10,2026-09,Wealth,1-3 yrs,Branch,9,Branch staff are helpful and patient with my parents.,165100
+R0462,2026-09-10,2026-09,Savings Account,3+ yrs,Call Centre,4,,4400
+R0463,2026-09-10,2026-09,Savings Account,3+ yrs,Mobile App,2,"Verification code does not come on time, so transactions fail. Very frustrating.",2200
+R0464,2026-09-10,2026-09,Credit Card,1-3 yrs,Mobile App,3,OTP never arrives since the last app update. Could not login for two days.,7300
+R0465,2026-09-10,2026-09,Savings Account,3+ yrs,Branch,8,Customer care solves the problem but the waiting time is long.,11000
+R0466,2026-09-10,2026-09,Savings Account,<1 yr,Branch,7,Average experience.,3700
+R0467,2026-09-10,2026-09,Wealth,<1 yr,Mobile App,6,OTP never arrives since the last app update. Could not login for two days.,90800
+R0468,2026-09-10,2026-09,Savings Account,1-3 yrs,Call Centre,10,,8000
+R0469,2026-09-11,2026-09,Credit Card,1-3 yrs,Mobile App,4,,25300
+R0470,2026-09-11,2026-09,Savings Account,1-3 yrs,Mobile App,1,,3400
+R0471,2026-09-11,2026-09,Wealth,1-3 yrs,Branch,4,The fee structure is confusing and nobody could explain it to me.,448500
+R0472,2026-09-11,2026-09,Savings Account,<1 yr,Mobile App,3,Locked out of my account three times this week. Login with OTP is broken.,11300
+R0473,2026-09-11,2026-09,Credit Card,3+ yrs,Mobile App,4,Locked out of my account three times this week. Login with OTP is broken.,19300
+R0474,2026-09-11,2026-09,Savings Account,1-3 yrs,Mobile App,5,Locked out of my account three times this week. Login with OTP is broken.,10600
+R0475,2026-09-11,2026-09,Credit Card,1-3 yrs,Mobile App,9,Mobile recharge and bill payments are super quick.,26000
+R0476,2026-09-11,2026-09,Credit Card,1-3 yrs,Branch,9,Branch staff are helpful and patient with my parents.,23100
+R0477,2026-09-11,2026-09,Credit Card,<1 yr,Mobile App,5,Locked out of my account three times this week. Login with OTP is broken.,23500
+R0478,2026-09-12,2026-09,Credit Card,1-3 yrs,Call Centre,6,"IVR goes in circles, never reached a human. Complaint still open.",14900
+R0479,2026-09-12,2026-09,Wealth,1-3 yrs,Branch,5,Why am I paying so much every quarter for advice I never get?,340700
+R0480,2026-09-12,2026-09,Savings Account,3+ yrs,Mobile App,3,"Verification code does not come on time, so transactions fail. Very frustrating.",2200
+R0481,2026-09-12,2026-09,Wealth,1-3 yrs,Branch,8,"It is okay, nothing special.",300900
+R0482,2026-09-12,2026-09,Credit Card,1-3 yrs,Mobile App,9,Reward points on my card are actually useful.,24200
+R0483,2026-09-12,2026-09,Savings Account,3+ yrs,Mobile App,8,App works but it is slow during peak hours.,6200
+R0484,2026-09-12,2026-09,Savings Account,3+ yrs,Mobile App,9,Opening the account was smooth and fully online.,8400
+R0485,2026-09-13,2026-09,Credit Card,1-3 yrs,Branch,8,"Decent app, but it freezes sometimes.",13800
+R0486,2026-09-13,2026-09,Savings Account,<1 yr,Mobile App,3,"Login fails every morning after the update, had to visit the branch just to check my balance.",9200
+R0487,2026-09-13,2026-09,Savings Account,<1 yr,Call Centre,7,Customer care solves the problem but the waiting time is long.,9400
+R0488,2026-09-13,2026-09,Credit Card,<1 yr,Branch,9,Happy with the overall service.,25300
+R0489,2026-09-13,2026-09,Credit Card,<1 yr,Mobile App,8,Callback was promised and came a day late.,6300
+R0490,2026-09-13,2026-09,Savings Account,<1 yr,Branch,10,UPI payments are quick and the app is easy to use.,8500
+R0491,2026-09-15,2026-09,Savings Account,3+ yrs,Call Centre,7,Average experience.,5000
+R0492,2026-09-15,2026-09,Savings Account,<1 yr,Mobile App,3,App is slow and hangs while making a payment.,11500
+R0493,2026-09-15,2026-09,Savings Account,3+ yrs,Call Centre,10,,7000
+R0494,2026-09-15,2026-09,Savings Account,<1 yr,Mobile App,10,The branch team sorted my KYC update in ten minutes.,7300
+R0495,2026-09-15,2026-09,Savings Account,1-3 yrs,Branch,8,"Decent app, but it freezes sometimes.",5400
+R0496,2026-09-16,2026-09,Wealth,1-3 yrs,Branch,9,"My RM explained every product clearly, no pushy selling.",213200
+R0497,2026-09-16,2026-09,Savings Account,1-3 yrs,Branch,9,Branch staff are helpful and patient with my parents.,10200
+R0498,2026-09-16,2026-09,Wealth,<1 yr,Branch,9,The branch team sorted my KYC update in ten minutes.,66700
+R0499,2026-09-16,2026-09,Credit Card,1-3 yrs,Mobile App,4,"Interest rates are poor compared to other banks, thinking of moving my FD.",18700
+R0500,2026-09-16,2026-09,Wealth,1-3 yrs,Mobile App,3,Couldn't get into my account for two days after the update.,210200
+R0501,2026-09-16,2026-09,Credit Card,1-3 yrs,Branch,7,Average experience.,29900
+R0502,2026-09-16,2026-09,Wealth,3+ yrs,Branch,10,Happy with the overall service.,217200
+R0503,2026-09-16,2026-09,Savings Account,3+ yrs,Mobile App,7,Callback was promised and came a day late.,14000
+R0504,2026-09-17,2026-09,Savings Account,3+ yrs,Branch,6,"Interest rates are poor compared to other banks, thinking of moving my FD.",14600
+R0505,2026-09-17,2026-09,Wealth,3+ yrs,Branch,9,,220600
+R0506,2026-09-17,2026-09,Wealth,<1 yr,Call Centre,8,"It is okay, nothing special.",93100
+R0507,2026-09-18,2026-09,Credit Card,<1 yr,Mobile App,5,"Verification code does not come on time, so transactions fail. Very frustrating.",27500
+R0508,2026-09-18,2026-09,Savings Account,<1 yr,Mobile App,8,"OTP was delayed for a few days in September, otherwise okay.",4800
+R0509,2026-09-18,2026-09,Savings Account,3+ yrs,Mobile App,10,"My RM explained every product clearly, no pushy selling.",8500
+R0510,2026-09-18,2026-09,Wealth,3+ yrs,Branch,8,,240100
+R0511,2026-09-18,2026-09,Savings Account,1-3 yrs,Mobile App,6,The app keeps asking for a code that never comes.,4300
+R0512,2026-09-18,2026-09,Credit Card,<1 yr,Mobile App,8,Average experience.,10700
+R0513,2026-09-18,2026-09,Savings Account,3+ yrs,Mobile App,9,,2200
+R0514,2026-09-18,2026-09,Savings Account,3+ yrs,Mobile App,6,,4000
+R0515,2026-09-18,2026-09,Savings Account,<1 yr,Call Centre,8,"Had to wait a long time on the call centre line, otherwise fine.",6300
+R0516,2026-09-18,2026-09,Credit Card,3+ yrs,Mobile App,2,Couldn't get into my account for two days after the update.,29000
+R0517,2026-09-18,2026-09,Credit Card,<1 yr,Mobile App,7,,23300
+R0518,2026-09-18,2026-09,Credit Card,3+ yrs,Mobile App,6,After the new version the app keeps logging me out and the OTP comes after 10 minutes.,11400
+R0519,2026-09-19,2026-09,Savings Account,<1 yr,Mobile App,5,"Verification code does not come on time, so transactions fail. Very frustrating.",2900
+R0520,2026-09-19,2026-09,Credit Card,1-3 yrs,Branch,10,Mobile recharge and bill payments are super quick.,17000
+R0521,2026-09-19,2026-09,Savings Account,3+ yrs,Mobile App,10,Mobile recharge and bill payments are super quick.,12000
+R0522,2026-09-19,2026-09,Savings Account,3+ yrs,Call Centre,10,UPI payments are quick and the app is easy to use.,13300
+R0523,2026-09-19,2026-09,Savings Account,<1 yr,Call Centre,10,"My RM explained every product clearly, no pushy selling.",11300
+R0524,2026-09-19,2026-09,Savings Account,3+ yrs,Branch,8,Callback was promised and came a day late.,14900
+R0525,2026-09-20,2026-09,Savings Account,3+ yrs,Mobile App,4,"Verification code does not come on time, so transactions fail. Very frustrating.",9900
+R0526,2026-09-20,2026-09,Credit Card,1-3 yrs,Mobile App,6,App is slow and hangs while making a payment.,22800
+R0527,2026-09-20,2026-09,Savings Account,1-3 yrs,Branch,10,"My RM explained every product clearly, no pushy selling.",9800
+R0528,2026-09-20,2026-09,Credit Card,<1 yr,Branch,10,,9300
+R0529,2026-09-20,2026-09,Credit Card,<1 yr,Mobile App,5,"Too many glitches in the app, had to retry payments.",13700
+R0530,2026-09-20,2026-09,Savings Account,1-3 yrs,Mobile App,4,Customer care kept me on hold for 40 minutes and the call dropped.,8200
+R0531,2026-09-20,2026-09,Savings Account,1-3 yrs,Mobile App,10,Mobile recharge and bill payments are super quick.,13200
+R0532,2026-09-20,2026-09,Savings Account,1-3 yrs,Call Centre,8,Does the job.,5800
+R0533,2026-09-20,2026-09,Credit Card,<1 yr,Branch,10,Happy with the overall service.,8000
+R0534,2026-09-20,2026-09,Savings Account,<1 yr,Call Centre,9,Happy with the overall service.,7400
+R0535,2026-09-21,2026-09,Savings Account,3+ yrs,Mobile App,6,"Verification code does not come on time, so transactions fail. Very frustrating.",8300
+R0536,2026-09-21,2026-09,Savings Account,<1 yr,Mobile App,4,After the new version the app keeps logging me out and the OTP comes after 10 minutes.,9900
+R0537,2026-09-21,2026-09,Credit Card,<1 yr,Branch,7,"Decent app, but it freezes sometimes.",11200
+R0538,2026-09-21,2026-09,Savings Account,3+ yrs,Call Centre,5,"IVR goes in circles, never reached a human. Complaint still open.",7400
+R0539,2026-09-21,2026-09,Savings Account,1-3 yrs,Call Centre,6,Not happy with the service lately.,13700
+R0540,2026-09-21,2026-09,Savings Account,1-3 yrs,Mobile App,3,The app keeps asking for a code that never comes.,7000
+R0541,2026-09-21,2026-09,Savings Account,1-3 yrs,Branch,9,My relationship manager is very helpful and always picks up the call.,3500
+R0542,2026-09-22,2026-09,Credit Card,3+ yrs,Mobile App,10,Opening the account was smooth and fully online.,21000
+R0543,2026-09-22,2026-09,Wealth,3+ yrs,Mobile App,6,The app keeps asking for a code that never comes.,277100
+R0544,2026-09-22,2026-09,Savings Account,3+ yrs,Mobile App,6,Locked out of my account three times this week. Login with OTP is broken.,7500
+R0545,2026-09-22,2026-09,Wealth,1-3 yrs,Call Centre,7,Does the job.,147500
+R0546,2026-09-22,2026-09,Savings Account,<1 yr,Mobile App,7,Does the job.,13000
+R0547,2026-09-22,2026-09,Credit Card,<1 yr,Branch,8,Interest rate on savings is lower than other banks.,11800
+R0548,2026-09-23,2026-09,Savings Account,1-3 yrs,Mobile App,8,My money earns more at other banks.,4200
+R0549,2026-09-23,2026-09,Savings Account,3+ yrs,Mobile App,0,"Login fails every morning after the update, had to visit the branch just to check my balance.",8100
+R0550,2026-09-23,2026-09,Credit Card,<1 yr,Mobile App,8,App works but it is slow during peak hours.,5500
+R0551,2026-09-23,2026-09,Savings Account,3+ yrs,Mobile App,8,Login was a problem after the update but it works now.,6700
+R0552,2026-09-23,2026-09,Wealth,1-3 yrs,Branch,10,The branch team sorted my KYC update in ten minutes.,246600
+R0553,2026-09-23,2026-09,Wealth,3+ yrs,Mobile App,6,Locked out of my account three times this week. Login with OTP is broken.,167900
+R0554,2026-09-24,2026-09,Credit Card,3+ yrs,Call Centre,1,"Best bank I have used, love the app.",25800
+R0555,2026-09-24,2026-09,Savings Account,3+ yrs,Branch,10,Branch staff are helpful and patient with my parents.,10300
+R0556,2026-09-24,2026-09,Credit Card,3+ yrs,Mobile App,10,Great cashback on the credit card every month.,25900
+R0557,2026-09-24,2026-09,Wealth,1-3 yrs,Mobile App,6,,83900
+R0558,2026-09-24,2026-09,Savings Account,1-3 yrs,Mobile App,6,App is slow and hangs while making a payment.,11500
+R0559,2026-09-24,2026-09,Credit Card,1-3 yrs,Branch,10,I feel safe banking here and transfers are fast.,24500
+R0560,2026-09-24,2026-09,Savings Account,3+ yrs,Mobile App,5,"Verification code does not come on time, so transactions fail. Very frustrating.",12500
+R0561,2026-09-25,2026-09,Savings Account,1-3 yrs,Branch,10,Happy with the overall service.,10400
+R0562,2026-09-25,2026-09,Credit Card,<1 yr,Branch,10,Branch staff are helpful and patient with my parents.,16400
+R0563,2026-09-25,2026-09,Savings Account,1-3 yrs,Mobile App,3,,14700
+R0564,2026-09-25,2026-09,Savings Account,1-3 yrs,Mobile App,9,Mobile recharge and bill payments are super quick.,9700
+R0565,2026-09-25,2026-09,Wealth,1-3 yrs,Branch,8,,87000
+R0566,2026-09-25,2026-09,Savings Account,1-3 yrs,Branch,7,"It is okay, nothing special.",4100
+R0567,2026-09-25,2026-09,Credit Card,<1 yr,Mobile App,7,App works but it is slow during peak hours.,22200
+R0568,2026-09-25,2026-09,Savings Account,3+ yrs,Mobile App,9,UPI payments are quick and the app is easy to use.,5500
+R0569,2026-09-25,2026-09,Savings Account,3+ yrs,Mobile App,7,"Had to wait a long time on the call centre line, otherwise fine.",14700
+R0570,2026-09-25,2026-09,Wealth,<1 yr,Mobile App,5,Hidden costs in the portfolio statement. Fees are much higher than other banks.,242700
+R0571,2026-09-25,2026-09,Savings Account,<1 yr,Mobile App,5,After the new version the app keeps logging me out and the OTP comes after 10 minutes.,10200
+R0572,2026-09-25,2026-09,Savings Account,1-3 yrs,Mobile App,8,,13000
+R0573,2026-09-26,2026-09,Credit Card,<1 yr,Mobile App,7,FD rates could be better.,14700
+R0574,2026-09-26,2026-09,Savings Account,<1 yr,Mobile App,4,The app keeps asking for a code that never comes.,13700
+R0575,2026-09-26,2026-09,Credit Card,<1 yr,Call Centre,5,"Interest rates are poor compared to other banks, thinking of moving my FD.",24300
+R0576,2026-09-27,2026-09,Savings Account,<1 yr,Mobile App,4,OTP never arrives since the last app update. Could not login for two days.,10300
+R0577,2026-09-27,2026-09,Savings Account,1-3 yrs,Mobile App,5,After the new version the app keeps logging me out and the OTP comes after 10 minutes.,9300
+R0578,2026-09-27,2026-09,Credit Card,<1 yr,Mobile App,5,OTP never arrives since the last app update. Could not login for two days.,26200
+R0579,2026-09-27,2026-09,Savings Account,1-3 yrs,Branch,8,Interest rate on savings is lower than other banks.,8800
+R0580,2026-09-27,2026-09,Savings Account,3+ yrs,Branch,10,Branch staff are helpful and patient with my parents.,9500
+R0581,2026-09-27,2026-09,Wealth,1-3 yrs,Mobile App,8,App works but it is slow during peak hours.,352800
+R0582,2026-09-27,2026-09,Savings Account,1-3 yrs,Branch,8,Credit card reward points expire too quickly.,7100
+R0583,2026-09-28,2026-09,Credit Card,3+ yrs,Mobile App,6,I was charged an annual fee on my credit card even after reaching the spend target.,18800
+R0584,2026-09-28,2026-09,Credit Card,3+ yrs,Mobile App,1,"Login fails every morning after the update, had to visit the branch just to check my balance.",23100
+R0585,2026-09-28,2026-09,Savings Account,3+ yrs,Call Centre,10,I feel safe banking here and transfers are fast.,10400
+R0586,2026-09-28,2026-09,Savings Account,<1 yr,Call Centre,10,I feel safe banking here and transfers are fast.,8900
+R0587,2026-09-28,2026-09,Savings Account,3+ yrs,Branch,6,App is slow and hangs while making a payment.,3200
+R0588,2026-09-28,2026-09,Savings Account,<1 yr,Mobile App,8,App works but it is slow during peak hours.,2600
+R0589,2026-09-28,2026-09,Savings Account,3+ yrs,Mobile App,3,After the new version the app keeps logging me out and the OTP comes after 10 minutes.,2100
+R0590,2026-09-29,2026-09,Credit Card,1-3 yrs,Mobile App,10,I feel safe banking here and transfers are fast.,26300
+R0591,2026-09-29,2026-09,Savings Account,1-3 yrs,Mobile App,4,"Verification code does not come on time, so transactions fail. Very frustrating.",9100
+R0592,2026-09-29,2026-09,Savings Account,1-3 yrs,Mobile App,0,Penalty deducted for minimum balance without any SMS alert.,3200
+R0593,2026-09-29,2026-09,Savings Account,3+ yrs,Mobile App,2,Not happy with the service lately.,7100
+R0594,2026-09-30,2026-09,Savings Account,1-3 yrs,Mobile App,1,The OTP issue is still not fixed. I am moving my salary account.,10500
+R0595,2026-09-30,2026-09,Wealth,1-3 yrs,Mobile App,8,Login was a problem after the update but it works now.,88700
+R0596,2026-09-30,2026-09,Wealth,1-3 yrs,Mobile App,8,Login was a problem after the update but it works now.,72000
+R0597,2026-09-30,2026-09,Credit Card,1-3 yrs,Mobile App,0,OTP never arrives since the last app update. Could not login for two days.,17900
+R0598,2026-09-30,2026-09,Wealth,1-3 yrs,Branch,8,"It is okay, nothing special.",266700
+R0599,2026-09-30,2026-09,Savings Account,3+ yrs,Call Centre,10,Mobile recharge and bill payments are super quick.,2300
+R0600,2026-09-30,2026-09,Savings Account,<1 yr,Mobile App,4,The OTP issue is still not fixed. I am moving my salary account.,13700

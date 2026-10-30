@@ -1,0 +1,54 @@
+comment,keyword_theme,llm_theme,agree,rationale
+After the new version the app keeps logging me out and the OTP comes after 10 minutes.,otp_login,otp_login,True,The comment mentions issues with OTP and login after an app update.
+"Amazing support from the branch team, thank you.",positive_mismatch,positive_mismatch,True,The comment is a glowing praise but appears on a detractor row.
+App crashes when I open the statements page.,app_performance,app_performance,True,The comment mentions an app crash on the statements page.
+App is slow and hangs while making a payment.,app_performance,app_performance,True,The comment mentions the app being slow and hanging during a payment.
+App works but it is slow during peak hours.,app_performance,app_performance,True,The comment mentions the app being slow during peak hours.
+Average experience.,general_sentiment,general_sentiment,True,The comment is a general remark without a specific operational root cause.
+"Best bank I have used, love the app.",positive_mismatch,positive_mismatch,True,The comment is a glowing praise but appears on a detractor row.
+Branch staff are helpful and patient with my parents.,branch_and_rm_service,branch_and_rm_service,True,The comment mentions helpful and patient branch staff.
+Callback was promised and came a day late.,call_centre_ivr,call_centre_ivr,True,The comment mentions a late callback from the call centre.
+Charges on my wealth account keep going up and nobody explains them.,fees_and_charges,fees_and_charges,True,The comment mentions unexplained high wealth advisory fees.
+Couldn't get into my account for two days after the update.,otp_login,otp_login,True,The comment mentions login issues after an app update.
+Credit card reward points expire too quickly.,interest_rates_rewards,interest_rates_rewards,True,The comment mentions expiring credit card reward points.
+Customer care kept me on hold for 40 minutes and the call dropped.,call_centre_ivr,call_centre_ivr,True,The comment mentions long hold times and dropped calls in the call centre.
+Customer care solves the problem but the waiting time is long.,call_centre_ivr,call_centre_ivr,True,The comment mentions long waiting times in the call centre.
+"Decent app, but it freezes sometimes.",app_performance,app_performance,True,The comment mentions the app freezing.
+Does the job.,general_sentiment,general_sentiment,True,The comment is a general remark without a specific operational root cause.
+"Excellent service, very happy with my bank!",positive_mismatch,positive_mismatch,True,The comment is a glowing praise but appears on a detractor row.
+FD rates could be better.,interest_rates_rewards,interest_rates_rewards,True,The comment mentions lower FD interest rates compared to competitors.
+"Good bank, no complaints.",general_sentiment,general_sentiment,True,The comment is a general remark without a specific operational root cause.
+Great cashback on the credit card every month.,card_cashback_rewards,card_cashback_rewards,True,The comment mentions strong monthly credit card cashback.
+"Had to wait a long time on the call centre line, otherwise fine.",call_centre_ivr,call_centre_ivr,True,The comment mentions long wait times on the call centre line.
+Happy with the overall service.,general_sentiment,general_sentiment,True,The comment is a general remark without a specific operational root cause.
+Hidden costs in the portfolio statement. Fees are much higher than other banks.,fees_and_charges,fees_and_charges,True,The comment mentions hidden portfolio costs and high fees.
+I feel safe banking here and transfers are fast.,fees_and_charges,fast_digital_payments,False,The comment mentions fast transfers.
+I was charged an annual fee on my credit card even after reaching the spend target.,fees_and_charges,fees_and_charges,True,The comment mentions an unexplained credit card annual fee.
+"IVR goes in circles, never reached a human. Complaint still open.",call_centre_ivr,call_centre_ivr,True,The comment mentions an IVR loop and not reaching a human.
+Interest rate on savings is lower than other banks.,interest_rates_rewards,interest_rates_rewards,True,The comment mentions lower savings interest rates compared to competitors.
+"Interest rates are poor compared to other banks, thinking of moving my FD.",interest_rates_rewards,interest_rates_rewards,True,The comment mentions poor interest rates compared to competitors.
+"It is okay, nothing special.",general_sentiment,general_sentiment,True,The comment is a general remark without a specific operational root cause.
+Late payment charges were added even though I paid on the due date.,fees_and_charges,fees_and_charges,True,The comment mentions late payment charges.
+Locked out of my account three times this week. Login with OTP is broken.,otp_login,otp_login,True,The comment mentions account lockouts and broken OTP login.
+"Login fails every morning after the update, had to visit the branch just to check my balance.",otp_login,otp_login,True,The comment mentions login failures after an app update.
+Login was a problem after the update but it works now.,otp_login,otp_login,True,The comment mentions login issues after an app update.
+Mobile recharge and bill payments are super quick.,fast_digital_payments,fast_digital_payments,True,The comment mentions quick mobile recharge and bill payments.
+"My RM explained every product clearly, no pushy selling.",branch_and_rm_service,branch_and_rm_service,True,The comment mentions a helpful relationship manager.
+My money earns more at other banks.,interest_rates_rewards,interest_rates_rewards,True,The comment mentions higher interest rates at other banks.
+My relationship manager is very helpful and always picks up the call.,branch_and_rm_service,branch_and_rm_service,True,The comment mentions a helpful relationship manager.
+Not happy with the service lately.,general_sentiment,general_sentiment,True,The comment is a general remark without a specific operational root cause.
+OTP never arrives since the last app update. Could not login for two days.,otp_login,otp_login,True,The comment mentions missing OTP and login issues after an app update.
+"OTP was delayed for a few days in September, otherwise okay.",otp_login,otp_login,True,The comment mentions delayed OTP after an app update.
+Opening the account was smooth and fully online.,fast_digital_payments,fast_digital_payments,True,The comment mentions a smooth online account opening.
+Penalty deducted for minimum balance without any SMS alert.,fees_and_charges,fees_and_charges,True,The comment mentions a penalty for minimum balance without an alert.
+Reward points on my card are actually useful.,card_cashback_rewards,card_cashback_rewards,True,The comment mentions useful reward points.
+"Seamless experience, everything works on the app.",fast_digital_payments,general_sentiment,False,The comment is a general remark without a specific operational root cause.
+The OTP issue is still not fixed. I am moving my salary account.,otp_login,otp_login,True,The comment mentions unresolved OTP issues.
+The app keeps asking for a code that never comes.,otp_login,otp_login,True,The comment mentions missing verification codes.
+The branch team sorted my KYC update in ten minutes.,branch_and_rm_service,branch_and_rm_service,True,The comment mentions fast KYC updates by the branch team.
+The fee structure is confusing and nobody could explain it to me.,fees_and_charges,fees_and_charges,True,The comment mentions confusing fee structures.
+Too many charges on a basic savings account.,fees_and_charges,fees_and_charges,True,The comment mentions too many charges on a savings account.
+"Too many glitches in the app, had to retry payments.",app_performance,app_performance,True,The comment mentions app glitches and payment retries.
+UPI payments are quick and the app is easy to use.,fast_digital_payments,fast_digital_payments,True,The comment mentions quick UPI payments.
+"Verification code does not come on time, so transactions fail. Very frustrating.",otp_login,otp_login,True,The comment mentions missing verification codes causing transaction failures.
+Why am I paying so much every quarter for advice I never get?,fees_and_charges,fees_and_charges,True,The comment mentions high wealth advisory fees without advice.
