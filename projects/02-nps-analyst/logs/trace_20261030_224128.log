@@ -1,0 +1,13 @@
+─── Phase 1 · Parallel Analysis (3 concurrent specialist calls) ───
+[  0.00s] CALL   -> ScoreAnalystAgent
+[  0.00s] CALL   -> VoiceOfCustomerAgent
+[  0.00s] CALL   -> ChurnRiskAgent
+[  7.67s] OUTPUT <- ChurnRiskAgent (2195 chars)
+[  8.97s] OUTPUT <- ScoreAnalystAgent (1211 chars)
+[ 14.39s] OUTPUT <- VoiceOfCustomerAgent (4266 chars)
+─── Phase 2 · Dependent Action Planning (with Phase 1 NPS Context) ───
+[ 14.39s] CALL   -> ActionPlannerAgent
+[ 22.64s] OUTPUT <- ActionPlannerAgent (2316 chars)
+─── Phase 3 · Executive Synthesis (ReportWriterAgent · No Tools) ───
+[ 22.64s] CALL   -> ReportWriterAgent
+[ 34.62s] OUTPUT <- ReportWriterAgent (8252 chars)

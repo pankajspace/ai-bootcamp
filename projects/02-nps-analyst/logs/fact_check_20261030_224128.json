@@ -1,0 +1,115 @@
+{
+  "elapsed_seconds": 34.62,
+  "guardrail_retries_used": 0,
+  "fact_check": {
+    "passed": true,
+    "label_aware": true,
+    "passed_count": 16,
+    "total_count": 16,
+    "checks": [
+      {
+        "id": "alert_level",
+        "name": "Executive Alert Level (RED)",
+        "passed": true,
+        "detail": "Verified 'RED' near label /alert/"
+      },
+      {
+        "id": "total_responses",
+        "name": "Total Survey Responses (600)",
+        "passed": true,
+        "detail": "Verified '600' near label /response/"
+      },
+      {
+        "id": "overall_nps",
+        "name": "Overall NPS (+18.5) with sign and no %",
+        "passed": true,
+        "detail": "Verified '+18.5' near label /overall/"
+      },
+      {
+        "id": "overall_moe",
+        "name": "Overall 95% Margin of Error (\u00b16.6)",
+        "passed": true,
+        "detail": "Verified '\u00b16.6' near label /18\\.5/"
+      },
+      {
+        "id": "month_2026_07",
+        "name": "2026-07 (July) NPS (+32.0)",
+        "passed": true,
+        "detail": "Verified '+32.0' near label /2026-07/"
+      },
+      {
+        "id": "month_2026_08",
+        "name": "2026-08 (August) NPS (+30.0)",
+        "passed": true,
+        "detail": "Verified '+30.0' near label /2026-08/"
+      },
+      {
+        "id": "month_2026_09",
+        "name": "2026-09 (September) NPS (-6.5)",
+        "passed": true,
+        "detail": "Verified '-6.5' near label /september/"
+      },
+      {
+        "id": "sep_mobile_app_drop",
+        "name": "Hidden Story 1 \u00b7 Sept Mobile App Collapse (-33.6) & OTP/Login Root Cause",
+        "passed": true,
+        "detail": "Verified '-33.6' near label /mobile app/"
+      },
+      {
+        "id": "total_revenue_at_risk",
+        "name": "Total Revenue at Risk (\u20b937.98 lakh)",
+        "passed": true,
+        "detail": "Verified '37.98' near label /risk/"
+      },
+      {
+        "id": "wealth_revenue_at_risk",
+        "name": "Hidden Story 2 \u00b7 Wealth Revenue at Risk (\u20b931.51 lakh / 83.0%)",
+        "passed": true,
+        "detail": "Verified '31.51' near label /wealth/"
+      },
+      {
+        "id": "whatif_otp_nps_gain",
+        "name": "Action Ranking A \u00b7 OTP Fix NPS Gain (+7.5 pts)",
+        "passed": true,
+        "detail": "Verified '+7.5' near label /otp/"
+      },
+      {
+        "id": "whatif_fees_rupees_saved",
+        "name": "Action Ranking B \u00b7 Fees Fix Rupees Saved (\u20b96.39 lakh)",
+        "passed": true,
+        "detail": "Verified '6.39' near label /fee/"
+      },
+      {
+        "id": "caveat_low_sample",
+        "name": "Caveat 1 \u00b7 Low-Sample Flag on 2026-09 Call Centre (n=26 < 30)",
+        "passed": true,
+        "detail": "Verified '26' near label /call centre/"
+      },
+      {
+        "id": "caveat_churn_assumptions",
+        "name": "Caveat 2 \u00b7 House Churn Rate Assumptions (3% / 10% / 25%)",
+        "passed": true,
+        "detail": "Verified '25%' near label /churn/"
+      },
+      {
+        "id": "caveat_mismatch_alt_nps",
+        "name": "Hidden Story 3 & Caveat 3 \u00b7 9 Score-Comment Mismatches & Alternative NPS (+20.3 or +21.5)",
+        "passed": true,
+        "detail": "Verified '+20.3' near label /mismatch/"
+      },
+      {
+        "id": "nps_not_percentage",
+        "name": "Unit Rule \u00b7 NPS written as a signed score, never with '%'",
+        "passed": true,
+        "detail": "Verified no NPS score has a trailing '%' symbol."
+      }
+    ],
+    "failed_checks": []
+  },
+  "specialist_reports": {
+    "score_analyst": "### HEADLINE SCORECARD\n- **Overall NPS**: +18.5 \u00b16.6\n- **Responses**: 600\n  - **Promoters**: 268 (44.7%)\n  - **Passives**: 175 (29.2%)\n  - **Detractors**: 157 (26.2%)\n- **Health Verdict**: NEEDS WORK\n\n### MONTHLY TREND\n- **2026-07**: +32.0\n- **2026-08**: +30.0\n- **2026-09**: -6.5\n- **Drop from July to September**: -38.5 points\n\n### SEGMENT BREAKDOWN (ALL MONTHS)\n- **Best Product Segment**: Savings Account (+23.1)\n- **Worst Product Segment**: Wealth (+1.0)\n- **Best Channel Segment**: Branch (+33.0)\n- **Worst Channel Segment**: Call Centre (+10.2)\n- **Best Tenure Segment**: 1-3 yrs (+20.7)\n- **Worst Tenure Segment**: <1 yr (+15.3)\n\n### SEPTEMBER (2026-09) DRILL-DOWN\n- **Mobile App**: -33.6 (n=113)\n- **Branch**: +34.4 (n=61)\n- **Call Centre**: +15.4 (n=26, low_sample=True, MOE \u00b131.4)\n\n### NPS_CONTEXT_HANDOFF\n```json\n{\n  \"overall_nps\": \"+18.5\",\n  \"overall_moe\": 6.6,\n  \"health_verdict\": \"NEEDS WORK\",\n  \"monthly_nps\": {\n    \"2026-07\": \"+32.0\",\n    \"2026-08\": \"+30.0\",\n    \"2026-09\": \"-6.5\"\n  },\n  \"worst_month\": \"2026-09\",\n  \"worst_month_channel\": \"Mobile App\",\n  \"low_sample_flags\": {\n    \"Call Centre\": {\n      \"month\": \"2026-09\",\n      \"n\": 26,\n      \"nps\": \"+15.4\",\n      \"moe\": 31.4\n    }\n  }\n}\n```",
+    "voice_of_customer": "<thinking>I have all the necessary data. Now, I'll compile the executive brief for the CEO with the key findings and verbatim quotes.</thinking>\n\n### Executive Brief for CEO\n\n#### DETRACTOR THEMES (WHY CUSTOMERS ARE UNHAPPY)\n- **OTP & Login Failure After App Update (45 comments, 32.4% of commented detractors, \u20b93.94 lakh risk; 42 of 45 occurred in 2026-09 after the app update)**\n  - Customers reported delayed/missing OTP verification codes, account lockouts, and login failures following the mobile app update. For example, one customer said, \"The OTP issue is still not fixed. I am moving my salary account.\" (response_id: R0457, product: Wealth, score: 5, annual_revenue_lakh: 3.24).\n  \n- **Wealth Advisory Fees & Account/Card Charges (24 comments, 17.3%, \u20b910.66 lakh risk \u2014 driven by high-value Wealth quarterly fee complaints)**\n  - Customers complained about high/unexplained quarterly wealth advisory fees, hidden portfolio costs, credit card annual fees, and minimum balance penalties. For example, one customer said, \"The fee structure is confusing and nobody could explain it to me.\" (response_id: R0314, product: Wealth, score: 6, annual_revenue_lakh: 5.45).\n\n- **App Crashes, Glitches & Slowness (21 comments, 15.1%, \u20b90.74 lakh risk \u2014 crashes on statements page and payment hangs)**\n  - Customers reported mobile app crashes on statements page, payment hangs, freezes, and peak-hour slowness. For example, one customer said, \"App crashes when I open the statements page.\" (response_id: R0004, product: Credit Card, score: 5, annual_revenue_lakh: 0.28).\n\n- **Call Centre Wait Times, Hold Drops & IVR Loops (18 comments, 12.9%, \u20b91.68 lakh risk \u2014 IVR loops and 40-minute hold drops)**\n  - Customers experienced endless IVR menus, 40-minute hold times, dropped calls, and late callbacks. For example, one customer said, \"Customer care kept me on hold for 40 minutes and the call dropped.\" (response_id: R0042, product: Wealth, score: 5, annual_revenue_lakh: 3.04).\n\n- **General Service Sentiment (Non-Specific) (12 comments)**\n- **FD/Savings Interest Rates & Card Reward Expiry (10 comments)**\n- **Score-Comment Mismatch (Glowing Praise on Low Score) (9 comments)**\n\n#### ROOT CAUSE OF THE SEPTEMBER DROP\n- The September Mobile App collapse (-33.6) can be connected to the 42 OTP & login failure complaints in 2026-09.\n\n#### PASSIVE & PROMOTER THEMES\n- **Top Passive Friction Points**\n  - Call Centre Wait Times, Hold Drops & IVR Loops (43 comments, 27.4%)\n  - FD/Savings Interest Rates & Card Reward Expiry (39 comments, 24.8%)\n  - General Service Sentiment (Non-Specific) (37 comments, 23.6%)\n  - App Crashes, Glitches & Slowness (32 comments, 20.4%)\n  - OTP & Login Failure After App Update (6 comments, 3.8%)\n\n- **Top Promoter Drivers**\n  - Fast UPI, Bill Pay & Smooth Digital Onboarding (95 comments, 39.6%)\n  - Helpful Branch Staff & Relationship Managers (69 comments, 28.7%)\n  - General Service Sentiment (Non-Specific) (36 comments, 15.0%)\n  - Credit Card Cashback & Useful Rewards (17 comments, 7.1%)\n  - Wealth Advisory Fees & Account/Card Charges (23 comments, 9.6%)\n\n#### VERBATIM CUSTOMER QUOTES\n1. **Detractor Quote** - \"The OTP issue is still not fixed. I am moving my salary account.\" (response_id: R0457, product: Wealth, score: 5, annual_revenue_lakh: 3.24)\n2. **Detractor Quote** - \"The app keeps asking for a code that never comes.\" (response_id: R0543, product: Wealth, score: 6, annual_revenue_lakh: 2.77)\n3. **Passive Quote** - \"Customer care solves the problem but the waiting time is long.\" (response_id: R0194, product: Wealth, score: 8, annual_revenue_lakh: 3.96)\n4. **Promoter Quote** - \"UPI payments are quick and the app is easy to use.\" (response_id: R0038, product: Wealth, score: 9, annual_revenue_lakh: 3.92)\n\n#### VOC_HANDOFF\n```json\n{\n  \"top_detractor_themes\": [\n    {\n      \"theme_key\": \"otp_login\",\n      \"comment_count\": 45,\n      \"revenue_at_risk_lakh\": 3.94\n    },\n    {\n      \"theme_key\": \"fees_and_charges\",\n      \"comment_count\": 24,\n      \"revenue_at_risk_lakh\": 10.66\n    },\n    {\n      \"theme_key\": \"app_performance\",\n      \"comment_count\": 21,\n      \"revenue_at_risk_lakh\": 0.74\n    },\n    {\n      \"theme_key\": \"call_centre_ivr\",\n      \"comment_count\": 18,\n      \"revenue_at_risk_lakh\": 1.68\n    }\n  ]\n}\n```",
+    "churn_risk": "# REVENUE AT RISK SUMMARY & VERDICT\n\n**Total Annual Revenue:** \u20b9304.43 lakh\n\n**Total Revenue at Risk:** \u20b937.98 lakh\n\n**Revenue at Risk by Product:**\n- **Wealth:** \u20b931.51 lakh (83.0% of total revenue at risk)\n- **Credit Card:** \u20b93.75 lakh (9.9% of total revenue at risk)\n- **Savings Account:** \u20b92.73 lakh (7.2% of total revenue at risk)\n\n**Revenue at Risk by Channel:**\n- **Branch:** \u20b917.32 lakh (45.6% of total revenue at risk)\n- **Mobile App:** \u20b915.98 lakh (42.1% of total revenue at risk)\n- **Call Centre:** \u20b94.68 lakh (12.3% of total revenue at risk)\n\n# LOUD VS. EXPENSIVE (PRODUCT & CHANNEL BREAKDOWN)\n\n**Most Detractors:**\n- **Product:** Savings Account (73 detractors)\n- **Channel:** Mobile App (98 detractors)\n\n**Most Money at Risk:**\n- **Product:** Wealth (\u20b931.51 lakh at risk, 83.0% of total revenue at risk)\n- **Channel:** Branch (\u20b917.32 lakh at risk, 45.6% of total revenue at risk)\n\n**Core Insight:** Savings Account has the most detractors (73), but **Wealth** (31 detractors, NPS `+1.0`) holds **\u20b931.51 lakh** of total revenue at risk (**83.0%** of the bank's **\u20b937.98 lakh** total revenue at risk, and **\u20b920.53 lakh** from Wealth detractors alone out of **\u20b924.54 lakh** total detractor risk).\n\n# DATA QUALITY AUDIT: SCORE-COMMENT MISMATCHES\n\n**Data-Quality Trap:** 9 customers (`R0003`, `R0136`, `R0191`, `R0195`, `R0243`, `R0262`, `R0273`, `R0362`, `R0554` \u2014 8 of them in Branch, including high-value Wealth accounts `R0191` \u20b93.48L and `R0262` \u20b93.03L) gave scores of `0` or `1` with glowing praise (*\"Amazing support from the branch team, thank you\"*, *\"Excellent service\"*).\n\n# ASSUMPTIONS & CAVEATS\n\n**House Churn Assumptions:**\n- Promoters: 3%\n- Passives: 10%\n- Detractors: 25%\n\n**Data-Quality Caveats:**\n- **Never silently change reported scores.** Report official NPS (`+18.5`) and show the alternative NPS (`+20.3` if the 9 mismatches are excluded; `+21.5` if reclassified as promoters, which also reduces overstated detractor risk by `\u20b91.84 lakh` / `\u20b91.62 lakh`).\n\n**Revenue Impact of Mismatches:**\n- **Mismatched Customers' Annual Revenue:** \u20b97.35 lakh\n- **Overstated Detractor Risk if Excluded:** \u20b91.84 lakh\n- **Overstated Risk if Reclassified as Promoters:** \u20b91.62 lakh",
+    "action_planner": "<thinking>I have the results from both tools. Now, I will recommend the two-track sequence and list the top callback accounts.</thinking>\n\n**Recommendation:**\n\nTo address the NPS decline and protect the bank's revenue, I recommend the following two-track sequence:\n\n1. **Engineering Hotfix on `otp_login` this week**: This will stop the September Mobile App bleed and lift NPS by **+7.5 points** to **+26.0**. It will also save **\u20b92.36 lakh** in revenue.\n\n2. **Wealth RMs Conduct Fee-Transparency Calls for `fees_and_charges`**: This will protect **\u20b96.39 lakh** in savings (out of **\u20b910.66 lakh** at risk) and lift NPS by **+4.0 points** to **+22.5**.\n\n**Top Callback Accounts:**\n\nHere are the top 10 callback accounts with exact `response_id`, `product`, `score`, `annual_revenue_lakh`, and `comment`:\n\n1. **R0314** (Wealth, score: 6, annual_revenue_lakh: 5.45, comment: \"The fee structure is confusing and nobody could explain it to me.\")\n2. **R0182** (Wealth, score: 3, annual_revenue_lakh: 5.04, comment: \"Charges on my wealth account keep going up and nobody explains them.\")\n3. **R0087** (Wealth, score: 4, annual_revenue_lakh: 5.01, comment: \"Hidden costs in the portfolio statement. Fees are much higher than other banks.\")\n4. **R0364** (Wealth, score: 4, annual_revenue_lakh: 4.79, comment: \"Why am I paying so much every quarter for advice I never get?\")\n5. **R0070** (Wealth, score: 3, annual_revenue_lakh: 4.55, comment: \"(No written comment provided \u2013 high-value detractor score)\")\n6. **R0471** (Wealth, score: 4, annual_revenue_lakh: 4.49, comment: \"The fee structure is confusing and nobody could explain it to me.\")\n7. **R0479** (Wealth, score: 5, annual_revenue_lakh: 3.41, comment: \"Why am I paying so much every quarter for advice I never get?\")\n8. **R0457** (Wealth, score: 5, annual_revenue_lakh: 3.24, comment: \"The OTP issue is still not fixed. I am moving my salary account.\")\n9. **R0042** (Wealth, score: 5, annual_revenue_lakh: 3.04, comment: \"Customer care kept me on hold for 40 minutes and the call dropped.\")\n10. **R0391** (Wealth, score: 2, annual_revenue_lakh: 3.02, comment: \"Too many charges on a basic savings account.\")\n\nNote that the 9 score-comment mismatch rows (`R0003`, `R0136`, `R0191`, `R0195`, `R0243`, `R0262`, `R0273`, `R0362`, `R0554`) were excluded from apology calls."
+  }
+}
