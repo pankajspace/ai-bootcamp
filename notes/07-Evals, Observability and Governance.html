@@ -4316,9 +4316,7 @@ sorter("#lv-list","#lv-score",[
     {t:"09:19",q:"Summarise data ownership",c:0.17,l:6.9,s:[["chat",0,2.4,"b4"],["search_contract",2.4,3.0,"b1"],["chat",3.0,6.9,"b4"]],d:"Normal, slightly longer answer."}
   ];
   const list=$("#lf-list");const found=new Set();
-  TR.forEach((t,i)=>{const b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed","false");if(t.hot)b.classList.add("hot");
-    b.innerHTML="<span>"+t.t+" · "+esc(t.q)+"</span><span class='c cost'>$"+t.c.toFixed(2)+"</span><span class='c'>"+t.l.toFixed(1)+" s</span>";
-    b.addEventListener("click",()=>{press(list,b);open(i);});list.appendChild(b);});
+  $$("button",list).forEach((b,i)=>b.addEventListener("click",()=>{press(list,b);open(i);}));
   function open(i){
     const t=TR[i];const max=t.l;
     $("#lf-title").textContent="Span breakdown · "+t.t+" · "+t.l.toFixed(1)+" s";
