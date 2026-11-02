@@ -61,7 +61,7 @@ load_dotenv()
 
 from langchain_core.prompts import PromptTemplate  # noqa: E402
 
-from sample_data import PERSON_INFORMATION  # noqa: E402
+from code.section1.sample_data import PERSON_INFORMATION  # noqa: E402
 
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.6-sol")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3:270m")

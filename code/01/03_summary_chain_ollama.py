@@ -69,7 +69,7 @@ load_dotenv()
 from langchain_core.prompts import PromptTemplate  # noqa: E402
 from langchain_ollama import ChatOllama  # noqa: E402
 
-from sample_data import PERSON_INFORMATION  # noqa: E402
+from code.section1.sample_data import PERSON_INFORMATION  # noqa: E402
 
 # (Script 02 imports ChatOpenAI here instead — that is the only difference.)
 

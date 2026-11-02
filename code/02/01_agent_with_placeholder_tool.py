@@ -69,7 +69,7 @@ from langchain.tools import tool  # noqa: E402
 from langchain_core.messages import HumanMessage  # noqa: E402
 from langchain_openai import ChatOpenAI  # noqa: E402
 
-from agent_trace_printer import print_agent_trace  # noqa: E402
+from code.section2.agent_trace_printer import print_agent_trace  # noqa: E402
 
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.6-sol")
 
