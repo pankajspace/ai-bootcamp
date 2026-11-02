@@ -20,8 +20,8 @@ print("Chat with the agent (type 'exit' to quit):\n")
 while True:
     user_input = input("You: ")
     if user_input.lower() == "exit":
-        print("\nExiting chat. Goodbye!")
-        print("\n Here is the conversation history:")
+        print("\n Bye! Here is the conversation history: \n")
+        # agent.messages contains the full conversation history with roles and content
         print(agent.messages)
         break
 
