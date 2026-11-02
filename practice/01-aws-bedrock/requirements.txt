@@ -1,0 +1,6 @@
+# Demo 1: List Bedrock Models
+boto3
+
+# Demo 2: AWS Strands Simple Agent
+python-dotenv
+strands-agents
