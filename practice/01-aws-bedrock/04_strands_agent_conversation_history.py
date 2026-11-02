@@ -20,6 +20,9 @@ print("Chat with the agent (type 'exit' to quit):\n")
 while True:
     user_input = input("You: ")
     if user_input.lower() == "exit":
+        print("\nExiting chat. Goodbye!")
+        print("\n Here is the conversation history:")
+        print(agent.messages)
         break
 
     response = agent(user_input)
