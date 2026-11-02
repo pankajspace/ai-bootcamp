@@ -4368,7 +4368,7 @@ sorter("#lv-list","#lv-score",[
      res:"<b style='color:var(--risk-ink)'>The money has gone.</b> Every check the guardrail can do passed, because the problem was an <em>action</em>, not words. That's AgentCore Policy's job (7.14).",v:"deny"}
   ];
   const box=$("#gd-msgs");const ul=$("#gd-log");
-  M.forEach((m,i)=>{const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed","false");b.textContent=m.lab;b.addEventListener("click",()=>{press(box,b);send(i);});box.appendChild(b);});
+  $$("button",box).forEach((b,i)=>b.addEventListener("click",()=>{press(box,b);send(i);}));
   function send(i){
     const m=M[i];ul.innerHTML="";
     addLog(ul,"msg","User",esc(m.txt));

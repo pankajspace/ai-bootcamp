@@ -3306,7 +3306,7 @@ function press(group,btn){$$("[aria-pressed]",group).forEach(b=>b.setAttribute("
     pts.forEach((p,i)=>{const c=el("circle",{cx:p[1],cy:p[2],r:9,"data-i":i});c.style.fill=groups[p[3]][1];c.style.opacity=".85";const ti=el("title",{},c);ti.textContent=p[0];});
   }
   const box=$("#embed-q");
-  qs.forEach((q,i)=>{const b=document.createElement("button");b.className="chip";b.textContent=q[0];b.setAttribute("aria-pressed","false");b.addEventListener("click",()=>{press(box,b);show(i);});box.appendChild(b);});
+  $$("button",box).forEach((b,i)=>b.addEventListener("click",()=>{press(box,b);show(i);}));
   function show(i){
     base();const q=qs[i];
     const d=pts.map((p,j)=>[Math.hypot(p[1]-q[1],p[2]-q[2]),j]).sort((a,b)=>a[0]-b[0]).slice(0,3);
@@ -3350,7 +3350,7 @@ function press(group,btn){$$("[aria-pressed]",group).forEach(b=>b.setAttribute("
   ];
   let cur={q:P[0].q,preset:0};
   const qbox=$("#rag-q");
-  P.forEach((p,i)=>{const b=document.createElement("button");b.className="chip";b.textContent=p.q;b.setAttribute("aria-pressed",i===0?"true":"false");b.addEventListener("click",()=>{press(qbox,b);$("#rag-input").value="";cur={q:p.q,preset:i};run();});qbox.appendChild(b);});
+  $$("button",qbox).forEach((b,i)=>b.addEventListener("click",()=>{const p=P[i];press(qbox,b);$("#rag-input").value="";cur={q:p.q,preset:i};run();}));
   $("#rag-input").addEventListener("input",e=>{const v=e.target.value.trim();if(!v)return;press(qbox,null);cur={q:v,preset:-1};run();});
   $("#rag-k").addEventListener("input",run);$("#rag-rerank").addEventListener("change",run);
   function run(){
@@ -3466,7 +3466,7 @@ function press(group,btn){$$("[aria-pressed]",group).forEach(b=>b.setAttribute("
   const box=$("#arag-q");
   const lab={plan:"Reason",act:"Act",obs:"Observe",warn:"Result",done:"Answer"};
   function fill(ul,arr){ul.innerHTML="";arr.forEach(([k,t],i)=>{const li=document.createElement("li");li.className=k;li.innerHTML='<span class="who">'+lab[k]+'</span>'+esc(t);if(!reduce){li.style.opacity="0";setTimeout(()=>{li.style.transition="opacity .3s";li.style.opacity="1";},120+i*260);}ul.appendChild(li);});}
-  Q.forEach((q,i)=>{const b=document.createElement("button");b.className="chip";b.textContent=q.q;b.setAttribute("aria-pressed",i===0?"true":"false");b.addEventListener("click",()=>{press(box,b);fill($("#arag-trad"),q.t);fill($("#arag-agent"),q.a);});box.appendChild(b);});
+  $$("button",box).forEach((b,i)=>b.addEventListener("click",()=>{const q=Q[i];press(box,b);fill($("#arag-trad"),q.t);fill($("#arag-agent"),q.a);}));
   fill($("#arag-trad"),Q[0].t);fill($("#arag-agent"),Q[0].a);
 })();
 
@@ -3515,7 +3515,7 @@ function press(group,btn){$$("[aria-pressed]",group).forEach(b=>b.setAttribute("
     timers.push(setTimeout(()=>{st("working");},step*4));
     timers.push(setTimeout(()=>{st("completed");out.innerHTML="<b>"+cards[T.m].name+" replied:</b> "+esc(T.r)+"<br><span style='color:var(--muted)'>The client agent never saw how that agent works inside. It only read its card and spoke A2A.</span>";},step*5.4));
   }
-  tasks.forEach((t,i)=>{const b=document.createElement("button");b.className="chip";b.textContent=t.t;b.setAttribute("aria-pressed","false");b.addEventListener("click",()=>{press(box,b);run(i);});box.appendChild(b);});
+  $$("button",box).forEach((b,i)=>b.addEventListener("click",()=>{press(box,b);run(i);}));
 })();
 
 /* ---------------- Sim: agent loop ---------------- */
@@ -3572,7 +3572,7 @@ function press(group,btn){$$("[aria-pressed]",group).forEach(b=>b.setAttribute("
   ];
   let ev=[],i=0,msgs=[],mc=0,tc=0,timer=null,pi=1;
   const box=$("#loop-prompts");
-  PROMPTS.forEach((p,k)=>{const b=document.createElement("button");b.className="chip";b.textContent=p.label;b.setAttribute("aria-pressed",k===1?"true":"false");b.addEventListener("click",()=>{press(box,b);pi=k;reset();});box.appendChild(b);});
+  $$("button",box).forEach((b,k)=>b.addEventListener("click",()=>{press(box,b);pi=k;reset();}));
   function wrap(s,n){const w=s.split(" ");const lines=[];let cur="";w.forEach(x=>{if((cur+" "+x).trim().length>n){lines.push(cur.trim());cur=x;}else cur+=" "+x;});if(cur.trim())lines.push(cur.trim());return lines;}
   function setPrompt(){const L=wrap("“"+PROMPTS[pi].p+"”",18);["lp1","lp2","lp3","lp4","lp5"].forEach((id,k)=>{let t=L[k]||"";if(k===4&&L.length>5)t+="…";$("#"+id).textContent=t;});$("#loop-tools").textContent=PROMPTS[pi].tools;}
   function hlStep(s){svg.classList.add("running");$$("[data-step]",svg).forEach(g=>{const on=s&&g.dataset.step.split(" ").includes(s);g.classList.toggle("on",on);$$(".flow",g).forEach(f=>f.classList.toggle("on",on&&g.dataset.step===s));});}

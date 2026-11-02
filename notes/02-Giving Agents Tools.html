@@ -2536,7 +2536,7 @@ function press(group,btn){$$("[aria-pressed]",group).forEach(b=>b.setAttribute("
     $("#tip-answer").innerHTML="<b>Agent:</b> A "+e.pct+"% tip on "+fmt(e.cur,e.bill)+" is "+fmt(e.cur,r.tip)+", making the total "+fmt(e.cur,r.total)+"."+(n>1?" Split "+n+" ways, each person pays <b>"+fmt(e.cur,r.per_person)+"</b>.":"")+(e.people?"":' <span style="color:var(--muted)">(No split mentioned, so <code>num_people</code> used its default of 1.)</span>');
   }
   const box=$("#tip-q");
-  P.forEach((q,i)=>{const b=document.createElement("button");b.className="chip";b.textContent=q;b.setAttribute("aria-pressed",i===0?"true":"false");b.addEventListener("click",()=>{press(box,b);$("#tip-input").value="";run(q);});box.appendChild(b);});
+  $$("button",box).forEach((b,i)=>b.addEventListener("click",()=>{press(box,b);$("#tip-input").value="";run(P[i]);}));
   $("#tip-input").addEventListener("input",e=>{const v=e.target.value.trim();if(!v)return;press(box,null);run(v);});
   run(P[0]);
 })();
@@ -2554,9 +2554,9 @@ function press(group,btn){$$("[aria-pressed]",group).forEach(b=>b.setAttribute("
   ];
   let cur=-1;const picked=new Set();
   const tb=$("#tb-tools");
-  TOOLS.forEach(n=>{const b=document.createElement("button");b.className="chip mono";b.textContent=n;b.setAttribute("aria-pressed","false");b.addEventListener("click",()=>{if(picked.has(n))picked.delete(n);else picked.add(n);b.setAttribute("aria-pressed",picked.has(n));});tb.appendChild(b);});
+  $$("button",tb).forEach((b,i)=>b.addEventListener("click",()=>{const n=TOOLS[i];if(picked.has(n))picked.delete(n);else picked.add(n);b.setAttribute("aria-pressed",picked.has(n));}));
   const box=$("#tb-tasks");
-  TASKS.forEach((t,i)=>{const b=document.createElement("button");b.className="chip";b.textContent=t.t;b.setAttribute("aria-pressed","false");b.addEventListener("click",()=>{press(box,b);cur=i;picked.clear();$$("button",tb).forEach(x=>x.setAttribute("aria-pressed","false"));$("#tb-out").textContent="Now tap the tools you'd give this agent, then check.";});box.appendChild(b);});
+  $$("button",box).forEach((b,i)=>b.addEventListener("click",()=>{press(box,b);cur=i;picked.clear();$$("button",tb).forEach(x=>x.setAttribute("aria-pressed","false"));$("#tb-out").textContent="Now tap the tools you'd give this agent, then check.";}));
   $("#tb-check").addEventListener("click",()=>{
     if(cur<0){$("#tb-out").textContent="Pick a task first.";return;}
     const T=TASKS[cur];const missing=T.req.filter(g=>!g.some(x=>picked.has(x)));
@@ -2593,7 +2593,7 @@ function press(group,btn){$$("[aria-pressed]",group).forEach(b=>b.setAttribute("
     }
     add(failed?"warn":"done","Agent",esc(failed?r.fail:r.done));
   }
-  R.forEach((r,i)=>{const b=document.createElement("button");b.className="chip";b.textContent=r.q;b.setAttribute("aria-pressed",i===0?"true":"false");b.addEventListener("click",()=>{press(box,b);cur=i;run();});box.appendChild(b);});
+  $$("button",box).forEach((b,i)=>b.addEventListener("click",()=>{press(box,b);cur=i;run();}));
   $("#aws-restricted").addEventListener("change",run);
   run();
 })();
@@ -2612,7 +2612,7 @@ function press(group,btn){$$("[aria-pressed]",group).forEach(b=>b.setAttribute("
     $("#int-agent").innerHTML='<span class="mono">check_inventory(product_id="'+id+'")</span><br><b>Agent:</b> “'+esc(tool(id))+'”';
   }
   const box=$("#int-q");
-  P.forEach((q,i)=>{const b=document.createElement("button");b.className="chip";b.textContent=q;b.setAttribute("aria-pressed",i===0?"true":"false");b.addEventListener("click",()=>{press(box,b);$("#int-input").value="";run(q);});box.appendChild(b);});
+  $$("button",box).forEach((b,i)=>b.addEventListener("click",()=>{press(box,b);$("#int-input").value="";run(P[i]);}));
   $("#int-input").addEventListener("input",e=>{const v=e.target.value.trim();if(!v)return;press(box,null);run(v);});
   run(P[0]);
 })();
