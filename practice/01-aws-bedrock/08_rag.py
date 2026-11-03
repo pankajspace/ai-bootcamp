@@ -18,15 +18,52 @@ This script explains and demonstrates the complete 5-stage RAG pipeline:
 """
 
 import json
+import logging
 import math
 import os
 import re
 from pathlib import Path
+from typing import Optional
 from dotenv import load_dotenv
 
 import boto3
+import pydantic
+
+# Compatibility shim for ChromaDB 0.3.x running with Pydantic v2 on Python 3.15+
+try:
+    from pydantic import BaseSettings as _BaseSettings
+except Exception:
+    class _BaseSettings(pydantic.BaseModel):
+        model_config = pydantic.ConfigDict(extra="ignore")
+        clickhouse_host: Optional[str] = None
+        clickhouse_port: Optional[str] = None
+        chroma_server_host: Optional[str] = None
+        chroma_server_http_port: Optional[str] = None
+        chroma_server_grpc_port: Optional[str] = None
+        anonymized_telemetry: bool = False
+
+    pydantic.BaseSettings = _BaseSettings
+
 import chromadb
 from chromadb.api.types import Documents, EmbeddingFunction, Embeddings
+
+if not hasattr(chromadb, "EphemeralClient"):
+    from chromadb.api.models.Collection import Collection as _ChromaCollection
+    from chromadb.telemetry.posthog import Posthog as _ChromaPosthog
+
+    def _patched_col_init(
+        self, client, name, id, embedding_function=None, metadata=None
+    ):
+        super(_ChromaCollection, self).__init__(name=name, metadata=metadata, id=id)
+        self._client = client
+        self._embedding_function = embedding_function
+
+    _ChromaCollection.__init__ = _patched_col_init
+    _ChromaPosthog.capture = lambda self, event: None
+    chromadb.EphemeralClient = chromadb.Client
+
+logging.getLogger("chromadb").setLevel(logging.ERROR)
+
 from strands import Agent
 from strands.models.bedrock import BedrockModel
 
@@ -110,7 +147,7 @@ def chunk_text(
 #   - Amazon Titan Text Embeddings V2 (`amazon.titan-embed-text-v2:0`) supports
 #     256, 512, or 1024 dimensions and returns normalized vectors out of the box.
 # ==============================================================================
-class TitanEmbeddingFunction(EmbeddingFunction[Documents]):
+class TitanEmbeddingFunction(EmbeddingFunction):
     """
     Custom ChromaDB-compatible EmbeddingFunction backed by AWS Bedrock Titan Embeddings.
     """
@@ -143,9 +180,9 @@ class TitanEmbeddingFunction(EmbeddingFunction[Documents]):
         response_body = json.loads(response["body"].read())
         return response_body["embedding"]
 
-    def __call__(self, input: Documents) -> Embeddings:
+    def __call__(self, texts: Documents) -> Embeddings:
         """Batch-embed a list of documents for ChromaDB."""
-        return [self.embed_single(doc) for doc in input]
+        return [self.embed_single(doc) for doc in texts]
 
 
 def cosine_similarity(vec_a: list[float], vec_b: list[float]) -> float:
