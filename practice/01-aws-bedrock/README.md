@@ -1,6 +1,6 @@
-# Roadmap to create project with AWS Bedrock from simple to advanced
+# AI with AWS Bedrock
 
-## 0: Set up AWS environment
+## 0: Setup
 
 #### 0.1. Configure AWS CLI
 
