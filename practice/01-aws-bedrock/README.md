@@ -18,11 +18,11 @@ aws sts get-caller-identity
 
 #### 0.2. Python Environment Setup
 
-Ensure you have Python installed. It's recommended to use a virtual environment:
+Ensure you have Python installed. It's recommended to use Python 3.14 (since `onnxruntime` / `chromadb` do not yet publish wheels for Python 3.15):
 
 ```bash
 cd practice/01-aws-bedrock
-python3 -m venv venv
+python3.14 -m venv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 ```
 
@@ -149,7 +149,8 @@ requirements.txt
 boto3
 python-dotenv
 strands-agents
-chromadb
+chromadb>=1.0.0
+numpy
 ```
 
 .env

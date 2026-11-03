@@ -13,4 +13,6 @@ strands-agents
 strands-agents-tools
 
 # Demo 8: RAG with AWS Titan Embeddings & ChromaDB
-chromadb
+chromadb>=1.0.0
+numpy
+

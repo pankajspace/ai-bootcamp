@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -9,9 +8,6 @@ import chromadb
 import numpy as np
 from strands import Agent
 from strands.models.bedrock import BedrockModel
-
-# Silence ChromaDB startup warnings for clean console output
-logging.getLogger("chromadb").setLevel(logging.ERROR)
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -52,27 +48,27 @@ text = (Path(__file__).parent / "sample_rag_knowledge.txt").read_text(encoding="
 chunk_size, overlap = 400, 50
 chunks = [text[i : i + chunk_size].strip() for i in range(0, len(text), chunk_size - overlap)]
 
-print(f"=== 1. Chunking ===")
+print("=== 1. Chunking ===")
 print(f"Split knowledge base ({len(text)} chars) into {len(chunks)} overlapping chunks.\n")
 
 
 # ==============================================================================
 # STEP 2: EMBEDDING & STORING IN CHROMADB
 # ==============================================================================
-# ChromaDB automatically calls our `embedding_function` using AWS Titan Embeddings
-# whenever we `.add()` documents or `.query()` the collection.
+# We embed each chunk with AWS Titan Embeddings and store both the text (`documents`)
+# and the vectors (`embeddings`) inside an in-memory ChromaDB collection.
 # ==============================================================================
 print(f"=== 2. Embedding & Storing in ChromaDB ({EMBED_MODEL_ID}) ===")
-chroma_client = chromadb.Client()
+chroma_client = chromadb.EphemeralClient()
 collection = chroma_client.create_collection(
     name="knowledge_base",
-    embedding_function=lambda texts: [get_titan_embedding(t) for t in texts],
     metadata={"hnsw:space": "cosine"},
 )
 
 collection.add(
     ids=[f"chunk_{i}" for i in range(len(chunks))],
     documents=chunks,
+    embeddings=[get_titan_embedding(c) for c in chunks],
 )
 print(f"Indexed {collection.count()} chunks into ChromaDB.\n")
 
@@ -80,14 +76,15 @@ print(f"Indexed {collection.count()} chunks into ChromaDB.\n")
 # ==============================================================================
 # STEP 3: RETRIEVAL OF TOP 5 ANSWERS
 # ==============================================================================
-# ChromaDB embeds the user's question with Titan Embeddings and finds the Top 5
-# closest chunks using cosine distance (Cosine Similarity = 1 - Cosine Distance).
+# We embed the user's question with Titan Embeddings and query ChromaDB for the
+# Top 5 closest chunks using cosine distance (Cosine Similarity = 1 - Distance).
 # ==============================================================================
 query = "What happens to customer data when an account is canceled, and when can I get a refund?"
-print(f"=== 3. Retrieving Top 5 Answers from ChromaDB ===")
+print("=== 3. Retrieving Top 5 Answers from ChromaDB ===")
 print(f"Query: {query}\n")
 
-results = collection.query(query_texts=[query], n_results=5)
+query_vec = get_titan_embedding(query)
+results = collection.query(query_embeddings=[query_vec], n_results=5)
 top_5_docs = results["documents"][0]
 top_5_dists = results["distances"][0]
 
@@ -104,8 +101,7 @@ for rank, (doc, dist) in enumerate(zip(top_5_docs, top_5_dists), 1):
 #   - Reranking inspects ONLY the Top 5 chunks closely: we embed individual lines
 #     with Titan Embeddings and rank each chunk by its best-matching sentence (`np.dot`).
 # ==============================================================================
-print(f"\n=== 4. Reranking Top 5 with AWS Titan Embeddings ===")
-query_vec = get_titan_embedding(query)
+print("\n=== 4. Reranking Top 5 with AWS Titan Embeddings ===")
 
 def score_chunk(chunk_text: str) -> float:
     lines = [line.strip() for line in chunk_text.split("\n") if len(line.strip()) > 20] or [chunk_text]
