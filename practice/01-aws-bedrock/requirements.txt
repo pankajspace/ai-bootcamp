@@ -9,4 +9,5 @@ strands-agents
 
 # Demo 5: Agent with tools
 # Demo 6: Agent with asynchronous tools
+# Demo 7: Agent with class-based tools
 strands-agents-tools

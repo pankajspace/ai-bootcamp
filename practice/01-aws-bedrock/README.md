@@ -125,3 +125,37 @@ AWS_BEDROCK_MODEL_ID=your_model_id
 ```bash
 python3 practice/01-aws-bedrock/06_async_tools.py
 ```
+
+## Demo 7: Agent with class-based tools
+requirements.txt
+```
+python-dotenv
+strands-agents
+strands-agents-tools
+```
+
+.env
+```
+AWS_BEDROCK_MODEL_ID=your_model_id
+```
+
+```bash
+python3 practice/01-aws-bedrock/07_class_based_tools.py
+```
+
+## Demo 7: Agent with class-based tools
+requirements.txt
+```
+python-dotenv
+strands-agents
+strands-agents-tools
+```
+
+.env
+```
+AWS_BEDROCK_MODEL_ID=your_model_id
+```
+
+```bash
+python3 practice/01-aws-bedrock/07_class_based_tools.py
+```
