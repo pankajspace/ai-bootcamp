@@ -57,7 +57,7 @@ AWS_BEDROCK_MODEL_ID=your_model_id
 ```
 
 ```bash
-python3 practice/01-aws-bedrock/02_strands_simple_agent.py
+python3 practice/01-aws-bedrock/02_simple_agent.py
 ```
 
 ## Demo 3: Strands agent with roles
@@ -73,7 +73,7 @@ AWS_BEDROCK_MODEL_ID=your_model_id
 ```
 
 ```bash
-python3 practice/01-aws-bedrock/03_strands_agent_roles.py
+python3 practice/01-aws-bedrock/03_agent_roles.py
 ```
 
 ## Demo 4: Strands agent with conversation history
@@ -89,5 +89,5 @@ AWS_BEDROCK_MODEL_ID=your_model_id
 ```
 
 ```bash
-python3 practice/01-aws-bedrock/04_strands_agent_conversation_history.py
+python3 practice/01-aws-bedrock/04_agent_conversation_history.py
 ```
