@@ -44,7 +44,7 @@ boto3
 python3 practice/01-aws-bedrock/01_list_bedrock_models.py
 ```
 
-## Demo 2: Strands Simple Agent
+## Demo 2: Simple Agent
 requirements.txt
 ```
 python-dotenv
@@ -60,7 +60,7 @@ AWS_BEDROCK_MODEL_ID=your_model_id
 python3 practice/01-aws-bedrock/02_simple_agent.py
 ```
 
-## Demo 3: Strands agent with roles
+## Demo 3: Agent with roles
 requirements.txt
 ```
 python-dotenv
@@ -76,7 +76,7 @@ AWS_BEDROCK_MODEL_ID=your_model_id
 python3 practice/01-aws-bedrock/03_agent_roles.py
 ```
 
-## Demo 4: Strands agent with conversation history
+## Demo 4: Agent with conversation history
 requirements.txt
 ```
 python-dotenv
@@ -90,4 +90,21 @@ AWS_BEDROCK_MODEL_ID=your_model_id
 
 ```bash
 python3 practice/01-aws-bedrock/04_agent_conversation_history.py
+```
+
+## Demo 5: Agent with tools
+requirements.txt
+```
+python-dotenv
+strands-agents
+strands-agents-tools
+```
+
+.env
+```
+AWS_BEDROCK_MODEL_ID=your_model_id
+```
+
+```bash
+python3 practice/01-aws-bedrock/05_tools.py
 ```
