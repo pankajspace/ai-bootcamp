@@ -22,6 +22,7 @@ tavily-python>=0.3.0
 strands-agents[a2a,otel,openai]>=1.60.0,<2.0.0
 strands-agents-tools>=0.8.9,<0.9.0
 boto3>=1.40.0
+chromadb>=1.0.0
 yfinance>=0.2.50
 alpha_vantage>=3.0.0
 pandas>=2.0.0

@@ -143,19 +143,24 @@ AWS_BEDROCK_MODEL_ID=your_model_id
 python3 practice/01-aws-bedrock/07_class_based_tools.py
 ```
 
-## Demo 7: Agent with class-based tools
+## Demo 8: RAG (Vector Chunking, AWS Titan Embeddings, ChromaDB Top-5 Retrieval & Reranking)
 requirements.txt
 ```
+boto3
 python-dotenv
 strands-agents
-strands-agents-tools
+chromadb
 ```
 
 .env
 ```
 AWS_BEDROCK_MODEL_ID=your_model_id
+AWS_BEDROCK_EMBED_MODEL_ID=amazon.titan-embed-text-v2:0
 ```
 
+Sample knowledge base file: `practice/01-aws-bedrock/sample_rag_knowledge.txt`
+
 ```bash
-python3 practice/01-aws-bedrock/07_class_based_tools.py
+python3 practice/01-aws-bedrock/08_rag.py
 ```
+

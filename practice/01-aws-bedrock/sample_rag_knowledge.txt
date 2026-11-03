@@ -1,0 +1,48 @@
+================================================================================
+ACME CLOUD PLATFORM — ENTERPRISE HANDBOOK & TECHNICAL ARCHITECTURE GUIDE
+================================================================================
+
+SECTION 1: OVERVIEW AND CORE ARCHITECTURE
+Acme Cloud Platform (ACP) is a multi-region, cloud-native application hosting and AI orchestration platform built on AWS.
+All production workloads run inside isolated Virtual Private Clouds (VPCs) across three primary regions: us-east-1 (N. Virginia), eu-central-1 (Frankfurt), and ap-southeast-1 (Singapore).
+The control plane is powered by Amazon EKS (Elastic Kubernetes Service) running Kubernetes version 1.31 with Karpenter for just-in-time node autoscaling.
+Data persistence is tiered into three layers:
+1. Hot transactional storage uses Amazon Aurora PostgreSQL Serverless v2 (configured between 2 and 64 ACUs).
+2. Low-latency session state and distributed caching use Amazon ElastiCache for Redis (Valkey 7.2 engine).
+3. Long-term immutable audit logs and analytical datasets are stored in Amazon S3 with intelligent tiering and 7-year Object Lock compliance.
+
+SECTION 2: AUTHENTICATION, SECURITY, AND API RATE LIMITS
+All external API requests to the Acme Cloud Gateway must authenticate using either OAuth 2.0 Bearer tokens (issued via Amazon Cognito) or short-lived HMAC-SHA256 API keys.
+API keys automatically expire after 90 days and must be rotated using the `/v2/security/rotate-key` endpoint.
+Rate limits are strictly enforced at the API Gateway level based on customer subscription tiers:
+- Developer Tier: 60 requests per minute (RPM) and a burst limit of 10 concurrent requests.
+- Business Tier: 600 requests per minute (RPM) and a burst limit of 100 concurrent requests.
+- Enterprise Tier: 6,000 requests per minute (RPM) with custom burst capacity up to 1,000 concurrent requests.
+If a client exceeds their allotted rate limit, the gateway returns an HTTP 429 (Too Many Requests) status code along with a `Retry-After` header indicating the number of seconds to wait before retrying.
+All data in transit is encrypted using TLS 1.3, and all data at rest is encrypted using customer-managed AWS KMS (Key Management Service) keys with annual automatic rotation enabled.
+
+SECTION 3: AI MODEL GATEWAY AND RAG PIPELINE STANDARDS
+Acme Cloud provides a unified AI Gateway that routes prompts to Amazon Bedrock foundation models, including Amazon Nova Lite, Amazon Nova Pro, and Anthropic Claude 3.5 Sonnet.
+For Retrieval-Augmented Generation (RAG) workloads, Acme standardizes on Amazon Titan Text Embeddings V2 (`amazon.titan-embed-text-v2:0`).
+Titan Embeddings V2 supports configurable output vector dimensions of 256, 512, or 1024 dimensions, and normalizes output vectors by default for cosine similarity calculations.
+Standard document ingestion rules for the RAG pipeline:
+- Text documents must be split into overlapping chunks of 400 to 600 characters with a 50-character sliding window overlap so sentences are not cut off mid-thought.
+- Vector embeddings are indexed in ChromaDB collections with metadata tags for `section`, `chunk_id`, and `source`.
+- During retrieval, the system fetches the Top 5 candidate chunks from ChromaDB and applies a two-stage reranking step (combining dense vector similarity with keyword/lexical relevance and LLM or Titan fine-grained scoring) before passing the top-ranked context to the generator model.
+
+SECTION 4: INCIDENT RESPONSE AND SLA POLICIES
+Acme Cloud guarantees a 99.95% monthly uptime Service Level Agreement (SLA) for Business Tier customers and a 99.99% monthly uptime SLA for Enterprise Tier customers.
+Incidents are classified into three severity levels:
+- SEV-1 (Critical Outage): Complete production system unavailability or security breach. Target initial response time is 15 minutes, with status updates every 30 minutes.
+- SEV-2 (Degraded Performance): Partial feature failure or latency exceeding p99 > 2,500ms. Target initial response time is 1 hour.
+- SEV-3 (Minor Issue): Non-critical bug or cosmetic dashboard issue with a workaround available. Target initial response time is 8 business hours.
+If monthly uptime falls below the guaranteed SLA threshold, customers are eligible for service credits ranging from 10% (for uptime between 99.0% and 99.95%) up to 30% (for uptime below 99.0%) applied to their next monthly invoice.
+
+SECTION 5: BILLING, REFUNDS, AND DATA RETENTION ON CANCELLATION
+Subscriptions are billed monthly in advance on the 1st of each calendar month. Overages for AI token usage and extra storage are billed in arrears on the 5th of the following month.
+Customers on the Developer or Business Tier may cancel their subscription at any time through the billing portal; full refunds are only issued if cancellation occurs within 14 days of the initial sign-up and total AI token consumption is under 100,000 tokens.
+When an account is canceled or terminated:
+- Active compute instances and API keys are immediately deactivated.
+- Customer databases and vector store snapshots are retained in a read-only quarantine state for 30 days to allow accidental cancellation recovery or data export.
+- After the 30-day retention window expires, all customer data, ChromaDB vector collections, and KMS encryption keys are permanently and irreversibly purged in accordance with GDPR and SOC2 Type II data destruction policies.
+
