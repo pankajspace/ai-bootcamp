@@ -28,24 +28,24 @@ Python 3.10 or newer.
 
 ```bash
 cd projects/05-vendor-risk-assessor
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate            # Windows: .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 cp .env.example .env                 # Windows: copy .env.example .env
-python scripts/check_setup.py
+python3 scripts/check_setup.py
 ```
 
 ## 2. Run it
 
 ```bash
-python run_assessor.py                                                          # LedgerLens AI, T3, 35 users → BLOCKED
-python run_assessor.py "Can we use Parakeet Translate for support chats?" --tier T3 --users 60   # → CONDITIONAL
-python run_assessor.py "Can the product team use Parakeet Translate for roadmap docs?" --tier T2 --users 8   # → READY FOR APPROVAL
-python run_assessor.py "Can marketing use QuillDesk for customer replies?" --tier T3 --users 12   # → BLOCKED (2 blockers)
-python run_assessor.py "Where must customer personal data be stored?"            # policy question
-python run_assessor.py "Does QuillDesk have SOC 2?"                               # vendor facts only
-python run_assessor.py --groups public,employees                                  # outside Security: the Approved Vendor List is hidden
-python run_assessor.py --interactive --approver "A. Sharma"                       # record a human decision
+python3 run_assessor.py                                                          # LedgerLens AI, T3, 35 users → BLOCKED
+python3 run_assessor.py "Can we use Parakeet Translate for support chats?" --tier T3 --users 60   # → CONDITIONAL
+python3 run_assessor.py "Can the product team use Parakeet Translate for roadmap docs?" --tier T2 --users 8   # → READY FOR APPROVAL
+python3 run_assessor.py "Can marketing use QuillDesk for customer replies?" --tier T3 --users 12   # → BLOCKED (2 blockers)
+python3 run_assessor.py "Where must customer personal data be stored?"            # policy question
+python3 run_assessor.py "Does QuillDesk have SOC 2?"                               # vendor facts only
+python3 run_assessor.py --groups public,employees                                  # outside Security: the Approved Vendor List is hidden
+python3 run_assessor.py --interactive --approver "A. Sharma"                       # record a human decision
 ```
 
 Each assessment writes `runs/<timestamp>-assess/`:
@@ -61,9 +61,9 @@ Each assessment writes `runs/<timestamp>-assess/`:
 Tests and evaluation:
 
 ```bash
-python -m pytest -q              # 70 tests
-python eval/run_eval.py          # scorecard against data/gold_set.json → reports/eval_report.md
-python eval/run_eval.py --strict # exit 1 on a failed threshold (use in CI)
+python3 -m pytest -q              # 70 tests
+python3 eval/run_eval.py          # scorecard against data/gold_set.json → reports/eval_report.md
+python3 eval/run_eval.py --strict # exit 1 on a failed threshold (use in CI)
 ```
 
 ## 3. Switch on a real LLM and real search (after the offline run is green)
@@ -73,7 +73,7 @@ Edit `.env`: pick one `LLM_PROVIDER` block (Gemini and Groq have free tiers; Oll
 Then assess a **real** vendor:
 
 ```bash
-python run_assessor.py "Can our support team use <Tool> for ticket summaries?" --vendor "<Tool>" --domain <vendor.com> --tier T3 --users 35 --max-usd 0.30
+python3 run_assessor.py "Can our support team use <Tool> for ticket summaries?" --vendor "<Tool>" --domain <vendor.com> --tier T3 --users 35 --max-usd 0.30
 ```
 
 Live mode is a *baseline*: sequential, unplanned, one model. Making it good is the project (Milestone 2).
@@ -138,31 +138,31 @@ Assuming you are in the `projects/05-vendor-risk-assessor` directory:
 
 ```bash
 # 1. Verify environment, policies, and corpus
-python scripts/check_setup.py
+python3 scripts/check_setup.py
 
 # 2. Run the 4 core demo assessments
 # Case 1: LedgerLens AI (T3, 35 users) -> BLOCKED (fails DP-3.1 India residency)
-python run_assessor.py
+python3 run_assessor.py
 
 # Case 2: Parakeet Translate (T3, 60 users) -> CONDITIONAL (passes tech rules, approved for T2 only on AVL)
-python run_assessor.py "Can we use Parakeet Translate for support chats?" --tier T3 --users 60
+python3 run_assessor.py "Can we use Parakeet Translate for support chats?" --tier T3 --users 60
 
 # Case 3: Parakeet Translate (T2, 8 users) -> READY_FOR_APPROVAL (all T2 rules pass)
-python run_assessor.py "Can the product team use Parakeet Translate for roadmap docs?" --tier T2 --users 8
+python3 run_assessor.py "Can the product team use Parakeet Translate for roadmap docs?" --tier T2 --users 8
 
 # Case 4: QuillDesk (T3, 12 users) -> BLOCKED (fails DP-3.1 US-only & SEC-9.3 incident without post-mortem)
-python run_assessor.py "Can marketing use QuillDesk for customer replies?" --tier T3 --users 12
+python3 run_assessor.py "Can marketing use QuillDesk for customer replies?" --tier T3 --users 12
 
 # 3. Run policy-only, vendor-facts-only, and ACL-restricted queries
-python run_assessor.py "Where must customer personal data be stored?"
-python run_assessor.py "Does QuillDesk have SOC 2?"
-python run_assessor.py --groups public,employees
+python3 run_assessor.py "Where must customer personal data be stored?"
+python3 run_assessor.py "Does QuillDesk have SOC 2?"
+python3 run_assessor.py --groups public,employees
 
 # 4. Run unit test suite
-python -m pytest -q
+python3 -m pytest -q
 
 # 5. Run the evaluation harness & strict CI check
-python eval/run_eval.py --strict
+python3 eval/run_eval.py --strict
 ```
 
 ---
@@ -195,19 +195,19 @@ Assuming you are in the `projects/05-vendor-risk-assessor` directory:
 
 ```bash
 # 1. Verify 11 policy files (68 clause chunks) are indexed through rag_core
-python scripts/check_setup.py
+python3 scripts/check_setup.py
 
 # 2. Run the M1 policy RAG unit tests (ACL, archived, draft, untrusted, hybrid + rerank)
-python -m pytest tests/test_policy_rag.py -v
+python3 -m pytest tests/test_policy_rag.py -v
 
 # 3. Ask the previously failing baseline question & the new M1 policy questions
-python run_assessor.py "Who approves a tool that handles customer data?"
-python run_assessor.py "How quickly must we notify CERT-In and the Data Protection Board after a confirmed vendor breach of customer data?"
-python run_assessor.py "How often must vendor API keys and service account tokens be rotated?"
-python run_assessor.py "Which vendors are on the approved vendor list?" --groups public,employees
+python3 run_assessor.py "Who approves a tool that handles customer data?"
+python3 run_assessor.py "How quickly must we notify CERT-In and the Data Protection Board after a confirmed vendor breach of customer data?"
+python3 run_assessor.py "How often must vendor API keys and service account tokens be rotated?"
+python3 run_assessor.py "Which vendors are on the approved vendor list?" --groups public,employees
 
 # 4. Run the full evaluation harness (verifying 100% policy_qa_hard and 100% policy_qa_soft across all 9 policy questions)
-python eval/run_eval.py --strict
+python3 eval/run_eval.py --strict
 ```
 
 ### ⏳ Milestone 2 (M2): Vendor Research on the Real Web *(Planned)*

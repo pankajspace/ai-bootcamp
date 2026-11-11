@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT))
 
 print(f"Python {sys.version.split()[0]}  ({'OK' if sys.version_info >= (3, 10) else 'need 3.10+'})")
 
-REQUIRED = {"pydantic": "core", "yaml": "requirements.yaml", "dotenv": ".env"}
+REQUIRED = {"pydantic": "core", "yaml": "requirements.yaml", "dotenv": ".env", "numpy": "rag_core vectors"}
 OPTIONAL = {"langgraph": "graph engine (plain Python fallback works)", "openai": "live LLM", "ddgs": "live web search (free)",
             "tavily": "live web search (API)", "trafilatura": "clean page text", "fastapi": "app/api.py", "streamlit": "app/ui.py",
             "pytest": "tests"}

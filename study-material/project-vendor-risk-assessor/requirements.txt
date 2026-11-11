@@ -2,6 +2,7 @@
 pydantic>=2.7            # contracts between stages (schemas.py)
 pyyaml>=6.0              # data/requirements.yaml
 python-dotenv>=1.0       # reads .env
+numpy>=1.26              # rag_core vector store & embeddings (Milestone 1)
 pytest>=8                # python -m pytest -q
 
 # --- orchestration --------------------------------------------------------------
