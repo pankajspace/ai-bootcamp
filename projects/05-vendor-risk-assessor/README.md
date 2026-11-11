@@ -20,6 +20,8 @@ Then you replace the simplified parts with the real components you built in the 
 Open **`Capstone-AI-Vendor-Risk-Assessor-Shivank-Agrawal.html`** in your browser for the full brief:
 milestones, the module-by-module course map, the rubric and the demo checklist.
 
+> **Architecture & System Diagrams:** See [**`PROJECT_GUIDE.md`**](./PROJECT_GUIDE.md) for a comprehensive deep-dive into the project architecture, data contracts, security layers, evaluation scorecard, and Mermaid diagrams.
+
 ---
 
 ## 1. Setup (10 minutes)
