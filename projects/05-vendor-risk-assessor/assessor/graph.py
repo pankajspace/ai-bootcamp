@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import time
 from datetime import date
-from typing import Any, Optional, TypedDict
+from typing import Any, Callable, Optional, TypedDict
 
 from .config import SETTINGS
 from .graders import grade_policy_answer
@@ -36,6 +36,7 @@ from .questionnaire import as_email, build_questions
 from .report import to_markdown
 from .router import decide
 from .schemas import Approval, AssessmentReport, AssessmentRequest
+from .store import AssessmentStore
 from .tracing import Budget, Tracer
 from .vendor_research import VendorResearcher
 
@@ -53,8 +54,10 @@ class State(TypedDict, total=False):
     domain: Optional[str]
     requested_by: str
     interactive: bool
+    pause_for_human: bool
     approver: Optional[str]
     decision: Optional[str]
+    approval_comment: Optional[str]
     route: Optional[str]
     refusal: Optional[str]
     policy_answer: Any
@@ -68,22 +71,26 @@ class State(TypedDict, total=False):
     report: Any
     answer: Optional[str]
     guardrail_notes: list[str]
+    stage_timings_ms: dict[str, float]
     started: float
 
 
 def new_state(question: str, *, user_groups: list[str] | None = None, tier: str = "T3", users: int = 1,
               vendor: str | None = None, domain: str | None = None, requested_by: str = "cli",
-              interactive: bool = False, approver: str | None = None, decision: str | None = None) -> dict:
+              interactive: bool = False, pause_for_human: bool = False,
+              approver: str | None = None, decision: str | None = None, approval_comment: str | None = None) -> dict:
     return {"question": question, "user_groups": user_groups or ["public", "employees"], "tier": tier, "users": users,
             "vendor": vendor, "domain": domain, "requested_by": requested_by, "interactive": interactive,
-            "approver": approver, "decision": decision,
+            "pause_for_human": pause_for_human, "approver": approver, "decision": decision,
+            "approval_comment": approval_comment,
             "route": None, "refusal": None, "policy_answer": None, "profile": None, "results": None, "overall": None,
             "overall_reason": None, "open_questions": [], "approval": None, "report": None, "answer": None,
-            "guardrail_notes": [], "started": time.time()}
+            "guardrail_notes": [], "stage_timings_ms": {}, "started": time.time()}
 
 
 class Pipeline:
-    def __init__(self, tracer: Tracer | None = None, budget: Budget | None = None, library: PolicyLibrary | None = None):
+    def __init__(self, tracer: Tracer | None = None, budget: Budget | None = None,
+                 library: PolicyLibrary | None = None, store: AssessmentStore | None = None):
         self.tracer = tracer
         self.budget = budget or Budget()
         self.library = library or PolicyLibrary()
@@ -91,6 +98,7 @@ class Pipeline:
         self.researcher = VendorResearcher(budget=self.budget, tracer=tracer)
         self.llm = LLM(budget=self.budget, tracer=tracer)
         self.known_vendors = list(self.researcher.web.vendors)
+        self.store = store
 
     def _t(self, stage: str, **data: Any) -> None:
         if self.tracer:
@@ -151,25 +159,61 @@ class Pipeline:
         return {"open_questions": qs}
 
     def human_gate(self, s: dict) -> dict:
-        """A person decides. Offline/CI: status stays 'pending'. Interactive CLI: ask on the terminal."""
+        """A person decides.
+        - LangGraph checkpoint mode (`pause_for_human=True` and `decision is None`): calls `langgraph.types.interrupt()`
+          so the run pauses at `human_gate` and resumes when the approver submits a decision.
+        - Offline/CI: status stays 'pending'.
+        - Interactive CLI: asks on the terminal.
+        """
+        t0 = time.time()
         roles = APPROVERS.get(s["tier"], [])
         approval = Approval(status="pending", approver_roles=roles)
         decision = s.get("decision")
+        approver_name = s.get("approver")
+        comment = s.get("approval_comment") or ""
+
+        if s.get("pause_for_human") and decision is None:
+            try:
+                from langgraph.types import interrupt  # noqa: WPS433
+
+                resumed = interrupt(
+                    {
+                        "stage": "human_gate",
+                        "vendor": s.get("vendor"),
+                        "tier": s.get("tier"),
+                        "overall": s.get("overall"),
+                        "overall_reason": s.get("overall_reason"),
+                        "approver_roles": roles,
+                        "allow_approve": s.get("overall") != "BLOCKED",
+                    }
+                )
+                if isinstance(resumed, dict):
+                    decision = resumed.get("decision", decision)
+                    approver_name = resumed.get("approver", approver_name)
+                    comment = resumed.get("comment", comment)
+                elif isinstance(resumed, str):
+                    decision = resumed
+            except ImportError:
+                pass
+
         if s.get("interactive") and decision is None:
             print(f"\nOutcome so far: {s['overall']} — {s['overall_reason']}")
             print(f"Approvers for {s['tier']}: {', '.join(roles)}")
             decision = input("Record a decision now? [approve / reject / leave pending]: ").strip().lower() or "pending"
         if decision in ("approve", "approved") and s["overall"] != "BLOCKED":
-            approval = Approval(status="approved", approver_roles=roles, decided_by=s.get("approver") or "cli-user", decided_on=date.today(),
-                                comment="Recorded via CLI")
+            approval = Approval(status="approved", approver_roles=roles, decided_by=approver_name or "cli-user", decided_on=date.today(),
+                                comment=comment or "Recorded via CLI")
         elif decision in ("approve", "approved") and s["overall"] == "BLOCKED":
             approval.comment = "Approval refused by the gate: a blocking requirement failed. Resolve it or change the data tier."
         elif decision in ("reject", "rejected"):
-            approval = Approval(status="rejected", approver_roles=roles, decided_by=s.get("approver") or "cli-user", decided_on=date.today())
-        self._t("human_gate", status=approval.status, decided_by=approval.decided_by)
+            approval = Approval(status="rejected", approver_roles=roles, decided_by=approver_name or "cli-user", decided_on=date.today(),
+                                comment=comment)
+        dur_ms = round((time.time() - t0) * 1000, 2)
+        self._t("human_gate", status=approval.status, decided_by=approval.decided_by, duration_ms=dur_ms)
         return {"approval": approval}
 
     def report(self, s: dict) -> dict:
+        t0 = time.time()
         rep = AssessmentReport(request=s["request"], profile=s["profile"], results=s["results"], overall=s["overall"],
                                overall_reason=s["overall_reason"], open_questions=s["open_questions"], approval=s["approval"],
                                guardrail_notes=list(s["guardrail_notes"]), run_id=self.tracer.run_id if self.tracer else "",
@@ -180,6 +224,7 @@ class Pipeline:
         if [r.verdict for r in rep.results] != before:   # a downgrade changes the outcome too
             rep.overall, rep.overall_reason = self.matcher.overall(rep.results)
         md = to_markdown(rep)
+        dur_ms = round((time.time() - t0) * 1000, 2)
         if self.tracer:
             self.tracer.write_text("report.md", md)
             self.tracer.write_json("report.json", rep.model_dump(mode="json"))
@@ -187,34 +232,71 @@ class Pipeline:
             email = as_email(rep.request.vendor, rep.open_questions)
             if email:
                 self.tracer.write_text("vendor_questions.txt", email)
-        self._t("report", overall=rep.overall, run_dir=str(self.tracer.dir) if self.tracer else None)
-        return {"report": rep, "answer": md}
+        self._t("report", overall=rep.overall, run_dir=str(self.tracer.dir) if self.tracer else None, duration_ms=dur_ms)
+        timings = dict(s.get("stage_timings_ms") or {})
+        if self.tracer and self.tracer.stage_timings_ms:
+            timings.update(self.tracer.stage_timings_ms)
+        timings["report"] = dur_ms
+        if self.store is not None:
+            self.store.save_run(
+                rep,
+                md,
+                stage_timings_ms=timings,
+                trace_events=self.tracer.events if self.tracer else [],
+            )
+        elif self.tracer is not None and self.tracer.enabled:
+            # Automatically index traced runs in the default AssessmentStore so UI/API history stays current
+            try:
+                AssessmentStore().save_run(
+                    rep,
+                    md,
+                    stage_timings_ms=timings,
+                    trace_events=self.tracer.events,
+                )
+            except Exception:
+                pass
+        return {"report": rep, "answer": md, "stage_timings_ms": timings}
 
     def refuse(self, s: dict) -> dict:
         return {"answer": s.get("refusal") or "I can only help with vendor assessments and policy questions."}
 
     # ------------------------------------------------------------------ engines
-    def run_plain(self, s: dict) -> dict:
-        """Plain Python. Read this first; it is the whole product in 15 lines."""
-        s.update(self.guard_input(s))
-        s.update(self.route(s))
-        if s["route"] == "refuse":
-            s.update(self.refuse(s))
-        elif s["route"] == "policy":
-            s.update(self.policy_qa(s))
-        elif s["route"] == "vendor":
-            s.update(self.vendor_research(s))
-            s.update(self.facts_only(s))
-        else:  # assessment
-            s.update(self.vendor_research(s))
-            s.update(self.match(s))
-            s.update(self.questionnaire(s))
-            s.update(self.human_gate(s))
-            s.update(self.report(s))
+    def _run_timed_node(self, name: str, s: dict, on_step: Optional[Callable[[str, dict, float], None]] = None) -> dict:
+        t0 = time.time()
+        out = getattr(self, name)(s)
+        dur_ms = round((time.time() - t0) * 1000, 2)
+        timings = dict(s.get("stage_timings_ms") or {})
+        timings[name] = dur_ms
+        if self.tracer is not None:
+            self.tracer.stage_timings_ms[name] = dur_ms
+        s.update(out)
+        s["stage_timings_ms"] = timings
+        if on_step is not None:
+            on_step(name, s, dur_ms)
         return s
 
-    def build_langgraph(self):
-        """The same nodes as a LangGraph state machine. Requires: pip install langgraph."""
+    def run_plain(self, s: dict, on_step: Optional[Callable[[str, dict, float], None]] = None) -> dict:
+        """Plain Python orchestrator with per-stage timing and optional step streaming callback."""
+        self._run_timed_node("guard_input", s, on_step)
+        self._run_timed_node("route", s, on_step)
+        if s["route"] == "refuse":
+            self._run_timed_node("refuse", s, on_step)
+        elif s["route"] == "policy":
+            self._run_timed_node("policy_qa", s, on_step)
+        elif s["route"] == "vendor":
+            self._run_timed_node("vendor_research", s, on_step)
+            self._run_timed_node("facts_only", s, on_step)
+        else:  # assessment
+            self._run_timed_node("vendor_research", s, on_step)
+            self._run_timed_node("match", s, on_step)
+            self._run_timed_node("questionnaire", s, on_step)
+            self._run_timed_node("human_gate", s, on_step)
+            self._run_timed_node("report", s, on_step)
+        return s
+
+    def build_langgraph(self, checkpointer: Any = None):
+        """The same nodes as a LangGraph state machine. Supports an optional checkpointer (e.g. MemorySaver)
+        so `interrupt()` at `human_gate` can pause and resume across days."""
         from langgraph.graph import END, START, StateGraph  # noqa: WPS433
 
         g = StateGraph(State)
@@ -232,9 +314,37 @@ class Pipeline:
         g.add_edge("human_gate", "report")
         for leaf in ("policy_qa", "facts_only", "report", "refuse"):
             g.add_edge(leaf, END)
-        return g.compile()
+        return g.compile(checkpointer=checkpointer)
 
-    def run(self, s: dict, engine: str = "auto") -> dict:
+    def start_checkpointed(self, s: dict, thread_id: str = "default", checkpointer: Any = None) -> tuple[dict, Any, dict]:
+        """Milestone 5: Run the LangGraph state machine with a checkpointer and `pause_for_human=True` so it
+        pauses at `human_gate` via `interrupt()` until `resume_checkpointed()` is called."""
+        from langgraph.checkpoint.memory import MemorySaver  # noqa: WPS433
+
+        cp = checkpointer or MemorySaver()
+        graph = self.build_langgraph(checkpointer=cp)
+        s = dict(s)
+        s["pause_for_human"] = True
+        config = {"configurable": {"thread_id": thread_id}}
+        self._t("engine", name="langgraph_checkpointed", thread_id=thread_id)
+        out = graph.invoke(s, config=config)
+        s.update(out)
+        return s, graph, config
+
+    def resume_checkpointed(self, graph: Any, config: dict, *, decision: str, approver: str, comment: str = "") -> dict:
+        """Milestone 5: Resume a paused LangGraph assessment from the `human_gate` interrupt."""
+        from langgraph.types import Command  # noqa: WPS433
+
+        out = graph.invoke(
+            Command(resume={"decision": decision, "approver": approver, "comment": comment}),
+            config=config,
+        )
+        return dict(out)
+
+    def run(self, s: dict, engine: str = "auto", on_step: Optional[Callable[[str, dict, float], None]] = None) -> dict:
+        if on_step is not None:
+            self._t("engine", name="plain_streaming")
+            return self.run_plain(s, on_step=on_step)
         if engine in ("auto", "langgraph"):
             try:
                 graph = self.build_langgraph()

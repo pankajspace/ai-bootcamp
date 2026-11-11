@@ -340,8 +340,52 @@ python eval/run_eval.py --strict
 python eval/run_eval.py --gold data/gold_set_real.json --strict
 ```
 
-### ⏳ Milestone 5 (M5): Make It a Product — Graph, API, UI, Human Gate *(Planned)*
-- **What it will include:** LangGraph checkpointer + `interrupt()` at `human_gate`, FastAPI background queue & vendor history (`/vendors/{name}/history`) with server-derived ACL groups, Streamlit UI with live progress & trace tree viewer, and per-stage latency/cost observability.
+### ✅ Milestone 5 (M5): Make It a Product — Graph, API, UI, Human Gate *(Completed)*
+**Goal:** Turn the pipeline into a full multi-user reviewer product with a checkpointed LangGraph human-in-the-loop gate, a background-queued FastAPI service backed by a persistent SQL store (`runs/assessor.db`), server-derived ACL groups, a Streamlit reviewer workbench with live node streaming and a trace tree viewer, and `p50`/`p95` observability.
+
+#### What M5 Includes
+- **LangGraph Checkpointer + `interrupt()` at `human_gate` (`assessor/graph.py`):**
+  - `Pipeline.build_langgraph(checkpointer=...)` compiles the graph with a checkpointer (`MemorySaver`), and `human_gate()` invokes `langgraph.types.interrupt(...)` when `pause_for_human=True` and `decision is None`.
+  - `Pipeline.start_checkpointed()` pauses execution at `human_gate` before generating the final report, and `Pipeline.resume_checkpointed()` resumes the checkpoint via `Command(resume={"decision": ..., "approver": ..., "comment": ...})` while still refusing `approve` on `BLOCKED` assessments.
+- **Persistent SQL Store, Background Queue & Vendor History (`assessor/store.py` & `app/api.py`):**
+  - `AssessmentStore` (`runs/assessor.db`) persists assessment reports, markdown review files, vendor profiles, per-stage timings, trace events, and human approval decisions across server restarts.
+  - `JobQueue` runs `/jobs/assess` (and `/assess?queued=true`) asynchronously in background workers, recording live node progress (`queued` → `running` → `completed`) pollable via `GET /jobs/{job_id}`.
+  - `GET /vendors/{name}/history` (`SEC-12.1`) returns chronological past assessments for a vendor along with `fact_changes` and `verdict_changes` diffs since the previous review.
+  - `POST /approve/{run_id}` records the human decision in `runs/assessor.db` and `runs/<run_id>/report.json` (`report.md`, `trace.jsonl`), returning `HTTP 409 Conflict` if anyone attempts to approve a `BLOCKED` report.
+- **Server-Derived ACL `user_groups` (`app/api.py`):**
+  - `resolve_caller_identity()` derives `user_groups` on the server from `X-User-Identity` / `Authorization` headers (`IDENTITY_DIRECTORY`: e.g., `alice@nimbumart.example` → `["public", "employees"]`, `priya.sec@nimbumart.example` → `["public", "employees", "security"]`). Client-supplied `user_groups` in JSON bodies are ignored so callers can never self-escalate ACL privileges.
+- **Reviewer Workbench UI (`app/ui.py`):**
+  - Streams node-by-node execution progress (`guard_input` → `route` → `vendor_research` → `match` → `questionnaire` → `human_gate` → `report`) with per-stage millisecond timings.
+  - Displays the **Trace Tree & Evidence Provenance** beside the report (`build_trace_tree`) so reviewers can drill down from any requirement verdict to the underlying page URLs.
+  - Provides the **Human Gate Decision (AI-5.1)** form that disables/omits the `approve` option whenever a report is `BLOCKED` (`allowed_decisions_for_overall("BLOCKED") == ["reject"]`).
+  - Includes tabs for **Vendor History (`SEC-12.1`)** and **Observability (Last 20 Runs)**.
+- **Observability (`GET /observability/runs` & `AssessmentStore.observability_summary`):**
+  - Tracks per-stage timings (`stage_timings_ms`), LLM calls, and USD cost on every run, reporting a table of the last 20 runs along with `p50` and `p95` latency and cost (Production RAG Lab 13).
+
+#### How to Run M5
+Assuming you are in the `projects/05-vendor-risk-assessor` directory:
+
+```bash
+# 1. Run the M5 product test suite (LangGraph checkpoint/interrupt, API queue, server ACL, history diffs, p50/p95 observability, UI helpers)
+python -m pytest tests/test_product_m5.py -v
+
+# 2. Start the FastAPI server (open http://localhost:8000/docs for interactive Swagger UI)
+uvicorn app.api:app --reload --port 8000
+
+# 3. Example API calls (in another terminal while uvicorn is running):
+#    a) Enqueue an assessment as a Security reviewer
+curl -s -X POST http://localhost:8000/jobs/assess \
+  -H "Content-Type: application/json" \
+  -H "X-User-Identity: priya.sec@nimbumart.example" \
+  -d '{"question":"Can the product team use Parakeet Translate for internal docs?","vendor":"Parakeet Translate","tier":"T2","users":15}'
+
+#    b) Check vendor history & diffs (SEC-12.1) and observability (p50/p95 latency & cost)
+curl -s "http://localhost:8000/vendors/Parakeet%20Translate/history" | python -m json.tool
+curl -s "http://localhost:8000/observability/runs?limit=20" | python -m json.tool
+
+# 4. Launch the Streamlit Reviewer Workbench UI
+streamlit run app/ui.py
+```
 
 ### ⏳ Milestone 6 (M6): Evaluate, Ablations, Write-Up & Demo *(Planned)*
 - **What it will include:** Expanded real-vendor gold set, calibrated LLM-as-judge for verdict reasons, component ablation table (no reranker, no identity gate, no freshness decay, no planner), CI workflow, and final demo rehearsal.

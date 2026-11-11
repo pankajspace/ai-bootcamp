@@ -49,6 +49,9 @@ class Budget:
         if self.spent_usd > self.max_usd:
             raise BudgetExceeded(f"Budget of ${self.max_usd:.2f} exceeded (spent ${self.spent_usd:.3f}). Raise VRA_MAX_USD or reduce pages.")
 
+    def can_spend(self, amount_usd: float = 0.001) -> bool:
+        return (self.spent_usd + amount_usd) <= self.max_usd
+
     @property
     def elapsed_s(self) -> float:
         return time.time() - self.started
@@ -59,8 +62,15 @@ class Tracer:
 
     def __init__(self, name: str = "assess", root: Path | None = None, enabled: bool = True):
         stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
-        self.run_id = f"{stamp}-{name}"
-        self.dir = (root or RUNS_DIR) / self.run_id
+        base_id = f"{stamp}-{name}"
+        base_root = root or RUNS_DIR
+        self.run_id = base_id
+        if enabled:
+            seq = 2
+            while (base_root / self.run_id).exists():
+                self.run_id = f"{base_id}-{seq}"
+                seq += 1
+        self.dir = base_root / self.run_id
         self.enabled = enabled
         self.events: list[dict] = []
         if enabled:
@@ -69,8 +79,11 @@ class Tracer:
         else:
             self._fh = None
         self._stage_start: dict[str, float] = {}
+        self.stage_timings_ms: dict[str, float] = {}
 
     def event(self, stage: str, **data: Any) -> None:
+        if "duration_ms" in data and data["duration_ms"] is not None:
+            self.stage_timings_ms[stage] = round(self.stage_timings_ms.get(stage, 0.0) + float(data["duration_ms"]), 2)
         rec = {"ts": datetime.now(timezone.utc).isoformat(timespec="milliseconds"), "stage": stage, **data}
         self.events.append(rec)
         if self._fh:
