@@ -1,0 +1,388 @@
+{
+  "_about": "Cached web page snapshots for real AI/SaaS vendors (Milestone 2). Ensures deterministic, reproducible evaluation and demos even when vendor trust centres use JavaScript or block bots.",
+  "as_of_default": "2026-11-01",
+  "vendors": {
+    "OpenAI": {
+      "official_domain": "openai.com",
+      "legal_entity": "OpenAI OpCo, LLC",
+      "country": "United States",
+      "product": "ChatGPT Enterprise and OpenAI API platform"
+    },
+    "Anthropic": {
+      "official_domain": "anthropic.com",
+      "legal_entity": "Anthropic PBC",
+      "country": "United States",
+      "product": "Claude for Work (Team and Enterprise) and Claude API"
+    },
+    "Freshworks Freddy AI": {
+      "official_domain": "freshworks.com",
+      "legal_entity": "Freshworks Inc",
+      "country": "United States",
+      "product": "Freddy AI customer service and ticket automation suite"
+    }
+  },
+  "documents": [
+    {
+      "id": "R-OA-01",
+      "url": "https://trust.openai.com/",
+      "title": "OpenAI Trust Portal — Security & Compliance",
+      "source_type": "official",
+      "publisher": "OpenAI OpCo, LLC",
+      "published_date": "2026-02-15",
+      "last_updated": "2026-09-10",
+      "about_entity": "openai.com",
+      "text": "OpenAI Trust Portal. OpenAI OpCo, LLC (San Francisco, United States) has completed a SOC 2 Type II audit for ChatGPT Enterprise, ChatGPT Edu, and the OpenAI API Platform, issued 15 February 2026 by Ernst & Young LLP. OpenAI also holds ISO/IEC 27001:2022 certification (issued 2025-11-01, valid until 2028-10-31). Single sign-on via SAML 2.0 and OIDC is included on ChatGPT Team and Enterprise plans. Customer data is encrypted with AES-256 at rest and TLS 1.3 in transit.",
+      "mock_claims": [
+        {
+          "field": "security_certifications",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "SOC 2 Type II", "status": "certified", "date": "2026-02-15", "valid_until": null, "issuer": "Ernst & Young LLP"},
+            {"name": "ISO 27001", "status": "certified", "date": "2025-11-01", "valid_until": "2028-10-31", "issuer": " Schellman"}
+          ],
+          "display": "SOC 2 Type II report dated 2026-02-15 (EY); ISO 27001 valid to 2028-10-31",
+          "quote": "completed a SOC 2 Type II audit ... issued 15 February 2026 by Ernst & Young LLP. OpenAI also holds ISO/IEC 27001:2022"
+        },
+        {
+          "field": "sso_saml",
+          "evidence_level": "documented",
+          "value": "paid_plans",
+          "display": "SAML 2.0 / OIDC SSO on Team and Enterprise plans",
+          "quote": "Single sign-on via SAML 2.0 and OIDC is included on ChatGPT Team and Enterprise plans"
+        },
+        {
+          "field": "legal_entity",
+          "evidence_level": "documented",
+          "value": {"name": "OpenAI OpCo, LLC", "country": "United States", "hq_city": "San Francisco"},
+          "display": "OpenAI OpCo, LLC (San Francisco, United States)",
+          "quote": "OpenAI OpCo, LLC (San Francisco, United States)"
+        }
+      ]
+    },
+    {
+      "id": "R-OA-02",
+      "url": "https://openai.com/enterprise-privacy/",
+      "title": "Enterprise Privacy at OpenAI",
+      "source_type": "official",
+      "publisher": "OpenAI OpCo, LLC",
+      "published_date": "2026-04-20",
+      "last_updated": "2026-08-15",
+      "about_entity": "openai.com",
+      "text": "Enterprise Privacy at OpenAI. Training: We do not use business data from ChatGPT Enterprise, ChatGPT Team, or the OpenAI API to train our models. Consumer plans (Free and Plus) may be used to improve models unless the user opts out in Data Controls. Data residency: Enterprise customers can choose data residency at rest in the United States, European Union, United Kingdom, Japan, Canada, South Korea, Singapore, or Australia. Retention: Enterprise workspace data is deleted within 30 days after contract termination or within 30 days of a deletion request. Our Data Processing Addendum (DPA) is published at openai.com/policies/data-processing-addendum.",
+      "mock_claims": [
+        {
+          "field": "trains_on_customer_data",
+          "evidence_level": "documented",
+          "value": "no_on_paid_plans",
+          "display": "No training on Enterprise, Team, or API; consumer plans train unless opted out",
+          "quote": "We do not use business data from ChatGPT Enterprise, ChatGPT Team, or the OpenAI API to train our models."
+        },
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["United States", "European Union", "United Kingdom", "Japan", "Canada", "South Korea", "Singapore", "Australia"], "planned": []},
+          "display": "US, EU, UK, Japan, Canada, South Korea, Singapore, Australia",
+          "quote": "choose data residency at rest in the United States, European Union, United Kingdom, Japan, Canada, South Korea, Singapore, or Australia"
+        },
+        {
+          "field": "data_retention",
+          "evidence_level": "documented",
+          "value": {"default_days": 30, "deletion_on_request_days": 30},
+          "display": "Deleted within 30 days of contract termination or deletion request",
+          "quote": "deleted within 30 days after contract termination or within 30 days of a deletion request"
+        },
+        {
+          "field": "dpa_available",
+          "evidence_level": "documented",
+          "value": "yes",
+          "display": "DPA published at openai.com/policies/data-processing-addendum",
+          "quote": "Our Data Processing Addendum (DPA) is published at openai.com/policies/data-processing-addendum"
+        }
+      ]
+    },
+    {
+      "id": "R-OA-03",
+      "url": "https://openai.com/policies/sub-processor-list/",
+      "title": "OpenAI Sub-processor List",
+      "source_type": "official",
+      "publisher": "OpenAI OpCo, LLC",
+      "published_date": "2026-07-01",
+      "last_updated": "2026-07-01",
+      "about_entity": "openai.com",
+      "text": "OpenAI Sub-processors. Microsoft Azure — Cloud infrastructure and model compute — United States, European Union. Cloudflare Inc — Content delivery and DDoS security — United States. Stripe Inc — Billing and payment processing — United States. OpenAI operates its own frontier models on dedicated Azure infrastructure.",
+      "mock_claims": [
+        {
+          "field": "subprocessors",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "Microsoft Azure", "purpose": "Cloud infrastructure and compute", "category": "hosting", "country": "United States, European Union"},
+            {"name": "Cloudflare Inc", "purpose": "CDN and security", "category": "other", "country": "United States"},
+            {"name": "Stripe Inc", "purpose": "Payment processing", "category": "other", "country": "United States"}
+          ],
+          "display": "3 sub-processors disclosed (Microsoft Azure hosting, Cloudflare security, Stripe billing); no third-party model provider",
+          "quote": "Microsoft Azure — Cloud infrastructure and model compute ... Cloudflare Inc ... Stripe Inc"
+        }
+      ]
+    },
+    {
+      "id": "R-OA-04",
+      "url": "https://status.openai.com/",
+      "title": "OpenAI Status and Incident History",
+      "source_type": "official",
+      "publisher": "OpenAI OpCo, LLC",
+      "published_date": "2026-10-15",
+      "last_updated": "2026-10-15",
+      "about_entity": "openai.com",
+      "text": "OpenAI System Status. No major security incidents affecting customer workspace data in the past 24 months. On 2025-12-11 an API availability outage lasted 95 minutes due to a Kubernetes control-plane rollout (availability only, no customer data exposure).",
+      "mock_claims": [
+        {
+          "field": "security_incidents",
+          "evidence_level": "documented",
+          "value": [
+            {"date": "2025-12-11", "summary": "95-minute API availability outage due to control-plane rollout; no customer data exposure", "severity": "minor", "postmortem_published": true, "postmortem_url": "https://status.openai.com/"}
+          ],
+          "display": "No major security incidents; 1 minor availability outage (2025-12-11)",
+          "quote": "No major security incidents affecting customer workspace data in the past 24 months."
+        }
+      ]
+    },
+    {
+      "id": "R-OA-05",
+      "url": "https://open-ai-logistics-india.example/about",
+      "title": "Open AI Logistics Pvt Ltd — Mumbai Warehousing",
+      "source_type": "official",
+      "publisher": "Open AI Logistics Pvt Ltd",
+      "published_date": "2026-01-10",
+      "last_updated": "2026-01-10",
+      "about_entity": "open-ai-logistics-india.example",
+      "text": "Open AI Logistics Pvt Ltd is a cold-chain warehousing company headquartered in Navi Mumbai, India. All logistics records are hosted in Mumbai, India. Unrelated to OpenAI OpCo, LLC.",
+      "mock_claims": [
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["India"], "planned": []},
+          "display": "India (Mumbai) — look-alike company",
+          "quote": "hosted in Mumbai, India"
+        }
+      ]
+    },
+    {
+      "id": "R-AN-01",
+      "url": "https://trust.anthropic.com/",
+      "title": "Anthropic Trust Center",
+      "source_type": "official",
+      "publisher": "Anthropic PBC",
+      "published_date": "2026-03-10",
+      "last_updated": "2026-09-20",
+      "about_entity": "anthropic.com",
+      "text": "Anthropic Trust Center. Anthropic PBC (San Francisco, United States) has completed a SOC 2 Type II examination covering Claude for Work (Team and Enterprise) and the Claude API, report issued 10 March 2026. Anthropic holds ISO/IEC 27001:2022 certification (issued 2025-09-30, valid until 2028-09-30). SAML 2.0 and OIDC single sign-on is available on the Claude for Enterprise plan. No major security incidents affecting customer data have occurred in the last 24 months.",
+      "mock_claims": [
+        {
+          "field": "security_certifications",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "SOC 2 Type II", "status": "certified", "date": "2026-03-10", "valid_until": null, "issuer": "Independent CPA"},
+            {"name": "ISO 27001", "status": "certified", "date": "2025-09-30", "valid_until": "2028-09-30", "issuer": "Accredited Registrar"}
+          ],
+          "display": "SOC 2 Type II report dated 2026-03-10; ISO 27001 valid to 2028-09-30",
+          "quote": "completed a SOC 2 Type II examination ... issued 10 March 2026. Anthropic holds ISO/IEC 27001:2022"
+        },
+        {
+          "field": "sso_saml",
+          "evidence_level": "documented",
+          "value": "enterprise_only",
+          "display": "SAML 2.0 / OIDC SSO on Claude for Enterprise plan",
+          "quote": "SAML 2.0 and OIDC single sign-on is available on the Claude for Enterprise plan"
+        },
+        {
+          "field": "security_incidents",
+          "evidence_level": "documented",
+          "value": [],
+          "display": "No major security incidents in the last 24 months",
+          "quote": "No major security incidents affecting customer data have occurred in the last 24 months"
+        },
+        {
+          "field": "legal_entity",
+          "evidence_level": "documented",
+          "value": {"name": "Anthropic PBC", "country": "United States", "hq_city": "San Francisco"},
+          "display": "Anthropic PBC (San Francisco, United States)",
+          "quote": "Anthropic PBC (San Francisco, United States)"
+        }
+      ]
+    },
+    {
+      "id": "R-AN-02",
+      "url": "https://www.anthropic.com/legal/commercial-terms",
+      "title": "Anthropic Commercial Terms and Privacy",
+      "source_type": "official",
+      "publisher": "Anthropic PBC",
+      "published_date": "2026-05-01",
+      "last_updated": "2026-08-01",
+      "about_entity": "anthropic.com",
+      "text": "Anthropic Commercial Privacy & Data Terms. Training: Anthropic does not train Claude models on prompts or outputs from Claude for Work (Team and Enterprise) or the commercial API. Consumer Free and Pro chats are not used for training unless the user explicitly opts in or submits feedback. Data regions: Customer content is stored in the United States and European Union regions. Retention: Commercial prompts and outputs are retained for 30 days by default (or zero-data-retention for eligible API customers) and deleted within 30 days of contract termination or written deletion request. Our Data Processing Addendum (DPA) is published and incorporated into Commercial Terms.",
+      "mock_claims": [
+        {
+          "field": "trains_on_customer_data",
+          "evidence_level": "documented",
+          "value": "no_on_paid_plans",
+          "display": "No training on Team, Enterprise, or commercial API",
+          "quote": "Anthropic does not train Claude models on prompts or outputs from Claude for Work (Team and Enterprise) or the commercial API."
+        },
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["United States", "European Union"], "planned": []},
+          "display": "United States and European Union",
+          "quote": "stored in the United States and European Union regions"
+        },
+        {
+          "field": "data_retention",
+          "evidence_level": "documented",
+          "value": {"default_days": 30, "deletion_on_request_days": 30},
+          "display": "30-day default retention; deleted within 30 days of request",
+          "quote": "retained for 30 days by default ... and deleted within 30 days of contract termination or written deletion request"
+        },
+        {
+          "field": "dpa_available",
+          "evidence_level": "documented",
+          "value": "yes",
+          "display": "DPA published and incorporated into Commercial Terms",
+          "quote": "Our Data Processing Addendum (DPA) is published and incorporated into Commercial Terms"
+        }
+      ]
+    },
+    {
+      "id": "R-AN-03",
+      "url": "https://trust.anthropic.com/subprocessors",
+      "title": "Anthropic Sub-processors",
+      "source_type": "official",
+      "publisher": "Anthropic PBC",
+      "published_date": "2026-06-15",
+      "last_updated": "2026-06-15",
+      "about_entity": "anthropic.com",
+      "text": "Anthropic Sub-processor List. Amazon Web Services Inc — Cloud hosting and model inference infrastructure — United States, European Union. Google Cloud Platform — Cloud hosting and model inference infrastructure — United States, European Union. Intercom Inc — Customer support ticketing — United States.",
+      "mock_claims": [
+        {
+          "field": "subprocessors",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "Amazon Web Services Inc", "purpose": "Cloud hosting and compute", "category": "hosting", "country": "United States, European Union"},
+            {"name": "Google Cloud Platform", "purpose": "Cloud hosting and compute", "category": "hosting", "country": "United States, European Union"},
+            {"name": "Intercom Inc", "purpose": "Customer support", "category": "support", "country": "United States"}
+          ],
+          "display": "3 sub-processors disclosed (AWS, GCP hosting, Intercom support); no third-party model provider",
+          "quote": "Amazon Web Services Inc ... Google Cloud Platform ... Intercom Inc"
+        }
+      ]
+    },
+    {
+      "id": "R-FW-01",
+      "url": "https://www.freshworks.com/security/",
+      "title": "Freshworks Security & Trust — Freddy AI",
+      "source_type": "official",
+      "publisher": "Freshworks Inc",
+      "published_date": "2026-04-01",
+      "last_updated": "2026-09-15",
+      "about_entity": "freshworks.com",
+      "text": "Freshworks Security & Compliance. Freshworks Inc holds ISO/IEC 27001:2022 certification (issued by BSI, valid until 2028-06-15) and an annual SOC 2 Type II attestation report (issued 2026-04-01) covering Freshdesk and Freddy AI. Single sign-on via SAML 2.0 and OIDC is included across paid plans via Freshworks Neo Admin Center. No major security incidents affecting customer data in the past 24 months.",
+      "mock_claims": [
+        {
+          "field": "security_certifications",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "ISO 27001", "status": "certified", "date": "2025-06-15", "valid_until": "2028-06-15", "issuer": "BSI"},
+            {"name": "SOC 2 Type II", "status": "certified", "date": "2026-04-01", "valid_until": null, "issuer": "Independent Auditor"}
+          ],
+          "display": "ISO 27001 valid to 2028-06-15 (BSI); SOC 2 Type II report dated 2026-04-01",
+          "quote": "holds ISO/IEC 27001:2022 certification (issued by BSI, valid until 2028-06-15) and an annual SOC 2 Type II attestation report (issued 2026-04-01)"
+        },
+        {
+          "field": "sso_saml",
+          "evidence_level": "documented",
+          "value": "paid_plans",
+          "display": "SAML 2.0 / OIDC SSO on paid plans via Neo Admin Center",
+          "quote": "Single sign-on via SAML 2.0 and OIDC is included across paid plans"
+        },
+        {
+          "field": "security_incidents",
+          "evidence_level": "documented",
+          "value": [],
+          "display": "No major security incidents in the last 24 months",
+          "quote": "No major security incidents affecting customer data in the past 24 months"
+        },
+        {
+          "field": "legal_entity",
+          "evidence_level": "documented",
+          "value": {"name": "Freshworks Inc", "country": "United States", "hq_city": "San Mateo"},
+          "display": "Freshworks Inc (United States / India)",
+          "quote": "Freshworks Inc holds ISO/IEC 27001:2022 certification"
+        }
+      ]
+    },
+    {
+      "id": "R-FW-02",
+      "url": "https://www.freshworks.com/privacy/",
+      "title": "Freshworks Privacy Notice & Data Residency",
+      "source_type": "official",
+      "publisher": "Freshworks Inc",
+      "published_date": "2026-03-20",
+      "last_updated": "2026-08-10",
+      "about_entity": "freshworks.com",
+      "text": "Freshworks Privacy Notice. Data Residency: Customers can choose to host their service data in our India (Mumbai), United States, European Union (Frankfurt), or Australia (Sydney) data centers. Freddy AI data usage: On paid Enterprise and Pro plans with Freddy AI Trust controls enabled, customer data is not used to train global models; opt-out governance is enforced per account. Retention: Service data is deleted within 30 days of account termination or within 30 days of a written deletion request. Our Data Processing Addendum (DPA) is published at freshworks.com/data-processing-addendum/.",
+      "mock_claims": [
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["India", "United States", "European Union", "Australia"], "planned": []},
+          "display": "India (Mumbai), United States, European Union (Frankfurt), Australia (Sydney)",
+          "quote": "host their service data in our India (Mumbai), United States, European Union (Frankfurt), or Australia (Sydney) data centers"
+        },
+        {
+          "field": "trains_on_customer_data",
+          "evidence_level": "documented",
+          "value": "no_on_paid_plans",
+          "display": "No cross-customer model training on paid plans with Freddy AI Trust controls",
+          "quote": "On paid Enterprise and Pro plans with Freddy AI Trust controls enabled, customer data is not used to train global models"
+        },
+        {
+          "field": "data_retention",
+          "evidence_level": "documented",
+          "value": {"default_days": 30, "deletion_on_request_days": 30},
+          "display": "Deleted within 30 days of termination or deletion request",
+          "quote": "Service data is deleted within 30 days of account termination or within 30 days of a written deletion request"
+        },
+        {
+          "field": "dpa_available",
+          "evidence_level": "documented",
+          "value": "yes",
+          "display": "DPA published at freshworks.com/data-processing-addendum/",
+          "quote": "Our Data Processing Addendum (DPA) is published at freshworks.com/data-processing-addendum/"
+        }
+      ]
+    },
+    {
+      "id": "R-FW-03",
+      "url": "https://www.freshworks.com/sub-processors/",
+      "title": "Freshworks Sub-processors",
+      "source_type": "official",
+      "publisher": "Freshworks Inc",
+      "published_date": "2026-07-15",
+      "last_updated": "2026-07-15",
+      "about_entity": "freshworks.com",
+      "text": "Freshworks Sub-processor List. Amazon Web Services Inc — Cloud hosting (India Mumbai, US, EU, Australia) — India, United States, Germany. Microsoft Azure OpenAI Service — Generative AI LLM inference for Freddy AI — United States, European Union. Twilio SendGrid — Transactional email delivery — United States.",
+      "mock_claims": [
+        {
+          "field": "subprocessors",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "Amazon Web Services Inc", "purpose": "Cloud hosting", "category": "hosting", "country": "India, United States, Germany"},
+            {"name": "Microsoft Azure OpenAI Service", "purpose": "LLM inference for Freddy AI", "category": "model_provider", "country": "United States, European Union"},
+            {"name": "Twilio SendGrid", "purpose": "Transactional email", "category": "email", "country": "United States"}
+          ],
+          "display": "3 sub-processors disclosed: AWS (hosting incl. India), Microsoft Azure OpenAI (LLM model provider), SendGrid (email)",
+          "quote": "Microsoft Azure OpenAI Service — Generative AI LLM inference for Freddy AI"
+        }
+      ]
+    }
+  ]
+}

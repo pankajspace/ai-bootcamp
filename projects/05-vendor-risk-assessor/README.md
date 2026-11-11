@@ -210,8 +210,44 @@ python3 run_assessor.py "Which vendors are on the approved vendor list?" --group
 python3 eval/run_eval.py --strict
 ```
 
-### ⏳ Milestone 2 (M2): Vendor Research on the Real Web *(Planned)*
-- **What it will include:** Justified authority/freshness tables, `Plan Creator -> Plan Reviewer` query planner with stop rules, parallel fetch + extraction workers with shared `Budget` and small-model routing, LLM identity gate, 3 real AI/SaaS vendors in the gold set with cached snapshots, and assessment memory for re-reviews.
+### ✅ Milestone 2 (M2): Vendor Research on the Real Web
+**Goal:** Turn the sequential live baseline into a planned, parallel, budgeted research agent with a strict identity gate, long-term assessment memory (`SEC-12.1`), and a hand-checked gold set + cached snapshot for real AI/SaaS vendors.
+
+#### What M2 Includes
+- **Justified Authority & Freshness Calibration (`assessor/vendor_research.py`):**
+  - Explicit justifications for every source weight in `AUTHORITY` (`regulator=1.0`, `official=0.95`, `news=0.70`, `review_site=0.50`, `news_syndicated=0.35`, `blog=0.30`, `forum=0.20`, `unknown=0.20`), `FIELD_AUTHORITY_OVERRIDES`, and per-field `HALF_LIFE_DAYS` (`180d` for fast-moving `subprocessors` and `trains_on_customer_data`, `365d` for `security_certifications` and `data_regions`, `730d` matching the 24-month `SEC-9.3` window for `security_incidents`).
+- **Plan Creator → Plan Reviewer (`create_research_plan` + `review_research_plan` in `assessor/vendor_research.py`):**
+  - Produces a typed `ResearchPlan` (`assessor/schemas.py`) with one `SubQuestion` per field across all 9 `VENDOR_FIELDS`, marking `HIGH_STAKES_FIELDS` (`security_certifications`, `security_incidents`, `trains_on_customer_data`, `data_regions`), prioritizing `legal_entity` first, and enforcing stop rules (`"stop when every high-stakes field has a documented source or two searches have failed"`, `"stop immediately if shared Budget (VRA_MAX_USD) is exhausted"`).
+  - `PlanReview` automatically audits and repairs missing fields, missing `high_stakes` flags, missing queries, and prompt-injection validation rules.
+- **Parallel Workers Sharing a Budget (`ThreadPoolExecutor` in `VendorResearcher.gather` & `research`):**
+  - Parallelizes live search/fetch and claim extraction across worker threads (`max_workers=4`) synchronized on a shared `Budget` and `Tracer`, routing extraction and identity checks to the fast/cheap model (`LLM.small`).
+- **Strict Identity Gate (`VendorResearcher.identity_gate`):**
+  - Rejects look-alike companies (via known memory look-alikes, domain/entity mismatch, explicit disavowal text, or `LLM.small.structured(..., IdentityCheck)`) before any claims are read.
+- **Real AI/SaaS Vendors Gold Set & Cached Snapshots:**
+  - `data/gold_set_real.json`: Hand-checked gold set for **OpenAI** (`openai.com`, `BLOCKED` at T3 due to US/EU residency; includes look-alike `open-ai-logistics-india.example` rejected by identity gate), **Anthropic** (`anthropic.com`, `BLOCKED` at T3), and **Freshworks Freddy AI** (`freshworks.com`, `CONDITIONAL` at T3 — passes `DP-3.1` with India Mumbai region, flags Azure OpenAI model provider under `AI-3.4`).
+  - `data/cached_pages/real_vendors.json`: Cached web snapshots so real-vendor evaluations and demos run deterministically even offline or when vendor trust centres block bots.
+  - `eval/run_eval.py`: Upgraded to compute and enforce `field_accuracy` (≥ 80% threshold; achieves **100.00%** on both `gold_set.json` and `gold_set_real.json`).
+- **Long-Term Assessment Memory (`assessor/memory.py`):**
+  - `AssessmentMemory` persists prior `VendorProfile` snapshots, rejected look-alike domains, and quarantined URLs in `runs/memory.json`, computing field-by-field diffs since the last review and supporting `only_newer=True` incremental re-reviews (`SEC-12.1`).
+
+#### How to Run M2
+Assuming you are in the `projects/05-vendor-risk-assessor` directory:
+
+```bash
+# 1. Run the M2 vendor research unit tests (planner/reviewer, real vendors, identity gate, memory)
+python -m pytest tests/test_vendor_research.py -v
+
+# 2. Assess the 3 real AI/SaaS vendors (using cached snapshots offline, or live with SEARCH_PROVIDER=ddgs/tavily)
+python run_assessor.py "Can our customer support team use OpenAI ChatGPT Enterprise to summarise customer support tickets?" --vendor "OpenAI" --domain openai.com --tier T3 --users 35
+python run_assessor.py "Can our engineering support team use Anthropic Claude for Work with customer bug reports?" --vendor "Anthropic" --domain anthropic.com --tier T3 --users 40
+python run_assessor.py "Can our customer support team use Freshworks Freddy AI to triage customer tickets?" --vendor "Freshworks Freddy AI" --domain freshworks.com --tier T3 --users 50
+
+# 3. Evaluate against the real-vendor gold set (verifying 100% field_accuracy, verdict_accuracy, and safety)
+python eval/run_eval.py --gold data/gold_set_real.json --strict
+
+# 4. Evaluate against the main regression gold set
+python eval/run_eval.py --strict
+```
 
 ### ⏳ Milestone 3 (M3): Router and Graders as Agents *(Planned)*
 - **What it will include:** Structured LLM Router (`policy`, `vendor`, `assessment`, `refuse`), LLM Relevance & Groundedness/Hallucination Graders with retry loop (query rewrite / search widening and strict regeneration), and a 30-question routing benchmark.

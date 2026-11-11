@@ -137,6 +137,31 @@ class VendorProfile(BaseModel):
         return self.facts.get(field)
 
 
+class SubQuestion(BaseModel):
+    id: str
+    field: VendorField
+    question: str
+    queries: list[str] = Field(default_factory=list)
+    high_stakes: bool = False
+    freshness_days: int = 365
+    preferred_sources: list[SourceType] = Field(default_factory=list)
+
+
+class ResearchPlan(BaseModel):
+    vendor: str
+    official_domain: Optional[str] = None
+    sub_questions: list[SubQuestion] = Field(default_factory=list)
+    stop_rules: list[str] = Field(default_factory=list)
+    validation_rules: list[str] = Field(default_factory=list)
+
+
+class PlanReview(BaseModel):
+    approved: bool = True
+    issues: list[str] = Field(default_factory=list)
+    fixes_applied: list[str] = Field(default_factory=list)
+
+
+
 # ---------------------------------------------------------------------------
 # 2. Policy library — what the RAG layer returns (Production RAG course Modules 8, 9, 11).
 # ---------------------------------------------------------------------------

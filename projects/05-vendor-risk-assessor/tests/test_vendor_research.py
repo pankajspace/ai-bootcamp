@@ -77,3 +77,66 @@ def test_parakeet_registry_corroborates_certificate(parakeet):
     assert certs.evidence_level == "documented"
     assert "https://registry.certisassurance.example/certificates/PT-27001-4471" in certs.sources or any("registry" in c for c in certs.conflicts)
     assert all(i["severity"] == "minor" for i in parakeet.facts["security_incidents"].value)
+
+
+# --- Milestone 2: Planner, Reviewer, Real Vendors, and Memory ----------------------------------
+def test_m2_plan_creator_and_reviewer():
+    from assessor.schemas import HIGH_STAKES_FIELDS, VENDOR_FIELDS, ResearchPlan, SubQuestion
+    from assessor.vendor_research import create_research_plan, review_research_plan
+
+    plan = create_research_plan("OpenAI", "openai.com")
+    reviewed, rev = review_research_plan(plan)
+    assert rev.approved
+    assert {sq.field for sq in reviewed.sub_questions} == set(VENDOR_FIELDS)
+    assert reviewed.sub_questions[0].field == "legal_entity"
+    for sq in reviewed.sub_questions:
+        if sq.field in HIGH_STAKES_FIELDS:
+            assert sq.high_stakes
+        assert sq.queries and sq.preferred_sources
+    assert any("high-stakes" in r for r in reviewed.stop_rules)
+
+    # Test Plan Reviewer repairing a partial plan
+    broken = ResearchPlan(
+        vendor="TestCo",
+        sub_questions=[SubQuestion(id="sq-1", field="security_certifications", question="Certs?", high_stakes=False)],
+    )
+    fixed, fix_rev = review_research_plan(broken)
+    assert {sq.field for sq in fixed.sub_questions} == set(VENDOR_FIELDS)
+    assert any(sq.field == "security_certifications" and sq.high_stakes for sq in fixed.sub_questions)
+    assert len(fix_rev.fixes_applied) >= 8
+
+
+def test_m2_real_vendors_field_accuracy_and_identity_gate():
+    import json
+    from assessor.config import DATA_DIR
+    from eval.run_eval import score_expected_facts
+
+    real_gold = json.loads((DATA_DIR / "gold_set_real.json").read_text(encoding="utf-8"))
+    researcher = VendorResearcher(max_workers=4)
+    total_ok, total_fields = 0, 0
+    for case in real_gold["cases"]:
+        prof = researcher.research(case["vendor"], case["official_domain"])
+        ok, tot = score_expected_facts(prof, case["expected_facts"])
+        total_ok += ok
+        total_fields += tot
+        for r_url in case.get("expected_rejected_urls", []):
+            assert r_url in prof.rejected
+            for fact in prof.facts.values():
+                assert r_url not in fact.sources
+    assert total_ok / max(1, total_fields) >= 0.80
+
+
+def test_m2_memory_tracks_changes_and_incremental_rereview(tmp_path):
+    from assessor.memory import AssessmentMemory
+
+    mem = AssessmentMemory(tmp_path / "memory.json")
+    r = VendorResearcher(memory=mem)
+    p1 = r.research("LedgerLens AI")
+    assert mem.last_reviewed_on("LedgerLens AI") == p1.as_of
+    assert "https://ledgerlens-uk.example/about-us" in mem.known_look_alikes("LedgerLens AI")
+    assert "https://aicomplianceguru.example/reviews/ledgerlens-ai-compliance-review" in mem.known_quarantined()
+
+    # Incremental re-review with only_newer=True carries forward unchanged facts
+    p2 = r.research("LedgerLens AI", only_newer=True)
+    assert p2.facts["data_regions"].value == p1.facts["data_regions"].value
+
