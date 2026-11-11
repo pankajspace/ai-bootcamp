@@ -45,6 +45,10 @@ pip install -r requirements.txt
   ```bash
   pip install -r projects/01-fundamental-analysis/requirements.txt
   ```
+- **Project 05 · AI Vendor Risk Assessor:**
+  ```bash
+  pip install -r projects/05-vendor-risk-assessor/requirements.txt
+  ```
 - **Weekend Sessions (per section, Bedrock or Groq edition):**
   ```bash
   pip install -r weekend-sessions-main/<section-folder>/requirements.txt
