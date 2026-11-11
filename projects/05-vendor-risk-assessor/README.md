@@ -27,7 +27,7 @@ milestones, the module-by-module course map, the rubric and the demo checklist.
 Python 3.10 or newer.
 
 ```bash
-cd vendor-risk-assessor
+cd projects/05-vendor-risk-assessor
 python -m venv .venv
 source .venv/bin/activate            # Windows: .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -134,37 +134,35 @@ All companies, people, domains and documents in `data/` are fictional and were w
 - **Baseline Evaluation (`eval/run_eval.py` + `data/gold_set.json`):** 5 assessment gold cases + 6 policy QA checks (with `pq-who-approves` marked as the baseline keyword-search failure to fix in M1).
 
 #### How to Run M0
-From the repository root (`/Users/pankaj/Workspace/ai-bootcamp`) or inside `projects/05-vendor-risk-assessor`:
+Assuming you are in the `projects/05-vendor-risk-assessor` directory:
 
 ```bash
-cd projects/05-vendor-risk-assessor
-
-# 1. Verify environment, policies (57 clause chunks), and corpus
-../../.venv/bin/python scripts/check_setup.py
+# 1. Verify environment, policies, and corpus
+python scripts/check_setup.py
 
 # 2. Run the 4 core demo assessments
 # Case 1: LedgerLens AI (T3, 35 users) -> BLOCKED (fails DP-3.1 India residency)
-../../.venv/bin/python run_assessor.py
+python run_assessor.py
 
 # Case 2: Parakeet Translate (T3, 60 users) -> CONDITIONAL (passes tech rules, approved for T2 only on AVL)
-../../.venv/bin/python run_assessor.py "Can we use Parakeet Translate for support chats?" --tier T3 --users 60
+python run_assessor.py "Can we use Parakeet Translate for support chats?" --tier T3 --users 60
 
 # Case 3: Parakeet Translate (T2, 8 users) -> READY_FOR_APPROVAL (all T2 rules pass)
-../../.venv/bin/python run_assessor.py "Can the product team use Parakeet Translate for roadmap docs?" --tier T2 --users 8
+python run_assessor.py "Can the product team use Parakeet Translate for roadmap docs?" --tier T2 --users 8
 
 # Case 4: QuillDesk (T3, 12 users) -> BLOCKED (fails DP-3.1 US-only & SEC-9.3 incident without post-mortem)
-../../.venv/bin/python run_assessor.py "Can marketing use QuillDesk for customer replies?" --tier T3 --users 12
+python run_assessor.py "Can marketing use QuillDesk for customer replies?" --tier T3 --users 12
 
 # 3. Run policy-only, vendor-facts-only, and ACL-restricted queries
-../../.venv/bin/python run_assessor.py "Where must customer personal data be stored?"
-../../.venv/bin/python run_assessor.py "Does QuillDesk have SOC 2?"
-../../.venv/bin/python run_assessor.py --groups public,employees
+python run_assessor.py "Where must customer personal data be stored?"
+python run_assessor.py "Does QuillDesk have SOC 2?"
+python run_assessor.py --groups public,employees
 
-# 4. Run unit test suite (71 tests)
-../../.venv/bin/python -m pytest -q
+# 4. Run unit test suite
+python -m pytest -q
 
 # 5. Run the evaluation harness & strict CI check
-../../.venv/bin/python eval/run_eval.py --strict
+python eval/run_eval.py --strict
 ```
 
 ---
@@ -173,7 +171,7 @@ cd projects/05-vendor-risk-assessor
 **Goal:** Replace pure keyword search with the `rag_core/` hybrid retrieval + reranking pipeline and grounded answer generation while preserving every security property (ACL, archived, draft, untrusted, and injection filtering).
 
 #### What M1 Includes
-- **`rag_core/` Integration (`projects/05-vendor-risk-assessor/rag_core/`):**
+- **`rag_core/` Integration (`rag_core/`):**
   - `rag_core/documents.py`: `Chunk` and deterministic `stable_chunk_id` indexing all policy clauses with full metadata (`doc`, `title`, `doc_id`, `clause_id`, `heading`, `section`, `version`, `status`, `trust`, `access`, `effective_date`, `injected`).
   - `rag_core/embeddings.py`: Embedder abstraction (`FastEmbed`, `OpenAI`, `WordLlama`, and offline stem/synonym/bigram/n-gram `HashingEmbedder`).
   - `rag_core/hybrid.py` & `rag_core/vectorstore.py`: Pre-filtered exact vector + BM25 hybrid search fused with **Reciprocal Rank Fusion (RRF)**.
@@ -193,23 +191,23 @@ cd projects/05-vendor-risk-assessor
   - `pq-crypto-key-rotation` (`CRY-3.1`, `90 days`)
 
 #### How to Run M1
-```bash
-cd projects/05-vendor-risk-assessor
+Assuming you are in the `projects/05-vendor-risk-assessor` directory:
 
-# 1. Verify 11 policy files (65 clause chunks) are indexed through rag_core
-../../.venv/bin/python scripts/check_setup.py
+```bash
+# 1. Verify 11 policy files (68 clause chunks) are indexed through rag_core
+python scripts/check_setup.py
 
 # 2. Run the M1 policy RAG unit tests (ACL, archived, draft, untrusted, hybrid + rerank)
-../../.venv/bin/python -m pytest tests/test_policy_rag.py -v
+python -m pytest tests/test_policy_rag.py -v
 
 # 3. Ask the previously failing baseline question & the new M1 policy questions
-../../.venv/bin/python run_assessor.py "Who approves a tool that handles customer data?"
-../../.venv/bin/python run_assessor.py "How quickly must we notify CERT-In and the Data Protection Board after a confirmed vendor breach of customer data?"
-../../.venv/bin/python run_assessor.py "How often must vendor API keys and service account tokens be rotated?"
-../../.venv/bin/python run_assessor.py "Which vendors are on the approved vendor list?" --groups public,employees
+python run_assessor.py "Who approves a tool that handles customer data?"
+python run_assessor.py "How quickly must we notify CERT-In and the Data Protection Board after a confirmed vendor breach of customer data?"
+python run_assessor.py "How often must vendor API keys and service account tokens be rotated?"
+python run_assessor.py "Which vendors are on the approved vendor list?" --groups public,employees
 
 # 4. Run the full evaluation harness (verifying 100% policy_qa_hard and 100% policy_qa_soft across all 9 policy questions)
-../../.venv/bin/python eval/run_eval.py --strict
+python eval/run_eval.py --strict
 ```
 
 ### ⏳ Milestone 2 (M2): Vendor Research on the Real Web *(Planned)*
