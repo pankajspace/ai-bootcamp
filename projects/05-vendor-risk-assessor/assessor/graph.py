@@ -117,7 +117,7 @@ class Pipeline:
 
     def policy_qa(self, s: dict) -> dict:
         pa = self.library.answer(s["question"], s["user_groups"], llm=self.llm)
-        pa = grade_policy_answer(pa, self.llm)
+        pa = grade_policy_answer(pa, self.llm, library=self.library, user_groups=s["user_groups"])
         self._t("policy_qa", abstained=pa.abstained, citations=[c.clause_id or c.heading for c in pa.citations[:3]],
                 relevant=pa.grader_relevant, grounded=pa.grader_grounded)
         cites = "\n".join(f"  - {c.clause_id or c.heading} — {c.title} (v{c.version})" for c in pa.citations[:3])

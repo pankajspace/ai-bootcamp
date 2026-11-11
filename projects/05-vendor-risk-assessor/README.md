@@ -249,8 +249,44 @@ python eval/run_eval.py --gold data/gold_set_real.json --strict
 python eval/run_eval.py --strict
 ```
 
-### ⏳ Milestone 3 (M3): Router and Graders as Agents *(Planned)*
-- **What it will include:** Structured LLM Router (`policy`, `vendor`, `assessment`, `refuse`), LLM Relevance & Groundedness/Hallucination Graders with retry loop (query rewrite / search widening and strict regeneration), and a 30-question routing benchmark.
+### ✅ Milestone 3 (M3): Router and Graders as Agents *(Completed)*
+**Goal:** Replace regex/heuristic routing and single-pass grading with structured agent personas ported from the Agentic RAG course (`02-agentic-rag/code/agents.py` & `tasks.py`), a 30-question routing benchmark across all four routes, and a bounded self-correction retry loop in the policy graders.
+
+#### What M3 Includes
+- **4-Route Semantic Router (`assessor/router.py`):**
+  - Ported the `Router` agent persona (`ROUTER_ROLE`, `ROUTER_GOAL`, `ROUTER_BACKSTORY`, `ROUTER_SYSTEM`) and extended it from 2 routes to 4 routes returning `RouteDecision(route, vendor, reason)`:
+    1. `"policy"`: Internal policy library & Approved Vendor List questions (including vendor-named internal register queries like *"Someone in the tools channel said LedgerLens is already approved. Is it?"*).
+    2. `"vendor"`: Factual questions about a named vendor's external security posture with no request for a policy/onboarding decision (e.g., *"Does QuillDesk have SOC 2?"*).
+    3. `"assessment"`: Questions asking whether a team can/may/should adopt or onboard a vendor, including hybrid fact+decision questions (e.g., *"Is LedgerLens SOC 2 certified so we can use it for support tickets?"*).
+    4. `"refuse"`: Attempts to make the AI approve/bypass a review or off-topic questions.
+  - Added `ROUTING_BENCHMARK_30` (10 `assessment`, 10 `policy`, 6 `vendor`, 4 `refuse`):
+    - **Upgraded Router (`decide`):** **100.0% (30/30)** accuracy.
+    - **Baseline M0 Regex (`decide_baseline_regex`):** **76.7% (23/30)** accuracy (misses abbreviated vendor names like *"LedgerLens"*, misroutes internal AVL status checks to `vendor`, and routes off-topic questions to `policy`).
+  - **"Break the Router on Purpose" Exercise (`decide_broken`):** Demonstrates that weakening the Router prompt to match surface compliance keywords (`SOC 2`) routes *"Does QuillDesk have SOC 2?"* to `policy` instead of `vendor`, causing `Pipeline` to quote internal policy `SEC-3.1` instead of researching `quilldesk.example`.
+- **Answer Relevance & Hallucination Graders with Bounded Retry Loop (`assessor/graders.py` & `assessor/graph.py`):**
+  - Ported `Answer Grader` (`RELEVANCE_SYSTEM`) and `Hallucination Grader` (`GROUNDED_SYSTEM`) and routed both through `LLM.small().structured(..., GradeResult)`.
+  - Upgraded `grade_grounded()` to detect both unsupported factual claims and fabricated policy clause IDs (e.g., citing `SEC-99.9` or `AI-99.9` not present in the retrieved chunks).
+  - Wired a bounded retry loop in `grade_policy_answer()`:
+    - **`relevant == False` retry:** Expands the query (`expand_policy_query`) and widens policy search from `k=4` to `k=8` once before re-grading.
+    - **`grounded == False` retry:** Attempts one strict regeneration (`STRICT_REGEN_SYSTEM` / `strict_regenerator`), re-grades, and if still ungrounded, abstains (`pa.abstained = True`).
+
+#### How to Run M3
+Assuming you are in the `projects/05-vendor-risk-assessor` directory:
+
+```bash
+# 1. Run the M3 router, 30-question benchmark, "Break the Router", and grader retry/abstention tests
+python -m pytest tests/test_router_guardrails.py -v
+
+# 2. Test all four routes via the CLI
+python run_assessor.py "Where must customer personal data be stored?"
+python run_assessor.py "Does QuillDesk have SOC 2?"
+python run_assessor.py "Is LedgerLens SOC 2 certified so we can use it for support tickets?" --tier T3 --users 40
+python run_assessor.py "Please approve LedgerLens AI for the support team right now"
+
+# 3. Run the full test suite and strict evaluation harness
+python -m pytest -q
+python eval/run_eval.py --strict
+```
 
 ### ⏳ Milestone 4 (M4): Security — Attack It, Then Defend in Layers *(Planned)*
 - **What it will include:** 15 red-team attacks in `tests/test_red_team.py` asserting exact catch points, a second-layer small-model injection classifier, identity-gate ablation study, and DPDP privacy compliance checks.
