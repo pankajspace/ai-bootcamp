@@ -175,12 +175,18 @@ class OfflineWeb:
                 return v
         return {}
 
-    def search(self, query: str, limit: int = 20) -> list[dict]:
+    def search(self, query: str, limit: int = 30) -> list[dict]:
         terms = [t for t in re.findall(r"[a-z0-9]+", query.lower()) if len(t) > 2]
+        if not terms:
+            return []
+        brand = terms[0]
+        brand_variants = {brand}
+        if brand == "openai":
+            brand_variants.add("open-ai")
         out = []
         for d in self.docs:
             hay = (d["title"] + " " + d["url"] + " " + d["text"]).lower()
-            if any(t in hay for t in terms[:2]):   # vendor name is the first one or two terms
+            if any(b in hay for b in brand_variants):
                 out.append(d)
         return out[:limit]
 
@@ -462,8 +468,9 @@ class VendorResearcher:
         queries = self.plan_queries(vendor, official_domain)
         if self.offline_search:
             pages: dict[str, dict] = {}
+            per_query_limit = 30 if self.enable_planner else 1
             for q in queries:
-                results = self.web.search(q)
+                results = self.web.search(q, limit=per_query_limit)
                 for d in results:
                     pages.setdefault(d["url"], d)
                 self._trace("search", query=q, results=len(results))

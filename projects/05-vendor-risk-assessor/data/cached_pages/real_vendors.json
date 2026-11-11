@@ -19,9 +19,78 @@
       "legal_entity": "Freshworks Inc",
       "country": "United States",
       "product": "Freddy AI customer service and ticket automation suite"
+    },
+    "Zoho Zia": {
+      "official_domain": "zoho.com",
+      "legal_entity": "Zoho Corporation Pvt Ltd",
+      "country": "India",
+      "product": "Zia AI assistant for CRM, desk, and workplace productivity"
+    },
+    "Sarvam AI": {
+      "official_domain": "sarvam.ai",
+      "legal_entity": "Sarvam AI Pvt Ltd",
+      "country": "India",
+      "product": "Enterprise Indian-language generative AI and voice platform"
+    },
+    "Cohere": {
+      "official_domain": "cohere.com",
+      "legal_entity": "Cohere Inc",
+      "country": "Canada",
+      "product": "Command R+ enterprise LLM and Embed API platform"
+    },
+    "Mistral AI": {
+      "official_domain": "mistral.ai",
+      "legal_entity": "Mistral AI SAS",
+      "country": "France",
+      "product": "La Plateforme and Le Chat Enterprise frontier LLM suite"
+    },
+    "Notion AI": {
+      "official_domain": "notion.so",
+      "legal_entity": "Notion Labs Inc",
+      "country": "United States",
+      "product": "Connected workspace and AI knowledge assistant"
+    },
+    "Otter.ai": {
+      "official_domain": "otter.ai",
+      "legal_entity": "Otter.ai Inc",
+      "country": "United States",
+      "product": "AI meeting transcription and summary assistant"
+    },
+    "Perplexity Enterprise": {
+      "official_domain": "perplexity.ai",
+      "legal_entity": "Perplexity AI Inc",
+      "country": "United States",
+      "product": "Perplexity Enterprise Pro AI answer and research engine"
     }
   },
   "documents": [
+    {
+      "id": "R-OA-00",
+      "url": "https://openai.com/security-2024-archive",
+      "title": "OpenAI Security & Privacy Overview (March 2024)",
+      "source_type": "official",
+      "publisher": "OpenAI OpCo, LLC",
+      "published_date": "2024-03-01",
+      "last_updated": "2024-03-01",
+      "about_entity": "openai.com",
+      "text": "OpenAI Security Overview (March 2024). Customer data is stored in the United States. Single sign-on (SAML SSO) is available only on the ChatGPT Enterprise plan.",
+      "mock_claims": [
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["United States"], "planned": []},
+          "display": "United States only (March 2024 archive)",
+          "quote": "Customer data is stored in the United States."
+        },
+        {
+          "field": "sso_saml",
+          "evidence_level": "documented",
+          "value": "enterprise_only",
+          "display": "SAML SSO on Enterprise only (March 2024 archive)",
+          "quote": "Single sign-on (SAML SSO) is available only on the ChatGPT Enterprise plan."
+        }
+      ]
+    },
     {
       "id": "R-OA-01",
       "url": "https://trust.openai.com/",
@@ -381,6 +450,579 @@
           ],
           "display": "3 sub-processors disclosed: AWS (hosting incl. India), Microsoft Azure OpenAI (LLM model provider), SendGrid (email)",
           "quote": "Microsoft Azure OpenAI Service — Generative AI LLM inference for Freddy AI"
+        }
+      ]
+    },
+    {
+      "id": "R-ZH-01",
+      "url": "https://www.zoho.com/compliance.html",
+      "title": "Zoho Compliance, Security & Zia AI Governance",
+      "source_type": "official",
+      "publisher": "Zoho Corporation Pvt Ltd",
+      "published_date": "2026-03-15",
+      "last_updated": "2026-09-25",
+      "about_entity": "zoho.com",
+      "text": "Zoho Security & Compliance. Zoho Corporation Pvt Ltd (Estancia IT Park, Chennai, India) holds ISO/IEC 27001:2022 certification (valid until 2028-11-30) and a SOC 2 Type II audit report issued 15 March 2026 covering Zoho CRM, Zoho Desk, and Zia AI. Data Residency: Indian customer accounts (zoho.in) are hosted in Zoho-owned data centers in Mumbai and Chennai, India (plus optional US, EU, Australia, and Japan regions). AI Training: Zoho never uses customer data to train shared Zia AI models. Zoho runs its own proprietary Zia LLMs on Zoho-owned infrastructure with no third-party LLM model providers. Retention: Deleted account data is purged within 30 days of termination or deletion request. SAML 2.0 and OIDC SSO are included across paid plans via Zoho Directory. Our DPDP/GDPR Data Processing Addendum (DPA) is published at zoho.com/privacy/dpa.html. No major security incidents in the last 24 months.",
+      "mock_claims": [
+        {
+          "field": "security_certifications",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "ISO 27001", "status": "certified", "date": "2025-11-30", "valid_until": "2028-11-30", "issuer": "BSI"},
+            {"name": "SOC 2 Type II", "status": "certified", "date": "2026-03-15", "valid_until": null, "issuer": "Ernst & Young"}
+          ],
+          "display": "ISO 27001 valid to 2028-11-30; SOC 2 Type II report dated 2026-03-15",
+          "quote": "holds ISO/IEC 27001:2022 certification (valid until 2028-11-30) and a SOC 2 Type II audit report issued 15 March 2026"
+        },
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["India", "United States", "European Union", "Australia", "Japan"], "planned": []},
+          "display": "India (Mumbai & Chennai), United States, European Union, Australia, Japan",
+          "quote": "hosted in Zoho-owned data centers in Mumbai and Chennai, India (plus optional US, EU, Australia, and Japan regions)"
+        },
+        {
+          "field": "trains_on_customer_data",
+          "evidence_level": "documented",
+          "value": "no",
+          "display": "Never trains shared Zia AI models on customer data",
+          "quote": "Zoho never uses customer data to train shared Zia AI models."
+        },
+        {
+          "field": "subprocessors",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "Zoho Data Centers (Self-Hosted)", "purpose": "Self-hosted cloud and Zia LLM compute", "category": "hosting", "country": "India"}
+          ],
+          "display": "Self-hosted on Zoho data centers in India; no third-party LLM model providers",
+          "quote": "Zoho runs its own proprietary Zia LLMs on Zoho-owned infrastructure with no third-party LLM model providers"
+        },
+        {
+          "field": "data_retention",
+          "evidence_level": "documented",
+          "value": {"default_days": 30, "deletion_on_request_days": 30},
+          "display": "Purged within 30 days of termination or deletion request",
+          "quote": "Deleted account data is purged within 30 days of termination or deletion request"
+        },
+        {
+          "field": "sso_saml",
+          "evidence_level": "documented",
+          "value": "paid_plans",
+          "display": "SAML 2.0 / OIDC SSO across paid plans via Zoho Directory",
+          "quote": "SAML 2.0 and OIDC SSO are included across paid plans via Zoho Directory"
+        },
+        {
+          "field": "security_incidents",
+          "evidence_level": "documented",
+          "value": [],
+          "display": "No major security incidents in the last 24 months",
+          "quote": "No major security incidents in the last 24 months."
+        },
+        {
+          "field": "dpa_available",
+          "evidence_level": "documented",
+          "value": "yes",
+          "display": "DPA published at zoho.com/privacy/dpa.html",
+          "quote": "Our DPDP/GDPR Data Processing Addendum (DPA) is published at zoho.com/privacy/dpa.html"
+        },
+        {
+          "field": "legal_entity",
+          "evidence_level": "documented",
+          "value": {"name": "Zoho Corporation Pvt Ltd", "country": "India", "hq_city": "Chennai"},
+          "display": "Zoho Corporation Pvt Ltd (Chennai, India)",
+          "quote": "Zoho Corporation Pvt Ltd (Estancia IT Park, Chennai, India)"
+        }
+      ]
+    },
+    {
+      "id": "R-SV-01",
+      "url": "https://www.sarvam.ai/security",
+      "title": "Sarvam AI Enterprise Security & India Sovereign Cloud",
+      "source_type": "official",
+      "publisher": "Sarvam AI Pvt Ltd",
+      "published_date": "2026-05-10",
+      "last_updated": "2026-10-05",
+      "about_entity": "sarvam.ai",
+      "text": "Sarvam AI Security & Trust. Sarvam AI Pvt Ltd (Bengaluru, India) holds ISO/IEC 27001:2022 certification (issued 2026-01-20, valid until 2029-01-19) and a SOC 2 Type II report issued 10 May 2026. Data Residency: All customer prompts, voice recordings, and fine-tuned weights are hosted exclusively in India (Mumbai and Bengaluru sovereign GPU regions). AI Training: Enterprise API and commercial workspace data is not used to train foundation models; free sandbox playgrounds may log prompts unless opted out. Sub-processors: Microsoft Azure India (Central India / South India GPU hosting) and Yotta Shakti Cloud (Navi Mumbai GPU hosting) — no external third-party LLM model providers. Retention: Customer logs are deleted within 30 days by default and within 30 days upon deletion request. SAML 2.0 / OIDC SSO is available on Enterprise plans. A DPDP-compliant DPA is published at sarvam.ai/legal/dpa. No major security incidents in the last 24 months.",
+      "mock_claims": [
+        {
+          "field": "security_certifications",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "ISO 27001", "status": "certified", "date": "2026-01-20", "valid_until": "2029-01-19", "issuer": "TUV SUD"},
+            {"name": "SOC 2 Type II", "status": "certified", "date": "2026-05-10", "valid_until": null, "issuer": "Deloitte"}
+          ],
+          "display": "ISO 27001 valid to 2029-01-19; SOC 2 Type II report dated 2026-05-10",
+          "quote": "holds ISO/IEC 27001:2022 certification (issued 2026-01-20, valid until 2029-01-19) and a SOC 2 Type II report issued 10 May 2026"
+        },
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["India"], "planned": []},
+          "display": "India (Mumbai and Bengaluru sovereign GPU regions)",
+          "quote": "hosted exclusively in India (Mumbai and Bengaluru sovereign GPU regions)"
+        },
+        {
+          "field": "trains_on_customer_data",
+          "evidence_level": "documented",
+          "value": "no_on_paid_plans",
+          "display": "No training on Enterprise API/commercial plans; free sandbox logs unless opted out",
+          "quote": "Enterprise API and commercial workspace data is not used to train foundation models"
+        },
+        {
+          "field": "subprocessors",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "Microsoft Azure India", "purpose": "Cloud & GPU hosting in India", "category": "hosting", "country": "India"},
+            {"name": "Yotta Shakti Cloud", "purpose": "Sovereign GPU hosting in Navi Mumbai", "category": "hosting", "country": "India"}
+          ],
+          "display": "2 sub-processors in India (Azure India, Yotta Shakti Cloud); no third-party LLM model provider",
+          "quote": "Microsoft Azure India ... and Yotta Shakti Cloud (Navi Mumbai GPU hosting) — no external third-party LLM model providers"
+        },
+        {
+          "field": "data_retention",
+          "evidence_level": "documented",
+          "value": {"default_days": 30, "deletion_on_request_days": 30},
+          "display": "30-day default retention and 30-day deletion on request",
+          "quote": "deleted within 30 days by default and within 30 days upon deletion request"
+        },
+        {
+          "field": "sso_saml",
+          "evidence_level": "documented",
+          "value": "enterprise_only",
+          "display": "SAML 2.0 / OIDC SSO on Enterprise plans",
+          "quote": "SAML 2.0 / OIDC SSO is available on Enterprise plans"
+        },
+        {
+          "field": "security_incidents",
+          "evidence_level": "documented",
+          "value": [],
+          "display": "No major security incidents in the last 24 months",
+          "quote": "No major security incidents in the last 24 months."
+        },
+        {
+          "field": "dpa_available",
+          "evidence_level": "documented",
+          "value": "yes",
+          "display": "DPDP-compliant DPA published at sarvam.ai/legal/dpa",
+          "quote": "A DPDP-compliant DPA is published at sarvam.ai/legal/dpa"
+        },
+        {
+          "field": "legal_entity",
+          "evidence_level": "documented",
+          "value": {"name": "Sarvam AI Pvt Ltd", "country": "India", "hq_city": "Bengaluru"},
+          "display": "Sarvam AI Pvt Ltd (Bengaluru, India)",
+          "quote": "Sarvam AI Pvt Ltd (Bengaluru, India)"
+        }
+      ]
+    },
+    {
+      "id": "R-CO-01",
+      "url": "https://trust.cohere.com/",
+      "title": "Cohere Trust Center & Enterprise Privacy",
+      "source_type": "official",
+      "publisher": "Cohere Inc",
+      "published_date": "2026-04-12",
+      "last_updated": "2026-09-18",
+      "about_entity": "cohere.com",
+      "text": "Cohere Trust Center. Cohere Inc (Toronto, Canada) holds a SOC 2 Type II attestation report (issued 12 April 2026) and ISO/IEC 27001:2022 certification (valid until 2028-08-31). Data Residency: Managed cloud deployments are hosted in the United States, Canada, and European Union (no managed India region). AI Training: Cohere does not train its foundation models on customer API prompts or outputs. Sub-processors: Google Cloud Platform (hosting) and Amazon Web Services (hosting) — Cohere develops its own Command and Embed models. Retention: API logs are automatically purged within 30 days (or 0 days with zero-data-retention) and deleted within 30 days of request. SAML 2.0 SSO is available on Enterprise plans. Our DPA is published at cohere.com/security/dpa. No major security incidents in the past 24 months.",
+      "mock_claims": [
+        {
+          "field": "security_certifications",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "SOC 2 Type II", "status": "certified", "date": "2026-04-12", "valid_until": null, "issuer": "AICPA Auditor"},
+            {"name": "ISO 27001", "status": "certified", "date": "2025-08-31", "valid_until": "2028-08-31", "issuer": "Registrar"}
+          ],
+          "display": "SOC 2 Type II dated 2026-04-12; ISO 27001 valid to 2028-08-31",
+          "quote": "SOC 2 Type II attestation report (issued 12 April 2026) and ISO/IEC 27001:2022 certification (valid until 2028-08-31)"
+        },
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["United States", "Canada", "European Union"], "planned": []},
+          "display": "United States, Canada, European Union",
+          "quote": "hosted in the United States, Canada, and European Union (no managed India region)"
+        },
+        {
+          "field": "trains_on_customer_data",
+          "evidence_level": "documented",
+          "value": "no",
+          "display": "Does not train models on customer API data",
+          "quote": "Cohere does not train its foundation models on customer API prompts or outputs."
+        },
+        {
+          "field": "subprocessors",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "Google Cloud Platform", "purpose": "Cloud GPU hosting", "category": "hosting", "country": "United States, European Union"},
+            {"name": "Amazon Web Services", "purpose": "Cloud hosting", "category": "hosting", "country": "United States, Canada"}
+          ],
+          "display": "2 sub-processors (GCP, AWS hosting); no third-party model provider",
+          "quote": "Google Cloud Platform (hosting) and Amazon Web Services (hosting)"
+        },
+        {
+          "field": "data_retention",
+          "evidence_level": "documented",
+          "value": {"default_days": 30, "deletion_on_request_days": 30},
+          "display": "30-day default retention and 30-day deletion on request",
+          "quote": "automatically purged within 30 days ... and deleted within 30 days of request"
+        },
+        {
+          "field": "sso_saml",
+          "evidence_level": "documented",
+          "value": "enterprise_only",
+          "display": "SAML 2.0 SSO on Enterprise plans",
+          "quote": "SAML 2.0 SSO is available on Enterprise plans"
+        },
+        {
+          "field": "security_incidents",
+          "evidence_level": "documented",
+          "value": [],
+          "display": "No major security incidents in the last 24 months",
+          "quote": "No major security incidents in the past 24 months."
+        },
+        {
+          "field": "dpa_available",
+          "evidence_level": "documented",
+          "value": "yes",
+          "display": "DPA published at cohere.com/security/dpa",
+          "quote": "Our DPA is published at cohere.com/security/dpa"
+        },
+        {
+          "field": "legal_entity",
+          "evidence_level": "documented",
+          "value": {"name": "Cohere Inc", "country": "Canada", "hq_city": "Toronto"},
+          "display": "Cohere Inc (Toronto, Canada)",
+          "quote": "Cohere Inc (Toronto, Canada)"
+        }
+      ]
+    },
+    {
+      "id": "R-MS-01",
+      "url": "https://trust.mistral.ai/",
+      "title": "Mistral AI Trust Portal & Data Protection",
+      "source_type": "official",
+      "publisher": "Mistral AI SAS",
+      "published_date": "2026-03-28",
+      "last_updated": "2026-09-12",
+      "about_entity": "mistral.ai",
+      "text": "Mistral AI Trust Portal. Mistral AI SAS (Paris, France) holds ISO/IEC 27001:2022 certification (valid until 2028-10-15) and a SOC 2 Type II report issued 28 March 2026. Data Residency: Customer data on La Plateforme and Le Chat Enterprise is hosted in the European Union (France and Sweden) and the United States (no India hosting region). AI Training: Paid API and Le Chat Enterprise workspaces are never used to train models; free Le Chat tier may use prompts unless opted out. Sub-processors: Scaleway SAS (France EU hosting) and Microsoft Azure (EU/US GPU compute) — Mistral trains and serves its own frontier models. Retention: Data is deleted within 30 days of contract end or deletion request. SAML 2.0 / OIDC SSO is included on Le Chat Enterprise. Our GDPR/DPDP DPA is published at mistral.ai/terms/dpa. No major security incidents in the last 24 months.",
+      "mock_claims": [
+        {
+          "field": "security_certifications",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "ISO 27001", "status": "certified", "date": "2025-10-15", "valid_until": "2028-10-15", "issuer": "AFNOR"},
+            {"name": "SOC 2 Type II", "status": "certified", "date": "2026-03-28", "valid_until": null, "issuer": "EY"}
+          ],
+          "display": "ISO 27001 valid to 2028-10-15; SOC 2 Type II dated 2026-03-28",
+          "quote": "holds ISO/IEC 27001:2022 certification (valid until 2028-10-15) and a SOC 2 Type II report issued 28 March 2026"
+        },
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["European Union", "United States"], "planned": []},
+          "display": "European Union (France, Sweden) and United States",
+          "quote": "hosted in the European Union (France and Sweden) and the United States"
+        },
+        {
+          "field": "trains_on_customer_data",
+          "evidence_level": "documented",
+          "value": "no_on_paid_plans",
+          "display": "No training on paid API or Le Chat Enterprise; free tier trains unless opted out",
+          "quote": "Paid API and Le Chat Enterprise workspaces are never used to train models"
+        },
+        {
+          "field": "subprocessors",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "Scaleway SAS", "purpose": "EU GPU cloud hosting", "category": "hosting", "country": "France"},
+            {"name": "Microsoft Azure", "purpose": "Cloud infrastructure", "category": "hosting", "country": "European Union, United States"}
+          ],
+          "display": "2 sub-processors (Scaleway, Azure hosting); no third-party LLM model provider",
+          "quote": "Scaleway SAS (France EU hosting) and Microsoft Azure (EU/US GPU compute)"
+        },
+        {
+          "field": "data_retention",
+          "evidence_level": "documented",
+          "value": {"default_days": 30, "deletion_on_request_days": 30},
+          "display": "Deleted within 30 days of contract end or deletion request",
+          "quote": "deleted within 30 days of contract end or deletion request"
+        },
+        {
+          "field": "sso_saml",
+          "evidence_level": "documented",
+          "value": "enterprise_only",
+          "display": "SAML 2.0 / OIDC SSO on Le Chat Enterprise",
+          "quote": "SAML 2.0 / OIDC SSO is included on Le Chat Enterprise"
+        },
+        {
+          "field": "security_incidents",
+          "evidence_level": "documented",
+          "value": [],
+          "display": "No major security incidents in the last 24 months",
+          "quote": "No major security incidents in the last 24 months."
+        },
+        {
+          "field": "dpa_available",
+          "evidence_level": "documented",
+          "value": "yes",
+          "display": "DPA published at mistral.ai/terms/dpa",
+          "quote": "Our GDPR/DPDP DPA is published at mistral.ai/terms/dpa"
+        },
+        {
+          "field": "legal_entity",
+          "evidence_level": "documented",
+          "value": {"name": "Mistral AI SAS", "country": "France", "hq_city": "Paris"},
+          "display": "Mistral AI SAS (Paris, France)",
+          "quote": "Mistral AI SAS (Paris, France)"
+        }
+      ]
+    },
+    {
+      "id": "R-NT-01",
+      "url": "https://www.notion.so/security",
+      "title": "Notion Security, Privacy & Notion AI Sub-processors",
+      "source_type": "official",
+      "publisher": "Notion Labs Inc",
+      "published_date": "2026-04-05",
+      "last_updated": "2026-09-22",
+      "about_entity": "notion.so",
+      "text": "Notion Security & Compliance. Notion Labs Inc (San Francisco, United States) holds a SOC 2 Type II report (issued 5 April 2026) and ISO/IEC 27001:2022 certification (valid until 2028-12-01). Data Residency: Notion workspaces can be hosted in the United States or the European Union (Germany). AI Training: Notion and its AI sub-processors are contractually prohibited from using customer workspace data to train models across all plans. Sub-processors: Amazon Web Services Inc (hosting), OpenAI OpCo LLC (LLM model provider for Notion AI), and Anthropic PBC (LLM model provider for Notion AI). Retention: Deleted workspace content is purged from backups within 30 days of termination or deletion request. SAML 2.0 SSO is available only on the Notion Enterprise plan. Our Data Processing Addendum (DPA) is published at notion.so/security/dpa. No major security incidents in the last 24 months.",
+      "mock_claims": [
+        {
+          "field": "security_certifications",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "SOC 2 Type II", "status": "certified", "date": "2026-04-05", "valid_until": null, "issuer": "Independent Auditor"},
+            {"name": "ISO 27001", "status": "certified", "date": "2025-12-01", "valid_until": "2028-12-01", "issuer": "Schellman"}
+          ],
+          "display": "SOC 2 Type II dated 2026-04-05; ISO 27001 valid to 2028-12-01",
+          "quote": "holds a SOC 2 Type II report (issued 5 April 2026) and ISO/IEC 27001:2022 certification (valid until 2028-12-01)"
+        },
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["United States", "European Union"], "planned": []},
+          "display": "United States and European Union (Germany)",
+          "quote": "hosted in the United States or the European Union (Germany)"
+        },
+        {
+          "field": "trains_on_customer_data",
+          "evidence_level": "documented",
+          "value": "no",
+          "display": "Never trains models on customer data across all plans",
+          "quote": "prohibited from using customer workspace data to train models across all plans"
+        },
+        {
+          "field": "subprocessors",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "Amazon Web Services Inc", "purpose": "Cloud infrastructure", "category": "hosting", "country": "United States, Germany"},
+            {"name": "OpenAI OpCo LLC", "purpose": "LLM inference for Notion AI", "category": "model_provider", "country": "United States"},
+            {"name": "Anthropic PBC", "purpose": "LLM inference for Notion AI", "category": "model_provider", "country": "United States"}
+          ],
+          "display": "3 sub-processors: AWS (hosting), OpenAI and Anthropic (third-party LLM model providers)",
+          "quote": "Amazon Web Services Inc (hosting), OpenAI OpCo LLC (LLM model provider for Notion AI), and Anthropic PBC (LLM model provider for Notion AI)"
+        },
+        {
+          "field": "data_retention",
+          "evidence_level": "documented",
+          "value": {"default_days": 30, "deletion_on_request_days": 30},
+          "display": "Purged within 30 days of termination or deletion request",
+          "quote": "purged from backups within 30 days of termination or deletion request"
+        },
+        {
+          "field": "sso_saml",
+          "evidence_level": "documented",
+          "value": "enterprise_only",
+          "display": "SAML 2.0 SSO on Notion Enterprise plan",
+          "quote": "SAML 2.0 SSO is available only on the Notion Enterprise plan"
+        },
+        {
+          "field": "security_incidents",
+          "evidence_level": "documented",
+          "value": [],
+          "display": "No major security incidents in the last 24 months",
+          "quote": "No major security incidents in the last 24 months."
+        },
+        {
+          "field": "dpa_available",
+          "evidence_level": "documented",
+          "value": "yes",
+          "display": "DPA published at notion.so/security/dpa",
+          "quote": "Our Data Processing Addendum (DPA) is published at notion.so/security/dpa"
+        },
+        {
+          "field": "legal_entity",
+          "evidence_level": "documented",
+          "value": {"name": "Notion Labs Inc", "country": "United States", "hq_city": "San Francisco"},
+          "display": "Notion Labs Inc (San Francisco, United States)",
+          "quote": "Notion Labs Inc (San Francisco, United States)"
+        }
+      ]
+    },
+    {
+      "id": "R-OT-01",
+      "url": "https://otter.ai/privacy-security",
+      "title": "Otter.ai Security, Privacy & Data Retention Policy",
+      "source_type": "official",
+      "publisher": "Otter.ai Inc",
+      "published_date": "2026-02-20",
+      "last_updated": "2026-08-05",
+      "about_entity": "otter.ai",
+      "text": "Otter.ai Security & Privacy. Otter.ai Inc (Mountain View, United States) holds a SOC 2 Type II report (issued 20 February 2026). Data Residency: All audio recordings and transcripts are stored in the United States on AWS US regions. AI Training: Otter may use de-identified customer audio and transcripts to train and improve speech recognition models unless the workspace administrator submits an opt-out request. Sub-processors: Amazon Web Services Inc (US hosting) and OpenAI OpCo LLC (summary generation model provider). Retention: Closed account data is retained for up to 90 days by default before permanent deletion; deletion-on-request is processed within 30 days. SAML 2.0 SSO is available only on the Otter Enterprise plan. A custom Data Processing Addendum (DPA) is available on request from legal@otter.ai. No major security incidents in the last 24 months.",
+      "mock_claims": [
+        {
+          "field": "security_certifications",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "SOC 2 Type II", "status": "certified", "date": "2026-02-20", "valid_until": null, "issuer": "AICPA Auditor"}
+          ],
+          "display": "SOC 2 Type II report dated 2026-02-20",
+          "quote": "holds a SOC 2 Type II report (issued 20 February 2026)"
+        },
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["United States"], "planned": []},
+          "display": "United States only",
+          "quote": "All audio recordings and transcripts are stored in the United States on AWS US regions"
+        },
+        {
+          "field": "trains_on_customer_data",
+          "evidence_level": "documented",
+          "value": "opt_out_available",
+          "display": "Uses de-identified data for model training unless opted out",
+          "quote": "may use de-identified customer audio and transcripts to train ... unless the workspace administrator submits an opt-out request"
+        },
+        {
+          "field": "subprocessors",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "Amazon Web Services Inc", "purpose": "Cloud storage and compute", "category": "hosting", "country": "United States"},
+            {"name": "OpenAI OpCo LLC", "purpose": "Meeting summary LLM provider", "category": "model_provider", "country": "United States"}
+          ],
+          "display": "2 sub-processors: AWS (US hosting) and OpenAI (model provider)",
+          "quote": "Amazon Web Services Inc (US hosting) and OpenAI OpCo LLC (summary generation model provider)"
+        },
+        {
+          "field": "data_retention",
+          "evidence_level": "documented",
+          "value": {"default_days": 90, "deletion_on_request_days": 30},
+          "display": "90-day default retention after closure; 30-day deletion on request",
+          "quote": "retained for up to 90 days by default before permanent deletion; deletion-on-request is processed within 30 days"
+        },
+        {
+          "field": "sso_saml",
+          "evidence_level": "documented",
+          "value": "enterprise_only",
+          "display": "SAML 2.0 SSO on Otter Enterprise plan",
+          "quote": "SAML 2.0 SSO is available only on the Otter Enterprise plan"
+        },
+        {
+          "field": "security_incidents",
+          "evidence_level": "documented",
+          "value": [],
+          "display": "No major security incidents in the last 24 months",
+          "quote": "No major security incidents in the last 24 months."
+        },
+        {
+          "field": "dpa_available",
+          "evidence_level": "documented",
+          "value": "on_request",
+          "display": "DPA available on request",
+          "quote": "A custom Data Processing Addendum (DPA) is available on request"
+        },
+        {
+          "field": "legal_entity",
+          "evidence_level": "documented",
+          "value": {"name": "Otter.ai Inc", "country": "United States", "hq_city": "Mountain View"},
+          "display": "Otter.ai Inc (Mountain View, United States)",
+          "quote": "Otter.ai Inc (Mountain View, United States)"
+        }
+      ]
+    },
+    {
+      "id": "R-PX-01",
+      "url": "https://trust.perplexity.ai/",
+      "title": "Perplexity Enterprise Pro Trust Center",
+      "source_type": "official",
+      "publisher": "Perplexity AI Inc",
+      "published_date": "2026-05-18",
+      "last_updated": "2026-10-01",
+      "about_entity": "perplexity.ai",
+      "text": "Perplexity Trust Center. Perplexity AI Inc (San Francisco, United States) holds a SOC 2 Type II report issued 18 May 2026 covering Perplexity Enterprise Pro. Data Residency: Customer queries and uploaded files are processed and stored in the United States on AWS US regions. AI Training: Perplexity Enterprise Pro queries and uploaded files are never used to train models; consumer Free/Pro accounts may be used unless data retention is toggled off. Sub-processors: Amazon Web Services Inc (US hosting), OpenAI OpCo LLC (LLM model provider), and Anthropic PBC (LLM model provider). Retention: Enterprise Pro deleted threads and files are purged within 30 days of termination or deletion request. SAML 2.0 / OIDC SSO is included on Enterprise Pro plans. Our Data Processing Addendum (DPA) is published at perplexity.ai/hub/legal/dpa. No major security incidents in the last 24 months.",
+      "mock_claims": [
+        {
+          "field": "security_certifications",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "SOC 2 Type II", "status": "certified", "date": "2026-05-18", "valid_until": null, "issuer": "Independent CPA"}
+          ],
+          "display": "SOC 2 Type II report dated 2026-05-18",
+          "quote": "holds a SOC 2 Type II report issued 18 May 2026 covering Perplexity Enterprise Pro"
+        },
+        {
+          "field": "data_regions",
+          "evidence_level": "documented",
+          "value": {"available": ["United States"], "planned": []},
+          "display": "United States only",
+          "quote": "processed and stored in the United States on AWS US regions"
+        },
+        {
+          "field": "trains_on_customer_data",
+          "evidence_level": "documented",
+          "value": "no_on_paid_plans",
+          "display": "No training on Enterprise Pro; consumer accounts train unless toggled off",
+          "quote": "Perplexity Enterprise Pro queries and uploaded files are never used to train models"
+        },
+        {
+          "field": "subprocessors",
+          "evidence_level": "documented",
+          "value": [
+            {"name": "Amazon Web Services Inc", "purpose": "Cloud hosting", "category": "hosting", "country": "United States"},
+            {"name": "OpenAI OpCo LLC", "purpose": "LLM inference provider", "category": "model_provider", "country": "United States"},
+            {"name": "Anthropic PBC", "purpose": "LLM inference provider", "category": "model_provider", "country": "United States"}
+          ],
+          "display": "3 sub-processors: AWS (hosting), OpenAI and Anthropic (LLM model providers)",
+          "quote": "Amazon Web Services Inc (US hosting), OpenAI OpCo LLC (LLM model provider), and Anthropic PBC (LLM model provider)"
+        },
+        {
+          "field": "data_retention",
+          "evidence_level": "documented",
+          "value": {"default_days": 30, "deletion_on_request_days": 30},
+          "display": "Purged within 30 days of termination or deletion request",
+          "quote": "purged within 30 days of termination or deletion request"
+        },
+        {
+          "field": "sso_saml",
+          "evidence_level": "documented",
+          "value": "paid_plans",
+          "display": "SAML 2.0 / OIDC SSO included on Enterprise Pro plans",
+          "quote": "SAML 2.0 / OIDC SSO is included on Enterprise Pro plans"
+        },
+        {
+          "field": "security_incidents",
+          "evidence_level": "documented",
+          "value": [],
+          "display": "No major security incidents in the last 24 months",
+          "quote": "No major security incidents in the last 24 months."
+        },
+        {
+          "field": "dpa_available",
+          "evidence_level": "documented",
+          "value": "yes",
+          "display": "DPA published at perplexity.ai/hub/legal/dpa",
+          "quote": "Our Data Processing Addendum (DPA) is published at perplexity.ai/hub/legal/dpa"
+        },
+        {
+          "field": "legal_entity",
+          "evidence_level": "documented",
+          "value": {"name": "Perplexity AI Inc", "country": "United States", "hq_city": "San Francisco"},
+          "display": "Perplexity AI Inc (San Francisco, United States)",
+          "quote": "Perplexity AI Inc (San Francisco, United States)"
         }
       ]
     }

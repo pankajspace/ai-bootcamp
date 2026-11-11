@@ -11,6 +11,7 @@ Tiers: T1 Public · T2 Internal · T3 Customer data (see SEC-1.2).
 | CloudStack Inc | CloudStack Object Storage | T3 Customer data | Enterprise | 2025-11-03 | 2026-11-03 | Primary storage provider. Mumbai region. |
 | MailRelay Ltd | MailRelay | T3 Customer data | Business | 2026-01-20 | 2027-01-20 | Transactional email only. |
 | Orbital Models Inc | Orbital API | T2 Internal | Pay-as-you-go | 2026-03-08 | 2027-03-08 | Zero-retention API endpoint. Not approved for T3. |
+| Zoho Corporation Pvt Ltd | Zoho Zia | T3 Customer data | Enterprise | 2026-06-15 | 2027-06-15 | Approved for India (Mumbai/Chennai) data centers. |
 
 ### AVL-2 Reviews in progress
 

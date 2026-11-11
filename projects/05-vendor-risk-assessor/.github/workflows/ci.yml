@@ -1,0 +1,39 @@
+name: Vendor Risk Assessor CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test-and-evaluate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/05-vendor-risk-assessor
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verify environment setup
+        run: python scripts/check_setup.py
+
+      - name: Run unit and red-team test suite
+        run: python -m pytest tests -v
+
+      - name: Run strict evaluation on fictional regression gold set
+        run: python eval/run_eval.py --strict
+
+      - name: Run strict evaluation on 10-vendor real gold set
+        run: python eval/run_eval.py --gold data/gold_set_real.json --strict
