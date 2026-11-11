@@ -26,6 +26,7 @@ from typing import Any, Optional
 from pydantic import BaseModel
 
 from .config import DATA_DIR, SETTINGS, VENDOR_CORPUS
+from .guardrails import classify_injection, scrub_employee_pii
 from .llm import LLM, LLMError
 from .memory import AssessmentMemory
 from .schemas import (
@@ -116,8 +117,18 @@ INJECTION_PATTERNS = [
 _INJ = re.compile("|".join(f"(?:{p})" for p in INJECTION_PATTERNS), re.I)
 
 
-def scan_injection(text: str) -> list[str]:
-    return [m.group(0) for m in _INJ.finditer(text)]
+def scan_injection(text: str, llm: Optional[LLM] = None) -> list[str]:
+    """Two-layer prompt-injection scan (Milestone 4 / Deep Search Lab 9):
+    Layer 1: Fast deterministic regex patterns (`INJECTION_PATTERNS`).
+    Layer 2: Small-model classifier (`classify_injection`) catching indirect/comment/compliance-bot overrides.
+    """
+    hits = [m.group(0) for m in _INJ.finditer(text)]
+    if hits:
+        return hits
+    cls = classify_injection(text, llm=llm)
+    if cls.is_injection:
+        return [f"classifier:{cls.category}:{cls.evidence}"]
+    return []
 
 
 def freshness(field: str, when: Optional[date], as_of: date) -> float:
@@ -587,7 +598,7 @@ class VendorResearcher:
         # 2. injection scan → quarantine (Module 8). Nothing from a quarantined page is read further.
         clean: list[dict] = []
         for p in kept:
-            hits = scan_injection(p["text"])
+            hits = scan_injection(p["text"], llm=self.llm)
             if hits:
                 profile.quarantined.append(p["url"])
                 self._trace("quarantined", url=p["url"], patterns=hits[:3])
@@ -626,6 +637,9 @@ class VendorResearcher:
                 last_updated=date.fromisoformat(p["last_updated"]) if p.get("last_updated") else None,
             )
             for c in claims:
+                c.display = scrub_employee_pii(c.display)
+                if isinstance(c.value, str):
+                    c.value = scrub_employee_pii(c.value)
                 if c.evidence_level == "rumour" or meta.source_type == "forum":
                     profile.dropped.append(f"{meta.url} — {c.field}: rumour/forum, not evidence (SEC-9.4)")
                     continue
@@ -712,3 +726,37 @@ class VendorResearcher:
         if self.tracer:
             with self._lock:
                 self.tracer.event(stage, **data)
+
+
+def run_identity_gate_ablation(
+    vendor: str = "LedgerLens AI",
+    official_domain: str = "ledgerlens.example",
+) -> dict[str, Any]:
+    """Milestone 4 Ablation: compare `enable_identity_gate=True` vs `enable_identity_gate=False`.
+    When the identity gate is disabled on LedgerLens AI, the UK accounting firm (`https://ledgerlens-uk.example/about-us`, L09)
+    is not rejected:
+      1. Its ISO 27001 certificate (`UK-27001-0822`) leaks into `security_certifications` (`conflicts` / evidence pool).
+      2. Because L09 (`last_updated: 2026-06-01`) is newer than LedgerLens AI's privacy policy L02 (`2026-03-15`),
+         the UK firm's `data_regions` (`United Kingdom`) overwrites LedgerLens AI's true regions (`US, EU; India planned`)!
+    """
+    with_gate = VendorResearcher(enable_identity_gate=True).research(vendor, official_domain)
+    without_gate = VendorResearcher(enable_identity_gate=False).research(vendor, official_domain)
+
+    return {
+        "vendor": vendor,
+        "with_gate": {
+            "rejected_urls": with_gate.rejected,
+            "data_regions_display": with_gate.facts["data_regions"].display,
+            "data_regions_sources": with_gate.facts["data_regions"].sources,
+            "security_certifications_display": with_gate.facts["security_certifications"].display,
+            "security_certifications_conflicts": with_gate.facts["security_certifications"].conflicts,
+        },
+        "without_gate": {
+            "rejected_urls": without_gate.rejected,
+            "data_regions_display": without_gate.facts["data_regions"].display,
+            "data_regions_sources": without_gate.facts["data_regions"].sources,
+            "security_certifications_display": without_gate.facts["security_certifications"].display,
+            "security_certifications_conflicts": without_gate.facts["security_certifications"].conflicts,
+        },
+    }
+
