@@ -1,0 +1,228 @@
+[
+  {
+    "id": "SEC-4.2",
+    "title": "Independent security assurance (SOC 2 Type II or ISO 27001)",
+    "policy_doc": "information_security_policy_2026.md",
+    "clause": "SEC-4.2",
+    "field": "security_certifications",
+    "rule": "certification_valid",
+    "params": {
+      "accepted": [
+        "SOC 2 Type II",
+        "ISO 27001"
+      ],
+      "max_age_months": 15,
+      "require_documented": true
+    },
+    "severity": "blocker",
+    "applies_when": {
+      "tiers": [
+        "T3"
+      ],
+      "or_min_users": null
+    }
+  },
+  {
+    "id": "SEC-4.2-T2",
+    "title": "Security assurance for internal-data tools (Type I or questionnaire acceptable)",
+    "policy_doc": "information_security_policy_2026.md",
+    "clause": "SEC-4.2",
+    "field": "security_certifications",
+    "rule": "certification_valid",
+    "params": {
+      "accepted": [
+        "SOC 2 Type II",
+        "SOC 2 Type I",
+        "ISO 27001"
+      ],
+      "max_age_months": 15,
+      "require_documented": false
+    },
+    "severity": "major",
+    "applies_when": {
+      "tiers": [
+        "T2"
+      ],
+      "or_min_users": null
+    }
+  },
+  {
+    "id": "DP-3.1",
+    "title": "Customer data stored in India",
+    "policy_doc": "data_protection_policy.md",
+    "clause": "DP-3.1",
+    "field": "data_regions",
+    "rule": "region_includes",
+    "params": {
+      "any_of": [
+        "India"
+      ],
+      "allow_planned": false
+    },
+    "severity": "blocker",
+    "applies_when": {
+      "tiers": [
+        "T3"
+      ],
+      "or_min_users": null
+    }
+  },
+  {
+    "id": "DP-3.2",
+    "title": "Storage region recorded (internal data)",
+    "policy_doc": "data_protection_policy.md",
+    "clause": "DP-3.2",
+    "field": "data_regions",
+    "rule": "value_known",
+    "params": {},
+    "severity": "minor",
+    "applies_when": {
+      "tiers": [
+        "T2"
+      ],
+      "or_min_users": null
+    }
+  },
+  {
+    "id": "AI-2.1",
+    "title": "No training on Nimbu Mart data",
+    "policy_doc": "ai_acceptable_use_policy.md",
+    "clause": "AI-2.1",
+    "field": "trains_on_customer_data",
+    "rule": "enum_verdict",
+    "params": {
+      "pass": [
+        "no"
+      ],
+      "review": [
+        "no_on_paid_plans",
+        "opt_out_available"
+      ],
+      "fail": [
+        "yes"
+      ]
+    },
+    "severity": "blocker",
+    "applies_when": {
+      "tiers": [
+        "T2",
+        "T3"
+      ],
+      "or_min_users": null
+    }
+  },
+  {
+    "id": "AI-3.4",
+    "title": "Sub-processors disclosed; model providers identified",
+    "policy_doc": "ai_acceptable_use_policy.md",
+    "clause": "AI-3.4",
+    "field": "subprocessors",
+    "rule": "list_disclosed",
+    "params": {
+      "review_if_category": [
+        "model_provider"
+      ]
+    },
+    "severity": "major",
+    "applies_when": {
+      "tiers": [
+        "T2",
+        "T3"
+      ],
+      "or_min_users": null
+    }
+  },
+  {
+    "id": "DP-5.4",
+    "title": "Deletion within 30 days of contract end or request",
+    "policy_doc": "data_protection_policy.md",
+    "clause": "DP-5.4",
+    "field": "data_retention",
+    "rule": "retention_within",
+    "params": {
+      "max_days": 30
+    },
+    "severity": "major",
+    "applies_when": {
+      "tiers": [
+        "T3"
+      ],
+      "or_min_users": null
+    }
+  },
+  {
+    "id": "SEC-7.1",
+    "title": "Single sign-on (SAML / OIDC)",
+    "policy_doc": "information_security_policy_2026.md",
+    "clause": "SEC-7.1",
+    "field": "sso_saml",
+    "rule": "enum_verdict",
+    "params": {
+      "pass": [
+        "all_plans",
+        "paid_plans"
+      ],
+      "review": [
+        "enterprise_only"
+      ],
+      "fail": [
+        "none"
+      ]
+    },
+    "severity": "major",
+    "applies_when": {
+      "tiers": [
+        "T3"
+      ],
+      "or_min_users": 21
+    }
+  },
+  {
+    "id": "SEC-9.3",
+    "title": "No major incident in 24 months without a published post-mortem",
+    "policy_doc": "information_security_policy_2026.md",
+    "clause": "SEC-9.3",
+    "field": "security_incidents",
+    "rule": "no_unresolved_incident",
+    "params": {
+      "lookback_months": 24,
+      "major_severities": [
+        "major",
+        "critical"
+      ]
+    },
+    "severity": "blocker",
+    "applies_when": {
+      "tiers": [
+        "T3"
+      ],
+      "or_min_users": null
+    }
+  },
+  {
+    "id": "DP-2.2",
+    "title": "Data Processing Agreement available",
+    "policy_doc": "data_protection_policy.md",
+    "clause": "DP-2.2",
+    "field": "dpa_available",
+    "rule": "enum_verdict",
+    "params": {
+      "pass": [
+        "yes"
+      ],
+      "review": [
+        "on_request"
+      ],
+      "fail": [
+        "no"
+      ]
+    },
+    "severity": "blocker",
+    "applies_when": {
+      "tiers": [
+        "T3"
+      ],
+      "or_min_users": null
+    }
+  }
+]
