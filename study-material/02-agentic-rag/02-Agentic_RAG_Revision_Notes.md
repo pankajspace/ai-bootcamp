@@ -27,8 +27,7 @@ You learn plain RAG first, then the agentic version, file by file (`config.py`, 
 17. [Run DeepSeek on your laptop](#17-run-deepseek-on-your-laptop)
 18. [When things break](#18-when-things-break)
 19. [Questions learners ask](#19-questions-learners-ask)
-20. [Practice and self-check](#20-practice-and-self-check)
-21. [Glossary](#21-glossary)
+20. [Glossary](#20-glossary)
 - [Cheat Sheet](#cheat-sheet)
 
 ---
@@ -72,20 +71,10 @@ flowchart TD
   - **Retrieval:** …which we **fetched** from our own documents.
 - **No retraining and no fine-tuning.** We only add the right text to the prompt.
 - **Analogy:** an **open-book exam**. The student (LLM) knows the subject but does better with the textbook open at the right page.
-- **Everyday examples:** a bank chatbot answering FD-penalty questions from the bank's FD rules, or an HR bot answering leave questions from the HR policy.
 
 ### Why not paste the whole document into the prompt?
 - A PDF can be **hundreds of pages**. That is **slow** and **costly**, and it is often **more than the model can take in** at once.
 - RAG sends only the **few most useful pieces**.
-
-```mermaid
-flowchart LR
-    A["Question about private doc"] --> B{"Does LLM have the doc?"}
-    B -->|"No: plain LLM"| C["Guess or hallucinate"]
-    B -->|"Yes: RAG adds relevant pages"| D["Grounded answer"]
-```
-
-> **Tip:** The "R" in RAG means **retrieves** relevant pieces of your documents. It does **not** retrain the model.
 
 ---
 
@@ -111,16 +100,13 @@ flowchart LR
 ### Step 2 — Split into chunks
 - A **chunk** is a small piece of text, for example **1,000–2,000 characters**.
 - Small pieces let us pick **only the parts that matter**.
-- There are several **splitting techniques**: fixed size, by paragraph, by heading, and so on.
 - **Overlap:** neighbouring chunks often share a little text, so a sentence cut at the edge is not lost.
 - **Trade-off:** **smaller chunks** are more precise but carry less context. **Bigger chunks** carry more context but also more noise.
-- **Analogy:** sticky notes in a textbook, one per topic.
 
 ### Step 3 — Embed (text → numbers)
 - An **embedding model** turns each chunk into a list of numbers called a **vector**.
 - The model used here is **`BAAI/bge-small-en-v1.5`**. It produces **384 numbers per chunk**.
 - **Key property:** texts with **similar meaning** get **similar vectors**, even with different words. For example, "How do I cancel my order?" ≈ "Steps to stop a purchase".
-- **Analogy:** a city map. Each chunk has an address, and similar topics live in the same neighbourhood. Embeddings have hundreds of coordinates, not just 2. A music app's "similar songs" works the same way.
 - **Semantic search** means searching by **meaning**, not by exact words.
 
 ### Step 4 — Store in a vector database
@@ -132,8 +118,6 @@ flowchart LR
 2. Ask the vector DB for the **top-k** most similar chunks. **k = 4** in our code.
 3. Put the **question and the chunks** into a prompt and send it to the LLM.
 4. The LLM writes the answer.
-
-- **Top-k analogy:** "restaurants near me". You see only the nearest few, not every restaurant.
 
 > **Tip (rule you must not break):** Embed the question and the documents with the **same embedding model**. Different models make different "maps", so distances between them mean nothing.
 
@@ -195,7 +179,6 @@ flowchart LR
 ### Two LLMs
 - **Main LLM:** **DeepSeek via OpenRouter**. It is the **brain of all five agents** and orchestrates the workflow.
 - **RAG LLM:** a **fast model on Groq**. It lives **inside the RAG tool** and turns the retrieved chunks into a short answer. Speed matters here.
-- **Analogy:** a newsroom. The **editor** (main LLM) decides and approves. A quick **junior reporter** (RAG LLM) reads the archive and summarises. Two **fact-checkers** (the graders) review before print.
 
 ```mermaid
 flowchart TB
@@ -256,20 +239,6 @@ sequenceDiagram
 - **Hallucination Grader:** `no`, because the date is not in the source chunks.
 - **Answer Generator** sees a "no" and **does not trust** the answer. It runs a **fresh web search** and builds the final answer from the web results.
 
-```mermaid
-stateDiagram-v2
-    [*] --> Routing
-    Routing --> RAGTool: vectorstore
-    Routing --> WebSearch: websearch
-    RAGTool --> WebSearch: NOT_FOUND_IN_DOCUMENT
-    RAGTool --> Grading
-    WebSearch --> Grading
-    Grading --> Polish: both yes
-    Grading --> FallbackWeb: any no
-    Polish --> [*]
-    FallbackWeb --> [*]
-```
-
 ### What one question costs
 
 | | Plain RAG | Agentic RAG |
@@ -290,12 +259,6 @@ stateDiagram-v2
 |---|---|---|---|---|
 | **Bank support** | Loan/FD/credit-card policies, fee schedules | Repo rate news, current offers (web or bank API) | A wrong foreclosure charge leads to complaints and penalties | FD closed after 8 months: penalty? |
 | **Hospital help desk** | Visiting rules, admission checklist, insurance/cashless docs | Doctor availability (appointment system tool) | A made-up fasting instruction can hurt a patient | Documents for cashless admission? |
-| **HR assistant** | Leave, travel, reimbursement policies | This year's state public holiday list | Wrong leave rules cause payroll and trust problems | Carry forward casual leave? |
-| **Food delivery / e-commerce** | Refund/cancellation policy, partner guidelines | Order status (internal API tool) | Promising a refund the policy doesn't allow costs money | 40 min late: full refund? |
-| **College study assistant** | Notes, syllabus, previous papers | Latest version of a library or tool | A confident wrong answer before an exam | Explain unit 3 normalisation forms |
-| **Legal / contracts** | Signed contracts, compliance guidelines | Recent law or regulation changes | Every claim must cite a clause (the grader acts like a junior lawyer) | Notice period for a vendor contract? |
-
-- **Quiz fact:** "Is Dr. Mehta available tomorrow?" goes on the **live line** (appointment system tool). Availability changes daily, so it can't come from a document.
 
 ### Plain RAG or agentic RAG?
 
@@ -310,20 +273,11 @@ flowchart TD
     C -->|"No, extra seconds OK"| AG
 ```
 
-| Choose **plain RAG** when… | Choose **agentic RAG** when… |
-|---|---|
-| All answers live in your documents | Some questions need live data, an API, or the web |
-| You need an answer in **1–2 s** | A few extra seconds are fine in exchange for accuracy |
-| Mistakes are cheap (a casual FAQ bot) | Mistakes are costly (money, health, legal) |
-| Budget per question ≈ zero | You can afford several LLM calls per question |
-
 > **Tip:** **Start simple.** Many teams build plain RAG first, **measure where it fails**, and only then add a router or graders for those failures.
 
 ---
 
 ## 7. The toolbox we use
-
-**In one line:** Each name you will see in the code, in one line.
 
 | Name | What it is | Our use |
 |---|---|---|
@@ -333,7 +287,6 @@ flowchart TD
 | **Groq** | Cloud provider running models on its own **LPU chips**, built for very fast inference | Fast LLM inside the RAG tool |
 | **Ollama** | Free app to download and run LLMs locally | Optional: DeepSeek fully local |
 | **Tavily** | Search API made for AI agents. Returns clean text, not messy web pages | Web search tool |
-| **Hugging Face** | The biggest library of open AI models | Downloading the embedding model |
 | **ChromaDB** | Lightweight local vector database | Storing the PDF's vectors |
 
 - **Inference** means running a trained model to get an answer.
@@ -389,29 +342,6 @@ Backstories and descriptions **are prompts**. Getting them right takes several r
 
 ## 9. Set up the project
 
-**In one line:** About **10 minutes**, mostly waiting for installs.
-
-### Folder structure (`code/`)
-| File | Purpose |
-|---|---|
-| `step0_simulate_flow.py` | Run **first**. No keys, no installs. Simulates the 5 steps with plain Python rules |
-| `step1_plain_rag.py` | Run **second**. Classic RAG, no agents |
-| `config.py` | All settings in one place |
-| `llms.py` | The two LLMs |
-| `tools.py` | `rag_tool` + `web_search_tool` |
-| `agents.py` | The 5 agents |
-| `tasks.py` | The 5 tasks |
-| `main.py` | Wires everything and runs it |
-| `requirements.txt` | Libraries |
-| `.env.example` | Template for secret keys |
-| `data/` | The PDF is downloaded here |
-| `answers_log.md` | Created on first run. Every Q&A is saved here |
-
-```mermaid
-flowchart LR
-    S0["Step 0<br/>step0_simulate_flow.py"] --> S1["Step 1<br/>venv"] --> S2["Step 2<br/>pip install"] --> S3["Step 3<br/>choose LLM_MODE"] --> S4["Step 4<br/>get API keys"] --> S5["Step 5<br/>fill .env"] --> RUN["python main.py"]
-```
-
 ### Step 0 — feel the flow (no keys)
 ```bash
 cd code
@@ -419,43 +349,15 @@ python step0_simulate_flow.py
 ```
 - Shows the same 5 steps. In the demo, the **Hallucination Grader catches a made-up fact** ("What is multi-head attention?" → grounded? **no** → the Answer Generator uses a web result).
 
-### Step 1 — virtual environment
-- A **virtual environment** is a private box of Python libraries for one project, so projects don't clash.
-```bash
-python -m venv venv
-venv\Scripts\Activate.ps1      # Windows PowerShell
-source venv/Scripts/activate   # Windows Git Bash
-source venv/bin/activate       # Mac / Linux
-```
-- You'll see `(venv)` in the prompt. Use **Python 3.10 to 3.13**.
-
-### Step 2 — install
-| Package | Why |
-|---|---|
-| `crewai[tools]>=1.15,<2` | Agents, tasks, crew + **PDFSearchTool** + ChromaDB (tested on 1.15) |
-| `sentence-transformers>=3` | Runs the Hugging Face embedding model locally (installs **PyTorch**) |
-| `tavily-python>=0.7` | Web search |
-| `python-dotenv>=1.0` | Reads keys from `.env` |
-
-- `pip install -r requirements.txt`. The first install can take **several minutes and a few hundred MB**.
-
-### Step 3 — choose the brain (`LLM_MODE`)
+### Choose the brain (`LLM_MODE`)
 | `LLM_MODE` | What runs | Cost | Speed | Best for |
 |---|---|---|---|---|
 | **`openrouter`** (default) | DeepSeek V4 Flash, cloud | Pay-as-you-go. A small credit lasts long | Good | Learning the real DeepSeek setup |
 | **`groq`** | Fast open model on Groq (**not DeepSeek**) | Free tier | Very fast | Practice with zero payment |
 | **`ollama`** | DeepSeek-R1 8B on your laptop | Free | Slow on normal laptops | Privacy, offline learning |
 
-### Step 4 — API keys
-| Key | Where | Used for |
-|---|---|---|
-| `OPENROUTER_API_KEY` | openrouter.ai → Keys → Create key. Add a small credit. Only needed for `LLM_MODE=openrouter` | DeepSeek brain |
-| `GROQ_API_KEY` | console.groq.com → API Keys (free tier) | Fast RAG LLM, and the brain in groq mode |
-| `TAVILY_API_KEY` | app.tavily.com dashboard (free tier) | Web search |
-
-### Step 5 — `.env`
+### `.env`
 - Copy `.env.example` to a file named exactly **`.env`**. Paste keys after `=` (**no quotes, no spaces**).
-- Key defaults: `LLM_MODE=openrouter`, `OPENROUTER_MODEL=deepseek/deepseek-v4-flash`, `OLLAMA_MODEL=deepseek-r1:8b`, `OLLAMA_BASE_URL=http://localhost:11434`, `RAG_LLM_MODE=groq`, `GROQ_MODEL=llama-3.3-70b-versatile`, `EMBEDDING_MODEL=BAAI/bge-small-en-v1.5`, `PDF_PATH=data/attention_is_all_you_need.pdf`, `TOP_K=4`, `MAX_RPM=10`.
 
 > **Tip (security):** **Never share or upload `.env`.** Anyone with your keys can spend your credits. Add `.env` to `.gitignore`.
 
@@ -473,8 +375,6 @@ def plain_rag(question):
     return clean_text(llm.call(RAG_PROMPT.format(context=chunks, question=question)))
 ```
 
-- It **reuses the same library builder** as the agentic version, so the comparison is fair.
-- It **prints the chunks** (first 600 characters), so you can see what the LLM was given.
 - **One LLM call**, so it is fast and cheap. There is **no router, no web, no checks**.
 
 ```bash
@@ -483,9 +383,6 @@ python step1_plain_rag.py "What is the weather in Delhi today?" # NOT_FOUND_IN_D
 ```
 
 - For the weather question, the best plain RAG can do is **`NOT_FOUND_IN_DOCUMENT`**. It has **nowhere else to look**.
-- **Analogy:** plain RAG is a shopkeeper who checks only the shelf behind him. Agentic RAG is a store where a front-desk person decides "godown or supplier?" and a supervisor checks the bill.
-
-> **Tip:** Run the same two questions through `main.py` later and compare **answers, time, and the journey line**.
 
 ---
 
@@ -494,12 +391,9 @@ python step1_plain_rag.py "What is the weather in Delhi today?" # NOT_FOUND_IN_D
 **In one line:** `config.py` is the **one place for settings**. `llms.py` is the **one place for the two brains**.
 
 ### config.py
-- **`load_dotenv()`** reads `.env` into environment variables.
-- **`os.getenv("NAME", "default")`** uses the `.env` value if it is there, otherwise the default. So the code still runs when optional settings are missing.
 - **`LLM_MODE`** is a three-way switch: `openrouter` / `groq` / `ollama`. Ollama needs **~8 GB free RAM**.
 - **`RAG_LLM_MODE`**: `groq` (fast cloud) or `same` (reuse the main brain, **no Groq key needed**).
 - The main model **must support tools (function calling)**, because the Retriever calls tools. Not every model can. Check openrouter.ai/models.
-- **`PDF_URL`** default: `https://arxiv.org/pdf/1706.03762`.
 - **`PDF_TOPIC`** is a one-line description of the PDF's contents. **The Router never opens the PDF.** It decides from this line plus the question. **Update it if you use your own PDF.**
 - Safety limits:
 
@@ -508,30 +402,13 @@ python step1_plain_rag.py "What is the weather in Delhi today?" # NOT_FOUND_IN_D
 | `WEB_RESULTS` | **3** | Web results to fetch |
 | `TOP_K` | **4** | PDF chunks to retrieve |
 | `MAX_RPM` | **10** | Max LLM calls per minute (free tiers are strict). Like a speed governor on a school bus |
-| `ANSWERS_LOG` | `answers_log.md` | Every Q&A and journey is saved here |
-
-- **`check_keys()`** returns friendly warnings for an invalid `LLM_MODE` or `RAG_LLM_MODE`, missing keys for the chosen mode, or a missing Tavily key ("web search will not work").
 
 ### llms.py
-
-```mermaid
-flowchart TD
-    M{"LLM_MODE?"} -->|"ollama"| O["LLM model=ollama/deepseek-r1:8b<br/>base_url localhost:11434, temp 0.1"]
-    M -->|"groq"| G["_groq_llm()<br/>openai/ connector + Groq base_url, temp 0.0"]
-    M -->|"openrouter (default)"| OR["LLM model=openrouter/deepseek/deepseek-v4-flash<br/>temp 0.1"]
-    R{"RAG_LLM_MODE?"} -->|"groq"| G
-    R -->|"same"| M
-```
 
 - **`LLM(...)`** is CrewAI's **universal model connector**, like a universal charger with different tips. The **prefix before the first slash** picks the provider: `openrouter/…`, `ollama/…`, `openai/…`.
 - **`temperature=0.1`** (main) keeps answers calm and consistent. Higher values are more creative, which is bad for routing and grading. The Groq LLM uses **`temperature=0.0`**.
 - **`@lru_cache(maxsize=1)`** means **build once, reuse**. All five agents share **one brain object**.
-- **Groq is OpenAI-compatible**, so the code uses the `openai/` connector with `base_url=https://api.groq.com/openai/v1`. Same plug, different socket.
 - **`clean_text()`** strips **`<think>…</think>`** blocks. Reasoning models like **DeepSeek-R1** write private "rough work" there. We keep only the final answer.
-
-```python
-text = re.sub(r"<think>.*?</think>", "", str(text), flags=re.DOTALL).strip()
-```
 
 ---
 
@@ -542,9 +419,7 @@ text = re.sub(r"<think>.*?</think>", "", str(text), flags=re.DOTALL).strip()
 ### `create_pdf_search_tool` — the library
 - Uses CrewAI's **`PDFSearchTool`**, which does the **whole indexing phase**: load, chunk, embed, store in ChromaDB.
 - **`collection_name`** is the "**shelf**". It is named `<pdf stem>_<embedding model name>`, with special characters replaced by `_` and **cut to 60 chars**. Switching the PDF or the model **never mixes old and new vectors**.
-- **`limit=config.TOP_K`** sets top-k (4).
 - Embedding provider **`"sentence-transformer"`** runs **locally**. The model downloads once from Hugging Face (**~130 MB**).
-- Vector DB provider: **`"chromadb"`**.
 
 ### `create_rag_tool` — retrieval + fast generation
 
@@ -559,7 +434,6 @@ flowchart TD
     D -->|"no"| OK["return ANSWER FROM DOCUMENT<br/>+ CHUNKS USED"]
 ```
 
-- `pdf_search` and `rag_llm` are built **once, outside** the inner function, and reused on every call. Indexing happens at creation time.
 - **`@tool("rag_tool")`** turns the function into something an agent can call.
 - **The docstring is an instruction, not decoration.** The agent learns what the tool does **from its name and docstring**.
 - **RAG_PROMPT** rules: "Use **ONLY** the context. No outside knowledge. If the answer isn't there, reply exactly **`NOT_FOUND_IN_DOCUMENT`**. Answer in **3 to 6** clear sentences."
@@ -568,8 +442,6 @@ flowchart TD
 ### `web_search_tool`
 - **`TavilyClient(api_key).search(query=question, max_results=3)`**.
 - It is wrapped in **`try/except`**. On failure (no internet, wrong key, limit reached) it returns **`WEB_SEARCH_FAILED: <error>`** instead of crashing the crew. One broken tool shouldn't stop the whole office.
-- If there are no results, it returns **`NO_WEB_RESULTS`**.
-- Each result is formatted as `[n] title / Link: url / content`, so you can see where facts came from.
 
 > **Common mistake (real bug):** The web tool failed with **"missing 1 required positional argument"** because the agent called it **without the question**. The fix had two parts: the tool docstring says "**Input must be the user's full question**", and the task descriptions say "**pass it the question: '{question}'**". When an agent calls a tool wrongly, **fix the instructions it reads**.
 
@@ -589,9 +461,7 @@ All agents share these settings: `allow_delegation=False`, **`max_iter=5`**, `ve
 | **Hallucination Grader** | Catch made-up facts before they reach the user | Fact checker. Is every important claim supported by the source? Invented **facts, numbers, or names** = hallucination |
 | **Answer Generator** | One clear, correct, concise final answer | Final editor. Polishes if checks pass. If they fail, does a fresh web search. **Never explains its internal process** |
 
-- **`allow_delegation=False`:** the agent decides alone and can't pass the job to another agent.
 - **`max_iter=5`:** at most **5 think-and-act rounds**, then it must answer. This **safety brake** stops endless loops that burn credits.
-- **Without `PDF_TOPIC` in its backstory, the Router has no idea what the PDF contains.**
 
 > **Tip:** **Tools are attached to tasks, not agents** in this design. That way the same agent can be reused for other tasks with different tools.
 
@@ -640,41 +510,17 @@ flowchart LR
 
 ### `build_crew()`
 1. **Tools:** `create_rag_tool(PDF_PATH)`. This **triggers indexing** on the first run only; later runs reuse the vector DB.
-2. **Agents:** create all 5.
-3. **Tasks:** create all 5, passing each task the earlier tasks it depends on.
-4. **Crew:** `Crew(agents=[...], tasks=[...], process=Process.sequential, max_rpm=config.MAX_RPM, verbose=True)`.
+2. **Crew:** `Crew(agents=[...], tasks=[...], process=Process.sequential, max_rpm=config.MAX_RPM, verbose=True)`.
 
 - **`Process.sequential`**: tasks run **one after another in list order**. It is simple and easy to debug.
 - **`max_rpm`**: at most **10 LLM calls per minute** for the whole team. If they go faster, **CrewAI waits**.
-- **`verbose=True`**: prints everything each agent thinks and does. Turn it off later for cleaner output.
 
 ### `ask()` and `main()`
 
-```mermaid
-sequenceDiagram
-    participant U as User CLI
-    participant M as main.py
-    participant C as config
-    participant CR as Crew
-    participant L as answers_log.md
-    U->>M: python main.py "question"
-    M->>C: check_keys()
-    C-->>M: problems list, exit 1 if any
-    M->>M: download_pdf() only if missing
-    M->>CR: build_crew()
-    M->>CR: kickoff with inputs question
-    CR-->>M: result + each task output
-    M->>U: QUESTION, ANSWER, JOURNEY line
-    M->>L: append Q, answer and summary
-```
-
 - **`crew.kickoff(inputs={"question": question})`** starts the team.
 - After the run, **every task's output is still available**. The code reads the one-word results of the Router and both graders to print a **journey line**: `route=… relevant=… grounded=… time=…s` (like a train ticket listing the stations).
-- Each Q&A is **appended to `answers_log.md`**, your diary of experiments.
 - **`config.check_keys()`** runs **before anything expensive** and prints "Please fix your .env file first".
 - **`--chat`** mode keeps the team ready for question after question. The PDF is **indexed only once**. Type `exit` or `quit` (or press Enter on an empty line) to stop.
-- Without `--chat`, the question comes from the command line or falls back to `DEFAULT_QUESTION`.
-- **`download_pdf()`** downloads only if the file is missing. It uses a `User-Agent: Mozilla/5.0` header and a **60 s timeout**.
 
 ---
 
@@ -689,25 +535,9 @@ python main.py "What is the latest stable version of Python?"
 python main.py --chat
 ```
 
-### What you'll see, in order
-1. **First run only:** the PDF downloads, the embedding model downloads, and chunks are inserted into ChromaDB.
-2. The Router says `vectorstore` (for a Transformer question).
-3. The Retriever calls `rag_tool`. You see the tool input (the question) and the output (answer + chunks).
-4. Answer Grader: `yes`.
-5. Hallucination Grader: `yes`.
-6. The Answer Generator prints the final answer.
-7. A summary box, for example `JOURNEY : route=vectorstore relevant=yes grounded=yes time=48s`.
-
-- For the Python-version question, the Router should say **`websearch`**.
-
 ### Why is it slow?
 - About **7–8 LLM calls per question**: 5 agents, a tool call, and the RAG LLM.
 - Fast providers take **~15–30 s**. Free or overloaded models can take **several minutes** (one slow free model once took **~10 min**). Ollama on a laptop also takes minutes.
-- Speed depends on **provider, rate limits, and hardware**.
-
-> **Common mistake:** Free tiers have **small per-minute and per-day limits**. At 7–8 calls per question, you can hit them after a handful of questions. On a **429** error, wait a minute, **lower `MAX_RPM`**, or use a paid model.
-
-> **Tip:** **Retries are normal.** CrewAI retries automatically after errors like a wrongly formatted tool call or a temporary API failure. Worry only if the **same error repeats until the run stops**.
 
 ---
 
@@ -717,21 +547,9 @@ python main.py --chat
 
 ```bash
 ollama pull deepseek-r1:8b      # ~5 GB download; needs ~8 GB free RAM
-ollama run deepseek-r1:8b       # optional test chat; type /bye to exit
-```
-
-`.env`:
-```ini
-LLM_MODE=ollama
-OLLAMA_MODEL=deepseek-r1:8b
-RAG_LLM_MODE=same   # optional: DeepSeek inside the RAG tool too
 ```
 
 - The brain then runs at **`http://localhost:11434`**. Only **Tavily (web search)** still needs the internet.
-
-| Use an **API** when… | **Self-host** when… |
-|---|---|
-| You want speed and reliability with little setup | **Privacy rules** require it, or **volume is high** enough that your own hardware becomes cheaper (expect more hosting and maintenance work) |
 
 - An 8B model on a normal laptop is **for learning**. Production local setups **need a GPU**.
 
@@ -741,45 +559,20 @@ RAG_LLM_MODE=same   # optional: DeepSeek inside the RAG tool too
 
 ## 18. When things break
 
-**In one line:** Read the error. It almost always tells you which of these problems it is.
-
 | You see | Why | Fix |
 |---|---|---|
 | "Please fix your .env file first" | A key is empty | The file must be named **`.env`** (not `.env.example`) and sit in the `code` folder |
 | **404** / model not found | The model ID no longer exists | Find a current ID on the provider's models page. Update `OPENROUTER_MODEL` / `GROQ_MODEL` |
 | **429** / rate limit | Too many requests on a free tier | Wait, **lower `MAX_RPM`**, or use a paid model |
-| **402** / insufficient credits | No OpenRouter credit | Add credit, or set `LLM_MODE=groq` |
-| "does not support tools" (Ollama) | The local model can't call tools | Use `deepseek-r1:8b` or bigger |
 | `WEB_SEARCH_FAILED` | No internet, wrong Tavily key, or limit reached | Check key and connection. The rest of the team keeps working |
 | **Embedding dimension error** | The DB was built with a different embedding model | The shelf name includes the model, so changing `EMBEDDING_MODEL` creates a fresh shelf. If you renamed things manually, use a new `PDF_PATH` name |
-| "missing required argument" from a tool | The agent called the tool without the question | Make the task description and tool docstring say exactly what to pass |
-| Router sends PDF questions to the web | It doesn't know what the PDF holds | Write a **richer `PDF_TOPIC`** |
-| Final answer explains its process | The prompt allows it | Tighten the answer task's description and expected_output |
-| Very slow | Free or local model, 7–8 calls per question | Use Groq for the RAG LLM, or try `LLM_MODE=groq` to compare |
-
-```mermaid
-flowchart TD
-    E["Error seen"] --> K{"Type?"}
-    K -->|"env / key message"| F1["Fix .env name, location, keys"]
-    K -->|"404"| F2["Update model ID"]
-    K -->|"429"| F3["Wait, lower MAX_RPM, paid model"]
-    K -->|"402"| F4["Add credit or LLM_MODE=groq"]
-    K -->|"tool not supported or wrong args"| F5["Bigger model, clearer docstring and task text"]
-    K -->|"wrong routing or wordy answer"| F6["Improve PDF_TOPIC or prompts"]
-```
 
 ---
 
 ## 19. Questions learners ask
 
-**In one line:** These are the answers to the questions that come up every time this is taught.
-
 - **How does the Router know if the answer is in the PDF without reading it?** It judges the question's meaning against **`PDF_TOPIC`**. It's an **educated guess, not a lookup**. The safety nets are the **Retriever's fallback** and the **two graders**. A **stronger design** gives the Router a quick "**peek**" tool to check the vector DB first.
-- **What exactly does the RAG tool do?** When **created**, it indexes (load, chunk, embed, store). When **called**, it retrieves similar chunks and the fast LLM writes an answer. The agents around it decide **when** to use it and **check** its output.
 - **Why a vector DB and not SQL?** Text is split into **tokens**, and models represent meaning as long number lists. Large models use thousands of numbers per token; our embedding model uses **384 per chunk**. **SQL is great at exact matches** ("find customer 42") but bad at "find the 4 rows whose 384 numbers are closest". A vector DB is **built and indexed for similarity search**.
-- **How are Agents, Tasks, and Tools related?** The **task** says what to do. The **agent** does it. The **tool** lets the agent reach outside itself (PDF, web, API). They complement each other.
-- **Can an agent pull data from a website or company API?** Yes. Write a Python function (for example with `requests` + `BeautifulSoup`, or a browser tool like **Selenium**), decorate it with **`@tool`**, give it a **clear docstring**, and add it to a task.
-- **Front end or back end?** **Back end** (Python). In a product, wrap `crew.kickoff()` in an API (for example **FastAPI**) and have a front end call it.
 - **How would I deploy this?**
   - **Simple start:** put the API on a cloud server such as **AWS EC2**. Add a GPU only if you self-host the LLM.
   - **Many users:** run several copies behind a **load balancer**, plus a **queue** for long jobs (answers take seconds to minutes).
@@ -789,59 +582,12 @@ flowchart TD
 
 ---
 
-## 20. Practice and self-check
-
-**In one line:** Do these exercises in order. Each one teaches a different part of the system.
-
-### Exercises
-1. **Compare plain vs agentic:** ask the same 3 questions with `step1_plain_rag.py` and `main.py`. Tabulate quality, time, and cost.
-2. **Watch the routing:** ask 3 paper questions and 3 current-events questions. Did any take the wrong line? Why?
-3. **Break the Router:** delete the "semantic meaning" sentence from its backstory. Ask "How do Transformers know the order of words?" and compare.
-4. **Change top-k:** set `limit=2`, then `limit=8` in `tools.py`. How do the answers and the evidence change?
-5. **Use your own PDF:** set `PDF_PATH` and `PDF_TOPIC`.
-6. **Add a third tool:** a `@tool` that returns today's date, given to the Answer Generator's task. Ask "What is today's date and what is self-attention?"
-7. **Compare speed:** `RAG_LLM_MODE=groq` vs `same`, and `LLM_MODE=groq`.
-8. **Build a mini use case:** pick a use case and a public PDF (for example a bank fee schedule). Write 5 questions: 3 for the PDF and 2 for the web. Check the journey line every time.
-
-### Quiz facts (the concepts behind the quiz)
-| Question | Answer |
-|---|---|
-| What does the "R" in RAG do? | **Retrieves** relevant pieces of your documents (no retraining) |
-| Why the same embedding model for questions and chunks? | Different models make different "maps", so distances become meaningless |
-| "Weather in Bengaluru today?" → Router says? | **`websearch`** (real-time info) |
-| Hallucination Grader says "yes" means? | The answer is **supported by the source** (grounded and safe) |
-| Where does an agent learn what a tool does? | From the tool's **name and docstring** |
-| What does `context=[router_task]` do? | Lets the retriever **read the router's output** |
-| "Is Dr. Mehta available tomorrow?" | **Live line** (appointment system tool) |
-| When is plain RAG better? | All answers are in your docs and you need **fast, cheap** replies |
-| Which setting switches cloud DeepSeek → laptop DeepSeek? | **`LLM_MODE=ollama`** |
-
----
-
-## 21. Glossary
+## 20. Glossary
 
 | Term | Meaning |
 |---|---|
-| **LLM** | Large Language Model. Predicts and writes text (DeepSeek, Llama, GPT) |
-| **RAG** | Retrieval-Augmented Generation. Fetch relevant text and give it to the LLM with the question |
-| **Agentic RAG** | RAG where AI agents **decide the path** and **verify the result** |
-| **Agent** | An LLM with a role, goal, backstory, and permission to use tools |
-| **Task** | A unit of work for an agent: description, expected output, context |
-| **Tool** | A function an agent can call (PDF search, web search) |
-| **Crew** | The team of agents + tasks + run order |
-| **Chunk** | A small piece of a document |
-| **Embedding / vector** | A list of numbers representing the meaning of a text |
-| **Vector database** | A DB optimised to store vectors and find the most similar ones fast |
-| **Semantic search** | Search by meaning, not exact words |
-| **Top-k** | The number of most-similar chunks retrieved (k = 4 here) |
-| **Hallucination** | The LLM states something not true or not supported by its sources |
-| **Grounded** | Supported by the source text |
-| **Inference** | Running a trained model to get an answer |
 | **Tool calling (function calling)** | The LLM's ability to request "run this function with these inputs" in a structured format |
 | **Token** | A small piece of text (often part of a word). Pricing and limits are counted in tokens |
-| **Rate limit** | The max requests a provider allows per minute or per day |
-| **API key** | A secret password that lets your code use an online service |
-| **Virtual environment** | A private folder of Python libraries for one project |
 
 ---
 
@@ -883,11 +629,7 @@ flowchart TD
 | LLM calls per question | Plain **1**; agentic **~7–8** |
 | Time per question | ~15–30 s fast; minutes on free/local (~10 min worst seen) |
 | Ollama model | deepseek-r1:8b, **~5 GB**, **~8 GB RAM**, port **11434** |
-| Python | **3.10–3.13** |
-| Collection name length | ≤ **60** chars |
-| PDF download timeout | **60 s** |
 | Pre-launch test set | **20–30** real questions |
-| Setup time | ~**10 min** |
 
 ### Defaults (`.env`)
 `LLM_MODE=openrouter` · `OPENROUTER_MODEL=deepseek/deepseek-v4-flash` · `RAG_LLM_MODE=groq` · `GROQ_MODEL=llama-3.3-70b-versatile` · `EMBEDDING_MODEL=BAAI/bge-small-en-v1.5` · `PDF_PATH=data/attention_is_all_you_need.pdf` · `PDF_URL=https://arxiv.org/pdf/1706.03762`
@@ -895,7 +637,6 @@ flowchart TD
 ### Commands
 ```bash
 python step0_simulate_flow.py                 # feel the flow, no keys
-python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 python step1_plain_rag.py "question"          # plain RAG
 python main.py "question"                     # agentic RAG

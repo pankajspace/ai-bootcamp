@@ -13,14 +13,13 @@
 - [0. Start Here](#0-start-here)
 - [1. The Problem](#1-the-problem)
 - [2. Architecture](#2-architecture)
-- [3. Course Map](#3-course-map)
-- [4. Milestones (M0–M6)](#4-milestones-m0m6)
-- [5. The Data Pack](#5-the-data-pack)
-- [6. Rules of the Project](#6-rules-of-the-project)
-- [7. Evaluation & Rubric](#7-evaluation--rubric)
-- [8. Demo Checklist (12 minutes)](#8-demo-checklist-12-minutes)
-- [9. Stretch Goals](#9-stretch-goals)
-- [10. FAQ](#10-faq)
+- [3. Milestones (M0–M6)](#3-milestones-m0m6)
+- [4. The Data Pack](#4-the-data-pack)
+- [5. Rules of the Project](#5-rules-of-the-project)
+- [6. Evaluation & Rubric](#6-evaluation--rubric)
+- [7. Demo Checklist (12 minutes)](#7-demo-checklist-12-minutes)
+- [8. Stretch Goals](#8-stretch-goals)
+- [9. FAQ](#9-faq)
 - [A. Glossary](#a-glossary)
 - [Cheat Sheet](#cheat-sheet)
 
@@ -51,7 +50,6 @@ flowchart LR
 | Router, Graders | Agentic RAG course |
 | Vendor research | Deep Search course |
 | Matcher, Questionnaire | **New in this capstone** |
-| Input/Output guardrails, Human gate | Security & humans (both courses) |
 
 > **Tip:** One sentence to remember it all — *"AI reads and finds facts; code judges; a human decides."*
 
@@ -61,65 +59,8 @@ flowchart LR
 
 **In one line:** You already built three pieces in three courses; this capstone glues them into one auditable product and gives you a working offline starter kit to upgrade.
 
-### The three courses → three components
-
-| Course | What you built | Role here |
-|---|---|---|
-| **Production RAG from Scratch** | RAG pipeline over company docs (`rag_core/`) | Policy library |
-| **Agentic RAG with DeepSeek + CrewAI** | Crew that **routes** and **grades** (Router, Retriever, two graders) | Router + Graders |
-| **Deep Search Agents** | Web research agent that refuses to be fooled (`run_agent.py`, Lab 12 in LangGraph) | Vendor research |
-
-- **RAG** = Retrieval-Augmented Generation: fetch relevant text first, then let the LLM answer from it.
-- **Agentic** = the LLM makes small decisions (e.g., which route to take).
-- **Deep search** = multi-step planned web research with source checking.
-
-### What you will have at the end
-- A working **assessor**: policy library + vendor research + rule-based verdicts + human gate, behind an **API** and a small **UI**.
-- A hand-built **gold set** (correct answers) of real vendors + an **evaluation report** proving accuracy, **zero guessing** and **injection resistance**.
-- A **trace** for every run: from any verdict you can point to the exact web page and policy clause.
-- A portfolio story: *"I automated the vendor security review, and here is how I kept it honest."*
-
-### Prerequisites
-- Production RAG done (have a working `rag_core/` folder).
-- Agentic RAG done (understand Router, Retriever, two graders).
-- Deep Search done (ran `run_agent.py` offline and live, and Lab 12 in LangGraph).
 - **Python 3.10+**, a free LLM key (**Gemini** or **Groq**) or **Ollama**, and free web search (**`ddgs`**, no key).
-
-### Day one: run the starter kit
-
-```bash
-cd vendor-risk-assessor
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-cp .env.example .env
-python scripts/check_setup.py
-python run_assessor.py        # LedgerLens AI, customer data, 35 users
-python -m pytest -q           # 70 tests
-python eval/run_eval.py       # the scorecard
-```
-
-- Default run: **< 1 second**, **no key, no internet**, prints a full review file ending in **BLOCKED**.
-- Read `runs/<timestamp>-assess/report.md`, then `trace.jsonl`. **That report is the target.**
-
-### How the starter kit is built
-
-| Part | State in starter kit |
-|---|---|
-| Schemas, matcher, questionnaire, report, gold set, evaluation harness | **Complete and tested** (deterministic) |
-| Course parts | **Simplified offline form** |
-
-Simplifications you will replace:
-
-| Simplified (now) | Real (your job) |
-|---|---|
-| Keyword search | Hybrid search + rerank |
-| Rule-based router | LLM router |
-| Static research plan | Planner (LLM) |
-
-- Every simplified file starts with a **`COURSE MAP`** comment and a **`LEARNER TODO`** block naming the milestone and course module.
 - **Your job:** replace simplified → real, **keep tests green**, **prove the improvement** in the evaluation.
-
-> **Tip:** Never "upgrade" something without re-running `pytest` and `eval/run_eval.py`. The improvement must show up in numbers.
 
 ---
 
@@ -139,16 +80,7 @@ Simplifications you will replace:
 - Today: **2–6 hours per vendor** reading trust centres, privacy policies, news. Teams **wait weeks** or **skip** the review.
 
 ### Running example: Nimbu Mart
-Its Information Security team has **8 internal documents**:
-1. Security policy — **two editions** (2026 current, 2025 archived)
-2. Data-protection policy (written for India's **DPDP Act**)
-3. AI acceptable-use policy
-4. Procurement checklist
-5. **Approved Vendor List** (restricted)
-6. Questionnaire template
-7. An **untrusted chat export**
-
-(The two security-policy editions count as two documents.)
+Its Information Security team has **8 internal documents** (see the Data Pack).
 
 ### The three fictional vendors
 
@@ -220,91 +152,9 @@ Jargon:
 - **ACL** = Access Control List — who may see which document.
 - **Extractive answer** = copy the matching text; **grounded generation** = LLM writes an answer using only retrieved text, with citations.
 
-### Assessment flow as a sequence
-
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant G as Guardrails
-    participant R as Router
-    participant V as Vendor research
-    participant M as Matcher
-    participant Qn as Questionnaire
-    participant H as Human approver
-    U->>G: "Can support use LedgerLens with customer data?"
-    G->>R: redacted question + intent OK
-    R->>V: route = assessment
-    V->>M: VendorProfile (typed, dated, sourced facts)
-    M->>M: rules x facts = verdicts (no LLM)
-    M->>Qn: UNKNOWN / NEEDS_REVIEW items
-    Qn->>H: review file + vendor questions
-    H-->>U: decision by named person (system never approves)
-```
-
-> **Tip:** The matcher is the only place verdicts are made. The LLM never touches the verdict.
-
 ---
 
-## 3. Course Map
-
-**In one line:** An index telling you which course module, lab and reusable file to use for each project part, and in which milestone.
-
-### Production RAG parts
-
-| Project part | Module / Lab | Reuse | Milestone |
-|---|---|---|---|
-| Ingest policies; **chunk by clause** with metadata (version, status, access, trust) | 04 Ingestion · 06 Chunking ("structure-aware", "chunk metadata") · Lab 03 | `rag_core/documents.py`, `chunking.py`, `loaders.py`, `_metadata.json` pattern | M1 |
-| Retrieve the right clause: **hybrid search, RRF, metadata filters, reranking** | 08 Retrieval & reranking (sec 3–9) · 07 Embeddings · Labs 04, 06, 07, 08 | `hybrid.py`, `bm25.py`, `vectorstore.py`, `rerank.py`, `query_transform.py` | M1 |
-| **Grounded answers** with clause citations; refuse when context lacks answer | 09 Grounded generation · Lab 09 | `generate.py`, `prompts.py` | M1 |
-| ACL in retrieval; archived versions; untrusted docs; **PII redaction** | 11 Security & privacy (sec 1–3) · Lab 11 | `rag_core/security.py` (`acl_filter`, `redact_pii`, `detect_injection`) | M1, M4 |
-| The service: **FastAPI**, validation, queue, workers, storage | 04 (entry points, queue, idempotency) · 13 Capstone | `code/app/api.py`, `worker.py`, `db.py`, `docker-compose.yml` | M5 |
-
-### Agentic RAG parts
-
-| Project part | Where | Reuse | Milestone |
-|---|---|---|---|
-| **Route**: policy / vendor / assessment / refuse | "agents.py → The Router", "tasks.py → Task 1: route", exercise "Break the Router on purpose" | `agents.py` (`create_router_agent`), `tasks.py` | M3 |
-| **Check the answer**: relevance + hallucination graders, with retry | "Tasks 3 and 4: the two checks", "Prompt engineering is the real work" | `agents.py` (two graders), `tasks.py` | M3 |
-| **Two models**: fast/cheap for extraction & grading, strong for synthesis | Agentic "Two LLMs" + Deep Search 09 "Model routing" · DS Lab 10 | `llms.py`; `deepsearch/llm.py` (`LLM.small`) | M2, M3 |
-
-### Deep Search parts
-
-| Project part | Module / Lab | Reuse | Milestone |
-|---|---|---|---|
-| **Plan** research: Plan Creator → Reviewer, sub-question per field, stop rules | 03 Planning · Lab 3 | `planner.py`, `schemas.py` (`ResearchPlan`, `PlanReview`) | M2 |
-| **Typed tools**; validate → repair loop for LLM JSON | 04 Executor, tools & MCP · Lab 2 | `llm.py` (`structured()`), `tools.py` | M2 |
-| **Parallel workers**: search → fetch → injection scan → extract claims | 04 · 09 "Latency: parallel workers" · Lab 4 | `executor.py`, `extractor.py` | M2 |
-| **Identity gate**, authority per source, **freshness decay**, copies counted once | 05 Validation & temporal reasoning · Lab 6 | `validator.py` (`AUTHORITY`, `HALF_LIFE_DAYS`, `FIELD_AUTHORITY_OVERRIDES`) | M2 |
-| **Merge** claims; resolve conflicts; keep **provenance** | 06 Merging · Lab 7 | `merger.py` | M2 |
-| **Memory**: re-review only what changed (SEC-12.1) | 07 Context, memory · Lab 8 | `memory.py` | M2 (stretch) |
-| **Prompt injection** via web pages; quarantine; defence in depth; red team | DS 08 Security + RAG 11 · DS Lab 9, RAG Lab 11 | `deepsearch/security.py`, `rag_core/security.py` | M4 |
-| **Budgets**, token costs, cost per assessment | DS 09 + RAG 12 ("Cost", "Caching") · DS Lab 10, RAG Lab 13 | `budget.py`, `rag_core/cache.py` | M2, M5 |
-| **Tracing / observability** | DS `tracing.py` (Module 12) + RAG 12 · RAG Lab 13 | `tracing.py`, `rag_core/observability.py` | M5 |
-| **Evaluation**: gold set first, metrics, ablations, LLM-as-judge, CI | DS 10 + RAG 10 · DS Lab 11, RAG Lab 10 | `evaluation.py` (both), `eval/golden.jsonl` format | M6 |
-| **Graph orchestration**, human-in-the-loop pause, checkpoints | 02 ("five patterns") · 12 "same loop in a framework" · Lab 12 | `labs/lab12_langgraph_version.py` | M5 |
-| **Privacy & law**: research companies not people; DPDP Act; minimal schema | 11 Privacy, law & ethics | Module 11 checklist | M4 |
-| Expose as **MCP tool** (stretch) | 04 "MCP" · Lab 5 | `lab05_mcp_server.py`, `lab05_mcp_client.py` | Stretch |
-
-### New parts (no course)
-
-| Project part | Principles from | Code | Milestone |
-|---|---|---|---|
-| **Requirement matcher**: rules × facts → verdicts, deterministic, tested | DS 06 ("clean structured result"), RAG 09 ("refusing") | Already written: `assessor/matcher.py`, `tests/test_matcher.py` | M0, M6 |
-| **Questionnaire drafter + review file** | RAG 09 "Structured output" | `questionnaire.py`, `report.py` | M0 |
-| **Human approval gate**, approvers by data tier | DS 12 checklist ("user approves the plan before a long run") | `graph.py` (`human_gate`), `app/api.py` (`/approve`) | M5 |
-| **Streamlit UI** with progress + trace viewer | — | `app/ui.py` skeleton | M5 |
-
-Jargon:
-- **RRF (Reciprocal Rank Fusion)** = merges two ranked lists (keyword + vector) into one.
-- **Reranker (cross-encoder)** = a model that rescores each (query, chunk) pair more accurately.
-- **Provenance** = where a value came from (URL, date).
-- **MCP (Model Context Protocol)** = standard way to expose tools to apps like Claude Desktop or an IDE.
-
-> **Tip:** When you open a `LEARNER TODO` in the code, look up its row here first.
-
----
-
-## 4. Milestones (M0–M6)
+## 3. Milestones (M0–M6)
 
 **In one line:** Seven milestones, done in order, each ending with a runnable "Done when" check.
 
@@ -321,15 +171,8 @@ flowchart LR
 ### M0 — Run and read the starter kit (½ day)
 **Goal:** know exactly what the finished system does before changing anything.
 - Run the **four demo questions** in the README. Read each `report.md`, then its `trace.jsonl` **bottom to top**.
-- Read code in this order: `schemas.py` → `matcher.py` → `graph.py` (`run_plain`) → `vendor_research.py` → `policy_rag.py`.
 - Open `data/vendor_web/corpus.json`. Find the **stale page, look-alike company, rumour, copy, attack page**. Predict what the system does; check against the LedgerLens trace.
 - **Break on purpose:** in `requirements.yaml` set `allow_planned: true` on DP-3.1 → LedgerLens passes residency. Put it back.
-
-```yaml
-# data/requirements.yaml (idea only)
-DP-3.1:
-  allow_planned: true   # breaks the rule: "planned" India region would count as PASS
-```
 
 **Done when:** pytest green, `eval/run_eval.py` shows **100% verdict accuracy**, and you can explain in two sentences why **QuillDesk is BLOCKED** and **Parakeet is only CONDITIONAL**.
 
@@ -359,8 +202,6 @@ flowchart LR
 
 **Done when:** all policy-question checks pass **including "baseline known to fail"**; `tests/test_policy_rag.py` still passes (ACL, archived, untrusted); asking for the Approved Vendor List still gets **the process, never the list**.
 
-> **Tip (common mistake):** Filtering *after* ranking can leak restricted or archived text into the top results. Always filter first.
-
 ### M2 — Vendor research on the real web (4–5 days)
 *Deep Search Modules 03, 04, 05, 06, 07, 09 · Labs 2, 3, 4, 6, 7, 8, 10*
 
@@ -372,7 +213,6 @@ flowchart LR
 - Fetch + extraction in **parallel workers** sharing **one Budget**; route extraction to the **small model**.
 - Make the **identity gate real**: LLM decides "same company?" from **domain, legal entity, product** — and it **stays a gate** (**reject, don't down-weight**).
 - Pick **3 real AI/SaaS vendors**, research by hand first (fill `data/gold_set_template.json` with URLs + dates), run the agent, compare field by field.
-- Stretch: **long-term memory** so a re-review only fetches pages newer than the last run.
 
 ```mermaid
 flowchart TD
@@ -406,9 +246,6 @@ flowchart TD
 - Port the Router's **goal and backstory**; add routes **vendor**, **assessment**, and **refuse**; return a **`RouteDecision`** via **`LLM.structured()`** (forces typed JSON output).
 - Port **Answer Grader** + **Hallucination Grader** as `grade_relevance()` / `grade_grounded()`. Add the **retry loop**.
 - Write **30 routing questions** (10 per route, incl. awkward ones). Measure accuracy for **mock vs LLM**.
-  - "Is LedgerLens SOC 2 so we can use it?" → **assessment**
-  - "Which tier is Parakeet approved for?" → **policy**
-- Repeat "**Break the Router on purpose**" on the new router; note what changed.
 
 ```mermaid
 stateDiagram-v2
@@ -494,7 +331,7 @@ sequenceDiagram
 
 ---
 
-## 5. The Data Pack
+## 4. The Data Pack
 
 **In one line:** Fictional policies, 11 YAML rules, a 23-page fake vendor web, and gold sets — all you need to run and test offline.
 
@@ -511,41 +348,22 @@ sequenceDiagram
 | **Questionnaire template NM-SEC-Q** | Source of **every** vendor question in the report |
 | **Chat export** | Marked **untrusted**; has a wrong claim + an injection line |
 
-(SSO = Single Sign-On.)
-
 ### Rules — `data/requirements.yaml`
 - **11 machine-checkable requirements.** Each has: **clause, vendor field, rule type, parameters, severity, data tiers it applies to.**
-- **8 rule types:**
-
-| Rule type | Plain meaning |
-|---|---|
-| `certification_valid` | Has a valid (documented, current) certification |
-| `region_includes` | Data region list includes the required region (e.g., India) |
-| `value_known` | The value is known / found |
-| `enum_verdict` | Value is one of allowed options |
-| `list_disclosed` | A list (e.g., sub-processors) is disclosed |
-| `retention_within` | Data retention within a limit |
-| `no_unresolved_incident` | No incident without resolution (e.g., post-mortem) |
-| `approved_for_tier` | Vendor approved for this data tier |
-
-(Plain meanings are inferred from the names.)
+- **8 rule types.**
 - **Adding a clause** = add a YAML entry and, sometimes, one small rule function **with its tests**.
 
 ### The vendor web — `data/vendor_web/corpus.json`
 - **23 fictional pages** across **3 vendors**.
 - Each page has **`mock_claims`**: what a careful extraction model would read from it.
   - **Offline mode** uses `mock_claims`; **live mode** calls your model.
-- Every domain ends in **`.example`**.
 
 ### Gold sets
 - **`gold_set.json`:** **5 assessment cases** (incl. the same question asked by someone **without access**) + **6 policy questions** (one marked **"baseline known to fail"**).
-- **`gold_set_template.json`:** the shape you fill for real vendors.
-
-> **Tip:** The archived 2025 policy is a deliberate trap — version filtering is a correctness issue, not just tidiness.
 
 ---
 
-## 6. Rules of the Project
+## 5. Rules of the Project
 
 **In one line:** Ten non-negotiable principles that keep the system honest, consistent and safe.
 
@@ -562,28 +380,9 @@ sequenceDiagram
 | 9 | **Humans approve** | Report ends in an approval block only a named person fills. The word **"approved" never appears** in system output about a vendor. |
 | 10 | **Research companies, not people** | No vendor-employee names in schema, memory or report. |
 
-### How a web page's fate is decided
-
-```mermaid
-flowchart TD
-    PG["Fetched page"] --> I1{"Contains instructions<br/>aimed at the AI?"}
-    I1 -->|"yes"| QQ["QUARANTINE whole page"]
-    I1 -->|"no"| I2{"About the same company?"}
-    I2 -->|"no"| RJ["REJECT, read nothing"]
-    I2 -->|"yes"| I3{"Forum post or rumour?"}
-    I3 -->|"yes"| DP["DROP and log"]
-    I3 -->|"no"| I4{"Copy of a page<br/>already counted?"}
-    I4 -->|"yes"| ONCE["Count once only"]
-    I4 -->|"no"| LV["Assign evidence level<br/>documented / claimed / third_party"]
-    ONCE --> LV
-    LV --> FR["Weight by authority + freshness"]
-```
-
-> **Tip (common mistakes):** (a) Letting a low-weighted look-alike page still contribute facts. (b) Treating two copies of the same text as two sources. (c) Accepting `user_groups` from the client.
-
 ---
 
-## 7. Evaluation & Rubric
+## 6. Evaluation & Rubric
 
 **In one line:** A scorecard of six metrics with hard targets, plus a 100-point rubric spread across the milestones.
 
@@ -615,7 +414,7 @@ flowchart TD
 
 ---
 
-## 8. Demo Checklist (12 minutes)
+## 7. Demo Checklist (12 minutes)
 
 **In one line:** A scripted 12-minute demo showing the result, the trace, access control, the good vendor, a live run, an attack, and the numbers.
 
@@ -629,33 +428,27 @@ flowchart TD
 | 6. Attack | 1 min | Add injection line to a cached page, re-run → **quarantined; verdicts unchanged**. |
 | 7. Numbers | 2 min | Scorecard, ablation table, cost & latency, and **the two things that still go wrong**. |
 
-> **Tip:** Showing honest failures is part of the demo — it builds trust in the numbers.
-
 ---
 
-## 9. Stretch Goals
+## 8. Stretch Goals
 
-**In one line:** Five optional extensions once the core works.
+**In one line:** Optional extensions once the core works.
 
 | Stretch | Idea | Course link |
 |---|---|---|
 | **Continuous monitoring** | Weekly re-review of every approved vendor, reporting only **changes** (new sub-processor, new incident, certificate expiring in **60 days**) | DS Module 7 memory + Module 12 "regulatory circular monitor" |
 | **MCP server** | Expose `assess_vendor` and `ask_policy` as MCP tools for Claude Desktop / IDE | DS Lab 5 |
-| **Debate layer** | Before the human gate, a **"vendor advocate"** and a **"risk officer"** agent each write one paragraph from the same evidence; report shows both. Useful when evidence conflicts. | — |
 | **Document intake** | Vendor uploads SOC 2 PDF; extract **audit period** + **auditor's opinion** via RAG OCR/table pipeline; upgrade **claimed → documented** automatically | Production RAG Lab 02 |
-| **Multi-tenant** | Second company with different policies (`tenant_id` on every chunk and rule) | Production RAG capstone exercise |
 
 ---
 
-## 10. FAQ
+## 9. FAQ
 
-**In one line:** Why the judging is in code, why that's still "AI", and practical answers on blocked sites, solo work and model choice.
+**In one line:** Why the rule engine is still "AI", and practical answers on blocked sites and solo work.
 
-- **Why not let the LLM decide?** The verdict must be the **same on Tuesday as on Monday**, and a reviewer must point to the exact policy line and evidence line. Models are great at **reading/extracting**, not **consistent judging**. Judgement in code = **auditable** system + **meaningful** evaluation.
 - **Isn't a rule engine "not AI"?** The intelligence is turning a thousand messy pages into **typed, dated, sourced facts** and knowing **which pages to distrust**. The rule engine is **~300 lines and stays that way**.
 - **Pages block my fetcher?** Cache what you can, record **UNKNOWN** for the rest, let the **questionnaire ask the vendor**. An honest UNKNOWN + question is a **correct output**. **Playwright** (browser automation) for JS-rendered trust centres is a reasonable stretch.
 - **Solo?** Yes: **M0–M4 fully**, **M5 as CLI + API only**, **3 real vendors instead of 10** → about **three weeks**.
-- **Which LLM?** Anything free with **JSON output**: **Gemini free tier** or **Groq** for dev, **Ollama** offline. **Small model** for extraction/grading, **stronger model** only for planning/synthesis — show the cost difference in your report.
 
 ---
 
@@ -670,8 +463,6 @@ flowchart TD
 | **DPDP Act** | India's Digital Personal Data Protection Act, 2023. Nimbu Mart = **Data Fiduciary**; vendors = **Data Processors**. |
 | **Sub-processor** | A company the vendor uses that also touches your data — hosting, email, any third-party model provider. |
 | **Evidence level** | **documented** (report, certificate, registry, legal page) · **claimed** (marketing text) · **third_party** (named press/review site) · **rumour** (forum, unnamed). |
-| **Identity gate** | Check that a page is about the same company before anything is read from it. |
-| **Quarantine** | Removing a page entirely because it contains instructions aimed at the AI. |
 | **Verdicts** | PASS · FAIL · **UNKNOWN** (no evidence) · **NEEDS_REVIEW** (evidence found, a person must judge) · **NOT_APPLICABLE** (rule doesn't apply to this tier). |
 | **Outcome** | **BLOCKED** (a blocking requirement failed) · **CONDITIONAL** (open items) · **READY FOR HUMAN APPROVAL** (all passed; a person still decides). |
 
@@ -733,10 +524,8 @@ stateDiagram-v2
 | M2 live | ≥ 80% field accuracy · < 90 s · < `VRA_MAX_USD` |
 | M3 router | 30 questions (10/route) · ≥ 90% |
 | M4 red team | 15/15 attacks with catch point |
-| M5 observability | last 20 runs · p50/p95 |
 | M6 | 10 vendors × 8 fields · judge calibrated on 20 reasons |
 | Demo | 12 minutes · rubric 100 pts (M2 = 20) |
-| Manual review today | 2–6 hours/vendor |
 
 ### Pipeline (assessment)
 `Question → Input guardrail → Router → Vendor research (plan · fetch · injection scan · identity · extract · score · merge) → Matcher → Questionnaire → Human gate → Review file (report.md · json · trace.jsonl) → Output guardrail`
@@ -751,9 +540,6 @@ python run_assessor.py          # default LedgerLens run (BLOCKED)
 python -m pytest -q             # 70 tests
 python eval/run_eval.py         # scorecard (--strict in CI)
 ```
-
-### Key files
-`assessor/`: `schemas.py` · `policy_rag.py` · `router.py` · `graders.py` · `vendor_research.py` · `matcher.py` · `questionnaire.py` · `report.py` · `guardrails.py` · `graph.py` | `app/`: `api.py` · `ui.py` | `data/`: `policies/` · `requirements.yaml` · `vendor_web/corpus.json` · `gold_set*.json` | `eval/run_eval.py` | `tests/test_matcher.py` · `test_policy_rag.py` · `test_red_team.py`
 
 ### Pitfalls
 - Reading the **archived 2025 policy** (accepted SOC 2 Type I).
