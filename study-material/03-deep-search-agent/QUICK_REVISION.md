@@ -84,10 +84,52 @@ flowchart LR
 
 - [ ] **Launch Gate:** Planner Trio + `EntityAnchor` · 4 Pydantic gates + repair loop · 7-layer injection + SSRF defence · Hard ID gate + shingle collapse · Dedupe (`0.6`) before Noisy-OR + `0.35` cap · JSON-only synthesis · `Budget` + `LLM.small()` · Gold-set CI (`forbidden_leaks=0`) + DPDP compliance.
 
+---
+
+## 6. ▶️ Step-by-Step Guide to Run the Code
+
+### Step 1: Offline Setup *(Zero API keys & zero internet needed by default)*
 ```bash
 cd study-material/03-deep-search-agent
-python -m deepsearch                                              # Offline 2-round due-diligence run
-python -m deepsearch --live -q "Assess Stripe" --country US --domain stripe.com
-python -m deepsearch --evaluate                                   # Gold-set metrics + ablations
-for f in labs/lab*.py; do python "$f"; done                       # Run all 12 hands-on labs
+python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+cp .env.example .env                                 # Defaults to LLM_PROVIDER=mock & SEARCH_PROVIDER=offline
 ```
+
+### Step 2: Run the Capstone Agent & Verify All 16 Tests
+```bash
+python run_agent.py                                  # Runs full 2-round due diligence on fictional NimbusPay
+python -m pytest -q                                  # Confirms all 16 automated checks pass
+```
+- **Success check:** Report shows CEO **`Ananya Rao`**, status **`final authorisation`**, funding **`Series B — $40M`**, and **1 quarantined page**.
+- **Inspect artifacts:** Open the newest folder inside `runs/` to view `report.md`, `report.json`, `evidence.json`, and step-by-step `trace.jsonl`.
+
+### Step 3: Run All 12 Hands-on Labs *(Always run from `03-deep-search-agent/` root)*
+```bash
+python labs/lab01_search_vs_rag_vs_deep.py           # Mod 1: Score Search vs Basic RAG vs Deep Search
+python labs/lab02_tools_and_schemas.py               # Mod 4: Pydantic schemas + validate-repair loop
+python labs/lab03_planner.py                         # Mod 3: Creator → Reviewer → Evaluator + stop rules
+python labs/lab04_executor_parallel.py               # Mod 4: Parallel workers & speed-up
+python labs/lab05_mcp_client.py                      # Mod 4: Spin up & call an MCP server
+python labs/lab06_validation.py                      # Mod 5: Authority, freshness decay, ID gate & copies
+python labs/lab07_merge_and_conflicts.py             # Mod 6: Dedupe thresholds, Noisy-OR & conflict rules
+python labs/lab08_iteration_memory_context.py        # Mod 7: Round-2 gap loop, compaction & lessons.json
+python labs/lab09_prompt_injection.py                # Mod 8: Attack simulation + 7-layer defence
+python labs/lab10_cost_latency_budget.py             # Mod 9: Model routing, hard Budget & concurrency
+python labs/lab11_evaluation.py                      # Mod 10: Gold-set metrics, ablations & LLM judge
+python labs/lab12_langgraph_version.py               # Mod 12: Same agent built as a LangGraph StateGraph
+```
+
+### Step 4: Switch On a Live LLM & Real Web Search *(Optional)*
+1. Edit `.env` and uncomment **one** LLM provider:
+   - *Free Cloud:* `LLM_PROVIDER=gemini` + `GEMINI_API_KEY=...` **or** `LLM_PROVIDER=groq` + `GROQ_API_KEY=...`
+   - *Free Local (Ollama):* `ollama pull qwen3:8b` → set `LLM_PROVIDER=ollama` and `LLM_MODEL=qwen3:8b`
+   - *Paid Cloud:* `openai`, `anthropic`, or `openrouter` (+ corresponding API key)
+2. Set `SEARCH_PROVIDER=ddgs` *(free live web search, no key)* or `SEARCH_PROVIDER=tavily` + `TAVILY_API_KEY=...`.
+3. Research a real company *(always pass identity anchors so look-alikes are filtered)*:
+   ```bash
+   python run_agent.py "Is Razorpay a reliable payment partner today?" \
+     --name "Razorpay" --city Bengaluru --country India \
+     --industry "payment gateway,payments" --domain razorpay.com --max-usd 0.50
+   ```
+*(Tip: If you hit `429` rate limits on free tiers, set `DS_MAX_PARALLEL=1` in `.env` or pass `--sequential`; delete `memory/` to reset learned lessons).*

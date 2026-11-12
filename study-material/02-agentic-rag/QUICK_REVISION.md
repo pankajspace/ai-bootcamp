@@ -73,11 +73,51 @@ flowchart LR
 
 - [ ] **Ready Check:** `.venv` (`Python 3.10–3.12`) · `.env` keys pass `check_keys()` · Tool-capable model set · `PDF_TOPIC` matches `PDF_PATH` · Verify PDF route, Web route & Fallback in `answers_log.md`.
 
+---
+
+## 5. ▶️ Step-by-Step Guide to Run the Code
+
+### Step 1: Virtual Environment & Dependencies *(Python 3.10–3.12)*
 ```bash
 cd study-material/02-agentic-rag/code
-python step0_simulate_flow.py                                 # 1. Offline flow simulator (no keys needed)
-python step1_plain_rag.py "What is multi-head attention?"     # 2. Plain RAG baseline
-python main.py "What is self-attention in Transformers?"      # 3. Full 5-agent Crew (PDF route)
-python main.py "What is the latest version of Python?"        # 4. Full 5-agent Crew (Web route)
-python main.py --chat                                         # 5. Interactive chat (logs to answers_log.md)
+python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt                      # First install takes a few mins (PyTorch + ChromaDB)
+cp .env.example .env
 ```
+
+### Step 2: Configure `.env` *(Pick ONE LLM Setup)*
+- **Option A — Cloud DeepSeek *(Default, `< ₹1` per run)*:** Paste `OPENROUTER_API_KEY`, `GROQ_API_KEY` (free at `console.groq.com`), and `TAVILY_API_KEY` (free at `app.tavily.com`). Keep `LLM_MODE=openrouter`.
+- **Option B — 100% Free Cloud:** Set `LLM_MODE=groq` + paste `GROQ_API_KEY` and `TAVILY_API_KEY`.
+- **Option C — Local & Private on Laptop *(Ollama, needs ~8 GB free RAM)*:**
+  ```bash
+  ollama serve                                       # Keep running (or open Ollama app)
+  ollama pull deepseek-r1:8b                         # ~5 GB download (avoid 1.5b — lacks tool calling!)
+  ```
+  Then in `.env`, set `LLM_MODE=ollama`, `RAG_LLM_MODE=same`, and paste `TAVILY_API_KEY`.
+
+### Step 3: Run in Progressive Order
+```bash
+# 1. Pure-Python flow simulator (works immediately with ZERO API keys)
+python step0_simulate_flow.py
+
+# 2. Plain RAG baseline (first run downloads ~130 MB embedder + PDF & builds ChromaDB)
+python step1_plain_rag.py "What is multi-head attention?"
+
+# 3. Full 5-Agent Crew — Private PDF route ('vectorstore')
+python main.py "What is the self-attention mechanism in Transformers?"
+
+# 4. Full 5-Agent Crew — Live Web route ('websearch')
+python main.py "What is the latest version of Python?"
+
+# 5. Interactive multi-question chat (saves every Q&A + journey summary to answers_log.md)
+python main.py --chat
+```
+
+### Step 4: Plug In Your Own PDF
+1. Copy your PDF into `data/` (e.g., `data/leave_policy.pdf`).
+2. Update **both** lines in `.env`:
+   ```env
+   PDF_PATH=data/leave_policy.pdf
+   PDF_TOPIC=our company's leave, travel and reimbursement policy
+   ```
+3. Run: `python main.py "How many casual leaves do I get in a year?"`

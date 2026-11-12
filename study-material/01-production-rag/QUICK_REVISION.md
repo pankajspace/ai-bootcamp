@@ -90,9 +90,54 @@ flowchart LR
 
 - [ ] **Launch Gate:** `50+` golden Qs (`>=20%` unanswerable) in CI · Idempotent S3+Queue+DLQ · OCR + Markdown tables + `NFKC` · Hybrid RRF + Rerank + `edges` · SQL JWT ACL + ACL-scoped cache · PII redaction + 5-layer injection defence · Blue/green re-embed + traces.
 
+---
+
+## 7. ▶️ Step-by-Step Guide to Run the Code
+
+### Step 1: Environment Setup *(Zero API keys needed — runs locally by default)*
 ```bash
-python scripts/run_all_labs.py && pytest -q                                           # Run all 14 labs + tests
-docker compose --profile app up --build && python scripts/ingest_samples.py           # Start Capstone + ingest
-python scripts/ask.py "What does error E102 mean?" --groups public,employees          # Ask with ACL groups
-python -m app.reembed --embedder fastembed --model BAAI/bge-base-en-v1.5 --cutover    # Zero-downtime model swap
+cd study-material/01-production-rag/code
+python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+cp .env.example .env
+python labs/lab00_check_setup.py                     # Verifies setup & prints fixes if needed
 ```
+- **Optional upgrades in `.env`:**
+  - *Scanned PDF OCR (Lab 02):* `brew install tesseract` (macOS) or `sudo apt install tesseract-ocr` (Linux).
+  - *Real LLM instead of free extractive mode:* Add `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`, **or** run local Ollama (`ollama pull llama3.2` → set `LLM_PROVIDER=ollama` in `.env`).
+  - *Restricted network (HuggingFace blocked):* Set `EMBEDDER=wordllama` in `.env` for 100% offline embeddings.
+
+### Step 2: Run the 14 Progressive Labs & Unit Tests
+```bash
+python labs/lab01_rag_in_60_lines.py        # Minimal end-to-end RAG + grounded prompt
+python labs/lab02_extraction_and_ocr.py     # Smart PDF/OCR routing, tables & cleaning
+python labs/lab03_chunking_strategies.py    # Compare 6 chunking methods
+python labs/lab04_embeddings.py             # Metrics, quantization & Hindi test
+python labs/lab05_vector_indexes.py         # Exact vs HNSW/IVF/PQ & post-filter trap
+python labs/lab06_hybrid_search.py          # BM25 + Vector + RRF + Self-Query
+python labs/lab07_query_transforms.py       # Rewrite, Multi-Query, HyDE & Router
+python labs/lab08_reranking.py              # Cross-Encoder reranking before/after
+python labs/lab09_grounded_generation.py    # Citations, abstention threshold & JSON
+python labs/lab10_evaluation.py             # Generates reports/eval_report.md
+python labs/lab11_security.py               # PII redaction, ACLs & prompt injection
+python labs/lab12_advanced_patterns.py      # Contextual retrieval, semantic cache, agent
+python labs/lab13_observability_and_cost.py # Spans, p50/p95 latency & cost math
+python scripts/run_all_labs.py && pytest -q # Run all labs + unit tests in one shot
+```
+
+### Step 3: Run the Production App *(FastAPI + Redis/RQ + Postgres/pgvector)*
+- **Option A — Full Docker *(Easiest)*:**
+  ```bash
+  docker compose --profile app up --build                                      # Terminal 1 (API at http://localhost:8000/docs)
+  python scripts/ingest_samples.py                                             # Terminal 2: Upload & index data/raw docs
+  python scripts/ask.py "What does error E102 mean?" --groups public,employees # Query with JWT ACL groups
+  ```
+- **Option B — DB/Redis in Docker, Python Local *(Best for debugging)*:**
+  ```bash
+  docker compose up -d db redis
+  uvicorn app.api:app --reload --port 8000                                     # Terminal 1: API server
+  rq worker ingest --with-scheduler --worker-class rq.worker.SimpleWorker \
+    --url redis://localhost:6379/0                                             # Terminal 2: Worker (SimpleWorker avoids macOS fork crash)
+  python scripts/ingest_samples.py                                             # Terminal 3: Ingest sample docs
+  ```
+- **Zero-Downtime Model Swap:** `python -m app.reembed --embedder fastembed --model BAAI/bge-base-en-v1.5 --cutover`
