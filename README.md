@@ -121,6 +121,12 @@ For scripts that use local models (e.g. `day1/section1/03_summary_chain_ollama.p
 # 📚 Reference Material
 1. [AI Reusable Snippets](snippets/ai-reusable-snippets.md)
 
+## 📝 Quick Revision Notes (with diagrams & cheat sheets)
+1. [Production RAG](study-material/01-production-rag/01-Production_RAG_Revision_Notes.md)
+2. [Agentic RAG](study-material/02-agentic-rag/02-Agentic_RAG_Revision_Notes.md)
+3. [Deep Search Agents](study-material/03-deep-search-agent/03-Deep-Search-Agents_Revision_Notes.md)
+4. [Capstone: AI Vendor Risk Assessor](study-material/project-vendor-risk-assessor/Capstone-AI-Vendor-Risk-Assessor_Revision_Notes.md)
+
 # Notes
 1. Alphavantage API key may be required for certain financial data scripts.
 2. https://site.financialmodelingprep.com/
