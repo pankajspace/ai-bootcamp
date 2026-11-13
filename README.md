@@ -121,6 +121,12 @@ For scripts that use local models (e.g. `day1/section1/03_summary_chain_ollama.p
 # 📚 Reference Material
 1. [AI Reusable Snippets](snippets/ai-reusable-snippets.md)
 
+## 🗺️ Project Maps
+1. [Production RAG — Project Map](study-material/01-production-rag/01-Production_RAG_Project_Map.md)
+2. [Agentic RAG — Project Map](study-material/02-agentic-rag/02-Agentic_RAG_Project_Map.md)
+3. [Deep Search Agents — Project Map](study-material/03-deep-search-agent/03-Deep-Search-Agents_Project_Map.md)
+4. [Capstone: AI Vendor Risk Assessor — Project Map](study-material/project-vendor-risk-assessor/Capstone-AI-Vendor-Risk-Assessor_Project_Map.md)
+
 ## 📝 Quick Revision Notes (with diagrams & cheat sheets)
 1. [Production RAG](study-material/01-production-rag/01-Production_RAG_Revision_Notes.md)
 2. [Agentic RAG](study-material/02-agentic-rag/02-Agentic_RAG_Revision_Notes.md)
