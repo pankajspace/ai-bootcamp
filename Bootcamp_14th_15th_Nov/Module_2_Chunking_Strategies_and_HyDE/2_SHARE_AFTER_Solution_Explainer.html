@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Shivank Agarwal">
+<title>Module 2 — Chunking Strategies and HyDE: Solution Explainer — Shivank Agarwal</title>
+<style>
+:root{--ink:#1d2433;--muted:#5b6475;--line:#e3e7ee;--bg:#fbfaf7;--card:#ffffff;--accent:#0f6e66;--accent-soft:#e6f3f1;
+--todo:#b45309;--todo-soft:#fff4e5;--blue:#1d4ed8;--blue-soft:#eaf1ff;--red:#b42318;--red-soft:#fdecea;--green:#15803d;--green-soft:#eaf7ee}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:940px;margin:0 auto;padding:0 22px 60px}
+header.top{background:linear-gradient(135deg,#0f3d3a,#0f6e66);color:#fff;padding:38px 0 30px;margin-bottom:28px}
+header.top .wrap{padding-bottom:0}
+.kicker{text-transform:uppercase;letter-spacing:.12em;font-size:12.5px;font-weight:700;opacity:.85}
+header.top h1{font-size:34px;line-height:1.2;margin:8px 0 10px;font-weight:800}
+header.top p.sub{margin:0;font-size:18px;opacity:.92;max-width:760px}
+.byline{margin-top:16px;font-size:14px;opacity:.9}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px 12px;font-size:13.5px}
+h2{font-size:26px;margin:44px 0 12px;padding-top:6px;border-top:2px solid var(--line)}
+h3{font-size:20.5px;margin:30px 0 8px}
+h4{font-size:17px;margin:20px 0 6px}
+p{margin:10px 0}
+a{color:var(--accent)}
+code{font-family:"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;font-size:.88em;background:#eef1f5;padding:1px 5px;border-radius:4px}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 20px;margin:18px 0}
+.toc ol{margin:6px 0;padding-left:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:18px 0;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.exercise{border-left:6px solid var(--accent)}
+.exercise > h3:first-child{margin-top:4px}
+.file{display:inline-block;font-family:Menlo,Consolas,monospace;font-size:14px;background:var(--accent-soft);color:var(--accent);padding:2px 9px;border-radius:6px}
+.todo{border:1px solid #f3d9b5;background:var(--todo-soft);border-radius:12px;padding:12px 16px;margin:12px 0}
+.todo .num{display:inline-block;background:var(--todo);color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:1px 10px;margin-right:8px}
+.todo .title{font-weight:650}
+details{margin:8px 0 2px}
+summary{cursor:pointer;color:var(--todo);font-weight:600;font-size:15px}
+details ul{margin:6px 0 4px}
+.callout{border-radius:12px;padding:12px 16px;margin:16px 0;border:1px solid}
+.callout.tip{background:var(--green-soft);border-color:#bfe3c9}
+.callout.note{background:var(--blue-soft);border-color:#c9d8fb}
+.callout.warn{background:var(--todo-soft);border-color:#f3d9b5}
+.callout.stop{background:var(--red-soft);border-color:#f5c2bc}
+.callout b.lbl{display:block;margin-bottom:2px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15.5px;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f3f5f8}
+.code{border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden;background:#fff}
+.code .label{font-size:12.5px;color:var(--muted);background:#f6f7f9;border-bottom:1px solid var(--line);padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.code pre{margin:0;padding:12px 14px;overflow-x:auto;font-size:14px;line-height:1.5}
+.out{background:#0f172a;color:#d6e2f0;border-radius:10px;margin:12px 0;overflow:hidden}
+.out .label{font-size:12.5px;color:#93a4bd;background:#18233a;padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.out pre{margin:0;padding:12px 14px;overflow-x:auto;font:13.5px/1.5 Menlo,Consolas,monospace;white-space:pre-wrap}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:16px 0}
+.flow .box{flex:1 1 140px;background:#fff;border:1.5px solid var(--accent);border-radius:12px;padding:10px 12px;text-align:center;font-size:15px}
+.flow .box b{display:block;color:var(--accent)}
+.flow .arrow{align-self:center;font-size:24px;color:var(--muted)}
+.qa{border-bottom:1px dashed var(--line);padding:8px 0}
+.qa .q{font-weight:650}
+.done{background:var(--green-soft);border:1px solid #bfe3c9;border-radius:10px;padding:10px 14px;margin:12px 0}
+.done b{color:var(--green)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr} header.top h1{font-size:27px}}
+footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;border-radius:999px;padding:1px 9px;margin-left:6px;vertical-align:middle}
+.pill.core{background:var(--accent-soft);color:var(--accent)}
+.pill.opt{background:#f1f2f6;color:var(--muted)}
+@media print{header.top{background:#0f6e66 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact} details{display:block} details>*{display:block}}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.code pre .hll { background-color: #ffffcc }
+.code pre { background: #f0f0f0; }
+.code pre .c { color: #60A0B0; font-style: italic } /* Comment */
+.code pre .err { border: 1px solid #F00 } /* Error */
+.code pre .k { color: #007020; font-weight: bold } /* Keyword */
+.code pre .o { color: #666 } /* Operator */
+.code pre .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.code pre .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.code pre .cp { color: #007020 } /* Comment.Preproc */
+.code pre .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.code pre .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.code pre .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.code pre .gd { color: #A00000 } /* Generic.Deleted */
+.code pre .ge { font-style: italic } /* Generic.Emph */
+.code pre .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.code pre .gr { color: #F00 } /* Generic.Error */
+.code pre .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.code pre .gi { color: #00A000 } /* Generic.Inserted */
+.code pre .go { color: #888 } /* Generic.Output */
+.code pre .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.code pre .gs { font-weight: bold } /* Generic.Strong */
+.code pre .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.code pre .gt { color: #04D } /* Generic.Traceback */
+.code pre .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.code pre .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.code pre .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.code pre .kp { color: #007020 } /* Keyword.Pseudo */
+.code pre .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.code pre .kt { color: #902000 } /* Keyword.Type */
+.code pre .m { color: #40A070 } /* Literal.Number */
+.code pre .s { color: #4070A0 } /* Literal.String */
+.code pre .na { color: #4070A0 } /* Name.Attribute */
+.code pre .nb { color: #007020 } /* Name.Builtin */
+.code pre .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.code pre .no { color: #60ADD5 } /* Name.Constant */
+.code pre .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.code pre .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.code pre .ne { color: #007020 } /* Name.Exception */
+.code pre .nf { color: #06287E } /* Name.Function */
+.code pre .nl { color: #002070; font-weight: bold } /* Name.Label */
+.code pre .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.code pre .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.code pre .nv { color: #BB60D5 } /* Name.Variable */
+.code pre .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.code pre .w { color: #BBB } /* Text.Whitespace */
+.code pre .mb { color: #40A070 } /* Literal.Number.Bin */
+.code pre .mf { color: #40A070 } /* Literal.Number.Float */
+.code pre .mh { color: #40A070 } /* Literal.Number.Hex */
+.code pre .mi { color: #40A070 } /* Literal.Number.Integer */
+.code pre .mo { color: #40A070 } /* Literal.Number.Oct */
+.code pre .sa { color: #4070A0 } /* Literal.String.Affix */
+.code pre .sb { color: #4070A0 } /* Literal.String.Backtick */
+.code pre .sc { color: #4070A0 } /* Literal.String.Char */
+.code pre .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.code pre .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.code pre .s2 { color: #4070A0 } /* Literal.String.Double */
+.code pre .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.code pre .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.code pre .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.code pre .sx { color: #C65D09 } /* Literal.String.Other */
+.code pre .sr { color: #235388 } /* Literal.String.Regex */
+.code pre .s1 { color: #4070A0 } /* Literal.String.Single */
+.code pre .ss { color: #517918 } /* Literal.String.Symbol */
+.code pre .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.code pre .fm { color: #06287E } /* Name.Function.Magic */
+.code pre .vc { color: #BB60D5 } /* Name.Variable.Class */
+.code pre .vg { color: #BB60D5 } /* Name.Variable.Global */
+.code pre .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.code pre .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.code pre .il { color: #40A070 } /* Literal.Number.Integer.Long */</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+<div class="kicker">Solution explainer · Share after the exercise</div>
+<h1>Module 2 — Chunking Strategies and HyDE: Solution Explainer</h1>
+<p class="sub">Step-by-step solutions, real outputs, and when to use which chunking strategy.</p>
+<div class="badges"><span class="badge">For learners, after the exercise</span><span class="badge">Parts 2.1 – 2.5</span></div>
+<div class="byline">Created by <b>Shivank Agarwal</b></div>
+</div></header>
+<main class="wrap">
+
+<div class="toc"><b>On this page</b><ol>
+<li><a href="#why">Why chunking matters</a></li>
+<li><a href="#s21">2.1 Chunk size</a></li><li><a href="#s22">2.2 Fixed-length</a></li>
+<li><a href="#s23">2.3 Semantic</a></li><li><a href="#s24">2.4 Structure-based</a></li>
+<li><a href="#s25">2.5 HyDE</a></li><li><a href="#compare">Which strategy when?</a></li>
+<li><a href="#think">Answers to "Think about it"</a></li><li><a href="#errors">Common errors</a></li></ol></div>
+
+<h2 id="why">Why chunking matters</h2>
+<p>A RAG system never sends a whole book to the LLM. It sends only the few <b>chunks</b> that match the question. So the chunks are the
+"units of knowledge" your bot can find. Cut badly and the answer is either split across pieces or buried inside a giant piece.</p>
+<p><b>Analogy:</b> notes for an exam. One sticky note per idea is easy to find. Notes torn mid-sentence are useless. One giant note
+with the whole chapter is hard to scan. Chunking is deciding how big each note should be and where to tear the page.</p>
+<div class="flow"><div class="box"><b>Document</b></div><div class="arrow">&rarr;</div><div class="box"><b>Chunk</b>split into pieces</div><div class="arrow">&rarr;</div><div class="box"><b>Embed</b>each piece &rarr; vector</div><div class="arrow">&rarr;</div><div class="box"><b>Store</b>vector database</div><div class="arrow">&rarr;</div><div class="box"><b>Retrieve</b>top-k pieces for a question</div><div class="arrow">&rarr;</div><div class="box"><b>LLM</b>answers from those pieces</div></div>
+
+<h2 id="s21">2.1 Chunk size</h2>
+<h4>TODO 1 — Split the document with RecursiveCharacterTextSplitter (10% overlap) and store the chunks</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="n">text_splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">size</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">))</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">text_splitter</span><span class="o">.</span><span class="n">split_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+</pre></div><p><code>RecursiveCharacterTextSplitter</code> tries to cut at paragraph breaks first, then line breaks, then spaces, and only cuts inside a word as a last resort. That is why it is the usual default.</p><div class="out"><div class="label">Output (real run)</div><pre>chunk_size=50   -&gt; 16 chunks
+chunk_size=150  -&gt; 6 chunks
+chunk_size=400  -&gt; 2 chunks
+
+The medium (150) chunks look like this:
+  [1] 'The human heart is a muscular organ that pumps blood through the circulatory system.'
+  [2] 'This blood delivers oxygen and nutrients to the body and removes metabolic waste. The heart'
+  [3] 'has four chambers: the right atrium, the right ventricle, the left atrium, and the left ventricle.'
+  [4] 'The average adult heart beats about 60 to 100 times per minute. The circulatory system consists of the heart,'
+  [5] 'blood vessels, and blood. It is a vital part of the human body, responsible for transporting essential substances.'
+  [6] 'A healthy lifestyle, including regular exercise and a balanced diet, is crucial for cardiovascular health.'</pre></div>
+<h4>TODO 2 — Store the chunks of this size in their own Chroma collection</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">db</span> <span class="o">=</span> <span class="n">Chroma</span><span class="o">.</span><span class="n">from_documents</span><span class="p">(</span>
+    <span class="n">chunks</span><span class="p">,</span>
+    <span class="n">embeddings</span><span class="p">,</span>
+    <span class="n">collection_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"heart_chunks_</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">))],</span>
+<span class="p">)</span>
+</pre></div><p>Each size gets its own <b>collection</b> (like a separate table), so the three experiments do not mix.
+We pass our own <code>ids</code>: if you run the cell twice, Chroma updates the same ids instead of storing duplicates
+(duplicates would make the same chunk appear 2–3 times in your results).</p>
+<h4>TODO 3 — Retrieve the k most similar chunks from this vector store</h4><div class="code"><div class="label">Solution for TODO 3</div><pre><span class="n">retrieved_docs</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunked_documents</span><span class="p">[</span><span class="n">size</span><span class="p">])))</span>
+</pre></div><p>With 400-character chunks there are only 2 chunks, so asking for 3 would print a warning. <code>min(k, ...)</code> avoids that.</p>
+<h4>What you should see</h4>
+<table><tr><th>Size</th><th>Typical result</th><th>Verdict</th></tr>
+<tr><td>50</td><td>Fragments like <i>"the body and removes metabolic waste. The heart"</i></td><td>Too small: the idea is split across chunks</td></tr>
+<tr><td>150</td><td>Whole sentences: <i>"The human heart is a muscular organ that pumps blood through the circulatory system."</i></td><td>Best for this text: one idea per chunk</td></tr>
+<tr><td>400</td><td>Half of the article in one block</td><td>Too large: the answer is buried, and you send many unneeded tokens to the LLM</td></tr></table>
+<p>There is no universal best size. For real documents start around 500–1,000 characters with 10–20% overlap, then test with real questions.</p>
+
+<h2 id="s22">2.2 Fixed-length chunking</h2>
+<p>The "pure" fixed-length splitter (<code>separator=""</code>) cuts exactly every 100 characters, even inside words:</p>
+<div class="out"><div class="label">Output (real run): notice 'enable|s' and 'M|achine'</div><pre>'# Machine Learning Fundamentals\n\nMachine learning is a subset of artificial intelligence that enable'
+'s computers to learn and improve from experience without being explicitly programmed.\n\n## Types of M'
+'achine Learning\n\n### Supervised Learning\nSupervised learning uses labeled training data to learn a m'</pre></div>
+<h4>TODO 4 — Fixed-length chunks of up to 200 characters that only cut at line breaks, with 20 characters overlap</h4><div class="code"><div class="label">Solution for TODO 4</div><pre><span class="n">fixed_length_splitter</span> <span class="o">=</span> <span class="n">CharacterTextSplitter</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">fixed_length_splitter</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div><p><code>separator="\n"</code> means "only cut at the end of a line". <code>chunk_size=200</code> is a maximum: lines are packed into a chunk until the next line would go over 200.</p><div class="out"><div class="label">Output (real run)</div><pre>Chunk 1 (length: 184):
+# Machine Learning Fundamentals
+Machine learning is a subset of artificial intelligence that enables computers to learn and improve from experience without being explicitly programmed.
+----------------------------------------
+Chunk 2 (length: 174):
+## Types of Machine Learning
+### Supervised Learning
+Supervised learning uses labeled training data to learn a mapping function from input to output. Common examples include:
+----------------------------------------
+Chunk 3 (length: 139):
+- Classification: Predicting categories (spam/not spam)
+- Regression: Predicting continuous values (house prices)
+### Unsupervised Learning
+----------------------------------------
+Chunk 4 (length: 198):
+Unsupervised learning finds hidden patterns in data without labeled examples:
+- Clustering: Grouping similar data points
+- Dimensionality reduction: Reducing feature space
+### Reinforcement Learning
+----------------------------------------
+Chunk 5 (length: 106):
+An agent learns through interaction with an environment, receiving rewards or penalties for actions taken.</pre></div><div class="callout warn"><b class="lbl">Spot the problem</b><p>Chunk 3 ends with the heading <i>### Unsupervised Learning</i>, but its text is in chunk 4. The heading and its content were separated. Fixed-length chunking does not understand structure. Parts 2.3 and 2.4 fix this in two different ways.</p></div>
+
+<h2 id="s23">2.3 Semantic chunking</h2>
+<p>How it works, in plain words:</p>
+<ol><li>Split the text into sentences.</li>
+<li>Embed every sentence (OpenAI <code>text-embedding-3-small</code>).</li>
+<li>Measure the distance between each sentence and the next one.</li>
+<li>Where the distance is unusually large (by default, bigger than 95% of all the gaps), start a new chunk.</li></ol>
+<h4>TODO 5 — Create a SemanticChunker with OpenAI embeddings and split the text into Documents</h4><div class="code"><div class="label">Solution for TODO 5</div><pre><span class="n">semantic_splitter</span> <span class="o">=</span> <span class="n">SemanticChunker</span><span class="p">(</span><span class="n">OpenAIEmbeddings</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"text-embedding-3-small"</span><span class="p">))</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">semantic_splitter</span><span class="o">.</span><span class="n">create_documents</span><span class="p">([</span><span class="n">text</span><span class="p">])</span>
+</pre></div><p>You get chunks of different lengths, each about one topic. The exact cut points depend on the embeddings, so two learners can get slightly different chunks. That is normal.</p><div class="callout note"><b class="lbl">About the DeprecationWarning</b><p><code>SemanticChunker</code> lives in <code>langchain-experimental</code>, a package that is being retired. It works today. The four steps above are simple enough to write yourself in about 15 lines if you ever need to replace it.</p></div>
+
+<h2 id="s24">2.4 Structure-based chunking</h2>
+<h4>TODO 6 — Split the Markdown text at the headings listed above</h4><div class="code"><div class="label">Solution for TODO 6</div><pre><span class="n">markdown_splitter</span> <span class="o">=</span> <span class="n">MarkdownHeaderTextSplitter</span><span class="p">(</span><span class="n">headers_to_split_on</span><span class="o">=</span><span class="n">headers_to_split_on</span><span class="p">)</span>
+<span class="n">md_header_splits</span> <span class="o">=</span> <span class="n">markdown_splitter</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div><div class="out"><div class="label">Output (real run)</div><pre>Chunk 1:
+Machine learning is a subset of artificial intelligence that enables computers to learn and improve from experience without being explicitly programmed.
+Metadata: {'Header 1': 'Machine Learning Fundamentals'}
+----------------------------------------
+Chunk 2:
+Supervised learning uses labeled training data to learn a mapping function from input to output. Common examples include:
+- Classification: Predicting categories (spam/not spam)
+- Regression: Predicting continuous values (house prices)
+Metadata: {'Header 1': 'Machine Learning Fundamentals', 'Header 2': 'Types of Machine Learning', 'Header 3': 'Supervised Learning'}
+----------------------------------------
+Chunk 3:
+Unsupervised learning finds hidden patterns in data without labeled examples:
+- Clustering: Grouping similar data points
+- Dimensionality reduction: Reducing feature space
+Metadata: {'Header 1': 'Machine Learning Fundamentals', 'Header 2': 'Types of Machine Learning', 'Header 3': 'Unsupervised Learning'}
+----------------------------------------
+Chunk 4:
+An agent learns through interaction with an environment, receiving rewards or penalties for actions taken.
+Metadata: {'Header 1': 'Machine Learning Fundamentals', 'Header 2': 'Types of Machine Learning', 'Header 3': 'Reinforcement Learning'}</pre></div><p>Every chunk is exactly one section, and the <b>metadata</b> remembers its "address" in the document
+(chapter &rarr; section &rarr; sub-section). You can show it as the source of an answer, filter on it, or add it to the chunk text before embedding so the search knows the topic.</p>
+<div class="callout tip"><b class="lbl">Why we used textwrap.dedent</b><p>The text sat inside indented code, so every line started with 4 spaces. The Markdown splitter ignores those spaces, but character-based splitters count them, which wastes chunk space and stores junk. Cleaning text before chunking is a good habit.</p></div>
+
+<h2 id="s25">2.5 HyDE (Hypothetical Document Embeddings)</h2>
+<p><b>The problem:</b> questions and documents are written in different "languages". Shoppers say <i>running shoes</i>; catalogues say <i>Pegasus trainers</i>.
+<b>The trick:</b> let the LLM write a fake document that looks like the real ones, and search with that.</p>
+<div class="out"><div class="label">Output (real run)</div><pre>Top products WITHOUT HyDE:
+  - Adidas Ultraboost sneakers for men , Marathon Shoes  (score: 1.59)</pre></div>
+<p>Only one product matched, and only because its title contains the word <i>Shoes</i>.</p>
+<h4>TODO 7 — Ask the LLM to write a hypothetical answer (fake product listings) for the shopper's query</h4><div class="code"><div class="label">Solution for TODO 7</div><pre><span class="n">hyde_prompt</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"You write product titles for an online shoe store.</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="sa">f</span><span class="s2">"A shopper searched for: '</span><span class="si">{</span><span class="n">shopper_query</span><span class="si">}</span><span class="s2">'.</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"Write 4 short product titles (brand, model, key feature) that would perfectly match this search. "</span>
+    <span class="s2">"One title per line, no numbering."</span>
+<span class="p">)</span>
+<span class="n">hyde_answer</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">hyde_prompt</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+</pre></div><p>We tell the LLM <b>who</b> it is (a writer of product titles), <b>what</b> the shopper typed, and the exact <b>format</b> we want. The answer is never shown to the user. It is only used as better search words.</p><div class="out"><div class="label">Example LLM answer (yours will be worded differently)</div><pre>Nike Air Zoom Pegasus 41 Road Running Trainers
+Adidas Ultraboost Light Running Shoes for Men
+Asics Gel-Kayano 31 Stability Running Trainers
+New Balance Fresh Foam X 1080 Cushioned Running Sneakers</pre></div>
+<h4>TODO 8 — Search again with the query + hypothetical answer and print the top 3 products</h4><div class="code"><div class="label">Solution for TODO 8</div><pre><span class="n">hyde_query</span> <span class="o">=</span> <span class="n">shopper_query</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">hyde_answer</span>
+<span class="n">scores_hyde</span> <span class="o">=</span> <span class="n">bm25</span><span class="o">.</span><span class="n">get_scores</span><span class="p">(</span><span class="n">hyde_query</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+</pre></div><div class="out"><div class="label">Output (real BM25 scores for the example answer above)</div><pre>Top products WITH HyDE:
+  - Nike Air Zoom Pegasus trainers  (score: 10.07)
+  - Adidas Ultraboost sneakers for men , Marathon Shoes  (score: 9.50)
+  - New Balance Fresh Foam trail trainers  (score: 9.23)</pre></div><p>The fake answer is full of catalogue words (<i>Pegasus, Ultraboost, Fresh Foam, Gel-Kayano, trainers</i>), so BM25 now finds all the real running shoes. Scores jump from about 1.6 to about 10.</p>
+<div class="callout note"><b class="lbl">HyDE with embeddings</b><p>The original HyDE idea embeds the fake answer and does a vector search with it ("answer-to-answer" matching is easier than "question-to-answer"). We used BM25 here only because word overlap is easy to see. The same code pattern works with <code>db.similarity_search(hyde_answer)</code>.</p></div>
+
+<h2 id="compare">Which strategy when?</h2>
+<table><tr><th>Strategy</th><th>Good for</th><th>Watch out for</th></tr>
+<tr><td>Recursive / fixed-length</td><td>Plain text, quick start, any document</td><td>Can separate headings from their content</td></tr>
+<tr><td>Semantic</td><td>Long text that drifts between topics (transcripts, articles)</td><td>One embedding call per sentence: slower and costs more</td></tr>
+<tr><td>Structure-based</td><td>Docs with headings: policies, manuals, Markdown, HTML</td><td>One section can be very long, so split it further with a recursive splitter</td></tr>
+<tr><td>HyDE (a retrieval trick, not a chunker)</td><td>Short or vague questions; questions worded differently from documents</td><td>One extra LLM call per question (latency + cost)</td></tr></table>
+
+<h2 id="think">Answers to "Think about it"</h2>
+<div class="card">
+<div class="qa"><div class="q">1. Why 10% overlap?</div><p>A sentence cut at a chunk boundary would otherwise exist only as two halves, and neither half would match the question well. Overlap repeats the edge text so the full sentence appears in at least one chunk.</p></div>
+<div class="qa"><div class="q">2. 300-page HR policy PDF with headings?</div><p>Structure-based first (one chunk per section, headings saved as metadata), then a recursive splitter for any section that is still too long. The headings also make answers easy to cite ("Leave Policy &rarr; Maternity Leave").</p></div>
+<div class="qa"><div class="q">3. When is semantic chunking worth the cost?</div><p>When the text has no structure but changes topic often, such as meeting transcripts or long articles, and answer quality matters more than indexing cost. It is a one-time cost when you build the index.</p></div>
+<div class="qa"><div class="q">4. HyDE's fake answer may be wrong. Why is that fine?</div><p>We never show the fake answer to anyone. We only use its words or its "shape" to find real documents. The final answer still comes from the real retrieved documents.</p></div>
+<div class="qa"><div class="q">5. How can headings help with "What is clustering?"</div><p>The chunk about clustering carries <code>Header 3: Unsupervised Learning</code>. We can prepend the headings to the chunk text before embedding, filter by section, or show the user where the answer came from.</p></div>
+</div>
+
+<h2 id="errors">Common errors and fixes</h2>
+<table><tr><th>You see</th><th>Fix</th></tr>
+<tr><td><code>AuthenticationError</code> / <code>401</code></td><td>Your OpenAI key is missing or wrong. Check the <code>.env</code> file, then restart the notebook kernel.</td></tr>
+<tr><td><code>NotFoundError: model gpt-6-luna</code></td><td>Your OpenAI account cannot use this model yet. See the SME guide's "model fallback" note.</td></tr>
+<tr><td>The same chunk appears several times in the results</td><td>You stored chunks twice without ids. Restart the kernel and run the notebook from the top.</td></tr>
+<tr><td><code>Number of requested results 3 is greater than number of elements</code></td><td>Only a warning. Use <code>k=min(k, number_of_chunks)</code> as in the solution.</td></tr>
+<tr><td>Markdown splitter returns 1 chunk only</td><td>Your text has no lines starting with <code>#</code> (for example, a PDF converted to plain text). Structure-based splitting needs real headings.</td></tr></table>
+
+<footer>Created by Shivank Agarwal. Matches 2_SHARE_AFTER_Solution_Code/chunking_strategies.ipynb.</footer>
+</main>
+</body>
+</html>

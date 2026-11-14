@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Shivank Agarwal">
+<title>Module 3 — Tool Calling Basics: Solution Explainer — Shivank Agarwal</title>
+<style>
+:root{--ink:#1d2433;--muted:#5b6475;--line:#e3e7ee;--bg:#fbfaf7;--card:#ffffff;--accent:#0f6e66;--accent-soft:#e6f3f1;
+--todo:#b45309;--todo-soft:#fff4e5;--blue:#1d4ed8;--blue-soft:#eaf1ff;--red:#b42318;--red-soft:#fdecea;--green:#15803d;--green-soft:#eaf7ee}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:940px;margin:0 auto;padding:0 22px 60px}
+header.top{background:linear-gradient(135deg,#0f3d3a,#0f6e66);color:#fff;padding:38px 0 30px;margin-bottom:28px}
+header.top .wrap{padding-bottom:0}
+.kicker{text-transform:uppercase;letter-spacing:.12em;font-size:12.5px;font-weight:700;opacity:.85}
+header.top h1{font-size:34px;line-height:1.2;margin:8px 0 10px;font-weight:800}
+header.top p.sub{margin:0;font-size:18px;opacity:.92;max-width:760px}
+.byline{margin-top:16px;font-size:14px;opacity:.9}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px 12px;font-size:13.5px}
+h2{font-size:26px;margin:44px 0 12px;padding-top:6px;border-top:2px solid var(--line)}
+h3{font-size:20.5px;margin:30px 0 8px}
+h4{font-size:17px;margin:20px 0 6px}
+p{margin:10px 0}
+a{color:var(--accent)}
+code{font-family:"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;font-size:.88em;background:#eef1f5;padding:1px 5px;border-radius:4px}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 20px;margin:18px 0}
+.toc ol{margin:6px 0;padding-left:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:18px 0;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.exercise{border-left:6px solid var(--accent)}
+.exercise > h3:first-child{margin-top:4px}
+.file{display:inline-block;font-family:Menlo,Consolas,monospace;font-size:14px;background:var(--accent-soft);color:var(--accent);padding:2px 9px;border-radius:6px}
+.todo{border:1px solid #f3d9b5;background:var(--todo-soft);border-radius:12px;padding:12px 16px;margin:12px 0}
+.todo .num{display:inline-block;background:var(--todo);color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:1px 10px;margin-right:8px}
+.todo .title{font-weight:650}
+details{margin:8px 0 2px}
+summary{cursor:pointer;color:var(--todo);font-weight:600;font-size:15px}
+details ul{margin:6px 0 4px}
+.callout{border-radius:12px;padding:12px 16px;margin:16px 0;border:1px solid}
+.callout.tip{background:var(--green-soft);border-color:#bfe3c9}
+.callout.note{background:var(--blue-soft);border-color:#c9d8fb}
+.callout.warn{background:var(--todo-soft);border-color:#f3d9b5}
+.callout.stop{background:var(--red-soft);border-color:#f5c2bc}
+.callout b.lbl{display:block;margin-bottom:2px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15.5px;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f3f5f8}
+.code{border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden;background:#fff}
+.code .label{font-size:12.5px;color:var(--muted);background:#f6f7f9;border-bottom:1px solid var(--line);padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.code pre{margin:0;padding:12px 14px;overflow-x:auto;font-size:14px;line-height:1.5}
+.out{background:#0f172a;color:#d6e2f0;border-radius:10px;margin:12px 0;overflow:hidden}
+.out .label{font-size:12.5px;color:#93a4bd;background:#18233a;padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.out pre{margin:0;padding:12px 14px;overflow-x:auto;font:13.5px/1.5 Menlo,Consolas,monospace;white-space:pre-wrap}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:16px 0}
+.flow .box{flex:1 1 140px;background:#fff;border:1.5px solid var(--accent);border-radius:12px;padding:10px 12px;text-align:center;font-size:15px}
+.flow .box b{display:block;color:var(--accent)}
+.flow .arrow{align-self:center;font-size:24px;color:var(--muted)}
+.qa{border-bottom:1px dashed var(--line);padding:8px 0}
+.qa .q{font-weight:650}
+.done{background:var(--green-soft);border:1px solid #bfe3c9;border-radius:10px;padding:10px 14px;margin:12px 0}
+.done b{color:var(--green)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr} header.top h1{font-size:27px}}
+footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;border-radius:999px;padding:1px 9px;margin-left:6px;vertical-align:middle}
+.pill.core{background:var(--accent-soft);color:var(--accent)}
+.pill.opt{background:#f1f2f6;color:var(--muted)}
+@media print{header.top{background:#0f6e66 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact} details{display:block} details>*{display:block}}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.code pre .hll { background-color: #ffffcc }
+.code pre { background: #f0f0f0; }
+.code pre .c { color: #60A0B0; font-style: italic } /* Comment */
+.code pre .err { border: 1px solid #F00 } /* Error */
+.code pre .k { color: #007020; font-weight: bold } /* Keyword */
+.code pre .o { color: #666 } /* Operator */
+.code pre .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.code pre .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.code pre .cp { color: #007020 } /* Comment.Preproc */
+.code pre .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.code pre .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.code pre .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.code pre .gd { color: #A00000 } /* Generic.Deleted */
+.code pre .ge { font-style: italic } /* Generic.Emph */
+.code pre .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.code pre .gr { color: #F00 } /* Generic.Error */
+.code pre .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.code pre .gi { color: #00A000 } /* Generic.Inserted */
+.code pre .go { color: #888 } /* Generic.Output */
+.code pre .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.code pre .gs { font-weight: bold } /* Generic.Strong */
+.code pre .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.code pre .gt { color: #04D } /* Generic.Traceback */
+.code pre .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.code pre .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.code pre .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.code pre .kp { color: #007020 } /* Keyword.Pseudo */
+.code pre .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.code pre .kt { color: #902000 } /* Keyword.Type */
+.code pre .m { color: #40A070 } /* Literal.Number */
+.code pre .s { color: #4070A0 } /* Literal.String */
+.code pre .na { color: #4070A0 } /* Name.Attribute */
+.code pre .nb { color: #007020 } /* Name.Builtin */
+.code pre .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.code pre .no { color: #60ADD5 } /* Name.Constant */
+.code pre .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.code pre .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.code pre .ne { color: #007020 } /* Name.Exception */
+.code pre .nf { color: #06287E } /* Name.Function */
+.code pre .nl { color: #002070; font-weight: bold } /* Name.Label */
+.code pre .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.code pre .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.code pre .nv { color: #BB60D5 } /* Name.Variable */
+.code pre .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.code pre .w { color: #BBB } /* Text.Whitespace */
+.code pre .mb { color: #40A070 } /* Literal.Number.Bin */
+.code pre .mf { color: #40A070 } /* Literal.Number.Float */
+.code pre .mh { color: #40A070 } /* Literal.Number.Hex */
+.code pre .mi { color: #40A070 } /* Literal.Number.Integer */
+.code pre .mo { color: #40A070 } /* Literal.Number.Oct */
+.code pre .sa { color: #4070A0 } /* Literal.String.Affix */
+.code pre .sb { color: #4070A0 } /* Literal.String.Backtick */
+.code pre .sc { color: #4070A0 } /* Literal.String.Char */
+.code pre .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.code pre .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.code pre .s2 { color: #4070A0 } /* Literal.String.Double */
+.code pre .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.code pre .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.code pre .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.code pre .sx { color: #C65D09 } /* Literal.String.Other */
+.code pre .sr { color: #235388 } /* Literal.String.Regex */
+.code pre .s1 { color: #4070A0 } /* Literal.String.Single */
+.code pre .ss { color: #517918 } /* Literal.String.Symbol */
+.code pre .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.code pre .fm { color: #06287E } /* Name.Function.Magic */
+.code pre .vc { color: #BB60D5 } /* Name.Variable.Class */
+.code pre .vg { color: #BB60D5 } /* Name.Variable.Global */
+.code pre .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.code pre .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.code pre .il { color: #40A070 } /* Literal.Number.Integer.Long */</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+<div class="kicker">Solution explainer · Share after the exercise</div>
+<h1>Module 3 — Tool Calling Basics: Solution Explainer</h1>
+<p class="sub">Step-by-step solutions, the message flow behind tool calling, and answers to the discussion questions.</p>
+<div class="badges"><span class="badge">For learners, after the exercise</span><span class="badge">Exercises 3.1 – 3.3</span></div>
+<div class="byline">Created by <b>Shivank Agarwal</b></div>
+</div></header>
+<main class="wrap">
+
+<div class="toc"><b>On this page</b><ol>
+<li><a href="#idea">How tool calling really works (the message list)</a></li>
+<li><a href="#e31">3.1 From scratch</a></li><li><a href="#e32">3.2 With LangChain</a></li>
+<li><a href="#e33">3.3 Choosing between four tools</a></li>
+<li><a href="#think">Answers to "Think about it"</a></li><li><a href="#errors">Common errors</a></li></ol></div>
+
+<h2 id="idea">How tool calling really works</h2>
+<p><b>Analogy:</b> a restaurant waiter (the LLM) and the kitchen (your code). The waiter cannot cook. He reads the menu (your tool list),
+writes an order slip with a table number (<code>tool_call_id</code>), and when the dish comes back he serves it with a smile (the final answer).</p>
+<p>Everything happens through one growing <b>list of messages</b>. For "What is the square root of 144?" it grows like this:</p>
+<div class="code"><div class="label">What the messages list looks like (ids are examples)</div><pre><span class="c1"># after step 1 (the LLM asked for a tool)</span>
+<span class="p">[{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"What is the square root of 144?"</span><span class="p">},</span>
+ <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"assistant"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+  <span class="s2">"tool_calls"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"id"</span><span class="p">:</span> <span class="s2">"call_abc123"</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"function"</span><span class="p">,</span>
+                  <span class="s2">"function"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"square_root"</span><span class="p">,</span> <span class="s2">"arguments"</span><span class="p">:</span> <span class="s2">"{</span><span class="se">\"</span><span class="s2">number</span><span class="se">\"</span><span class="s2">: 144}"</span><span class="p">}}]}]</span>
+
+<span class="c1"># after step 3 (our code ran the tool and appended the result)</span>
+ <span class="o">...</span><span class="p">,</span>
+ <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"tool"</span><span class="p">,</span> <span class="s2">"tool_call_id"</span><span class="p">:</span> <span class="s2">"call_abc123"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"12.0"</span><span class="p">}]</span>
+
+<span class="c1"># step 4: we send the whole list again; the LLM now replies with normal text</span>
+<span class="s2">"The square root of 144 is 12."</span>
+</pre></div>
+<p>Note that <code>arguments</code> is a <b>JSON string</b>, not a dict. That is why we need <code>json.loads</code>.</p>
+
+<h2 id="e31">3.1 Tool calling from scratch</h2>
+<h4>TODO 1 — Describe the square_root tool in OpenAI's JSON tool format</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="n">tools</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"function"</span><span class="p">,</span>
+        <span class="s2">"function"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"square_root"</span><span class="p">,</span>
+            <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Calculate the square root of a non-negative number."</span><span class="p">,</span>
+            <span class="s2">"parameters"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"object"</span><span class="p">,</span>
+                <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"number"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"number"</span><span class="p">,</span>
+                        <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"The non-negative number to take the square root of."</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="s2">"required"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"number"</span><span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div><p>This is a <b>JSON Schema</b>: it says the tool takes one argument named <code>number</code>, of type number, and it is required.
+The <code>description</code> fields are the most important part. The LLM reads them to decide <i>when</i> to use the tool.</p>
+<h4>TODO 2 — Run the requested tool and add its result to messages</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">fn_name</span> <span class="o">=</span> <span class="n">tool_call</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">name</span>
+<span class="n">fn_args</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">tool_call</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>  <span class="c1"># e.g. {"number": 144}</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">tool_map</span><span class="p">[</span><span class="n">fn_name</span><span class="p">](</span><span class="o">**</span><span class="n">fn_args</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   [tool] </span><span class="si">{</span><span class="n">fn_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">fn_args</span><span class="si">}</span><span class="s2">) -&gt; </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+    <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"tool"</span><span class="p">,</span>
+    <span class="s2">"tool_call_id"</span><span class="p">:</span> <span class="n">tool_call</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>  <span class="c1"># tells the LLM which request this result belongs to</span>
+    <span class="s2">"content"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">),</span>
+<span class="p">})</span>
+</pre></div><p>Three moves: read the name, turn the JSON string into a dict, call the real function with <code>**fn_args</code>
+(which means <code>square_root(number=144)</code>). Then append a message with <code>role: "tool"</code> and the same <code>tool_call_id</code>,
+so the LLM knows which request this answers. The API rejects a tool result without a matching id.</p>
+<h4>TODO 3 — Call the LLM a second time with the updated messages and return its text</h4><div class="code"><div class="label">Solution for TODO 3</div><pre><span class="n">final_response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span>
+    <span class="n">reasoning_effort</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">return</span> <span class="n">final_response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+</pre></div><p>The second call sends the full history (question, tool request, tool result). Now the LLM has the number it needs and writes a sentence.</p>
+<div class="out"><div class="label">Example output (the [tool] lines are exact; the AI's wording will vary)</div><pre>Q: What is the square root of 144?
+   [tool] square_root({'number': 144}) -&gt; 12.0
+A: The square root of 144 is 12.
+
+Q: What is the capital of France?
+A: The capital of France is Paris.
+
+Q: Can you calculate the square root of 2025 for me?
+   [tool] square_root({'number': 2025}) -&gt; 45.0
+A: The square root of 2025 is 45.</pre></div>
+<div class="callout note"><b class="lbl">Why reasoning_effort="none"?</b><p>We use OpenAI's <code>gpt-6-luna</code>, a fast, low-cost model. In the Chat Completions API, OpenAI only allows tool calling with this model when <code>reasoning_effort="none"</code> (no long internal "thinking" before answering). It also makes the replies faster.</p></div>
+
+<h2 id="e32">3.2 With LangChain</h2>
+<h4>TODO 1 — Turn square_root into a LangChain tool</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">square_root</span><span class="p">(</span><span class="n">number</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Calculate the square root of a non-negative number."""</span>
+    <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cannot compute square root of a negative number."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+</pre></div><p><code>@tool</code> reads three things from your function and builds the JSON menu for you: the <b>name</b> (<code>square_root</code>), the <b>docstring</b> (description) and the <b>type hints</b> (<code>number: float</code>).</p><div class="out"><div class="label">Output (real run)</div><pre>Tool name       : square_root
+Tool description: Calculate the square root of a non-negative number.
+Tool arguments  : {'number': {'title': 'Number', 'type': 'number'}}</pre></div>
+<h4>TODO 2 — Run every requested tool and add a ToolMessage with its result</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="k">for</span> <span class="n">tc</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>  <span class="c1"># Step 3: run the tools</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">tool_map</span><span class="p">[</span><span class="n">tc</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]]</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">tc</span><span class="p">[</span><span class="s2">"args"</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   [tool] </span><span class="si">{</span><span class="n">tc</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">tc</span><span class="p">[</span><span class="s1">'args'</span><span class="p">]</span><span class="si">}</span><span class="s2">) -&gt; </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ToolMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="n">tool_call_id</span><span class="o">=</span><span class="n">tc</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]))</span>
+</pre></div><p>LangChain already parsed the arguments into a dict (<code>tc["args"]</code>), so there is no <code>json.loads</code>.
+<code>tool.invoke(args)</code> runs the function. <code>ToolMessage</code> is LangChain's version of the <code>role: "tool"</code> message.</p>
+<div class="out"><div class="label">Example output (the [tool] line is exact; the wording will vary)</div><pre>Q: Is 15241383937 the square of 123456?
+   [tool] square_root({'number': 15241383937}) -&gt; 123456.00000405003
+A: No. The square root of 15241383937 is about 123456.000004, not exactly 123456.
+   123456 squared is 15241383936, so the number you gave is one more than that.</pre></div>
+<table><tr><th>Job</th><th>From scratch (3.1)</th><th>LangChain (3.2)</th></tr>
+<tr><td>Describe the tool</td><td>Write JSON by hand</td><td><code>@tool</code> + docstring</td></tr>
+<tr><td>Attach tools to the call</td><td><code>tools=tools</code> on every call</td><td><code>llm.bind_tools(tools)</code> once</td></tr>
+<tr><td>Read arguments</td><td><code>json.loads(tool_call.function.arguments)</code></td><td><code>tc["args"]</code></td></tr>
+<tr><td>Send result back</td><td><code>{"role": "tool", ...}</code></td><td><code>ToolMessage(...)</code></td></tr>
+<tr><td>Switch to another LLM provider</td><td>Rewrite the code</td><td>Change one line (the chat model class)</td></tr></table>
+<div class="callout tip"><b class="lbl">Why .text instead of .content?</b><p>With tools bound, LangChain sends this model's requests to OpenAI's newer <b>Responses API</b>. There, <code>response.content</code> is a list of blocks (text, ids, annotations). <code>response.text</code> always gives you just the plain answer.</p></div>
+
+<h2 id="e33">3.3 Choosing between four tools</h2>
+<h4>TODO 1 — Write a 4th tool that lists every SKU at or below its reorder point</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_low_stock_items</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""List all SKUs that are at or below their reorder point and need restocking."""</span>
+    <span class="n">low</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">sku</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2">): stock=</span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">'stock'</span><span class="p">]</span><span class="si">}</span><span class="s2">, reorder_point=</span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">'reorder_point'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">for</span> <span class="n">sku</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">INVENTORY</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s2">"stock"</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"reorder_point"</span><span class="p">]</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">low</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"All items are adequately stocked."</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"Items needing reorder (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">low</span><span class="p">)</span><span class="si">}</span><span class="s2"> total): "</span> <span class="o">+</span> <span class="s2">"; "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
+</pre></div><p>The docstring is the "menu description". "List all SKUs that are at or below their reorder point" matches questions like "which items need reordering?" very well, so the LLM picks this tool for them.</p>
+<h4>TODO 2 — Put all four tools in a list, build tool_map, and bind the tools to the LLM</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">tools</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_stock_level</span><span class="p">,</span> <span class="n">calculate_reorder_quantity</span><span class="p">,</span> <span class="n">days_until_stockout</span><span class="p">,</span> <span class="n">list_low_stock_items</span><span class="p">]</span>
+<span class="n">tool_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tools</span><span class="p">}</span>
+
+<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"gpt-6-luna"</span><span class="p">,</span> <span class="n">reasoning_effort</span><span class="o">=</span><span class="s2">"none"</span><span class="p">)</span>
+<span class="n">llm_with_tools</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">bind_tools</span><span class="p">(</span><span class="n">tools</span><span class="p">)</span>
+</pre></div><p>One <code>bind_tools</code> call with all four tools. The LLM now sees four menu items and must choose.</p>
+<div class="out"><div class="label">Output: the [tool] lines (exact). After each one, the script prints the LLM's sentence built from that result.</div><pre>Q: What is the current stock level for SKU-003?
+   [tool] get_stock_level({'sku': 'SKU-003'}) -&gt; Conveyor Belt (SKU-003): stock=5, reorder_point=10, status=LOW
+
+Q: Which items need to be reordered right now?
+   [tool] list_low_stock_items({}) -&gt; Items needing reorder (2 total): SKU-002 (Hydraulic Pump): stock=18, reorder_point=25; SKU-003 (Conveyor Belt): stock=5, reorder_point=10
+
+Q: How many days until SKU-002 runs out of stock?
+   [tool] days_until_stockout({'sku': 'SKU-002'}) -&gt; Hydraulic Pump (SKU-002): 6.0 days until stockout (stock=18, daily_demand=3)
+
+Q: What quantity of SKU-003 should I order if my supplier takes 10 days to deliver?
+   [tool] calculate_reorder_quantity({'sku': 'SKU-003', 'lead_time_days': 10}) -&gt; Conveyor Belt (SKU-003): recommend ordering 35 units (lead_time_demand=20, safety_buffer=20, lead_time=10d, estimated_cost=Rs 612,500)</pre></div>
+<p><b>How the reorder number is built:</b> 2 belts/day &times; 10 days = 20 needed while waiting for delivery, + 20 as a safety buffer = 40 target, &minus; 5 in stock = <b>35 to order</b>.
+This is a simple rule of thumb. Module 4 uses the proper safety-stock formula.</p>
+
+<h2 id="think">Answers to "Think about it"</h2>
+<div class="card">
+<div class="qa"><div class="q">1. How did "my supplier takes 10 days" become lead_time_days=10?</div><p>The tool menu says <code>calculate_reorder_quantity</code> takes <code>lead_time_days: int</code> and its description mentions "supplier lead time in days". The LLM matches the phrase to the parameter and fills it in. Clear parameter names and descriptions make this reliable.</p></div>
+<div class="qa"><div class="q">2. Two tools with the same description?</div><p>The LLM cannot tell them apart, so it picks one more or less at random, or calls both. Every tool needs a description that says exactly when to use it.</p></div>
+<div class="qa"><div class="q">3. Why send tool_call_id?</div><p>The LLM can ask for several tools at once. The id links each result to the request it answers, like a table number on a restaurant order slip. The API rejects results without a matching id.</p></div>
+<div class="qa"><div class="q">4. A question needing two tools in a row?</div><p>Example: "Look up SKU-005, then calculate its reorder point" (the second tool needs the first tool's output). Our code calls tools once and then forces a final answer, so the second step never happens. The fix is a <b>loop</b>: keep calling the LLM until it stops asking for tools. You build exactly that in Module 4, Step 06.</p></div>
+<div class="qa"><div class="q">5. Is it safe to expose any function?</div><p>No. Read-only tools (look up stock) are low risk. Tools that change the world (place a purchase order, send money, delete records, send emails) should need a human "approve" step, and should check their inputs, because the LLM can misunderstand or be tricked by text it reads.</p></div>
+</div>
+
+<h2 id="errors">Common errors and fixes</h2>
+<table><tr><th>You see</th><th>Fix</th></tr>
+<tr><td><code>BadRequestError ... tools ... []</code> or <code>too short</code></td><td>TODO 1 is still the empty placeholder <code>tools = []</code>.</td></tr>
+<tr><td><code>... must be a response to a preceding message with 'tool_calls'</code></td><td>You appended the tool result but forgot to append the assistant's message (<code>messages.append(message)</code>) before it, or the <code>tool_call_id</code> does not match.</td></tr>
+<tr><td><code>TypeError: square_root() got an unexpected keyword argument</code></td><td>The parameter name in your JSON (<code>number</code>) must match the Python function's argument name exactly.</td></tr>
+<tr><td><code>KeyError: 'list_low_stock_items'</code></td><td>The tool is not in your <code>tools</code> list, so it is missing from <code>tool_map</code>.</td></tr>
+<tr><td>The answer prints as a list like <code>[{'type': 'text', ...}]</code></td><td>Use <code>response.text</code> instead of <code>response.content</code>.</td></tr>
+</table>
+
+<footer>Created by Shivank Agarwal. Matches the files in 2_SHARE_AFTER_Solution_Code.</footer>
+</main>
+</body>
+</html>

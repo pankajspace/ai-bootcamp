@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Shivank Agarwal">
+<title>Module 4 — Build an Inventory Planning Agent, Step by Step: Solution Explainer — Shivank Agarwal</title>
+<style>
+:root{--ink:#1d2433;--muted:#5b6475;--line:#e3e7ee;--bg:#fbfaf7;--card:#ffffff;--accent:#0f6e66;--accent-soft:#e6f3f1;
+--todo:#b45309;--todo-soft:#fff4e5;--blue:#1d4ed8;--blue-soft:#eaf1ff;--red:#b42318;--red-soft:#fdecea;--green:#15803d;--green-soft:#eaf7ee}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:940px;margin:0 auto;padding:0 22px 60px}
+header.top{background:linear-gradient(135deg,#0f3d3a,#0f6e66);color:#fff;padding:38px 0 30px;margin-bottom:28px}
+header.top .wrap{padding-bottom:0}
+.kicker{text-transform:uppercase;letter-spacing:.12em;font-size:12.5px;font-weight:700;opacity:.85}
+header.top h1{font-size:34px;line-height:1.2;margin:8px 0 10px;font-weight:800}
+header.top p.sub{margin:0;font-size:18px;opacity:.92;max-width:760px}
+.byline{margin-top:16px;font-size:14px;opacity:.9}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px 12px;font-size:13.5px}
+h2{font-size:26px;margin:44px 0 12px;padding-top:6px;border-top:2px solid var(--line)}
+h3{font-size:20.5px;margin:30px 0 8px}
+h4{font-size:17px;margin:20px 0 6px}
+p{margin:10px 0}
+a{color:var(--accent)}
+code{font-family:"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;font-size:.88em;background:#eef1f5;padding:1px 5px;border-radius:4px}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 20px;margin:18px 0}
+.toc ol{margin:6px 0;padding-left:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:18px 0;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.exercise{border-left:6px solid var(--accent)}
+.exercise > h3:first-child{margin-top:4px}
+.file{display:inline-block;font-family:Menlo,Consolas,monospace;font-size:14px;background:var(--accent-soft);color:var(--accent);padding:2px 9px;border-radius:6px}
+.todo{border:1px solid #f3d9b5;background:var(--todo-soft);border-radius:12px;padding:12px 16px;margin:12px 0}
+.todo .num{display:inline-block;background:var(--todo);color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:1px 10px;margin-right:8px}
+.todo .title{font-weight:650}
+details{margin:8px 0 2px}
+summary{cursor:pointer;color:var(--todo);font-weight:600;font-size:15px}
+details ul{margin:6px 0 4px}
+.callout{border-radius:12px;padding:12px 16px;margin:16px 0;border:1px solid}
+.callout.tip{background:var(--green-soft);border-color:#bfe3c9}
+.callout.note{background:var(--blue-soft);border-color:#c9d8fb}
+.callout.warn{background:var(--todo-soft);border-color:#f3d9b5}
+.callout.stop{background:var(--red-soft);border-color:#f5c2bc}
+.callout b.lbl{display:block;margin-bottom:2px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15.5px;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f3f5f8}
+.code{border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden;background:#fff}
+.code .label{font-size:12.5px;color:var(--muted);background:#f6f7f9;border-bottom:1px solid var(--line);padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.code pre{margin:0;padding:12px 14px;overflow-x:auto;font-size:14px;line-height:1.5}
+.out{background:#0f172a;color:#d6e2f0;border-radius:10px;margin:12px 0;overflow:hidden}
+.out .label{font-size:12.5px;color:#93a4bd;background:#18233a;padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.out pre{margin:0;padding:12px 14px;overflow-x:auto;font:13.5px/1.5 Menlo,Consolas,monospace;white-space:pre-wrap}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:16px 0}
+.flow .box{flex:1 1 140px;background:#fff;border:1.5px solid var(--accent);border-radius:12px;padding:10px 12px;text-align:center;font-size:15px}
+.flow .box b{display:block;color:var(--accent)}
+.flow .arrow{align-self:center;font-size:24px;color:var(--muted)}
+.qa{border-bottom:1px dashed var(--line);padding:8px 0}
+.qa .q{font-weight:650}
+.done{background:var(--green-soft);border:1px solid #bfe3c9;border-radius:10px;padding:10px 14px;margin:12px 0}
+.done b{color:var(--green)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr} header.top h1{font-size:27px}}
+footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;border-radius:999px;padding:1px 9px;margin-left:6px;vertical-align:middle}
+.pill.core{background:var(--accent-soft);color:var(--accent)}
+.pill.opt{background:#f1f2f6;color:var(--muted)}
+@media print{header.top{background:#0f6e66 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact} details{display:block} details>*{display:block}}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.code pre .hll { background-color: #ffffcc }
+.code pre { background: #f0f0f0; }
+.code pre .c { color: #60A0B0; font-style: italic } /* Comment */
+.code pre .err { border: 1px solid #F00 } /* Error */
+.code pre .k { color: #007020; font-weight: bold } /* Keyword */
+.code pre .o { color: #666 } /* Operator */
+.code pre .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.code pre .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.code pre .cp { color: #007020 } /* Comment.Preproc */
+.code pre .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.code pre .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.code pre .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.code pre .gd { color: #A00000 } /* Generic.Deleted */
+.code pre .ge { font-style: italic } /* Generic.Emph */
+.code pre .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.code pre .gr { color: #F00 } /* Generic.Error */
+.code pre .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.code pre .gi { color: #00A000 } /* Generic.Inserted */
+.code pre .go { color: #888 } /* Generic.Output */
+.code pre .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.code pre .gs { font-weight: bold } /* Generic.Strong */
+.code pre .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.code pre .gt { color: #04D } /* Generic.Traceback */
+.code pre .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.code pre .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.code pre .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.code pre .kp { color: #007020 } /* Keyword.Pseudo */
+.code pre .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.code pre .kt { color: #902000 } /* Keyword.Type */
+.code pre .m { color: #40A070 } /* Literal.Number */
+.code pre .s { color: #4070A0 } /* Literal.String */
+.code pre .na { color: #4070A0 } /* Name.Attribute */
+.code pre .nb { color: #007020 } /* Name.Builtin */
+.code pre .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.code pre .no { color: #60ADD5 } /* Name.Constant */
+.code pre .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.code pre .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.code pre .ne { color: #007020 } /* Name.Exception */
+.code pre .nf { color: #06287E } /* Name.Function */
+.code pre .nl { color: #002070; font-weight: bold } /* Name.Label */
+.code pre .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.code pre .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.code pre .nv { color: #BB60D5 } /* Name.Variable */
+.code pre .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.code pre .w { color: #BBB } /* Text.Whitespace */
+.code pre .mb { color: #40A070 } /* Literal.Number.Bin */
+.code pre .mf { color: #40A070 } /* Literal.Number.Float */
+.code pre .mh { color: #40A070 } /* Literal.Number.Hex */
+.code pre .mi { color: #40A070 } /* Literal.Number.Integer */
+.code pre .mo { color: #40A070 } /* Literal.Number.Oct */
+.code pre .sa { color: #4070A0 } /* Literal.String.Affix */
+.code pre .sb { color: #4070A0 } /* Literal.String.Backtick */
+.code pre .sc { color: #4070A0 } /* Literal.String.Char */
+.code pre .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.code pre .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.code pre .s2 { color: #4070A0 } /* Literal.String.Double */
+.code pre .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.code pre .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.code pre .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.code pre .sx { color: #C65D09 } /* Literal.String.Other */
+.code pre .sr { color: #235388 } /* Literal.String.Regex */
+.code pre .s1 { color: #4070A0 } /* Literal.String.Single */
+.code pre .ss { color: #517918 } /* Literal.String.Symbol */
+.code pre .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.code pre .fm { color: #06287E } /* Name.Function.Magic */
+.code pre .vc { color: #BB60D5 } /* Name.Variable.Class */
+.code pre .vg { color: #BB60D5 } /* Name.Variable.Global */
+.code pre .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.code pre .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.code pre .il { color: #40A070 } /* Literal.Number.Integer.Long */</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+<div class="kicker">Solution explainer · Share after the exercise</div>
+<h1>Module 4 — Build an Inventory Planning Agent, Step by Step: Solution Explainer</h1>
+<p class="sub">Step-by-step solutions for all 8 steps, the inventory maths with real numbers, and answers to the discussion questions.</p>
+<div class="badges"><span class="badge">For learners, after the exercise</span><span class="badge">Steps 01 – 08</span></div>
+<div class="byline">Created by <b>Shivank Agarwal</b></div>
+</div></header>
+<main class="wrap">
+
+<div class="toc"><b>On this page</b><ol>
+<li><a href="#arch">The finished system in one picture</a></li><li><a href="#maths">The maths with one real example</a></li>
+<li><a href="#s01">Step 01</a> · <a href="#s02">02</a> · <a href="#s03">03</a> · <a href="#s04">04</a> · <a href="#s05">05</a> · <a href="#s06">06</a> · <a href="#s07">07</a> · <a href="#s08">08</a></li>
+<li><a href="#pva">Pipeline vs agent</a></li><li><a href="#think">Answers to "Think about it"</a></li><li><a href="#errors">Common errors</a></li></ol></div>
+
+<h2 id="arch">The finished system in one picture</h2>
+<div class="grid2">
+<div class="card"><h4 style="margin-top:0">Data side</h4>
+<p><b>SQLite</b>: 3 tables (inventory, lead_time, demand), 10 products. Exact facts.</p>
+<p><b>ChromaDB</b>: 13 short notes (formulas, category rules, best practices), embedded with <code>all-MiniLM-L6-v2</code>. Advice and context.</p></div>
+<div class="card"><h4 style="margin-top:0">Brain side</h4>
+<p><b>LLM</b> (<code>gpt-6-luna</code>): understands the question, decides which tool to call, writes the answer.</p>
+<p><b>Tools</b>: <code>db_lookup</code>, <code>list_available_skus</code>, <code>compute_stock_metrics</code>. Facts and maths, never guessed.</p></div></div>
+<div class="flow"><div class="box"><b>User</b>types in Gradio chat</div><div class="arrow">&rarr;</div><div class="box"><b>RAG</b>3 relevant notes &rarr; system prompt</div><div class="arrow">&rarr;</div><div class="box"><b>Agent loop</b>LLM &harr; tools until done</div><div class="arrow">&rarr;</div><div class="box"><b>Answer</b>quantity, urgency, why</div></div>
+<p><b>Golden rule of this design:</b> <i>facts come from the database, maths comes from Python, knowledge comes from retrieval, and the LLM only does the reasoning and the talking.</i></p>
+
+<h2 id="maths">The maths with one real example</h2>
+
+<table>
+<tr><th>Word</th><th>Plain meaning</th><th>Example (SKU-005, Laptop 15-inch)</th></tr>
+<tr><td><b>SKU</b></td><td>Stock Keeping Unit: the ID of one product</td><td>SKU-005</td></tr>
+<tr><td><b>Current stock</b></td><td>Units on the shelf right now</td><td>50 laptops</td></tr>
+<tr><td><b>Lead time</b></td><td>Days between placing an order and receiving it</td><td>30 days</td></tr>
+<tr><td><b>Average daily demand</b></td><td>Units sold per day on average</td><td>3 per day</td></tr>
+<tr><td><b>Demand std dev</b></td><td>How much daily sales jump around the average (standard deviation)</td><td>1 per day (some days 2, some days 4)</td></tr>
+<tr><td><b>Service level</b></td><td>How sure you want to be that you will <i>not</i> run out before the delivery arrives</td><td>99%</td></tr>
+<tr><td><b>Z-score</b></td><td>The service level turned into a number from the statistics table. Higher = more caution</td><td>99% &rarr; 2.33 (95% &rarr; 1.65)</td></tr>
+<tr><td><b>Safety stock</b></td><td>Extra buffer for bad days: <code>Z &times; demand_std_dev &times; &radic;lead_time</code></td><td>2.33 &times; 1 &times; &radic;30 = <b>12.76</b></td></tr>
+<tr><td><b>Desired stock</b> (= reorder point)</td><td>What you must have to survive until the delivery comes: <code>avg_daily_demand &times; lead_time + safety_stock</code></td><td>3 &times; 30 + 12.76 = <b>102.76</b></td></tr>
+<tr><td><b>Reorder quantity</b></td><td>How many to order now: <code>max(0, desired &minus; current)</code>, rounded up</td><td>102.76 &minus; 50 &rarr; <b>53 laptops</b></td></tr>
+</table>
+<p>Results of <code>compute_stock_metrics</code> for all 10 products in Step 08 (real run):</p>
+<table><tr><th>SKU</th><th>Product</th><th>Stock</th><th>Z</th><th>Safety stock</th><th>Desired stock</th><th>Order now</th></tr>
+<tr><td>SKU-001</td><td>Wireless Headphones</td><td>150</td><td>2.05</td><td>18.79</td><td>186.79</td><td><b>37</b></td></tr>
+<tr><td>SKU-002</td><td>Paracetamol 500mg</td><td>800</td><td>2.33</td><td>30.82</td><td>310.82</td><td>0</td></tr>
+<tr><td>SKU-003</td><td>Instant Noodles 12-pack</td><td>300</td><td>1.65</td><td>33.00</td><td>353.00</td><td><b>53</b></td></tr>
+<tr><td>SKU-004</td><td>Steel Rod 10mm</td><td>300</td><td>1.41</td><td>15.83</td><td>225.83</td><td>0</td></tr>
+<tr><td>SKU-005</td><td>Laptop 15-inch</td><td>50</td><td>2.33</td><td>12.76</td><td>102.76</td><td><b>53</b></td></tr>
+<tr><td>SKU-006</td><td>Vitamin C Tablets</td><td>600</td><td>1.88</td><td>23.78</td><td>273.78</td><td>0</td></tr>
+<tr><td>SKU-007</td><td>Shampoo 400ml</td><td>900</td><td>1.65</td><td>29.52</td><td>329.52</td><td>0</td></tr>
+<tr><td>SKU-008</td><td>Copper Wire 2.5mm</td><td>150</td><td>1.28</td><td>14.66</td><td>224.66</td><td><b>75</b></td></tr>
+<tr><td>SKU-009</td><td>Bluetooth Speaker</td><td>120</td><td>1.75</td><td>11.14</td><td>119.14</td><td>0 (just barely)</td></tr>
+<tr><td>SKU-010</td><td>Flour 5kg</td><td>2000</td><td>1.65</td><td>57.16</td><td>507.16</td><td>0</td></tr></table>
+
+<h2 id="s01">Step 01 — SQLite basics</h2>
+<p><b>Why a SQL database?</b> Stock numbers are exact facts that change every day. They belong in a table, not in a prompt and not in a vector store.</p>
+<h4>TODO 1 — Write a JOIN query that returns sku_id, sku_name, stock, lead_time_days, supplier_name for every product</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">    SELECT p.sku_id, p.sku_name, p.stock,</span>
+<span class="s2">           s.lead_time_days, s.supplier_name</span>
+<span class="s2">    FROM   products p</span>
+<span class="s2">    JOIN   suppliers s ON s.sku_id = p.sku_id</span>
+<span class="s2">    ORDER  BY p.sku_id</span>
+<span class="s2">"""</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</pre></div><p><code>JOIN ... ON s.sku_id = p.sku_id</code> glues each product row to the supplier row with the same <code>sku_id</code>. <code>p</code> and <code>s</code> are short nicknames for the tables.</p>
+<h4>TODO 2 — Fetch ONE product (joined with its supplier) by sku_id; return it as a dict, or None if not found</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">row</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="s2">"SELECT p.*, s.lead_time_days, s.supplier_name "</span>
+    <span class="s2">"FROM products p JOIN suppliers s ON s.sku_id = p.sku_id "</span>
+    <span class="s2">"WHERE UPPER(p.sku_id) = UPPER(?)"</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">sku_id</span><span class="p">,),</span>
+<span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+<span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">if</span> <span class="n">row</span> <span class="k">else</span> <span class="kc">None</span>
+</pre></div><p>The <code>?</code> placeholder lets SQLite insert the value safely (never build SQL with f-strings: that opens the door to SQL injection). <code>UPPER(...)</code> on both sides makes the lookup case-insensitive.</p>
+<div class="out"><div class="label">Output (real run)</div><pre>SKU        Name                    Stock  Lead (days)  Supplier
+----------------------------------------------------------------------
+SKU-001    Wireless Headphones       150           21  TechImports Ltd
+SKU-002    Paracetamol 500mg         800            7  MedSupply Co
+SKU-003    Instant Noodles           300            4  FoodDist Pvt
+
+Lookup sku-002: {'sku_id': 'SKU-002', 'sku_name': 'Paracetamol 500mg', 'stock': 800, 'lead_time_days': 7, 'supplier_name': 'MedSupply Co'}
+Lookup SKU-999: None</pre></div>
+
+<h2 id="s02">Step 02 — Embeddings basics</h2>
+<h4>TODO 1 — Embed the query, score it against every passage, and return the top k</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="n">qv</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">normalize_embeddings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">passage_vectors</span> <span class="o">@</span> <span class="n">qv</span>              <span class="c1"># one score per passage</span>
+<span class="n">ranked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">scores</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">k</span><span class="p">]</span>      <span class="c1"># biggest first</span>
+<span class="k">return</span> <span class="p">[(</span><span class="nb">float</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">PASSAGES</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ranked</span><span class="p">]</span>
+</pre></div><p><code>normalize_embeddings=True</code> makes every vector length 1. Then cosine similarity is just the dot product, and
+<code>passage_vectors @ qv</code> scores all six passages in one line (a 6&times;384 matrix times a 384 vector = 6 scores).
+<code>np.argsort</code> gives positions sorted from smallest to largest, so <code>[::-1]</code> flips it to largest first.</p>
+<table><tr><th>Question</th><th>Expected #1 passage</th></tr>
+<tr><td>How do I calculate safety stock?</td><td>Safety Stock = Z-score * demand_std_dev * sqrt(lead_time_days)</td></tr>
+<tr><td>What should I know about electronics inventory?</td><td>Electronics: lead times 14-30 days, high obsolescence risk.</td></tr>
+<tr><td>Tell me about demand patterns for consumer goods.</td><td>FMCG: short lead times 3-7 days, high steady demand.</td></tr></table>
+<p>The third one is the interesting one: the question says <i>consumer goods</i>, the passage says <i>FMCG</i>, and no words overlap. The embedding model still knows they mean the same thing. (Exact scores vary slightly between machines.)</p>
+
+<h2 id="s03">Step 03 — ChromaDB retrieval</h2>
+<p>Step 02 kept vectors in a numpy array. A <b>vector database</b> stores the text, the vector and tags together, searches fast even with millions of rows, and can filter by tag.</p>
+<h4>TODO 1 — Embed every text and add ids, vectors, texts and metadata to the collection</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="n">vectors</span> <span class="o">=</span> <span class="n">embed</span><span class="o">.</span><span class="n">embed_documents</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s2">"text"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">])</span>
+<span class="n">collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">],</span>
+    <span class="n">embeddings</span><span class="o">=</span><span class="n">vectors</span><span class="p">,</span>
+    <span class="n">documents</span><span class="o">=</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">"text"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">],</span>
+    <span class="n">metadatas</span><span class="o">=</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">"meta"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div><p>Four parallel lists, matched by position: the 1st id goes with the 1st vector, the 1st text and the 1st tag.</p>
+<h4>TODO 2 — Embed the query and search the collection (apply the filter only if one is given)</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">qv</span> <span class="o">=</span> <span class="n">embed</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"query_embeddings"</span><span class="p">:</span> <span class="p">[</span><span class="n">qv</span><span class="p">],</span> <span class="s2">"n_results"</span><span class="p">:</span> <span class="n">n</span><span class="p">}</span>
+<span class="k">if</span> <span class="n">where</span><span class="p">:</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s2">"where"</span><span class="p">]</span> <span class="o">=</span> <span class="n">where</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="s2">"documents"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div><p><code>where={"topic": "formula"}</code> works like SQL <code>WHERE topic = 'formula'</code>: Chroma searches by meaning, but only inside matching rows. The results come back as a list per query, so <code>["documents"][0]</code> takes the first (and only) query's list.</p>
+<div class="out"><div class="label">Output (real run; the order of the two lines may differ)</div><pre>Collection has 8 documents
+
+=== Query: 'how to calculate stock' (formulas only) ===
+ • Reorder Point (ROP) = (avg_daily_demand * lead_time) + safety_stock.
+ • Safety Stock = Z * demand_std_dev * sqrt(lead_time). Z=1.65 for 95%, Z=2.33 for 99%.</pre></div>
+<p>The filtered search returns only 2 notes even though we asked for 3, because only 2 notes have the <code>formula</code> tag.</p>
+
+<h2 id="s04">Step 04 — Your first LLM chain</h2>
+<h4>TODO 1 — Build the chain: prompt -&gt; llm -&gt; StrOutputParser</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="n">chain</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">llm</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+</pre></div><p>Read the pipe <code>|</code> as "then": fill the prompt, <b>then</b> send it to the LLM, <b>then</b> turn the reply into a plain string. This is LangChain's LCEL (LangChain Expression Language).</p>
+<h4>TODO 2 — Run the chain with this SKU's parameters and print the result</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">result</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div><p><code>invoke(params)</code> fills <code>{sku_id}</code>, <code>{lead_time_days}</code> and the other blanks from the dict keys with the same names.</p>
+<div class="out"><div class="label">Example output for SKU-001 (the LLM's working varies; the Python check line is exact)</div><pre>Safety Stock = 2.05 × 2 × √21 ≈ 2.05 × 2 × 4.583 ≈ 18.79
+Desired Stock = (8 × 21) + 18.79 = 168 + 18.79 = 186.79
+
+DESIRED_STOCK: 186.79
+
+[Python check] safety stock = 18.79, desired stock = 186.79</pre></div>
+<div class="callout warn"><b class="lbl">The lesson of this step</b><p>The LLM usually gets close, but square roots and decimals are where it slips (for example writing √21 ≈ 4.6 and ending at 186.86). For inventory, money or medicine, "usually close" is not acceptable. That is why Step 06 moves every calculation into Python tools.</p></div>
+
+<h2 id="s05">Step 05 — RAG chain</h2>
+<div class="flow"><div class="box"><b>Retrieve</b>find 3 notes in ChromaDB</div><div class="arrow">&rarr;</div><div class="box"><b>Augment</b>paste them into {rag_context}</div><div class="arrow">&rarr;</div><div class="box"><b>Generate</b>LLM answers using them</div></div>
+<h4>TODO 1 — Search the collection and return the passages as a bullet list ("- passage" per line)</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="n">qv</span> <span class="o">=</span> <span class="n">embed</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query_embeddings</span><span class="o">=</span><span class="p">[</span><span class="n">qv</span><span class="p">],</span> <span class="n">n_results</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+<span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"- </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s2">"documents"</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+</pre></div><p>We turn the notes into one bullet-list string because a prompt is just text.</p>
+<h4>TODO 2 — Run the RAG chain: pass all SKU fields AND the retrieved context</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">answer</span> <span class="o">=</span> <span class="n">rag_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="o">**</span><span class="n">sku</span><span class="p">,</span> <span class="s2">"rag_context"</span><span class="p">:</span> <span class="n">context</span><span class="p">})</span>
+</pre></div><p><code>{**sku, "rag_context": context}</code> makes a new dict with every SKU field plus one extra key, so the prompt can fill <code>{rag_context}</code> too.</p>
+<table><tr><th>Without RAG (typical)</th><th>With RAG (typical)</th></tr>
+<tr><td>General advice: "monitor demand, keep a buffer, review regularly".</td>
+<td>Uses the retrieved notes: names the 99%+ service level for pharma, FIFO and expiry dates, and the safety-stock formula with Z = 2.33.</td></tr></table>
+<p>The retrieved notes are usually the pharma rule, the safety-stock formula and the 95% &rarr; 99% service-level note (order can vary). Same LLM, same question, but the RAG answer is <b>specific to our business rules</b>, because we gave it our rules.</p>
+
+<h2 id="s06">Step 06 — Tool calling with an agent loop</h2>
+<h4>TODO 1 — One turn of the agent loop</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="n">response</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+<span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+<span class="c1"># No tool calls -&gt; the LLM is ready to answer</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># .text = the answer as plain text</span>
+
+<span class="c1"># Run every tool the LLM asked for, then go round the loop again</span>
+<span class="k">for</span> <span class="n">tc</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">TOOL_MAP</span><span class="p">[</span><span class="n">tc</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]]</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">tc</span><span class="p">[</span><span class="s2">"args"</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  [tool] </span><span class="si">{</span><span class="n">tc</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">tc</span><span class="p">[</span><span class="s1">'args'</span><span class="p">]</span><span class="si">}</span><span class="s2">) -&gt; </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ToolMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="n">tool_call_id</span><span class="o">=</span><span class="n">tc</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]))</span>
+</pre></div><p>Each trip round the loop is one "think &rarr; act &rarr; observe" cycle. The loop ends when the LLM replies with no tool calls (it has everything it needs). <code>json.dumps</code> turns the Python result (a dict or a number) into text, because messages carry text.</p>
+<div class="out"><div class="label">Example output (the [tool] lines and numbers are exact; the wording varies)</div><pre>Q: Does SKU-005 need to be reordered? Show the reorder point.
+  [tool] lookup_sku_stock({'sku_id': 'SKU-005'}) -&gt; {'sku_id': 'SKU-005', 'sku_name': 'Laptop 15-inch', 'current_stock': 50, 'avg_daily_demand': 3, 'demand_std_dev': 1.0, 'lead_time_days': 30, 'service_level': 99}
+  [tool] calculate_safety_stock({'demand_std_dev': 1.0, 'lead_time_days': 30, 'service_level_pct': 99}) -&gt; 12.76
+  [tool] calculate_reorder_point({'avg_daily_demand': 3, 'lead_time_days': 30, 'safety_stock': 12.76}) -&gt; 102.76
+A: Yes. SKU-005 (Laptop 15-inch) has 50 units, below its reorder point of 102.76 units
+   (3/day × 30 days + 12.76 safety stock). Reorder now.</pre></div>
+<p>Notice the LLM <b>chained</b> the tools: it used the output of <code>lookup_sku_stock</code> as the input of <code>calculate_safety_stock</code>, then used that result in <code>calculate_reorder_point</code>. Three loop rounds, then the answer. Sometimes the LLM asks for two tools in the same round; the inner <code>for</code> loop handles that.</p>
+
+<h2 id="s07">Step 07 — Multi-chain pipeline</h2>
+<h4>TODO 1 — Build reorder_chain: a prompt that receives chain 1's explanation as {computation}, then llm, then a parser</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="n">reorder_prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span>
+     <span class="s2">"You are an inventory planning advisor.</span><span class="se">\n</span><span class="s2">"</span>
+     <span class="s2">"Reorder Quantity = max(0, Desired Stock - Current Stock), rounded up to whole units.</span><span class="se">\n</span><span class="s2">"</span>
+     <span class="s2">"State the quantity and whether an immediate reorder is needed, in under 80 words."</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span>
+     <span class="s2">"SKU: </span><span class="si">{sku_id}</span><span class="s2"> | </span><span class="si">{sku_name}</span><span class="se">\n</span><span class="s2">"</span>
+     <span class="s2">"Current Stock: </span><span class="si">{current_stock}</span><span class="s2">   Supplier: </span><span class="si">{supplier_name}</span><span class="se">\n\n</span><span class="s2">"</span>
+     <span class="s2">"Stock Computation:</span><span class="se">\n</span><span class="si">{computation}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="n">reorder_chain</span> <span class="o">=</span> <span class="n">reorder_prompt</span> <span class="o">|</span> <span class="n">llm</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+</pre></div><p>A second prompt with a <code>{computation}</code> slot. Whatever chain 1 writes is pasted there.</p>
+<h4>TODO 2 — Step 3 — run reorder_chain, feeding it chain 1's output, and print the recommendation</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">recommendation</span> <span class="o">=</span> <span class="n">reorder_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span>
+    <span class="s2">"sku_id"</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">"sku_id"</span><span class="p">],</span>
+    <span class="s2">"sku_name"</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">"sku_name"</span><span class="p">],</span>
+    <span class="s2">"current_stock"</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">"current_stock"</span><span class="p">],</span>
+    <span class="s2">"supplier_name"</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">"supplier_name"</span><span class="p">],</span>
+    <span class="s2">"computation"</span><span class="p">:</span> <span class="n">computation</span><span class="p">,</span>   <span class="c1"># &lt;- chain 1's output becomes chain 2's input</span>
+<span class="p">})</span>
+</pre></div><p>This is the hand-off: chain 1's output becomes chain 2's input. Each chain has one small, focused job, which makes each prompt easier to write and test.</p>
+<div class="out"><div class="label">Example output, shortened (tool lines exact; chain text varies)</div><pre>Processing SKU-001
+[Tool] safety_stock_tool -&gt; {'z_score': 2.05, 'safety_stock': 18.79, 'desired_stock': 186.79}
+--- Chain 1: Stock Computation ---  (explanation ... ends with DESIRED_STOCK: 186.79)
+--- Chain 2: Reorder Recommendation ---  Order 37 units of Wireless Headphones now (186.79 - 150 = 36.79, rounded up).
+
+Processing SKU-005
+[Tool] safety_stock_tool -&gt; {'z_score': 2.33, 'safety_stock': 12.76, 'desired_stock': 102.76}
+--- Chain 2: Reorder Recommendation ---  Order 53 units of Laptop 15-inch immediately (102.76 - 50 = 52.76, rounded up).</pre></div>
+
+<h2 id="s08">Step 08 — The full agent app</h2>
+<h4>TODO 1 — Write the compute_stock_metrics tool (exact maths for one SKU)</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_stock_metrics</span><span class="p">(</span><span class="n">avg_daily_demand</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">demand_std_dev</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lead_time_days</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                          <span class="n">service_level_pct</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">current_stock</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Compute safety stock, desired stock level, and reorder quantity with exact arithmetic.</span>
+<span class="sd">    Returns: z_score, safety_stock, desired_stock, reorder_quantity, reorder_needed.</span>
+<span class="sd">    """</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">Z_TABLE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">service_level_pct</span><span class="p">),</span> <span class="mf">1.65</span><span class="p">)</span>
+    <span class="n">safety_stock</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">z</span> <span class="o">*</span> <span class="n">demand_std_dev</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">lead_time_days</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">desired_stock</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">avg_daily_demand</span> <span class="o">*</span> <span class="n">lead_time_days</span> <span class="o">+</span> <span class="n">safety_stock</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">reorder_quantity</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">desired_stock</span> <span class="o">-</span> <span class="n">current_stock</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"z_score"</span><span class="p">:</span> <span class="n">z</span><span class="p">,</span>
+        <span class="s2">"safety_stock"</span><span class="p">:</span> <span class="n">safety_stock</span><span class="p">,</span>
+        <span class="s2">"desired_stock"</span><span class="p">:</span> <span class="n">desired_stock</span><span class="p">,</span>
+        <span class="s2">"reorder_quantity"</span><span class="p">:</span> <span class="n">reorder_quantity</span><span class="p">,</span>
+        <span class="s2">"reorder_needed"</span><span class="p">:</span> <span class="n">reorder_quantity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">}</span>
+</pre></div><p>One tool does all the maths for a SKU and returns everything as a dict. <code>math.ceil</code> rounds up, because you cannot order 36.79 headphones, and rounding down would leave you short.</p>
+<h4>TODO 2 — One turn of the agent loop (same as Step 06)</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">response</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+<span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># .text = the answer as plain text</span>
+
+<span class="k">for</span> <span class="n">tc</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">TOOL_MAP</span><span class="p">[</span><span class="n">tc</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]]</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">tc</span><span class="p">[</span><span class="s2">"args"</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  [tool] </span><span class="si">{</span><span class="n">tc</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">tc</span><span class="p">[</span><span class="s1">'args'</span><span class="p">]</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ToolMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">),</span> <span class="n">tool_call_id</span><span class="o">=</span><span class="n">tc</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]))</span>
+</pre></div><p>The same loop as Step 06. The difference is in what goes <b>into</b> it: a system prompt with instructions plus the 3 most relevant knowledge notes (RAG), and <code>MAX_STEPS = 15</code> because "Which SKUs are most at risk?" needs many lookups.</p>
+<div class="out"><div class="label">Terminal after asking: What is the reorder quantity for SKU-001? (real run)</div><pre>Starting Inventory Planning Agent...
+  10 SKUs in the database
+  13 notes in the knowledge base
+* Running on local URL:  http://127.0.0.1:7860
+
+  [tool] db_lookup({'sku_id': 'SKU-001'})
+  [tool] compute_stock_metrics({'avg_daily_demand': 8.0, 'demand_std_dev': 2.0, 'lead_time_days': 21.0, 'service_level_pct': 98.0, 'current_stock': 150.0})</pre></div>
+<div class="out"><div class="label">Example chat answer (wording varies; the numbers come from the tools)</div><pre>Reorder 37 units of SKU-001 (Wireless Headphones).
+- Current stock: 150. Desired stock: 186.79 (168 for the 21-day lead time + 18.79 safety stock at 98% service level).
+- Urgency: medium-high. With 21-day international lead times for electronics, order this week.</pre></div>
+<div class="callout note"><b class="lbl">Things to notice in the code</b><ul><li><code>check_same_thread=False</code>: Gradio answers each chat message in a worker thread, and SQLite would otherwise refuse to be used from a different thread.</li><li><code>chat_handler</code> catches errors and shows a friendly message instead of crashing the app.</li><li>Every question is answered on its own (the chat <code>history</code> is not sent to the LLM). Making it remember is a stretch challenge.</li></ul></div>
+
+<h2 id="pva">Pipeline (Step 07) vs Agent (Steps 06 and 08)</h2>
+<table><tr><th></th><th>Pipeline</th><th>Agent</th></tr>
+<tr><td>Who decides the steps?</td><td>You, in code</td><td>The LLM, at run time</td></tr>
+<tr><td>Predictable?</td><td>Yes, same steps every time</td><td>Less, it may take different paths</td></tr>
+<tr><td>Handles new kinds of questions?</td><td>No, only the flow you wrote</td><td>Yes: "list", "compare", "most at risk"...</td></tr>
+<tr><td>Cost and speed</td><td>Fixed number of LLM calls</td><td>Varies with the question</td></tr>
+<tr><td>Use it when</td><td>The task is always the same (nightly reorder report)</td><td>Users ask open questions (chat assistant)</td></tr></table>
+
+<h2 id="think">Answers to "Think about it"</h2>
+<div class="card">
+<div class="qa"><div class="q">1. Did the LLM's number match the Python check?</div><p>Often close, sometimes off in the decimals, occasionally clearly wrong. LLMs predict likely text; they do not calculate. A small error times hundreds of SKUs means real money: lost sales or cash stuck in stock. Exact maths belongs in code.</p></div>
+<div class="qa"><div class="q">2. What could only come from the retrieved notes?</div><p>Our business rules: "Pharma: 99%+ service level, strict FIFO, expiry dates" and the exact Z values. A general LLM may know similar ideas, but it cannot know <i>your</i> company's rules unless you give them.</p></div>
+<div class="qa"><div class="q">3. Agent vs pipeline advantages?</div><p>Agent: flexible, handles questions you did not plan for. Pipeline: predictable, easy to test, fixed cost. Many real systems use a pipeline for the core flow and an agent only at the edges.</p></div>
+<div class="qa"><div class="q">4. Why MAX_STEPS?</div><p>If the LLM keeps asking for tools (for example, a tool keeps returning an error and the LLM keeps retrying), the loop would never end, burning money and time. A step limit is a simple safety net.</p></div>
+<div class="qa"><div class="q">5. Why only 3 notes, not all 13?</div><p>Fewer tokens = cheaper and faster. Irrelevant notes can also distract the LLM. With 13 notes you could send all of them, but a real knowledge base has thousands, so retrieval is the habit to build.</p></div>
+<div class="qa"><div class="q">6. SKU-009 with 120 in stock and a desired stock of 119.14?</div><p>The formula says no reorder, but there is less than one unit of margin. A manager would want: upcoming sales or festival season, supplier reliability, minimum order size, and whether an order is already on its way. Tools give exact numbers; people still make the judgement call.</p></div>
+</div>
+
+<h2 id="errors">Common errors and fixes</h2>
+<table><tr><th>You see</th><th>Fix</th></tr>
+<tr><td><code>sqlite3.OperationalError: no such column</code></td><td>Check the column names and the table nicknames (<code>p.</code> / <code>s.</code>) in your SQL.</td></tr>
+<tr><td><code>chromadb ... Collection inventory_kb already exists</code></td><td>Only happens if you run the creation twice in one session (for example in a notebook). Use <code>client.get_or_create_collection(...)</code>, or restart.</td></tr>
+<tr><td><code>KeyError: 'rag_context'</code> or a missing <code>{...}</code> variable</td><td>Every <code>{name}</code> in a prompt must be a key in the dict you pass to <code>invoke</code>.</td></tr>
+<tr><td>The agent answers without calling tools</td><td>Make the tool docstrings clearer and keep the system prompt rule "never do the maths yourself".</td></tr>
+<tr><td><code>SQLite objects created in a thread can only be used in that same thread</code></td><td>Keep <code>check_same_thread=False</code> in Step 08.</td></tr>
+<tr><td>"Stopped: too many steps"</td><td>The LLM kept calling tools. Print the <code>[tool]</code> lines to see which one keeps failing.</td></tr></table>
+
+<footer>Created by Shivank Agarwal. Matches the files in 2_SHARE_AFTER_Solution_Code.</footer>
+</main>
+</body>
+</html>

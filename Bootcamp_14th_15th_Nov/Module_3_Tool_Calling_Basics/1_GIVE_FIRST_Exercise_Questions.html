@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Shivank Agarwal">
+<title>Module 3 — Tool Calling Basics: Exercises — Shivank Agarwal</title>
+<style>
+:root{--ink:#1d2433;--muted:#5b6475;--line:#e3e7ee;--bg:#fbfaf7;--card:#ffffff;--accent:#0f6e66;--accent-soft:#e6f3f1;
+--todo:#b45309;--todo-soft:#fff4e5;--blue:#1d4ed8;--blue-soft:#eaf1ff;--red:#b42318;--red-soft:#fdecea;--green:#15803d;--green-soft:#eaf7ee}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:940px;margin:0 auto;padding:0 22px 60px}
+header.top{background:linear-gradient(135deg,#0f3d3a,#0f6e66);color:#fff;padding:38px 0 30px;margin-bottom:28px}
+header.top .wrap{padding-bottom:0}
+.kicker{text-transform:uppercase;letter-spacing:.12em;font-size:12.5px;font-weight:700;opacity:.85}
+header.top h1{font-size:34px;line-height:1.2;margin:8px 0 10px;font-weight:800}
+header.top p.sub{margin:0;font-size:18px;opacity:.92;max-width:760px}
+.byline{margin-top:16px;font-size:14px;opacity:.9}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px 12px;font-size:13.5px}
+h2{font-size:26px;margin:44px 0 12px;padding-top:6px;border-top:2px solid var(--line)}
+h3{font-size:20.5px;margin:30px 0 8px}
+h4{font-size:17px;margin:20px 0 6px}
+p{margin:10px 0}
+a{color:var(--accent)}
+code{font-family:"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;font-size:.88em;background:#eef1f5;padding:1px 5px;border-radius:4px}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 20px;margin:18px 0}
+.toc ol{margin:6px 0;padding-left:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:18px 0;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.exercise{border-left:6px solid var(--accent)}
+.exercise > h3:first-child{margin-top:4px}
+.file{display:inline-block;font-family:Menlo,Consolas,monospace;font-size:14px;background:var(--accent-soft);color:var(--accent);padding:2px 9px;border-radius:6px}
+.todo{border:1px solid #f3d9b5;background:var(--todo-soft);border-radius:12px;padding:12px 16px;margin:12px 0}
+.todo .num{display:inline-block;background:var(--todo);color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:1px 10px;margin-right:8px}
+.todo .title{font-weight:650}
+details{margin:8px 0 2px}
+summary{cursor:pointer;color:var(--todo);font-weight:600;font-size:15px}
+details ul{margin:6px 0 4px}
+.callout{border-radius:12px;padding:12px 16px;margin:16px 0;border:1px solid}
+.callout.tip{background:var(--green-soft);border-color:#bfe3c9}
+.callout.note{background:var(--blue-soft);border-color:#c9d8fb}
+.callout.warn{background:var(--todo-soft);border-color:#f3d9b5}
+.callout.stop{background:var(--red-soft);border-color:#f5c2bc}
+.callout b.lbl{display:block;margin-bottom:2px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15.5px;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f3f5f8}
+.code{border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden;background:#fff}
+.code .label{font-size:12.5px;color:var(--muted);background:#f6f7f9;border-bottom:1px solid var(--line);padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.code pre{margin:0;padding:12px 14px;overflow-x:auto;font-size:14px;line-height:1.5}
+.out{background:#0f172a;color:#d6e2f0;border-radius:10px;margin:12px 0;overflow:hidden}
+.out .label{font-size:12.5px;color:#93a4bd;background:#18233a;padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.out pre{margin:0;padding:12px 14px;overflow-x:auto;font:13.5px/1.5 Menlo,Consolas,monospace;white-space:pre-wrap}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:16px 0}
+.flow .box{flex:1 1 140px;background:#fff;border:1.5px solid var(--accent);border-radius:12px;padding:10px 12px;text-align:center;font-size:15px}
+.flow .box b{display:block;color:var(--accent)}
+.flow .arrow{align-self:center;font-size:24px;color:var(--muted)}
+.qa{border-bottom:1px dashed var(--line);padding:8px 0}
+.qa .q{font-weight:650}
+.done{background:var(--green-soft);border:1px solid #bfe3c9;border-radius:10px;padding:10px 14px;margin:12px 0}
+.done b{color:var(--green)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr} header.top h1{font-size:27px}}
+footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;border-radius:999px;padding:1px 9px;margin-left:6px;vertical-align:middle}
+.pill.core{background:var(--accent-soft);color:var(--accent)}
+.pill.opt{background:#f1f2f6;color:var(--muted)}
+@media print{header.top{background:#0f6e66 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact} details{display:block} details>*{display:block}}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.code pre .hll { background-color: #ffffcc }
+.code pre { background: #f0f0f0; }
+.code pre .c { color: #60A0B0; font-style: italic } /* Comment */
+.code pre .err { border: 1px solid #F00 } /* Error */
+.code pre .k { color: #007020; font-weight: bold } /* Keyword */
+.code pre .o { color: #666 } /* Operator */
+.code pre .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.code pre .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.code pre .cp { color: #007020 } /* Comment.Preproc */
+.code pre .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.code pre .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.code pre .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.code pre .gd { color: #A00000 } /* Generic.Deleted */
+.code pre .ge { font-style: italic } /* Generic.Emph */
+.code pre .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.code pre .gr { color: #F00 } /* Generic.Error */
+.code pre .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.code pre .gi { color: #00A000 } /* Generic.Inserted */
+.code pre .go { color: #888 } /* Generic.Output */
+.code pre .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.code pre .gs { font-weight: bold } /* Generic.Strong */
+.code pre .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.code pre .gt { color: #04D } /* Generic.Traceback */
+.code pre .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.code pre .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.code pre .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.code pre .kp { color: #007020 } /* Keyword.Pseudo */
+.code pre .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.code pre .kt { color: #902000 } /* Keyword.Type */
+.code pre .m { color: #40A070 } /* Literal.Number */
+.code pre .s { color: #4070A0 } /* Literal.String */
+.code pre .na { color: #4070A0 } /* Name.Attribute */
+.code pre .nb { color: #007020 } /* Name.Builtin */
+.code pre .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.code pre .no { color: #60ADD5 } /* Name.Constant */
+.code pre .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.code pre .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.code pre .ne { color: #007020 } /* Name.Exception */
+.code pre .nf { color: #06287E } /* Name.Function */
+.code pre .nl { color: #002070; font-weight: bold } /* Name.Label */
+.code pre .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.code pre .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.code pre .nv { color: #BB60D5 } /* Name.Variable */
+.code pre .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.code pre .w { color: #BBB } /* Text.Whitespace */
+.code pre .mb { color: #40A070 } /* Literal.Number.Bin */
+.code pre .mf { color: #40A070 } /* Literal.Number.Float */
+.code pre .mh { color: #40A070 } /* Literal.Number.Hex */
+.code pre .mi { color: #40A070 } /* Literal.Number.Integer */
+.code pre .mo { color: #40A070 } /* Literal.Number.Oct */
+.code pre .sa { color: #4070A0 } /* Literal.String.Affix */
+.code pre .sb { color: #4070A0 } /* Literal.String.Backtick */
+.code pre .sc { color: #4070A0 } /* Literal.String.Char */
+.code pre .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.code pre .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.code pre .s2 { color: #4070A0 } /* Literal.String.Double */
+.code pre .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.code pre .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.code pre .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.code pre .sx { color: #C65D09 } /* Literal.String.Other */
+.code pre .sr { color: #235388 } /* Literal.String.Regex */
+.code pre .s1 { color: #4070A0 } /* Literal.String.Single */
+.code pre .ss { color: #517918 } /* Literal.String.Symbol */
+.code pre .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.code pre .fm { color: #06287E } /* Name.Function.Magic */
+.code pre .vc { color: #BB60D5 } /* Name.Variable.Class */
+.code pre .vg { color: #BB60D5 } /* Name.Variable.Global */
+.code pre .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.code pre .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.code pre .il { color: #40A070 } /* Literal.Number.Integer.Long */</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+<div class="kicker">Hands-on exercises · Give to learners</div>
+<h1>Module 3 — Tool Calling Basics: Exercises</h1>
+<p class="sub">Hands-on exercise sheet. Try every TODO yourself before you see the solution.</p>
+<div class="badges"><span class="badge">For learners</span><span class="badge">About 45 minutes</span><span class="badge">OpenAI API key needed</span></div>
+<div class="byline">Created by <b>Shivank Agarwal</b></div>
+</div></header>
+<main class="wrap">
+
+<div class="card">
+<h3 style="margin-top:4px">What you will build</h3>
+<ul>
+<li><b>3.1</b> Tool calling with the plain OpenAI library: you write the JSON "tool menu" and the message passing yourself</li>
+<li><b>3.2</b> The same thing with LangChain, so you see what a framework saves you</li>
+<li><b>3.3</b> A warehouse assistant where the LLM must <b>choose</b> between four tools</li>
+</ul>
+<p><b>Time:</b> about 45 minutes &nbsp;·&nbsp; <b>API key needed:</b> Yes (OpenAI)</p>
+</div>
+
+<h2>The one idea behind this module</h2>
+<p>An LLM cannot run code, read your database, or do exact maths reliably. With <b>tool calling</b>, the LLM can <i>ask your program</i> to run a function, then use the result in its answer.</p>
+<div class="flow"><div class="box"><b>1. Ask</b>question + tool menu</div><div class="arrow">&rarr;</div><div class="box"><b>2. LLM decides</b>answer, or &quot;call tool X with Y&quot;</div><div class="arrow">&rarr;</div><div class="box"><b>3. Your code</b>runs the function</div><div class="arrow">&rarr;</div><div class="box"><b>4. Send result</b>role = tool</div><div class="arrow">&rarr;</div><div class="box"><b>5. LLM answers</b>using the result</div></div>
+<div class="callout note"><b class="lbl">Important</b><p>The LLM never runs your function. It only <b>asks</b>. Your Python code runs it and reports back.</p></div>
+<p>Setup: <a href="../00_Setup/Setup_Guide_for_Learners.html">00_Setup/Setup_Guide_for_Learners.html</a>. Open the folder <span class="file">1_GIVE_FIRST_Starter_Code</span>.</p>
+
+<h2>Exercise 3.1 — Tool calling from scratch</h2>
+<div class="card exercise">
+<p><b>File:</b> <span class="file">1_GIVE_FIRST_Starter_Code/1_tool_calling_from_scratch.py</span></p>
+<p>You get a working Python function <code>square_root(number)</code>. Teach the LLM that it exists, and handle its requests.</p>
+<div class="todo"><span class="num">TODO 1</span><span class="title">Describe the square_root tool in OpenAI's JSON tool format</span><p>The LLM only sees this description, never your Python code. So the name, the description and the parameter types must be clear.</p><details><summary>Need a hint?</summary><ul><li>A list with one dict: <code>{"type": "function", "function": {"name": ..., "description": ..., "parameters": {...}}}</code></li><li><code>"parameters"</code> is a JSON Schema: <code>{"type": "object", "properties": {"number": {"type": "number", ...}}, "required": ["number"]}</code></li></ul></details></div>
+<div class="todo"><span class="num">TODO 2</span><span class="title">Run the requested tool and add its result to messages</span><details><summary>Need a hint?</summary><ul><li>The tool name is in <code>tool_call.function.name</code></li><li>The arguments are a JSON string in <code>tool_call.function.arguments</code></li><li><code>json.loads(...)</code> turns the arguments into a dict, then call <code>tool_map[name](**args)</code></li><li>Append <code>{"role": "tool", "tool_call_id": tool_call.id, "content": str(result)}</code></li></ul></details></div>
+<div class="todo"><span class="num">TODO 3</span><span class="title">Call the LLM a second time with the updated messages and return its text</span><details><summary>Need a hint?</summary><ul><li>Same <code>client.chat.completions.create(...)</code> call as in Step 1, with the updated messages</li></ul></details></div>
+<p><b>Run it:</b> <code>python 1_tool_calling_from_scratch.py</code></p>
+<div class="done"><b>You are done when</b><ul>
+<li>For 144 and 2025 you see a line starting with <code>[tool] square_root(...)</code>, then a final answer of 12 and 45</li>
+<li>For "capital of France" there is <b>no</b> <code>[tool]</code> line: the LLM answered directly</li></ul></div>
+</div>
+
+<h2>Exercise 3.2 — The same, with LangChain</h2>
+<div class="card exercise">
+<p><b>File:</b> <span class="file">1_GIVE_FIRST_Starter_Code/2_tool_calling_with_langchain.py</span></p>
+<div class="todo"><span class="num">TODO 1</span><span class="title">Turn square_root into a LangChain tool</span><p>When you run the file, the first three printed lines show the tool menu that <code>@tool</code> built for you. Compare it with the JSON you wrote by hand in 3.1.</p><details><summary>Need a hint?</summary><ul><li>Put the <code>@tool</code> decorator above the function</li><li>The docstring becomes the tool description the LLM reads, so keep it clear</li></ul></details></div>
+<div class="todo"><span class="num">TODO 2</span><span class="title">Run every requested tool and add a ToolMessage with its result</span><details><summary>Need a hint?</summary><ul><li>Each tool call is a dict with keys <code>"name", "args" and "id"</code></li><li><code>tool_map[tc["name"]].invoke(tc["args"])</code> runs the tool</li><li><code>messages.append(ToolMessage(content=str(result), tool_call_id=tc["id"]))</code></li></ul></details></div>
+<div class="done"><b>You are done when</b><ul>
+<li>The trap question <i>"Is 15241383937 the square of 123456?"</i> calls the tool and the answer says <b>no</b> (it is off by one)</li>
+<li>"Capital of France" is answered without a tool</li></ul></div>
+</div>
+
+<h2>Exercise 3.3 — Choosing between four tools</h2>
+<div class="card exercise">
+<p><b>File:</b> <span class="file">1_GIVE_FIRST_Starter_Code/3_inventory_tools_demo.py</span></p>
+<p><b>Story:</b> A small factory warehouse keeps 5 items. Three tools are ready (<code>get_stock_level</code>, <code>calculate_reorder_quantity</code>, <code>days_until_stockout</code>). You write the fourth tool and connect everything to the LLM.</p>
+<div class="todo"><span class="num">TODO 1</span><span class="title">Write a 4th tool that lists every SKU at or below its reorder point</span><details><summary>Need a hint?</summary><ul><li>Decorate with <code>@tool and</code> write a clear docstring <code>(the LLM reads it!)</code></li><li>Loop over <code>INVENTORY.items() and</code> keep items where stock <code>&lt;= reorder_point</code></li><li>Return a string, <code>e.g. "Items needing reorder (2 total): SKU-002 (...); SKU-003 (...)"</code></li></ul></details></div>
+<div class="todo"><span class="num">TODO 2</span><span class="title">Put all four tools in a list, build tool_map, and bind the tools to the LLM</span><details><summary>Need a hint?</summary><ul><li><code>tool_map = {t.name: t for t in tools}</code></li><li><code>ChatOpenAI(model="gpt-6-luna", reasoning_effort="none").bind_tools(tools)</code></li></ul></details></div>
+<div class="done"><b>You are done when</b> each of the 4 questions prints a <b>different</b> tool name:
+<table><tr><th>Question</th><th>Expected tool</th></tr>
+<tr><td>What is the current stock level for SKU-003?</td><td><code>get_stock_level</code></td></tr>
+<tr><td>Which items need to be reordered right now?</td><td><code>list_low_stock_items</code> (yours!)</td></tr>
+<tr><td>How many days until SKU-002 runs out of stock?</td><td><code>days_until_stockout</code></td></tr>
+<tr><td>What quantity of SKU-003 should I order if my supplier takes 10 days?</td><td><code>calculate_reorder_quantity</code> with <code>lead_time_days=10</code></td></tr></table></div>
+</div>
+
+<h2>Think about it</h2>
+<div class="card"><ol>
+<li>In 3.3, how did the LLM know that "my supplier takes 10 days" should become <code>lead_time_days=10</code>?</li>
+<li>What would happen if two tools had the same description, for example "Get info about a SKU"?</li>
+<li>Why do we send <code>tool_call_id</code> back with every tool result?</li>
+<li>Our 3.1–3.3 code calls the LLM at most twice. Think of a question that would need <b>two tools one after the other</b>. What would break?</li>
+<li>Is it safe to let an LLM call <i>any</i> function? Give one tool you would never expose without a human check.</li>
+</ol></div>
+
+<h2>Stretch challenges</h2>
+<div class="card"><ul>
+<li>3.1: Add a second tool <code>power(base, exponent)</code>. Ask "What is 2 to the power 10, and its square root?"</li>
+<li>3.3: Ask "Show me everything about SKU-005". How many tools does the LLM call at once?</li>
+<li>3.3: Ask about SKU-999 (does not exist). Does the final answer handle it politely?</li>
+</ul></div>
+<footer>Created by Shivank Agarwal. Solutions are shared by your instructor after the exercise.</footer>
+</main>
+</body>
+</html>

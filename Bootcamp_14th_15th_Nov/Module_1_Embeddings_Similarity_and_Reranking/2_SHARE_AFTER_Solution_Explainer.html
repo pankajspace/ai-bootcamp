@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Shivank Agarwal">
+<title>Module 1 — Embeddings, Similarity Search and Reranking: Solution Explainer — Shivank Agarwal</title>
+<style>
+:root{--ink:#1d2433;--muted:#5b6475;--line:#e3e7ee;--bg:#fbfaf7;--card:#ffffff;--accent:#0f6e66;--accent-soft:#e6f3f1;
+--todo:#b45309;--todo-soft:#fff4e5;--blue:#1d4ed8;--blue-soft:#eaf1ff;--red:#b42318;--red-soft:#fdecea;--green:#15803d;--green-soft:#eaf7ee}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:940px;margin:0 auto;padding:0 22px 60px}
+header.top{background:linear-gradient(135deg,#0f3d3a,#0f6e66);color:#fff;padding:38px 0 30px;margin-bottom:28px}
+header.top .wrap{padding-bottom:0}
+.kicker{text-transform:uppercase;letter-spacing:.12em;font-size:12.5px;font-weight:700;opacity:.85}
+header.top h1{font-size:34px;line-height:1.2;margin:8px 0 10px;font-weight:800}
+header.top p.sub{margin:0;font-size:18px;opacity:.92;max-width:760px}
+.byline{margin-top:16px;font-size:14px;opacity:.9}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px 12px;font-size:13.5px}
+h2{font-size:26px;margin:44px 0 12px;padding-top:6px;border-top:2px solid var(--line)}
+h3{font-size:20.5px;margin:30px 0 8px}
+h4{font-size:17px;margin:20px 0 6px}
+p{margin:10px 0}
+a{color:var(--accent)}
+code{font-family:"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;font-size:.88em;background:#eef1f5;padding:1px 5px;border-radius:4px}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 20px;margin:18px 0}
+.toc ol{margin:6px 0;padding-left:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:18px 0;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.exercise{border-left:6px solid var(--accent)}
+.exercise > h3:first-child{margin-top:4px}
+.file{display:inline-block;font-family:Menlo,Consolas,monospace;font-size:14px;background:var(--accent-soft);color:var(--accent);padding:2px 9px;border-radius:6px}
+.todo{border:1px solid #f3d9b5;background:var(--todo-soft);border-radius:12px;padding:12px 16px;margin:12px 0}
+.todo .num{display:inline-block;background:var(--todo);color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:1px 10px;margin-right:8px}
+.todo .title{font-weight:650}
+details{margin:8px 0 2px}
+summary{cursor:pointer;color:var(--todo);font-weight:600;font-size:15px}
+details ul{margin:6px 0 4px}
+.callout{border-radius:12px;padding:12px 16px;margin:16px 0;border:1px solid}
+.callout.tip{background:var(--green-soft);border-color:#bfe3c9}
+.callout.note{background:var(--blue-soft);border-color:#c9d8fb}
+.callout.warn{background:var(--todo-soft);border-color:#f3d9b5}
+.callout.stop{background:var(--red-soft);border-color:#f5c2bc}
+.callout b.lbl{display:block;margin-bottom:2px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15.5px;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f3f5f8}
+.code{border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden;background:#fff}
+.code .label{font-size:12.5px;color:var(--muted);background:#f6f7f9;border-bottom:1px solid var(--line);padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.code pre{margin:0;padding:12px 14px;overflow-x:auto;font-size:14px;line-height:1.5}
+.out{background:#0f172a;color:#d6e2f0;border-radius:10px;margin:12px 0;overflow:hidden}
+.out .label{font-size:12.5px;color:#93a4bd;background:#18233a;padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.out pre{margin:0;padding:12px 14px;overflow-x:auto;font:13.5px/1.5 Menlo,Consolas,monospace;white-space:pre-wrap}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:16px 0}
+.flow .box{flex:1 1 140px;background:#fff;border:1.5px solid var(--accent);border-radius:12px;padding:10px 12px;text-align:center;font-size:15px}
+.flow .box b{display:block;color:var(--accent)}
+.flow .arrow{align-self:center;font-size:24px;color:var(--muted)}
+.qa{border-bottom:1px dashed var(--line);padding:8px 0}
+.qa .q{font-weight:650}
+.done{background:var(--green-soft);border:1px solid #bfe3c9;border-radius:10px;padding:10px 14px;margin:12px 0}
+.done b{color:var(--green)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr} header.top h1{font-size:27px}}
+footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;border-radius:999px;padding:1px 9px;margin-left:6px;vertical-align:middle}
+.pill.core{background:var(--accent-soft);color:var(--accent)}
+.pill.opt{background:#f1f2f6;color:var(--muted)}
+@media print{header.top{background:#0f6e66 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact} details{display:block} details>*{display:block}}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.code pre .hll { background-color: #ffffcc }
+.code pre { background: #f0f0f0; }
+.code pre .c { color: #60A0B0; font-style: italic } /* Comment */
+.code pre .err { border: 1px solid #F00 } /* Error */
+.code pre .k { color: #007020; font-weight: bold } /* Keyword */
+.code pre .o { color: #666 } /* Operator */
+.code pre .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.code pre .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.code pre .cp { color: #007020 } /* Comment.Preproc */
+.code pre .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.code pre .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.code pre .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.code pre .gd { color: #A00000 } /* Generic.Deleted */
+.code pre .ge { font-style: italic } /* Generic.Emph */
+.code pre .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.code pre .gr { color: #F00 } /* Generic.Error */
+.code pre .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.code pre .gi { color: #00A000 } /* Generic.Inserted */
+.code pre .go { color: #888 } /* Generic.Output */
+.code pre .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.code pre .gs { font-weight: bold } /* Generic.Strong */
+.code pre .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.code pre .gt { color: #04D } /* Generic.Traceback */
+.code pre .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.code pre .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.code pre .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.code pre .kp { color: #007020 } /* Keyword.Pseudo */
+.code pre .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.code pre .kt { color: #902000 } /* Keyword.Type */
+.code pre .m { color: #40A070 } /* Literal.Number */
+.code pre .s { color: #4070A0 } /* Literal.String */
+.code pre .na { color: #4070A0 } /* Name.Attribute */
+.code pre .nb { color: #007020 } /* Name.Builtin */
+.code pre .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.code pre .no { color: #60ADD5 } /* Name.Constant */
+.code pre .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.code pre .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.code pre .ne { color: #007020 } /* Name.Exception */
+.code pre .nf { color: #06287E } /* Name.Function */
+.code pre .nl { color: #002070; font-weight: bold } /* Name.Label */
+.code pre .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.code pre .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.code pre .nv { color: #BB60D5 } /* Name.Variable */
+.code pre .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.code pre .w { color: #BBB } /* Text.Whitespace */
+.code pre .mb { color: #40A070 } /* Literal.Number.Bin */
+.code pre .mf { color: #40A070 } /* Literal.Number.Float */
+.code pre .mh { color: #40A070 } /* Literal.Number.Hex */
+.code pre .mi { color: #40A070 } /* Literal.Number.Integer */
+.code pre .mo { color: #40A070 } /* Literal.Number.Oct */
+.code pre .sa { color: #4070A0 } /* Literal.String.Affix */
+.code pre .sb { color: #4070A0 } /* Literal.String.Backtick */
+.code pre .sc { color: #4070A0 } /* Literal.String.Char */
+.code pre .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.code pre .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.code pre .s2 { color: #4070A0 } /* Literal.String.Double */
+.code pre .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.code pre .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.code pre .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.code pre .sx { color: #C65D09 } /* Literal.String.Other */
+.code pre .sr { color: #235388 } /* Literal.String.Regex */
+.code pre .s1 { color: #4070A0 } /* Literal.String.Single */
+.code pre .ss { color: #517918 } /* Literal.String.Symbol */
+.code pre .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.code pre .fm { color: #06287E } /* Name.Function.Magic */
+.code pre .vc { color: #BB60D5 } /* Name.Variable.Class */
+.code pre .vg { color: #BB60D5 } /* Name.Variable.Global */
+.code pre .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.code pre .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.code pre .il { color: #40A070 } /* Literal.Number.Integer.Long */</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+<div class="kicker">Solution explainer · Share after the exercise</div>
+<h1>Module 1 — Embeddings, Similarity Search and Reranking: Solution Explainer</h1>
+<p class="sub">Step-by-step solutions with the reasoning behind every line, real outputs, and answers to the discussion questions.</p>
+<div class="badges"><span class="badge">For learners, after the exercise</span><span class="badge">Exercises 1.1 – 1.3</span></div>
+<div class="byline">Created by <b>Shivank Agarwal</b></div>
+</div></header>
+<main class="wrap">
+
+<div class="toc"><b>On this page</b><ol>
+<li><a href="#big">The big idea in one picture</a></li>
+<li><a href="#e11">1.1 Word embeddings: solution walk-through</a></li>
+<li><a href="#e12">1.2 Similarity search app: solution walk-through</a></li>
+<li><a href="#e13">1.3 Retrieve, then rerank: solution walk-through</a></li>
+<li><a href="#think">Answers to "Think about it"</a></li>
+<li><a href="#errors">Common errors and fixes</a></li></ol></div>
+
+<h2 id="big">The big idea in one picture</h2>
+<p>Computers compare numbers, not meanings. So we first turn text into numbers that <i>capture</i> meaning, and then compare the numbers.</p>
+<div class="flow"><div class="box"><b>Text</b>&quot;I want a refund&quot;</div><div class="arrow">&rarr;</div><div class="box"><b>Embedding model</b>learned from lots of text</div><div class="arrow">&rarr;</div><div class="box"><b>Vector</b>[0.12, -0.53, 0.88, ...]</div><div class="arrow">&rarr;</div><div class="box"><b>Compare</b>cosine similarity</div></div>
+<p><b>Everyday analogy:</b> think of each sentence as a pin on a giant map of meanings. "Train ticket refund" and "cancel my IRCTC booking"
+land close together. "Recipe for paneer tikka" lands far away. Search becomes: <i>find the pins nearest to the question's pin</i>.</p>
+
+<h2 id="e11">1.1 Word embeddings</h2>
+<p>We used <b>GloVe</b> vectors: 400,000 English words, each stored as 50 numbers. They were learned from Wikipedia and news text,
+so words used in similar sentences end up with similar numbers.</p>
+<h4>TODO 1 — Get the vector for the word "king" and print its shape and first 5 numbers</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="n">v_king</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s2">"king"</span><span class="p">]</span>
+</pre></div><p>The model behaves like a Python dictionary: word in, vector out.</p><div class="out"><div class="label">Output (real run)</div><pre>Shape of the 'king' vector: (50,)
+First 5 numbers: [ 0.50451   0.68607  -0.59517  -0.022801  0.60046 ]</pre></div>
+<p>No single number means "royal" or "male". The <i>pattern</i> of all 50 numbers carries the meaning. That is why the nearest
+neighbours of <i>king</i> make sense:</p>
+<div class="out"><div class="label">Output (real run): model.most_similar("king", topn=5)</div><pre>prince     0.824
+queen      0.784
+ii         0.775
+emperor    0.774
+son        0.767</pre></div>
+<h4>TODO 2 — Use word maths to answer "king - man + woman = ?"</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">answer</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="s2">"king"</span><span class="p">,</span> <span class="s2">"woman"</span><span class="p">],</span> <span class="n">negative</span><span class="o">=</span><span class="p">[</span><span class="s2">"man"</span><span class="p">],</span> <span class="n">topn</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div><div class="out"><div class="label">Output (real run)</div><pre>king - man + woman = [('queen', 0.8523604273796082)]</pre></div><p><code>positive</code> words are added, <code>negative</code> words are subtracted. Read it as: <i>start at king, remove the 'man' direction, add the 'woman' direction</i>.</p><div class="callout warn"><b class="lbl">The gotcha from the notebook</b><p>If you build the vector yourself and search with it, the closest word is <i>king</i>, because the result is still very close to where we started. <code>most_similar(positive=..., negative=...)</code> automatically skips the input words.</p><div class="out"><div class="label">Output (real run, rounded)</div><pre>Raw vector search (input words NOT removed): [('king', 0.886), ('queen', 0.861), ('daughter', 0.768)]</pre></div></div>
+<h4>TODO 3 — Capital cities: "paris - france + india = ?"</h4><div class="code"><div class="label">Solution for TODO 3</div><pre><span class="n">answer_2</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="s2">"paris"</span><span class="p">,</span> <span class="s2">"india"</span><span class="p">],</span> <span class="n">negative</span><span class="o">=</span><span class="p">[</span><span class="s2">"france"</span><span class="p">],</span> <span class="n">topn</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div><div class="out"><div class="label">Output (real run)</div><pre>paris - france + india = [('delhi', 0.8888585567474365)]</pre></div><p>The model has learned a "capital of" direction, just from reading text.</p>
+<h4>TODO 4 — Write a cosine_similarity(a, b) function using numpy</h4><div class="code"><div class="label">Solution for TODO 4</div><pre><span class="k">def</span><span class="w"> </span><span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="p">)))</span>
+</pre></div><div class="out"><div class="label">Output (real run)</div><pre>   king vs queen     -&gt; my answer: 0.784 | gensim: 0.784
+cricket vs football  -&gt; my answer: 0.696 | gensim: 0.696
+   king vs banana    -&gt; my answer: 0.221 | gensim: 0.221</pre></div><p><b>Reading the formula:</b> <code>np.dot(a, b)</code> is large when the two lists of numbers go up and down together.
+Dividing by the two lengths (<code>np.linalg.norm</code>) removes the effect of size, so we only measure <i>direction</i>.
+The result is between −1 and 1: near 1 = same meaning, near 0 = unrelated.</p>
+
+<h2 id="e12">1.2 Similarity search app</h2>
+<p>Now we embed whole sentences instead of single words. The model <code>sentence-transformers/all-MiniLM-L6-v2</code> is small
+(about 90 MB), free, runs on a laptop CPU, and turns any sentence into 384 numbers.</p>
+<h4>TODO 1 — Write the cosine similarity formula</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="k">def</span><span class="w"> </span><span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="p">)))</span>
+</pre></div><p>The same formula you wrote in 1.1. We wrap the answer in <code>float()</code> so Gradio shows a normal number.</p>
+<h4>TODO 2 — Embed all documents and the query</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">doc_embeddings</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
+<span class="n">query_embedding</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">query</span><span class="o">.</span><span class="n">strip</span><span class="p">()])[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div><p><code>model.encode</code> takes a <b>list</b> of texts and returns one row of 384 numbers per text. We pass the query as a list of one item and take row <code>[0]</code>.</p>
+<h4>TODO 3 — Score every document against the query and sort best-first</h4><div class="code"><div class="label">Solution for TODO 3</div><pre><span class="n">scores</span> <span class="o">=</span> <span class="p">[(</span><span class="n">doc</span><span class="p">,</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">emb</span><span class="p">))</span> <span class="k">for</span> <span class="n">doc</span><span class="p">,</span> <span class="n">emb</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">docs</span><span class="p">,</span> <span class="n">doc_embeddings</span><span class="p">)]</span>
+<span class="n">scores</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pair</span><span class="p">:</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div><p><code>zip</code> pairs each document with its vector. The <code>lambda pair: pair[1]</code> tells <code>sort</code> to sort by the score, and <code>reverse=True</code> puts the biggest score first.</p>
+<h4>What you should see</h4>
+<table><tr><th>Rank</th><th>Document</th><th>Score (pattern)</th></tr>
+<tr><td>1–2</td><td>Apples and oranges are healthy fruits. / Bananas are a great source of potassium.</td><td>clearly the highest</td></tr>
+<tr><td>3</td><td>any other sentence</td><td>much lower, close to 0</td></tr></table>
+<p>Exact numbers change slightly between laptops and library versions. The <b>order</b> is what matters. Notice that
+<i>Bananas are a great source of potassium</i> scores high even though it shares <b>no words</b> with "fruit and nutrition".
+Keyword search could never do that.</p>
+<div class="callout tip"><b class="lbl">How the web page works (Gradio)</b><p><code>gr.Blocks()</code> builds the page from Python. <code>retrieve_btn.click(fn=retrieve_top_k, inputs=[...], outputs=results_table)</code> means: when the button is clicked, call <code>retrieve_top_k</code> with the values of the input boxes and show what it returns in the table. No HTML or JavaScript needed.</p></div>
+
+<h2 id="e13">1.3 Retrieve, then rerank</h2>
+<div class="grid2">
+<div class="card"><h4 style="margin-top:0">Bi-encoder (Step 1)</h4><p>Embeds the query and each document <b>separately</b>, then compares vectors.
+Document vectors can be computed once and stored in a vector database, so searching millions is fast.
+But the model never sees the query and the document together.</p></div>
+<div class="card"><h4 style="margin-top:0">Cross-encoder (Step 2)</h4><p>Reads <b>(query, document) as one input</b> and outputs a relevance score.
+Much more accurate, because every word of the query can be matched against every word of the document.
+But nothing can be pre-computed, so it is slow. Use it only on the top K.</p></div></div>
+<p><b>Analogy:</b> hiring for a job. Step 1 is the resume filter that scans 5,000 resumes in seconds and keeps 20.
+Step 2 is the interview: slow and careful, but you only do it for those 20.</p>
+<h4>TODO 1 — Embed the documents and the query, score them with cosine similarity, sort, keep top k</h4><div class="code"><div class="label">Solution for TODO 1</div><pre><span class="n">doc_embeddings</span> <span class="o">=</span> <span class="n">bi_encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+<span class="n">query_embedding</span> <span class="o">=</span> <span class="n">bi_encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">query</span><span class="p">])</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">doc_embeddings</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">scores</span><span class="p">))</span>
+<span class="n">pairs</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pair</span><span class="p">:</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">return</span> <span class="n">pairs</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span>
+</pre></div><p>scikit-learn's <code>cosine_similarity(A, B)</code> compares every row of A with every row of B. With one query row we get one list of scores, hence <code>[0]</code>.</p>
+<h4>TODO 2 — Score every (query, document) pair with the cross-encoder and sort best first</h4><div class="code"><div class="label">Solution for TODO 2</div><pre><span class="n">pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">query</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">]</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_encoder</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span>
+
+<span class="n">ranked</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">scores</span><span class="p">))</span>
+<span class="n">ranked</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pair</span><span class="p">:</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">return</span> <span class="n">ranked</span>
+</pre></div><p>The cross-encoder model <code>cross-encoder/ms-marco-MiniLM-L6-v2</code> was trained on MS MARCO, a large set of real web search questions with the passages that answered them. Its scores are <b>not</b> between 0 and 1. They can be negative. Only the order matters: bigger = more relevant.</p>
+<h4>What you should see</h4>
+<ul>
+<li><b>Before reranking:</b> short sentences that simply repeat the query words (<i>COVID-19 has many symptoms.</i>, <i>COVID-19 symptoms are bad.</i>) score near the top, even though they tell you nothing.</li>
+<li><b>After reranking:</b> the sentences that actually <b>list symptoms</b> (fever, chills, cough, loss of smell) move to the top. The Dementia sentence stays near the bottom.</li>
+</ul>
+<p>Scores differ slightly by machine. Look at how the <b>order</b> changes.</p>
+<div class="callout tip"><b class="lbl">Design choice in this app</b><p>The Rerank button reranks exactly the rows shown in the Top-K table (the table is an input to <code>on_rerank</code>). So if you change K and retrieve again, the reranker works on the new list. If you click Rerank first, the app shows a friendly error.</p></div>
+
+<h2 id="think">Answers to "Think about it"</h2>
+<div class="card">
+<div class="qa"><div class="q">1. Why does the raw vector search return <i>king</i>?</div>
+<p>king − man + woman moves the vector only a little, so it is still very close to <i>king</i>. A plain nearest-neighbour search does not know which words you started from. <code>most_similar(positive, negative)</code> removes the input words from the answers.</p></div>
+<div class="qa"><div class="q">2. Why cosine similarity instead of subtracting the numbers?</div>
+<p>Cosine measures the <b>direction</b> of the vectors and ignores their length. A long sentence and a short sentence about the same thing point the same way but can have very different lengths. Direction is what carries meaning.</p></div>
+<div class="qa"><div class="q">3. Why not run the cross-encoder on all documents?</div>
+<p>It has to run the full model once per (query, document) pair, every time a user asks something. One million documents would mean one million model runs per question. The bi-encoder's document vectors are computed once and reused, so retrieval takes milliseconds.</p></div>
+<div class="qa"><div class="q">4. Did the reranker push down the "COVID-19 causes memory loss" sentence?</div>
+<p>Look at where it landed: it usually does not sink to the bottom, because it <i>looks like</i> an answer to "COVID-19 symptoms" (right topic, right shape). A reranker judges <b>relevance</b>, not <b>truth</b>. Checking facts needs trusted sources, which is why RAG systems care so much about what goes into the knowledge base.</p></div>
+<div class="qa"><div class="q">5. K = 2: can the reranker still find the best document?</div>
+<p>Only if the best document is already in the top 2 of Step 1. The reranker can only <b>re-order</b> what retrieval gives it. In practice we retrieve more (for example 20–50) and rerank down to the best 3–5.</p></div>
+</div>
+
+<h2 id="errors">Common errors and fixes</h2>
+<table>
+<tr><th>You see</th><th>Why</th><th>Fix</th></tr>
+<tr><td><code>ModuleNotFoundError: No module named 'gensim'</code> (or gradio, sentence_transformers)</td><td>Libraries not installed in the Python you are using</td><td>Activate your virtual environment, then <code>pip install -r 00_Setup/requirements.txt</code>. In Jupyter or VS Code, pick the same environment as the kernel.</td></tr>
+<tr><td><code>KeyError: "Key 'xyz' not present"</code></td><td>The word is not in GloVe's vocabulary (GloVe is lower-case)</td><td>Use lower-case common words</td></tr>
+<tr><td><code>OSError: [Errno 98] Address already in use</code> / port 7860</td><td>Another Gradio app is still running</td><td>Stop it with Ctrl+C in its terminal, or run <code>demo.launch(server_port=7861)</code></td></tr>
+<tr><td>The first run is very slow</td><td>Models are downloading</td><td>Wait once. Later runs load from disk.</td></tr>
+<tr><td><code>AttributeError: 'NoneType' object has no attribute ...</code></td><td>A TODO still has its placeholder (<code>None</code> / <code>[]</code>)</td><td>Find the TODO and replace the placeholder line</td></tr>
+</table>
+
+<footer>Created by Shivank Agarwal. Matches the files in 2_SHARE_AFTER_Solution_Code.</footer>
+</main>
+</body>
+</html>
