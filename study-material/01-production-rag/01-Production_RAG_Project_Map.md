@@ -1,14 +1,14 @@
 # Production RAG from Scratch — Project Map
 
-> **Directory:** [`study-material/01-production-rag/`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag)  
+> **Directory:** [`study-material/01-production-rag/`](./)  
 > **Domain & Running Example:** *Nimbu Mart* (fictional Indian online store) — 14 multi-format documents + 33 golden evaluation questions  
-> **Course Companion:** [`01-Production_RAG_Course_Shivank_Agrawal.html`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/01-Production_RAG_Course_Shivank_Agrawal.html) · [`01-Production_RAG_Revision_Notes.md`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/01-Production_RAG_Revision_Notes.md)
+> **Course Companion:** [`01-Production_RAG_Course_Shivank_Agrawal.html`](01-Production_RAG_Course_Shivank_Agrawal.html) · [`01-Production_RAG_Revision_Notes.md`](01-Production_RAG_Revision_Notes.md)
 
 ---
 
 ## 1. Architecture & Pipeline Flow
 
-The codebase is split into a modular library ([`production-rag-code/rag_core/`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core)), 14 progressive lesson scripts ([`production-rag-code/labs/`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/labs)), and a containerized production service ([`production-rag-code/app/`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/app)) backed by FastAPI, Redis/RQ, and PostgreSQL + `pgvector`.
+The codebase is split into a modular library ([`production-rag-code/rag_core/`](production-rag-code/rag_core/)), 14 progressive lesson scripts ([`production-rag-code/labs/`](production-rag-code/labs/)), and a containerized production service ([`production-rag-code/app/`](production-rag-code/app/)) backed by FastAPI, Redis/RQ, and PostgreSQL + `pgvector`.
 
 ```mermaid
 flowchart LR
@@ -141,41 +141,41 @@ study-material/01-production-rag/
 
 | File | Key Classes / Functions | Responsibility |
 |---|---|---|
-| [`config.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/config.py) | `Settings`, `get_settings()`, `_auto_provider()` | Loads `.env` and selects embedder, reranker, LLM provider, and retrieval defaults |
-| [`documents.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/documents.py) | `Page`, `Document`, `Chunk`, `stable_chunk_id()` | Shared data types flowing from loaders through chunkers into stores and citations |
-| [`loaders.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/loaders.py) | `extract_pdf()`, `extract_html()`, `extract_csv()`, `load_document()`, `load_corpus()` | Format-specific parsing with PyMuPDF page routing and Tesseract OCR fallback |
-| [`cleaning.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/cleaning.py) | `clean_text()`, `remove_repeated_lines()`, `normalize_currency()`, `fix_hyphenation()` | Fixes PDF ligatures, broken line wraps, currency symbols, and repeated headers/footers |
-| [`chunking.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/chunking.py) | `Tokenizer`, `fixed_size()`, `sliding_window()`, `recursive()`, `structure_aware()`, `semantic()`, `llm_based()`, `parent_child()`, `chunk_documents()` | Implements and dispatches all chunking strategies while preserving heading paths |
-| [`embeddings.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/embeddings.py) | `Embedder`, `FastEmbedEmbedder`, `OpenAIEmbedder`, `WordLlamaEmbedder`, `HashingEmbedder`, `get_embedder()`, `fingerprint()` | Pluggable vector encoders with model fingerprinting (`provider:model:dim`) |
-| [`vectorstore.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/vectorstore.py) | `InMemoryVectorStore`, `matches()` | Exact cosine search with pre-scoring metadata filtering (`$in`, `$ne`, `$gte`, `$lte`) |
-| [`bm25.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/bm25.py) | `BM25`, `tokenize()` | Keyword scoring preserving alphanumeric codes (`E102`, `NM-PHN-4821`) |
-| [`hybrid.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/hybrid.py) | `Hit`, `HybridRetriever`, `rrf()`, `minmax()` | Fuses dense vector and BM25 rankings using Reciprocal Rank Fusion or min-max |
-| [`query_transform.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/query_transform.py) | `multi_query()`, `hyde()`, `rewrite_with_history()`, `self_query()`, `route()` | Pre-retrieval query expansion, hypothetical doc generation, and metadata filter extraction |
-| [`rerank.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/rerank.py) | `CrossEncoderReranker`, `KeywordOverlapReranker`, `get_reranker()` | Second-stage reranking of top candidates to final `top_n` |
-| [`prompts.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/prompts.py) | `SYSTEM_PROMPT`, `ABSTAIN`, `format_sources()`, `user_prompt()`, `JSON_INSTRUCTIONS`, `SELF_CHECK_PROMPT` | Builds grounded XML-fenced prompts (`<sources>`) with anti-injection instructions |
-| [`llm.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/llm.py) | `LLM`, `LLMResult` | Provider-agnostic completion wrapper (`openai`, `anthropic`, `ollama`, `extractive`) |
-| [`generate.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/generate.py) | `Answer`, `build_context()`, `extractive_answer()`, `answer()`, `self_check()` | Context packing, similarity refusal gating, `[S#]` citation extraction, and offline extractive fallback |
-| [`evaluation.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/evaluation.py) | `load_golden()`, `retrieval_metrics()`, `evaluate_retrieval()`, `answer_correct()`, `heuristic_faithfulness()`, `llm_judge()`, `evaluate_answers()` | Computes `hit@k`, `recall@k`, `precision@k`, `MRR`, `nDCG@k`, `context_precision`, and answer quality |
-| [`security.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/security.py) | `redact_pii()`, `acl_filter()`, `detect_injection()`, `output_leaks()`, `verhoeff_ok()`, `luhn_ok()` | Redacts PAN/Aadhaar/cards/phones/emails, builds ACL filters, flags injection patterns |
-| [`cache.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/cache.py) | `SemanticCache` | Cosine-similarity response cache partitioned by `(user_groups, index_version)` |
-| [`observability.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/observability.py) | `Trace`, `Tracer`, `percentiles()`, `estimate_cost()` | Span timing logger to JSONL and latency/cost aggregation |
-| [`pipeline.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/rag_core/pipeline.py) | `RAGPipeline` | Wires ingest (`build`) and query (`filters`, `retrieve`, `ask`) into one reference object |
+| [`config.py`](production-rag-code/rag_core/config.py) | `Settings`, `get_settings()`, `_auto_provider()` | Loads `.env` and selects embedder, reranker, LLM provider, and retrieval defaults |
+| [`documents.py`](production-rag-code/rag_core/documents.py) | `Page`, `Document`, `Chunk`, `stable_chunk_id()` | Shared data types flowing from loaders through chunkers into stores and citations |
+| [`loaders.py`](production-rag-code/rag_core/loaders.py) | `extract_pdf()`, `extract_html()`, `extract_csv()`, `load_document()`, `load_corpus()` | Format-specific parsing with PyMuPDF page routing and Tesseract OCR fallback |
+| [`cleaning.py`](production-rag-code/rag_core/cleaning.py) | `clean_text()`, `remove_repeated_lines()`, `normalize_currency()`, `fix_hyphenation()` | Fixes PDF ligatures, broken line wraps, currency symbols, and repeated headers/footers |
+| [`chunking.py`](production-rag-code/rag_core/chunking.py) | `Tokenizer`, `fixed_size()`, `sliding_window()`, `recursive()`, `structure_aware()`, `semantic()`, `llm_based()`, `parent_child()`, `chunk_documents()` | Implements and dispatches all chunking strategies while preserving heading paths |
+| [`embeddings.py`](production-rag-code/rag_core/embeddings.py) | `Embedder`, `FastEmbedEmbedder`, `OpenAIEmbedder`, `WordLlamaEmbedder`, `HashingEmbedder`, `get_embedder()`, `fingerprint()` | Pluggable vector encoders with model fingerprinting (`provider:model:dim`) |
+| [`vectorstore.py`](production-rag-code/rag_core/vectorstore.py) | `InMemoryVectorStore`, `matches()` | Exact cosine search with pre-scoring metadata filtering (`$in`, `$ne`, `$gte`, `$lte`) |
+| [`bm25.py`](production-rag-code/rag_core/bm25.py) | `BM25`, `tokenize()` | Keyword scoring preserving alphanumeric codes (`E102`, `NM-PHN-4821`) |
+| [`hybrid.py`](production-rag-code/rag_core/hybrid.py) | `Hit`, `HybridRetriever`, `rrf()`, `minmax()` | Fuses dense vector and BM25 rankings using Reciprocal Rank Fusion or min-max |
+| [`query_transform.py`](production-rag-code/rag_core/query_transform.py) | `multi_query()`, `hyde()`, `rewrite_with_history()`, `self_query()`, `route()` | Pre-retrieval query expansion, hypothetical doc generation, and metadata filter extraction |
+| [`rerank.py`](production-rag-code/rag_core/rerank.py) | `CrossEncoderReranker`, `KeywordOverlapReranker`, `get_reranker()` | Second-stage reranking of top candidates to final `top_n` |
+| [`prompts.py`](production-rag-code/rag_core/prompts.py) | `SYSTEM_PROMPT`, `ABSTAIN`, `format_sources()`, `user_prompt()`, `JSON_INSTRUCTIONS`, `SELF_CHECK_PROMPT` | Builds grounded XML-fenced prompts (`<sources>`) with anti-injection instructions |
+| [`llm.py`](production-rag-code/rag_core/llm.py) | `LLM`, `LLMResult` | Provider-agnostic completion wrapper (`openai`, `anthropic`, `ollama`, `extractive`) |
+| [`generate.py`](production-rag-code/rag_core/generate.py) | `Answer`, `build_context()`, `extractive_answer()`, `answer()`, `self_check()` | Context packing, similarity refusal gating, `[S#]` citation extraction, and offline extractive fallback |
+| [`evaluation.py`](production-rag-code/rag_core/evaluation.py) | `load_golden()`, `retrieval_metrics()`, `evaluate_retrieval()`, `answer_correct()`, `heuristic_faithfulness()`, `llm_judge()`, `evaluate_answers()` | Computes `hit@k`, `recall@k`, `precision@k`, `MRR`, `nDCG@k`, `context_precision`, and answer quality |
+| [`security.py`](production-rag-code/rag_core/security.py) | `redact_pii()`, `acl_filter()`, `detect_injection()`, `output_leaks()`, `verhoeff_ok()`, `luhn_ok()` | Redacts PAN/Aadhaar/cards/phones/emails, builds ACL filters, flags injection patterns |
+| [`cache.py`](production-rag-code/rag_core/cache.py) | `SemanticCache` | Cosine-similarity response cache partitioned by `(user_groups, index_version)` |
+| [`observability.py`](production-rag-code/rag_core/observability.py) | `Trace`, `Tracer`, `percentiles()`, `estimate_cost()` | Span timing logger to JSONL and latency/cost aggregation |
+| [`pipeline.py`](production-rag-code/rag_core/pipeline.py) | `RAGPipeline` | Wires ingest (`build`) and query (`filters`, `retrieve`, `ask`) into one reference object |
 
 ### `app/` Production Service Endpoints & Components
 
 | Component | Details |
 |---|---|
-| [`app/api.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/app/api.py) | `POST /documents` (202 queued + SHA-256 dedup), `GET /documents`, `GET /documents/{doc_id}`, `DELETE /documents/{doc_id}`, `POST /query` (`X-User-Groups` header), `GET /health`, `GET /` |
-| [`app/db.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/app/db.py) | Tables `documents` and `chunks` (`vector(dim)`, generated `tsv`), HNSW & GIN indexes, `pgvector 0.8+` iterative scan support, SQL RRF `hybrid_search()` |
-| [`app/worker.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/app/worker.py) | RQ worker executing `ingest_document()`: blob fetch → extract → PII redaction → structure-aware chunking → injection flag → batch embed → DB upsert |
-| [`app/storage.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/app/storage.py) | `LocalBlobStore` (default `./blobs`) and `S3BlobStore` (S3/MinIO) |
-| [`app/reembed.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/app/reembed.py) | Adds `embedding_next` column, backfills in batches, builds HNSW index, shadow-evaluates against `golden.jsonl`, and performs transactional `--cutover` |
+| [`app/api.py`](production-rag-code/app/api.py) | `POST /documents` (202 queued + SHA-256 dedup), `GET /documents`, `GET /documents/{doc_id}`, `DELETE /documents/{doc_id}`, `POST /query` (`X-User-Groups` header), `GET /health`, `GET /` |
+| [`app/db.py`](production-rag-code/app/db.py) | Tables `documents` and `chunks` (`vector(dim)`, generated `tsv`), HNSW & GIN indexes, `pgvector 0.8+` iterative scan support, SQL RRF `hybrid_search()` |
+| [`app/worker.py`](production-rag-code/app/worker.py) | RQ worker executing `ingest_document()`: blob fetch → extract → PII redaction → structure-aware chunking → injection flag → batch embed → DB upsert |
+| [`app/storage.py`](production-rag-code/app/storage.py) | `LocalBlobStore` (default `./blobs`) and `S3BlobStore` (S3/MinIO) |
+| [`app/reembed.py`](production-rag-code/app/reembed.py) | Adds `embedding_next` column, backfills in batches, builds HNSW index, shadow-evaluates against `golden.jsonl`, and performs transactional `--cutover` |
 
 ---
 
 ## 4. Quick Run & Config Reference
 
-Run all commands from [`study-material/01-production-rag/production-rag-code/`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code):
+Run all commands from [`study-material/01-production-rag/production-rag-code/`](production-rag-code/):
 
 ```bash
 python labs/lab00_check_setup.py      # Check environment (runs offline without API keys)
@@ -188,4 +188,4 @@ python scripts/ingest_samples.py
 python scripts/ask.py "What does error E102 mean?" --groups public,employees
 ```
 
-- **Key `.env` variables** ([`.env.example`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/01-production-rag/production-rag-code/.env.example)): `EMBEDDER` (`fastembed` | `openai` | `wordllama` | `hashing`), `EMBED_MODEL`, `RERANKER_MODEL`, `LLM_PROVIDER` (`openai` | `anthropic` | `ollama` | `none`), `LLM_MODEL`, `MIN_SIMILARITY`, `DATABASE_URL`, `REDIS_URL`, `USE_RERANKER`.
+- **Key `.env` variables** ([`.env.example`](production-rag-code/.env.example)): `EMBEDDER` (`fastembed` | `openai` | `wordllama` | `hashing`), `EMBED_MODEL`, `RERANKER_MODEL`, `LLM_PROVIDER` (`openai` | `anthropic` | `ollama` | `none`), `LLM_MODEL`, `MIN_SIMILARITY`, `DATABASE_URL`, `REDIS_URL`, `USE_RERANKER`.

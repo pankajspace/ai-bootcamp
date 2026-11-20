@@ -1,14 +1,14 @@
 # Deep Search Agents — Project Map
 
-> **Directory:** [`study-material/03-deep-search-agent/`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent)  
+> **Directory:** [`study-material/03-deep-search-agent/`](./)  
 > **Domain & Running Example:** Vendor due diligence on *NimbusPay* (fictional Indian payment gateway) over a deliberately messy 19-page corpus (`data/corpus.json`)  
-> **Course Companion:** [`03-Deep-Search-Agents-Shivank-Agrawal.html`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/03-Deep-Search-Agents-Shivank-Agrawal.html) · [`03-Deep-Search-Agents_Revision_Notes.md`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/03-Deep-Search-Agents_Revision_Notes.md)
+> **Course Companion:** [`03-Deep-Search-Agents-Shivank-Agrawal.html`](03-Deep-Search-Agents-Shivank-Agrawal.html) · [`03-Deep-Search-Agents_Revision_Notes.md`](03-Deep-Search-Agents_Revision_Notes.md)
 
 ---
 
 ## 1. Architecture & Iterative Research Loop
 
-The system implements a 4-layer iterative due-diligence workflow in [`deepsearch/orchestrator.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/orchestrator.py) (`DeepSearchAgent`) with strict Pydantic contracts ([`deepsearch/schemas.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/schemas.py)), offline/live search parity, layered prompt-injection defenses, and deterministic pre-merge validation.
+The system implements a 4-layer iterative due-diligence workflow in [`deepsearch/orchestrator.py`](deep-search-agent-code/deepsearch/orchestrator.py) (`DeepSearchAgent`) with strict Pydantic contracts ([`deepsearch/schemas.py`](deep-search-agent-code/deepsearch/schemas.py)), offline/live search parity, layered prompt-injection defenses, and deterministic pre-merge validation.
 
 ```mermaid
 flowchart TD
@@ -108,28 +108,28 @@ study-material/03-deep-search-agent/
 
 | Module | Key Classes / Functions | Responsibility |
 |---|---|---|
-| [`config.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/config.py) | `Settings`, `PROVIDER_DEFAULTS`, `describe()` | Resolves provider presets, base URLs, search backend (`offline`/`ddgs`/`tavily`), and budget/iteration limits |
-| [`schemas.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/schemas.py) | `EntityAnchor`, `SubQuestion`, `ResearchPlan`, `PlanReview`, `PlanDecision`, `Document`, `ExtractedClaim`, `ClaimList`, `Evidence`, `MergedClaim`, `ConflictRecord`, `Finding`, `FinalReport` | Typed contracts passed across every stage of the pipeline |
-| [`llm.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/llm.py) | `LLM`, `LLMError`, `_extract_json()` | Supports `complete()`, `complete_structured()` (Pydantic repair loop), and `run_with_tools()` |
-| [`tools.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/tools.py) | `_BM25`, `load_corpus()`, `search_web()`, `fetch_page()`, `think()`, `TOOL_SCHEMAS`, `TOOL_FUNCTIONS` | Unified offline BM25 search and live `ddgs`/`tavily` search + `trafilatura` extraction |
-| [`security.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/security.py) | `scan_for_injection()`, `is_suspicious()`, `strip_hidden()`, `spotlight()` | Removes hidden HTML/CSS/zero-width text, scans regex injection patterns, and fences untrusted content |
-| [`extractor.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/extractor.py) | `llm_extract()`, `rule_extract()`, `gullible_extract()` | Extracts typed claims + exact supporting quotes (`gullible_extract` exists for Lab 9 attack demo) |
-| [`planner.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/planner.py) | `create_plan()`, `review_plan()`, `evaluate_progress()`, `_mock_plan()` | Generates sub-questions, enforces entity anchors/caps, and decides `continue` vs `stop` per iteration |
-| [`executor.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/executor.py) | `Executor`, `QueryList`, `make_queries()` | Fans out sub-questions across threads, deduplicates fetched URLs, quarantines injected pages |
-| [`validator.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/validator.py) | `score_evidence()`, `authority_score()`, `freshness_score()`, `identity_score()`, `completeness_score()`, `find_copies()` | Rejects wrong-entity pages (gate), penalizes stale/syndicated copies (`0.1x`), scores reliability |
-| [`merger.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/merger.py) | `normalize_value()`, `same_value()`, `cluster_values()`, `merge_field()`, `merge_all()`, `confidence_label()` | Groups near-duplicate claims, resolves historical timelines vs conflicts, preserves `[S#]` provenance |
-| [`memory.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/memory.py) | `Memory` | Reads/writes `memory/lessons.json` (`record_source`, `known_look_alikes`, `blocked_domains`, `learn`) |
-| [`budget.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/budget.py) | `Budget`, `BudgetExceeded`, `price_for()`, `estimate_tokens()` | Enforces hard caps on USD spend, tokens, wall-clock seconds, and tool calls across worker threads |
-| [`tracing.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/tracing.py) | `start_run()`, `trace()`, `events()` | Logs structured events to `runs/<timestamp>-<tag>/trace.jsonl` |
-| [`baselines.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/baselines.py) | `naive_search_answer()`, `basic_rag_answer()` | Single-pass baselines used in Lab 1 and Lab 11 to benchmark Deep Search improvements |
-| [`evaluation.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/evaluation.py) | `score_answers()`, `judge()`, `JudgeScores` | Measures factual accuracy, look-alike/rumour rejections, injection defense, and rubric scores |
-| [`orchestrator.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/deepsearch/orchestrator.py) | `DeepSearchAgent`, `report_to_markdown()`, `template_answer()`, `default_entity()` | Runs the full loop and saves `report.md`, `report.json`, `evidence.json`, `trace.jsonl` |
+| [`config.py`](deep-search-agent-code/deepsearch/config.py) | `Settings`, `PROVIDER_DEFAULTS`, `describe()` | Resolves provider presets, base URLs, search backend (`offline`/`ddgs`/`tavily`), and budget/iteration limits |
+| [`schemas.py`](deep-search-agent-code/deepsearch/schemas.py) | `EntityAnchor`, `SubQuestion`, `ResearchPlan`, `PlanReview`, `PlanDecision`, `Document`, `ExtractedClaim`, `ClaimList`, `Evidence`, `MergedClaim`, `ConflictRecord`, `Finding`, `FinalReport` | Typed contracts passed across every stage of the pipeline |
+| [`llm.py`](deep-search-agent-code/deepsearch/llm.py) | `LLM`, `LLMError`, `_extract_json()` | Supports `complete()`, `complete_structured()` (Pydantic repair loop), and `run_with_tools()` |
+| [`tools.py`](deep-search-agent-code/deepsearch/tools.py) | `_BM25`, `load_corpus()`, `search_web()`, `fetch_page()`, `think()`, `TOOL_SCHEMAS`, `TOOL_FUNCTIONS` | Unified offline BM25 search and live `ddgs`/`tavily` search + `trafilatura` extraction |
+| [`security.py`](deep-search-agent-code/deepsearch/security.py) | `scan_for_injection()`, `is_suspicious()`, `strip_hidden()`, `spotlight()` | Removes hidden HTML/CSS/zero-width text, scans regex injection patterns, and fences untrusted content |
+| [`extractor.py`](deep-search-agent-code/deepsearch/extractor.py) | `llm_extract()`, `rule_extract()`, `gullible_extract()` | Extracts typed claims + exact supporting quotes (`gullible_extract` exists for Lab 9 attack demo) |
+| [`planner.py`](deep-search-agent-code/deepsearch/planner.py) | `create_plan()`, `review_plan()`, `evaluate_progress()`, `_mock_plan()` | Generates sub-questions, enforces entity anchors/caps, and decides `continue` vs `stop` per iteration |
+| [`executor.py`](deep-search-agent-code/deepsearch/executor.py) | `Executor`, `QueryList`, `make_queries()` | Fans out sub-questions across threads, deduplicates fetched URLs, quarantines injected pages |
+| [`validator.py`](deep-search-agent-code/deepsearch/validator.py) | `score_evidence()`, `authority_score()`, `freshness_score()`, `identity_score()`, `completeness_score()`, `find_copies()` | Rejects wrong-entity pages (gate), penalizes stale/syndicated copies (`0.1x`), scores reliability |
+| [`merger.py`](deep-search-agent-code/deepsearch/merger.py) | `normalize_value()`, `same_value()`, `cluster_values()`, `merge_field()`, `merge_all()`, `confidence_label()` | Groups near-duplicate claims, resolves historical timelines vs conflicts, preserves `[S#]` provenance |
+| [`memory.py`](deep-search-agent-code/deepsearch/memory.py) | `Memory` | Reads/writes `memory/lessons.json` (`record_source`, `known_look_alikes`, `blocked_domains`, `learn`) |
+| [`budget.py`](deep-search-agent-code/deepsearch/budget.py) | `Budget`, `BudgetExceeded`, `price_for()`, `estimate_tokens()` | Enforces hard caps on USD spend, tokens, wall-clock seconds, and tool calls across worker threads |
+| [`tracing.py`](deep-search-agent-code/deepsearch/tracing.py) | `start_run()`, `trace()`, `events()` | Logs structured events to `runs/<timestamp>-<tag>/trace.jsonl` |
+| [`baselines.py`](deep-search-agent-code/deepsearch/baselines.py) | `naive_search_answer()`, `basic_rag_answer()` | Single-pass baselines used in Lab 1 and Lab 11 to benchmark Deep Search improvements |
+| [`evaluation.py`](deep-search-agent-code/deepsearch/evaluation.py) | `score_answers()`, `judge()`, `JudgeScores` | Measures factual accuracy, look-alike/rumour rejections, injection defense, and rubric scores |
+| [`orchestrator.py`](deep-search-agent-code/deepsearch/orchestrator.py) | `DeepSearchAgent`, `report_to_markdown()`, `template_answer()`, `default_entity()` | Runs the full loop and saves `report.md`, `report.json`, `evidence.json`, `trace.jsonl` |
 
 ---
 
 ## 4. Quick Run & Config Reference
 
-Run commands from [`study-material/03-deep-search-agent/`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent):
+Run commands from [`study-material/03-deep-search-agent/deep-search-agent-code/`](deep-search-agent-code/):
 
 ```bash
 python run_agent.py                # Offline NimbusPay due-diligence demo (no keys required)
@@ -142,4 +142,4 @@ python run_agent.py "Is <Company> a reliable payment partner today?" \
   --industry "payment gateway,payments" --domain company.com
 ```
 
-- **Key `.env` variables** ([`.env.example`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/03-deep-search-agent/.env.example)): `LLM_PROVIDER` (`mock` | `gemini` | `groq` | `ollama` | `openrouter` | `openai` | `anthropic` | `custom`), `LLM_MODEL`, `LLM_SMALL_MODEL`, `SEARCH_PROVIDER` (`offline` | `ddgs` | `tavily`), `DS_AS_OF`, `DS_MAX_ITERATIONS`, `DS_MAX_PARALLEL`, `DS_RESULTS_PER_QUERY`.
+- **Key `.env` variables** ([`.env.example`](deep-search-agent-code/.env.example)): `LLM_PROVIDER` (`mock` | `gemini` | `groq` | `ollama` | `openrouter` | `openai` | `anthropic` | `custom`), `LLM_MODEL`, `LLM_SMALL_MODEL`, `SEARCH_PROVIDER` (`offline` | `ddgs` | `tavily`), `DS_AS_OF`, `DS_MAX_ITERATIONS`, `DS_MAX_PARALLEL`, `DS_RESULTS_PER_QUERY`.

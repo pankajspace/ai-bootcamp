@@ -154,7 +154,7 @@ sequenceDiagram
 
 ## 5. Agents Breakdown
 
-All agents are defined in [`nps_insights_agent/agents/__init__.py`](file:///home/pankaj/Workspace/ai-bootcamp/projects/02-nps-analyst/nps_insights_agent/agents/__init__.py):
+All agents are defined in [`nps_insights_agent/agents/__init__.py`](nps_insights_agent/agents/__init__.py):
 
 | Agent | Phase | Assigned Tools | Core Responsibility |
 |---|---|---|---|
@@ -171,19 +171,19 @@ All agents are defined in [`nps_insights_agent/agents/__init__.py`](file:///home
 
 All tools return structured JSON strings and handle invalid inputs defensively without raising unhandled exceptions:
 
-### [`nps_insights_agent/tools/survey_tools.py`](file:///home/pankaj/Workspace/ai-bootcamp/projects/02-nps-analyst/nps_insights_agent/tools/survey_tools.py)
+### [`nps_insights_agent/tools/survey_tools.py`](nps_insights_agent/tools/survey_tools.py)
 1. **`get_nps_overview()`**
    - Returns overall NPS (`+18.5`), 95% MOE (`±6.6`), bucket counts (`268` Promoters, `175` Passives, `157` Detractors), verdict (`NEEDS WORK`), alert (`RED`), and monthly trend (`2026-07: +32.0`, `2026-08: +30.0`, `2026-09: -6.5`).
 2. **`get_nps_by_segment(segment_col: str, month: str = "all")`** *(shared & cached via `@lru_cache`)*
    - Breaks NPS down by `product`, `channel`, `tenure`, or `month`, optionally filtered to a single month (e.g., `month="2026-09"`). Automatically sets `low_sample=True` when $n < 30$ and excludes low-sample slices from `best_reliable_segment` / `worst_reliable_segment`.
 
-### [`nps_insights_agent/tools/theme_tools.py`](file:///home/pankaj/Workspace/ai-bootcamp/projects/02-nps-analyst/nps_insights_agent/tools/theme_tools.py)
+### [`nps_insights_agent/tools/theme_tools.py`](nps_insights_agent/tools/theme_tools.py)
 3. **`get_comment_themes(bucket: str = "detractor")`**
    - Groups written comments in `detractor`, `passive`, `promoter`, or `all` buckets into 7 transparent keyword themes (`otp_login`, `fees_and_charges`, `app_performance`, `call_centre_ivr`, `interest_rates_rewards`, `general_sentiment`, `positive_mismatch`), returning counts, percentages, product/channel/month breakdowns, revenue at risk, and sample verbatim quotes.
 4. **`find_score_comment_mismatches()`**
    - Detects the `9` detractor rows (`score <= 6`) whose comments contain unmistakable praise, returning their IDs, channels (`8 Branch`, `1 Call Centre`), affected revenue (`₹7.35 lakh`), overstated detractor risk (`₹1.84 lakh`), and recomputed NPS (`+20.3` if excluded, `+21.5` if reclassified as Promoters).
 
-### [`nps_insights_agent/tools/whatif_tools.py`](file:///home/pankaj/Workspace/ai-bootcamp/projects/02-nps-analyst/nps_insights_agent/tools/whatif_tools.py)
+### [`nps_insights_agent/tools/whatif_tools.py`](nps_insights_agent/tools/whatif_tools.py)
 5. **`get_revenue_at_risk(by_col: str = "product")`**
    - Applies the house churn model (`3%` Promoter, `10%` Passive, `25%` Detractor) across `product`, `channel`, or `tenure`, returning total revenue (`₹304.43 lakh`), total expected revenue at risk (`₹37.98 lakh`), detractor revenue at risk (`₹24.54 lakh`), and segment risk shares (`Wealth = 83.0%`).
 6. **`estimate_fix_impact(theme: str = "all")`**
@@ -197,11 +197,11 @@ All tools return structured JSON strings and handle invalid inputs defensively w
 
 | Milestone | File(s) | Status | Description |
 |---|---|---|---|
-| **M0 · NPS by Hand** | [`nps_by_hand.py`](file:///home/pankaj/Workspace/ai-bootcamp/projects/02-nps-analyst/nps_by_hand.py) | ✅ Complete | Pure `pandas` warm-up verifying `+18.5 ±6.6`, monthly trend, segment tables, and `₹37.98L` risk. |
-| **M1 · Tool Suite** | [`try_tools.py`](file:///home/pankaj/Workspace/ai-bootcamp/projects/02-nps-analyst/try_tools.py), `tools/*.py` | ✅ Complete | All 7 `@tool` functions tested standalone with defensive JSON error handling and `@lru_cache`. |
-| **M2 · Specialist Agents** | [`agents/__init__.py`](file:///home/pankaj/Workspace/ai-bootcamp/projects/02-nps-analyst/nps_insights_agent/agents/__init__.py) | ✅ Complete | 5 focused specialist agents (`ScoreAnalyst`, `VoC`, `ChurnRisk`, `ActionPlanner`, `ReportWriter`). |
-| **M3 · 3-Phase Pipeline** | [`main.py`](file:///home/pankaj/Workspace/ai-bootcamp/projects/02-nps-analyst/nps_insights_agent/main.py) | ✅ Complete | `asyncio.gather` runs Phase 1 analysts in parallel (`--trace` logs all 3 `CALL`s before any `OUTPUT`). |
-| **M4 · Auditor Fact Check** | [`fact_check.py`](file:///home/pankaj/Workspace/ai-bootcamp/projects/02-nps-analyst/nps_insights_agent/fact_check.py) | ✅ Complete | 16 label-aware regex & unit checks verifying numbers, signs, caveats, and that NPS never has `%`. |
+| **M0 · NPS by Hand** | [`nps_by_hand.py`](nps_by_hand.py) | ✅ Complete | Pure `pandas` warm-up verifying `+18.5 ±6.6`, monthly trend, segment tables, and `₹37.98L` risk. |
+| **M1 · Tool Suite** | [`try_tools.py`](try_tools.py), `tools/*.py` | ✅ Complete | All 7 `@tool` functions tested standalone with defensive JSON error handling and `@lru_cache`. |
+| **M2 · Specialist Agents** | [`agents/__init__.py`](nps_insights_agent/agents/__init__.py) | ✅ Complete | 5 focused specialist agents (`ScoreAnalyst`, `VoC`, `ChurnRisk`, `ActionPlanner`, `ReportWriter`). |
+| **M3 · 3-Phase Pipeline** | [`main.py`](nps_insights_agent/main.py) | ✅ Complete | `asyncio.gather` runs Phase 1 analysts in parallel (`--trace` logs all 3 `CALL`s before any `OUTPUT`). |
+| **M4 · Auditor Fact Check** | [`fact_check.py`](nps_insights_agent/fact_check.py) | ✅ Complete | 16 label-aware regex & unit checks verifying numbers, signs, caveats, and that NPS never has `%`. |
 | **M5 · Stretch Goals** | `stretch/llm_theme_tagger.py`, `main.py`, `fact_check.py` | ✅ Complete | **Stretch 1**: LLM vs. Keyword Theme Tagger (`99.3%` agreement on 139 detractor comments). **Stretch 2**: `--verbose`, `--stream`, `--log-dir` JSONL telemetry. **Stretch 3**: Self-correcting retry loop when fact checks fail. |
 
 ---

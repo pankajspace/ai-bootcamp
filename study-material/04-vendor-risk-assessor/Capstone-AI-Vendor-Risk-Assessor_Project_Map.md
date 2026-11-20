@@ -1,19 +1,19 @@
 # AI Vendor Risk Assessor (Capstone) — Project Map
 
-> **Directory:** [`study-material/project-vendor-risk-assessor/`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor)  
+> **Directory:** [`study-material/04-vendor-risk-assessor/`](./)  
 > **Organization & Domain:** *Nimbu Mart* — Automates vendor security/privacy due diligence against internal policies and open-web evidence. **AI finds & dates facts; deterministic Python judges; a human approves.**  
-> **Course Companion:** [`Capstone-AI-Vendor-Risk-Assessor-Shivank-Agrawal.html`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/Capstone-AI-Vendor-Risk-Assessor-Shivank-Agrawal.html) · [`Capstone-AI-Vendor-Risk-Assessor_Revision_Notes.md`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/Capstone-AI-Vendor-Risk-Assessor_Revision_Notes.md)
+> **Course Companion:** [`Capstone-AI-Vendor-Risk-Assessor-Shivank-Agrawal.html`](Capstone-AI-Vendor-Risk-Assessor-Shivank-Agrawal.html) · [`Capstone-AI-Vendor-Risk-Assessor_Revision_Notes.md`](Capstone-AI-Vendor-Risk-Assessor_Revision_Notes.md)
 
 ---
 
 ## 1. Cross-Course Synthesis & Architecture Flow
 
-This capstone integrates all three preceding courses into one auditable product orchestrated by [`assessor/graph.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/graph.py) (supporting both plain Python and LangGraph `StateGraph`):
+This capstone integrates all three preceding courses into one auditable product orchestrated by [`assessor/graph.py`](vendor-risk-assessor-code/assessor/graph.py) (supporting both plain Python and LangGraph `StateGraph`):
 
-- **From Course 1 (`01-production-rag`):** Clause-level chunking, BM25 policy retrieval, ACL pre-filtering, active/archived version gating, untrusted source exclusion, and grounded citations ([`assessor/policy_rag.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/policy_rag.py), [`app/api.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/app/api.py)).
-- **From Course 2 (`02-agentic-rag`):** Semantic 4-way Router ([`assessor/router.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/router.py)) + Answer Relevance & Hallucination Graders ([`assessor/graders.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/graders.py)).
-- **From Course 3 (`03-deep-search-agent`):** Vendor research planner, parallel gatherer, identity gate, prompt-injection quarantine, freshness decay + authority scoring, conflict/provenance merger, and budgets/tracing ([`assessor/vendor_research.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/vendor_research.py), [`assessor/tracing.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/tracing.py)).
-- **New Capstone Glue:** Deterministic rule matcher ([`assessor/matcher.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/matcher.py)), vendor questionnaire drafter ([`assessor/questionnaire.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/questionnaire.py)), input/output guardrails ([`assessor/guardrails.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/guardrails.py)), human approval gate (`human_gate`), and Streamlit UI ([`app/ui.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/app/ui.py)).
+- **From Course 1 (`01-production-rag`):** Clause-level chunking, BM25 policy retrieval, ACL pre-filtering, active/archived version gating, untrusted source exclusion, and grounded citations ([`assessor/policy_rag.py`](vendor-risk-assessor-code/assessor/policy_rag.py), [`app/api.py`](vendor-risk-assessor-code/app/api.py)).
+- **From Course 2 (`02-agentic-rag`):** Semantic 4-way Router ([`assessor/router.py`](vendor-risk-assessor-code/assessor/router.py)) + Answer Relevance & Hallucination Graders ([`assessor/graders.py`](vendor-risk-assessor-code/assessor/graders.py)).
+- **From Course 3 (`03-deep-search-agent`):** Vendor research planner, parallel gatherer, identity gate, prompt-injection quarantine, freshness decay + authority scoring, conflict/provenance merger, and budgets/tracing ([`assessor/vendor_research.py`](vendor-risk-assessor-code/assessor/vendor_research.py), [`assessor/tracing.py`](vendor-risk-assessor-code/assessor/tracing.py)).
+- **New Capstone Glue:** Deterministic rule matcher ([`assessor/matcher.py`](vendor-risk-assessor-code/assessor/matcher.py)), vendor questionnaire drafter ([`assessor/questionnaire.py`](vendor-risk-assessor-code/assessor/questionnaire.py)), input/output guardrails ([`assessor/guardrails.py`](vendor-risk-assessor-code/assessor/guardrails.py)), human approval gate (`human_gate`), and Streamlit UI ([`app/ui.py`](vendor-risk-assessor-code/app/ui.py)).
 
 ```mermaid
 flowchart LR
@@ -106,18 +106,18 @@ study-material/project-vendor-risk-assessor/
 
 | Module | Key Symbols | Responsibility |
 |---|---|---|
-| [`schemas.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/schemas.py) | `VENDOR_FIELDS`, `HIGH_STAKES_FIELDS`, `Evidence`, `VendorFact`, `VendorProfile`, `PolicyAnswer`, `Requirement`, `RequirementResult`, `AssessmentReport`, `Approval` | Strict Pydantic v2 contracts across all stages (`VendorProfile` covers 9 fields from `legal_entity` to `dpa_available`) |
-| [`guardrails.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/guardrails.py) | `redact_input()`, `check_intent()`, `enforce_output_policy()` | Scrubs keys/PAN/Aadhaar/emails/phones on input; blocks self-approval bypasses; downgrades uncited `PASS`/`FAIL` verdicts to `UNKNOWN` on output |
-| [`router.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/router.py) | `decide()`, `guess_vendor()`, `RouteDecision` | Routes queries to `policy`, `vendor`, `assessment`, or `refuse` |
-| [`policy_rag.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/policy_rag.py) | `PolicyLibrary`, `PolicyChunk`, `BM25`, `chunk_markdown()`, `approved_vendor_entry()` | Splits markdown policies by clause (`SEC-4.2`, etc.), filters ACL/archived/untrusted pre-ranking, and looks up `NM-PROC-AVL` |
-| [`graders.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/graders.py) | `GradeResult`, `grade_relevance()`, `grade_grounded()`, `grade_policy_answer()` | Verifies retrieved policy answers address the question and stay grounded in citations |
-| [`vendor_research.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/vendor_research.py) | `VendorResearcher`, `OfflineWeb`, `IdentityCheck`, `scan_injection()`, `freshness()`, `authority()` | Plans queries, gathers pages (`offline`/`ddgs`/`tavily`), gates look-alikes, quarantines injections, down-weights copies (`0.1x`), and merges with half-life decay |
-| [`matcher.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/matcher.py) | `Matcher`, `load_requirements()`, `rule_certification_valid()`, `rule_region_includes()`, `rule_value_known()`, `rule_enum_verdict()`, `rule_list_disclosed()`, `rule_retention_within()`, `rule_no_unresolved_incident()`, `rule_approved_for_tier()` | Evaluates 11 rules from `data/requirements.yaml` deterministically (`PASS`/`FAIL`/`NEEDS_REVIEW`/`UNKNOWN`/`NOT_APPLICABLE`) and computes `BLOCKED`/`CONDITIONAL`/`READY_FOR_APPROVAL` |
-| [`questionnaire.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/questionnaire.py) | `build_questions()`, `as_email()` | Generates clause-linked vendor questions & outreach email from `NM-SEC-Q` for non-passing rules |
-| [`report.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/report.py) | `to_markdown()` | Formats `PROC-2.1` review report with verdict table, source URLs/dates, conflicts, and human approval block |
-| [`graph.py`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/assessor/graph.py) | `Pipeline`, `State`, `new_state()`, `APPROVERS` | Runs the 10-node graph identically in plain Python (`run_plain`) or LangGraph (`build_langgraph`) |
+| [`schemas.py`](vendor-risk-assessor-code/assessor/schemas.py) | `VENDOR_FIELDS`, `HIGH_STAKES_FIELDS`, `Evidence`, `VendorFact`, `VendorProfile`, `PolicyAnswer`, `Requirement`, `RequirementResult`, `AssessmentReport`, `Approval` | Strict Pydantic v2 contracts across all stages (`VendorProfile` covers 9 fields from `legal_entity` to `dpa_available`) |
+| [`guardrails.py`](vendor-risk-assessor-code/assessor/guardrails.py) | `redact_input()`, `check_intent()`, `enforce_output_policy()` | Scrubs keys/PAN/Aadhaar/emails/phones on input; blocks self-approval bypasses; downgrades uncited `PASS`/`FAIL` verdicts to `UNKNOWN` on output |
+| [`router.py`](vendor-risk-assessor-code/assessor/router.py) | `decide()`, `guess_vendor()`, `RouteDecision` | Routes queries to `policy`, `vendor`, `assessment`, or `refuse` |
+| [`policy_rag.py`](vendor-risk-assessor-code/assessor/policy_rag.py) | `PolicyLibrary`, `PolicyChunk`, `BM25`, `chunk_markdown()`, `approved_vendor_entry()` | Splits markdown policies by clause (`SEC-4.2`, etc.), filters ACL/archived/untrusted pre-ranking, and looks up `NM-PROC-AVL` |
+| [`graders.py`](vendor-risk-assessor-code/assessor/graders.py) | `GradeResult`, `grade_relevance()`, `grade_grounded()`, `grade_policy_answer()` | Verifies retrieved policy answers address the question and stay grounded in citations |
+| [`vendor_research.py`](vendor-risk-assessor-code/assessor/vendor_research.py) | `VendorResearcher`, `OfflineWeb`, `IdentityCheck`, `scan_injection()`, `freshness()`, `authority()` | Plans queries, gathers pages (`offline`/`ddgs`/`tavily`), gates look-alikes, quarantines injections, down-weights copies (`0.1x`), and merges with half-life decay |
+| [`matcher.py`](vendor-risk-assessor-code/assessor/matcher.py) | `Matcher`, `load_requirements()`, `rule_certification_valid()`, `rule_region_includes()`, `rule_value_known()`, `rule_enum_verdict()`, `rule_list_disclosed()`, `rule_retention_within()`, `rule_no_unresolved_incident()`, `rule_approved_for_tier()` | Evaluates 11 rules from `data/requirements.yaml` deterministically (`PASS`/`FAIL`/`NEEDS_REVIEW`/`UNKNOWN`/`NOT_APPLICABLE`) and computes `BLOCKED`/`CONDITIONAL`/`READY_FOR_APPROVAL` |
+| [`questionnaire.py`](vendor-risk-assessor-code/assessor/questionnaire.py) | `build_questions()`, `as_email()` | Generates clause-linked vendor questions & outreach email from `NM-SEC-Q` for non-passing rules |
+| [`report.py`](vendor-risk-assessor-code/assessor/report.py) | `to_markdown()` | Formats `PROC-2.1` review report with verdict table, source URLs/dates, conflicts, and human approval block |
+| [`graph.py`](vendor-risk-assessor-code/assessor/graph.py) | `Pipeline`, `State`, `new_state()`, `APPROVERS` | Runs the 10-node graph identically in plain Python (`run_plain`) or LangGraph (`build_langgraph`) |
 
-### Deterministic Rules ([`data/requirements.yaml`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/data/requirements.yaml)) & Fictional Test Vendors
+### Deterministic Rules ([`data/requirements.yaml`](vendor-risk-assessor-code/data/requirements.yaml)) & Fictional Test Vendors
 
 | Rule ID | Clause & Severity | Vendor Field Checked | Test Vendors in `data/vendor_web/corpus.json` |
 |---|---|---|---|
@@ -131,7 +131,7 @@ study-material/project-vendor-risk-assessor/
 
 ## 4. Quick Run & Config Reference
 
-Run commands from [`study-material/project-vendor-risk-assessor/`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor):
+Run commands from [`study-material/04-vendor-risk-assessor/vendor-risk-assessor-code/`](vendor-risk-assessor-code/):
 
 ```bash
 python scripts/check_setup.py      # Verify environment & offline corpus
@@ -144,4 +144,4 @@ uvicorn app.api:app --reload --port 8000
 streamlit run app/ui.py
 ```
 
-- **Key `.env` variables** ([`.env.example`](file:///Users/pankaj/Workspace/ai-bootcamp/study-material/project-vendor-risk-assessor/.env.example)): `LLM_PROVIDER` (`mock` | `gemini` | `groq` | `ollama` | `openrouter` | `openai` | `anthropic` | `custom`), `SEARCH_PROVIDER` (`offline` | `ddgs` | `tavily`), `VRA_AS_OF`, `VRA_MAX_USD`, `VRA_MAX_PARALLEL`, `VRA_RESULTS_PER_QUERY`.
+- **Key `.env` variables** ([`.env.example`](vendor-risk-assessor-code/.env.example)): `LLM_PROVIDER` (`mock` | `gemini` | `groq` | `ollama` | `openrouter` | `openai` | `anthropic` | `custom`), `SEARCH_PROVIDER` (`offline` | `ddgs` | `tavily`), `VRA_AS_OF`, `VRA_MAX_USD`, `VRA_MAX_PARALLEL`, `VRA_RESULTS_PER_QUERY`.
