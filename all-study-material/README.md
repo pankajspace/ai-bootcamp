@@ -3,9 +3,6 @@
 ## AI Sessions GitHub Repo
 1. [AI Sessions GitHub Repo](https://github.com/pulkit-scaler/weekend-sessions)
 
-## Kaggle Project
-1. [Vendor Verdict Kaggle Competition](https://www.kaggle.com/competitions/vendor-verdict-can-we-trust-this-ai-tool)
-
 ## AI Infusion Notes (Each Note Covers a Specific Topic in GitHub Repo)
 1. [Your first AI agent](https://scaler-content.github.io/your-first-agent/)
 2. [Giving agents tools](https://scaler-content.github.io/giving-agents-tools/)
@@ -36,3 +33,6 @@
 ## Codex Projects
 1. [09 Codex: Notes](./code/09-codex-notes/)
 2. [09 Codex: Building an Auction Website with Codex](./code/08-auction-website-with-codex/)
+
+## Kaggle Project
+1. [Vendor Verdict Kaggle Competition](https://www.kaggle.com/competitions/vendor-verdict-can-we-trust-this-ai-tool)
