@@ -3,7 +3,7 @@
 ## AI Sessions GitHub Repo
 1. [AI Sessions GitHub Repo](https://github.com/pulkit-scaler/weekend-sessions)
 
-## AI Infusion Notes (Each Note Covers a Specific Topic in GitHub Repo)
+## AI Infusion Notes (Each Note Covers a Specific Topic in the GitHub Repo)
 1. [Your first AI agent](https://scaler-content.github.io/your-first-agent/)
 2. [Giving agents tools](https://scaler-content.github.io/giving-agents-tools/)
 3. [Agents that remember](https://scaler-content.github.io/Agents-that-remember/)
