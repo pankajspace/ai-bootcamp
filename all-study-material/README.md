@@ -20,19 +20,19 @@
 ## Senior AI Engineer Interview Notes (online)
 1. [Senior AI Engineer Interview](https://scaler-content.github.io/senior-ai-engineer-interview/)
 
-## Code
-1. [01 Langchain Foundation](./code/01-langchain-foundation/)
-2. [02 AI Harness](./code/02-ai-harness/)
-3. [03 Inference Optimization & Observablity](./code/03-inference-optimization-observablity/)
-4. [04 RAG: Setup](./code/04-rag-setup/)
-5. [05 RAG: Embeddings, Similarity and Reranking](./code/04-rag-embeddings-similarity-reranking/)
-6. [06 RAG: Chunking Strategies](./code/05-rag-chunking-strategies/)
-7. [07 RAG: Tool Calling Basics](./code/06-rag-tool-calling-basics/)
-8. [08 RAG: Inventory Agent](./code/07-rag-inventory-agent/)
+## Basics
+1. [01 Langchain Foundation](./00-basics/01-langchain-foundation/)
+2. [02 AI Harness](./00-basics/02-ai-harness/)
+3. [03 Inference Optimization & Observablity](./00-basics/03-inference-optimization-observablity/)
+4. [04 RAG: Setup](./00-basics/04-rag-setup/)
+5. [05 RAG: Embeddings, Similarity and Reranking](./00-basics/05-rag-embeddings-similarity-reranking/)
+6. [06 RAG: Chunking Strategies](./00-basics/06-rag-chunking-strategies/)
+7. [07 RAG: Tool Calling Basics](./00-basics/07-rag-tool-calling-basics/)
+8. [08 RAG: Inventory Agent](./00-basics/08-rag-inventory-agent/)
 
-## Codex Projects
-1. [09 Codex: Notes](./code/09-codex-notes/)
-2. [09 Codex: Building an Auction Website with Codex](./code/08-auction-website-with-codex/)
+## Codex Project
+1. [05 Codex: Notes](./05-codex/codex-project-notes/)
+2. [05 Codex: Building an Auction Website with Codex](./05-codex/codex-project-code/)
 
 ## Kaggle Project
 1. [Vendor Verdict Kaggle Competition](https://www.kaggle.com/competitions/vendor-verdict-can-we-trust-this-ai-tool)
