@@ -17,7 +17,7 @@
 1. [AI Agents in Finance](https://shrijankumar1-maker.github.io/finance-section-1/)
 2. [NPS Analyst in a Box](https://pulkit-scaler.github.io/finance-nps-project/)
 
-## Senior AI Engineer Interview
+## Senior AI Engineer Interview Notes (online)
 1. [Senior AI Engineer Interview](https://scaler-content.github.io/senior-ai-engineer-interview/)
 
 ## Code
