@@ -61,7 +61,7 @@ flowchart LR
 
 **In one line:** A self-paced course. Read a module, try its simulation, run its lab, then do the quick check.
 
-- **Golden set:** 33 questions with expected answers in `code/eval/golden.jsonl`. Used to measure every change.
+- **Golden set:** 33 questions with expected answers in `production-rag-code/eval/golden.jsonl`. Used to measure every change.
 
 ---
 
@@ -664,7 +664,7 @@ flowchart LR
 
 - Wrong answer but right chunk at rank 1 → **generation** failed (prompt, distracting chunks, model). Right chunk never found → **retrieval** failed.
 
-### 1. Golden dataset (`code/eval/golden.jsonl`)
+### 1. Golden dataset (`production-rag-code/eval/golden.jsonl`)
 - **Size:** **50–200** questions to start; grow from real failures.
 - **Coverage:** every question type (paraphrase, keyword/ID, table, scanned PDF, multi-hop, versioned, permission-restricted, other languages) and every important doc.
 - **Unanswerable: 20%+** — otherwise a always-guessing system looks as good as one that refuses correctly.

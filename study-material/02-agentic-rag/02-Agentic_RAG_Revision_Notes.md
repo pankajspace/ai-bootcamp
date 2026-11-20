@@ -561,7 +561,7 @@ ollama pull deepseek-r1:8b      # ~5 GB download; needs ~8 GB free RAM
 
 | You see | Why | Fix |
 |---|---|---|
-| "Please fix your .env file first" | A key is empty | The file must be named **`.env`** (not `.env.example`) and sit in the `code` folder |
+| "Please fix your .env file first" | A key is empty | The file must be named **`.env`** (not `.env.example`) and sit in the `agentic-rag-code` folder |
 | **404** / model not found | The model ID no longer exists | Find a current ID on the provider's models page. Update `OPENROUTER_MODEL` / `GROQ_MODEL` |
 | **429** / rate limit | Too many requests on a free tier | Wait, **lower `MAX_RPM`**, or use a paid model |
 | `WEB_SEARCH_FAILED` | No internet, wrong Tavily key, or limit reached | Check key and connection. The rest of the team keeps working |

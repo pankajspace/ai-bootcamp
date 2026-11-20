@@ -319,7 +319,7 @@ footer{max-width:860px;margin:0 auto;padding:30px 0 60px;color:var(--muted);font
     <tr><td>Community tips</td><td>Markdown</td><td>Contains a hidden prompt-injection attack</td></tr>
     <tr><td>FAQ in Hindi</td><td>Markdown</td><td>Indian-language retrieval</td></tr>
   </table></div>
-  <p>There is also a <b>golden set</b> of 33 questions with expected answers (<code>code/eval/golden.jsonl</code>). We use it to measure every change.</p>
+  <p>There is also a <b>golden set</b> of 33 questions with expected answers (<code>production-rag-code/eval/golden.jsonl</code>). We use it to measure every change.</p>
 
   <h3>Set up your machine (Lab 00)</h3>
   <ol>
@@ -1526,7 +1526,7 @@ python labs/lab08_reranking.py          # 25 candidates -> cross-encoder -> top 
   </figure>
 
   <h3>1. The golden dataset</h3>
-  <p>A list of realistic questions, each with the evidence that should be retrieved and the facts the answer must contain. Ours is <code>code/eval/golden.jsonl</code>:</p>
+  <p>A list of realistic questions, each with the evidence that should be retrieved and the facts the answer must contain. Ours is <code>production-rag-code/eval/golden.jsonl</code>:</p>
 <pre><code>{"id": "q06", "question": "What should a support agent do when a customer sees error E102?",
  "type": "keyword", "relevant_docs": ["error_codes_runbook.md"], "evidence": ["E102"],
  "answer_must_contain": ["15 minutes"], "answerable": true}</code></pre>
@@ -1588,7 +1588,7 @@ python labs/lab08_reranking.py          # 25 candidates -> cross-encoder -> top 
     <h4>An evaluation harness with a written report</h4>
 <pre><code>python labs/lab10_evaluation.py            # 4 configs: vector, BM25, hybrid, hybrid + rerank
 python labs/lab10_evaluation.py --judge    # + an LLM judge on a sample (needs a key)
-# then open code/reports/eval_report.md</code></pre>
+# then open production-rag-code/reports/eval_report.md</code></pre>
     <p><b>What to look for:</b> the summary table (hit@5, MRR, nDCG, correct, abstain_ok, cited); the metrics by question type; and the list of questions the best configuration still gets wrong. Then change one setting in <code>.env</code> (model, reranker, LLM) and run it again.</p>
   </div>
 
@@ -1881,13 +1881,13 @@ python labs/lab13_observability_and_cost.py    # writes logs/traces.jsonl</code>
 <section class="module" id="m13" data-title="Capstone: the production app">
   <div class="module-head"><span class="kicker">Module 13</span></div>
   <h2>Capstone: run the production app</h2>
-  <div class="meta-row"><span class="chip">60–90 min</span><span class="chip lab">code/app</span><span class="chip">Docker</span></div>
+  <div class="meta-row"><span class="chip">60–90 min</span><span class="chip lab">production-rag-code/app</span><span class="chip">Docker</span></div>
   <div class="learn"><h4>In this module you will</h4><ul>
     <li>Run a real RAG service: FastAPI + Redis/RQ workers + Postgres/pgvector.</li>
     <li>Ingest all 14 Nimbu Mart documents through the queue, including a broken file.</li>
     <li>Ask questions as different users; read the hybrid SQL; try a model migration.</li></ul></div>
 
-  <h3>What is in <code>code/app</code></h3>
+  <h3>What is in <code>production-rag-code/app</code></h3>
   <div class="table-wrap"><table>
     <tr><th>File</th><th>What it does</th><th>Concepts from</th></tr>
     <tr><td><code>api.py</code></td><td>Upload (type/size checks, SHA-256 de-dup, blob store, queue), document status, delete, query (embed → hybrid SQL → rerank → grounded answer → trace), health</td><td>Modules 4, 8, 9, 12</td></tr>
