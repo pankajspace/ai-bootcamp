@@ -39,8 +39,8 @@
 16. [16 Trip Buddy](./00-basics/16-trip-buddy/)
 
 ## Codex Project
-1. [05 Codex: Notes](./05-codex/codex-project-notes/)
-2. [05 Codex: Building an Auction Website with Codex](./05-codex/codex-project-code/)
+1. [04 Codex: Notes](./04-codex/codex-project-notes/)
+2. [04 Codex: Building an Auction Website with Codex](./04-codex/codex-project-code/)
 
 ## Kaggle Project
 1. [Vendor Verdict Kaggle Competition](https://www.kaggle.com/competitions/vendor-verdict-can-we-trust-this-ai-tool)
