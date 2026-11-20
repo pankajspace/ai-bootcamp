@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Shivank Agarwal">
+<title>Module 1 — Embeddings, Similarity Search and Reranking: Exercises — Shivank Agarwal</title>
+<style>
+:root{--ink:#1d2433;--muted:#5b6475;--line:#e3e7ee;--bg:#fbfaf7;--card:#ffffff;--accent:#0f6e66;--accent-soft:#e6f3f1;
+--todo:#b45309;--todo-soft:#fff4e5;--blue:#1d4ed8;--blue-soft:#eaf1ff;--red:#b42318;--red-soft:#fdecea;--green:#15803d;--green-soft:#eaf7ee}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:940px;margin:0 auto;padding:0 22px 60px}
+header.top{background:linear-gradient(135deg,#0f3d3a,#0f6e66);color:#fff;padding:38px 0 30px;margin-bottom:28px}
+header.top .wrap{padding-bottom:0}
+.kicker{text-transform:uppercase;letter-spacing:.12em;font-size:12.5px;font-weight:700;opacity:.85}
+header.top h1{font-size:34px;line-height:1.2;margin:8px 0 10px;font-weight:800}
+header.top p.sub{margin:0;font-size:18px;opacity:.92;max-width:760px}
+.byline{margin-top:16px;font-size:14px;opacity:.9}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px 12px;font-size:13.5px}
+h2{font-size:26px;margin:44px 0 12px;padding-top:6px;border-top:2px solid var(--line)}
+h3{font-size:20.5px;margin:30px 0 8px}
+h4{font-size:17px;margin:20px 0 6px}
+p{margin:10px 0}
+a{color:var(--accent)}
+code{font-family:"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;font-size:.88em;background:#eef1f5;padding:1px 5px;border-radius:4px}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 20px;margin:18px 0}
+.toc ol{margin:6px 0;padding-left:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:18px 0;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.exercise{border-left:6px solid var(--accent)}
+.exercise > h3:first-child{margin-top:4px}
+.file{display:inline-block;font-family:Menlo,Consolas,monospace;font-size:14px;background:var(--accent-soft);color:var(--accent);padding:2px 9px;border-radius:6px}
+.todo{border:1px solid #f3d9b5;background:var(--todo-soft);border-radius:12px;padding:12px 16px;margin:12px 0}
+.todo .num{display:inline-block;background:var(--todo);color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:1px 10px;margin-right:8px}
+.todo .title{font-weight:650}
+details{margin:8px 0 2px}
+summary{cursor:pointer;color:var(--todo);font-weight:600;font-size:15px}
+details ul{margin:6px 0 4px}
+.callout{border-radius:12px;padding:12px 16px;margin:16px 0;border:1px solid}
+.callout.tip{background:var(--green-soft);border-color:#bfe3c9}
+.callout.note{background:var(--blue-soft);border-color:#c9d8fb}
+.callout.warn{background:var(--todo-soft);border-color:#f3d9b5}
+.callout.stop{background:var(--red-soft);border-color:#f5c2bc}
+.callout b.lbl{display:block;margin-bottom:2px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15.5px;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f3f5f8}
+.code{border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden;background:#fff}
+.code .label{font-size:12.5px;color:var(--muted);background:#f6f7f9;border-bottom:1px solid var(--line);padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.code pre{margin:0;padding:12px 14px;overflow-x:auto;font-size:14px;line-height:1.5}
+.out{background:#0f172a;color:#d6e2f0;border-radius:10px;margin:12px 0;overflow:hidden}
+.out .label{font-size:12.5px;color:#93a4bd;background:#18233a;padding:4px 12px;font-family:Menlo,Consolas,monospace}
+.out pre{margin:0;padding:12px 14px;overflow-x:auto;font:13.5px/1.5 Menlo,Consolas,monospace;white-space:pre-wrap}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:16px 0}
+.flow .box{flex:1 1 140px;background:#fff;border:1.5px solid var(--accent);border-radius:12px;padding:10px 12px;text-align:center;font-size:15px}
+.flow .box b{display:block;color:var(--accent)}
+.flow .arrow{align-self:center;font-size:24px;color:var(--muted)}
+.qa{border-bottom:1px dashed var(--line);padding:8px 0}
+.qa .q{font-weight:650}
+.done{background:var(--green-soft);border:1px solid #bfe3c9;border-radius:10px;padding:10px 14px;margin:12px 0}
+.done b{color:var(--green)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr} header.top h1{font-size:27px}}
+footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;border-radius:999px;padding:1px 9px;margin-left:6px;vertical-align:middle}
+.pill.core{background:var(--accent-soft);color:var(--accent)}
+.pill.opt{background:#f1f2f6;color:var(--muted)}
+@media print{header.top{background:#0f6e66 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact} details{display:block} details>*{display:block}}
+
+pre { line-height: 125%; }
+td.linenos .normal { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.code pre .hll { background-color: #ffffcc }
+.code pre { background: #f0f0f0; }
+.code pre .c { color: #60A0B0; font-style: italic } /* Comment */
+.code pre .err { border: 1px solid #F00 } /* Error */
+.code pre .k { color: #007020; font-weight: bold } /* Keyword */
+.code pre .o { color: #666 } /* Operator */
+.code pre .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.code pre .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.code pre .cp { color: #007020 } /* Comment.Preproc */
+.code pre .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.code pre .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.code pre .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.code pre .gd { color: #A00000 } /* Generic.Deleted */
+.code pre .ge { font-style: italic } /* Generic.Emph */
+.code pre .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.code pre .gr { color: #F00 } /* Generic.Error */
+.code pre .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.code pre .gi { color: #00A000 } /* Generic.Inserted */
+.code pre .go { color: #888 } /* Generic.Output */
+.code pre .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.code pre .gs { font-weight: bold } /* Generic.Strong */
+.code pre .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.code pre .gt { color: #04D } /* Generic.Traceback */
+.code pre .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.code pre .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.code pre .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.code pre .kp { color: #007020 } /* Keyword.Pseudo */
+.code pre .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.code pre .kt { color: #902000 } /* Keyword.Type */
+.code pre .m { color: #40A070 } /* Literal.Number */
+.code pre .s { color: #4070A0 } /* Literal.String */
+.code pre .na { color: #4070A0 } /* Name.Attribute */
+.code pre .nb { color: #007020 } /* Name.Builtin */
+.code pre .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.code pre .no { color: #60ADD5 } /* Name.Constant */
+.code pre .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.code pre .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.code pre .ne { color: #007020 } /* Name.Exception */
+.code pre .nf { color: #06287E } /* Name.Function */
+.code pre .nl { color: #002070; font-weight: bold } /* Name.Label */
+.code pre .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.code pre .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.code pre .nv { color: #BB60D5 } /* Name.Variable */
+.code pre .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.code pre .w { color: #BBB } /* Text.Whitespace */
+.code pre .mb { color: #40A070 } /* Literal.Number.Bin */
+.code pre .mf { color: #40A070 } /* Literal.Number.Float */
+.code pre .mh { color: #40A070 } /* Literal.Number.Hex */
+.code pre .mi { color: #40A070 } /* Literal.Number.Integer */
+.code pre .mo { color: #40A070 } /* Literal.Number.Oct */
+.code pre .sa { color: #4070A0 } /* Literal.String.Affix */
+.code pre .sb { color: #4070A0 } /* Literal.String.Backtick */
+.code pre .sc { color: #4070A0 } /* Literal.String.Char */
+.code pre .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.code pre .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.code pre .s2 { color: #4070A0 } /* Literal.String.Double */
+.code pre .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.code pre .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.code pre .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.code pre .sx { color: #C65D09 } /* Literal.String.Other */
+.code pre .sr { color: #235388 } /* Literal.String.Regex */
+.code pre .s1 { color: #4070A0 } /* Literal.String.Single */
+.code pre .ss { color: #517918 } /* Literal.String.Symbol */
+.code pre .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.code pre .fm { color: #06287E } /* Name.Function.Magic */
+.code pre .vc { color: #BB60D5 } /* Name.Variable.Class */
+.code pre .vg { color: #BB60D5 } /* Name.Variable.Global */
+.code pre .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.code pre .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.code pre .il { color: #40A070 } /* Literal.Number.Integer.Long */</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+<div class="kicker">Hands-on exercises · Give to learners</div>
+<h1>Module 1 — Embeddings, Similarity Search and Reranking: Exercises</h1>
+<p class="sub">Hands-on exercise sheet. Try every TODO yourself before you see the solution.</p>
+<div class="badges"><span class="badge">For learners</span><span class="badge">About 50 minutes</span><span class="badge">No API key needed</span></div>
+<div class="byline">Created by <b>Shivank Agarwal</b></div>
+</div></header>
+<main class="wrap">
+
+<div class="card">
+<h3 style="margin-top:4px">What you will build</h3>
+<ul>
+<li><b>1.1</b> Explore word embeddings: see a word as 50 numbers and do "word maths" (king − man + woman = ?)</li>
+<li><b>1.2</b> A small web app that finds the documents closest in meaning to a question (Top-K search)</li>
+<li><b>1.3</b> The same app with a second step, <b>reranking</b>, the way real search and RAG systems do it</li>
+</ul>
+<p><b>Time:</b> about 50 minutes &nbsp;·&nbsp; <b>API key needed:</b> No (everything in this module runs on your laptop)</p>
+</div>
+
+<h2>How to do these exercises</h2>
+<ol>
+<li>Finish the setup first: <a href="../00_Setup/Setup_Guide_for_Learners.html">00_Setup/Setup_Guide_for_Learners.html</a>.</li>
+<li>Open the folder <span class="file">1_GIVE_FIRST_Starter_Code</span>. Every file has blanks marked <code># ----- TODO n: ... -----</code>.</li>
+<li>Replace the placeholder line under each TODO (for example <code>scores = []  # replace with your code</code>) with your own code.</li>
+<li>Stuck for more than 5 minutes? Open the hint under the TODO on this page. Still stuck? Ask your instructor.</li>
+<li>Check your work with the <b>"You are done when"</b> box at the end of each exercise.</li>
+</ol>
+<div class="callout note"><b class="lbl">First run downloads models</b><p>Exercise 1.1 downloads a 66 MB word model. Exercises 1.2 and 1.3 download two small models (about 90 MB each). After the first time they load from your laptop.</p></div>
+
+<h2>Exercise 1.1 — Word embeddings <span class="pill core">notebook</span></h2>
+<div class="card exercise">
+<p><b>File:</b> <span class="file">1_GIVE_FIRST_Starter_Code/1_word_embeddings.ipynb</span></p>
+<p><b>Story:</b> A computer cannot read the word <i>king</i>. It only works with numbers. An <b>embedding</b> is a list of numbers
+that stands for a word, and words with similar meanings get similar lists. Your job is to look at these numbers and use them.</p>
+<p>Run the cells from top to bottom. Fill in these blanks:</p>
+<div class="todo"><span class="num">TODO 1</span><span class="title">Get the vector for the word "king" and print its shape and first 5 numbers</span><p>Expected: the shape is <code>(50,)</code>, which means 50 numbers.</p><details><summary>Need a hint?</summary><ul><li>The model works like a dictionary: <code>model["some_word"]</code></li><li>A numpy array has a .shape attribute</li></ul></details></div>
+<div class="todo"><span class="num">TODO 2</span><span class="title">Use word maths to answer "king - man + woman = ?"</span><p>Do the analogy <i>king − man + woman</i>. Which word comes back?</p><details><summary>Need a hint?</summary><ul><li><code>model.most_similar(positive=[words to add], negative=[words to subtract], topn=1)</code></li></ul></details></div>
+<div class="todo"><span class="num">TODO 3</span><span class="title">Capital cities: "paris - france + india = ?"</span><p>Paris is to France as <b>?</b> is to India.</p><details><summary>Need a hint?</summary><ul><li>Same pattern as TODO 2. Words to add: paris, india. Word to subtract: france</li></ul></details></div>
+<div class="todo"><span class="num">TODO 4</span><span class="title">Write a cosine_similarity(a, b) function using numpy</span><p>Formula: <code>cosine(a, b) = (a · b) / (|a| × |b|)</code>. Your numbers must match gensim's numbers.</p><details><summary>Need a hint?</summary><ul><li><code>np.dot(a, b)</code> gives a · b</li><li><code>np.linalg.norm(a) gives |a|</code></li></ul></details></div>
+<div class="done"><b>You are done when</b><ul>
+<li>TODO 2 prints <code>queen</code> and TODO 3 prints an Indian city</li>
+<li>In TODO 4, "my answer" and "gensim" show the same three numbers</li>
+<li><i>king vs queen</i> scores clearly higher than <i>king vs banana</i></li></ul></div>
+</div>
+<h2>Exercise 1.2 — Similarity search app (Top-K) <span class="pill core">web app</span></h2>
+<div class="card exercise">
+<p><b>File:</b> <span class="file">1_GIVE_FIRST_Starter_Code/2_similarity_search_app.py</span></p>
+<p><b>Story:</b> You have a pile of sentences (documents). A user types a question. Show the K sentences whose
+<i>meaning</i> is closest to the question, even if they share no words with it. This is the <b>R</b> (Retrieval) in RAG.</p>
+<div class="flow"><div class="box"><b>Documents</b>one per line</div><div class="arrow">&rarr;</div><div class="box"><b>Embedding model</b>each line &rarr; 384 numbers</div><div class="arrow">&rarr;</div><div class="box"><b>Cosine similarity</b>question vs every line</div><div class="arrow">&rarr;</div><div class="box"><b>Sort + keep K</b>best first</div></div>
+<div class="todo"><span class="num">TODO 1</span><span class="title">Write the cosine similarity formula</span><details><summary>Need a hint?</summary><ul><li><code>cosine(a, b) = (a · b) / (|a| × |b|)</code></li><li><code>np.dot(a, b) and np.linalg.norm(a)</code> are all you need</li></ul></details></div>
+<div class="todo"><span class="num">TODO 2</span><span class="title">Embed all documents and the query</span><details><summary>Need a hint?</summary><ul><li><code>model.encode(list_of_texts)</code> returns one vector per text</li><li>Encode the query as a list with one item, then take <code>[0]</code></li></ul></details></div>
+<div class="todo"><span class="num">TODO 3</span><span class="title">Score every document against the query and sort best-first</span><details><summary>Need a hint?</summary><ul><li>Build a list of <code>(doc, score)</code> pairs with <code>zip(docs, doc_embeddings)</code></li><li><code>list.sort(key=lambda pair: pair[1], reverse=True)</code> puts the highest score first</li></ul></details></div>
+<p><b>Run it:</b></p>
+<div class="code"><div class="label">Terminal (inside the starter folder)</div><pre>python<span class="w"> </span>2_similarity_search_app.py
+</pre></div>
+<p>Open the link shown in the terminal (usually <code>http://127.0.0.1:7860</code>). The sample documents and query are already filled in. Click <b>Retrieve Top K</b>.</p>
+<div class="done"><b>You are done when</b><ul>
+<li>For the query <i>fruit and nutrition</i>, the two fruit sentences (bananas, apples and oranges) are the top 2 rows</li>
+<li>Changing the query to <i>share prices falling</i> puts the stock market and Sensex sentences on top</li>
+<li>Moving the K slider changes how many rows you get</li></ul></div>
+</div>
+<h2>Exercise 1.3 — Retrieve, then Rerank <span class="pill core">web app</span></h2>
+<div class="card exercise">
+<p><b>File:</b> <span class="file">1_GIVE_FIRST_Starter_Code/3_reranking_app.py</span></p>
+<p><b>Story:</b> Fast search (Exercise 1.2) is good at finding <i>roughly</i> related text, but it can be fooled by sentences
+that just repeat the question's words. A <b>reranker</b> (a cross-encoder) reads the question and each document <i>together</i>
+and gives a sharper relevance score. Real systems do both: retrieve many quickly, then rerank the few that came back.</p>
+<div class="flow"><div class="box"><b>Step 1: Retrieve</b>bi-encoder, fast, top K</div><div class="arrow">&rarr;</div><div class="box"><b>Step 2: Rerank</b>cross-encoder, slow, precise</div><div class="arrow">&rarr;</div><div class="box"><b>Final order</b>best answer first</div></div>
+<div class="todo"><span class="num">TODO 1</span><span class="title">Embed the documents and the query, score them with cosine similarity, sort, keep top k</span><p>This is the same idea as Exercise 1.2, written with scikit-learn's <code>cosine_similarity</code>, which scores all documents in one call.</p><details><summary>Need a hint?</summary><ul><li><code>bi_encoder.encode(documents) -&gt; matrix (one row per document)</code></li><li><code>bi_encoder.encode([query]) -&gt;</code> matrix with ONE row</li><li><code>cosine_similarity(query_matrix, doc_matrix)[0] -&gt;</code> one score per document</li></ul></details></div>
+<div class="todo"><span class="num">TODO 2</span><span class="title">Score every (query, document) pair with the cross-encoder and sort best first</span><details><summary>Need a hint?</summary><ul><li>Build pairs like <code>[(query, doc1), (query, doc2), ...]</code></li><li><code>cross_encoder.predict(pairs) -&gt;</code> one score per pair <code>(higher = more relevant)</code></li></ul></details></div>
+<p><b>Run it:</b> <code>python 3_reranking_app.py</code>, open the link, click <b>1) Retrieve Top K</b>, then <b>2) Rerank</b>.</p>
+<div class="done"><b>You are done when</b><ul>
+<li>Both tables show all 8 documents with a score</li>
+<li>The order in the "Reranked" table is different from the "Top-K" table</li>
+<li>Write down: which sentence is #1 before reranking, and which is #1 after?</li></ul></div>
+</div>
+<h2>Think about it (answer in 1–2 lines each)</h2>
+<div class="card">
+<ol>
+<li>In Exercise 1.1, when we search with the raw vector for <i>king − man + woman</i>, the top word is <i>king</i> itself. Why?</li>
+<li>Why do we compare embeddings with <b>cosine similarity</b> (the angle) and not just by subtracting the numbers?</li>
+<li>A cross-encoder gives better scores. So why don't we run it on all one million documents in a real system?</li>
+<li>Exercise 1.3 has a document saying COVID-19 causes memory loss and confusion. That is not a common COVID symptom. Did the reranker push it down? What does that tell you about what a reranker checks?</li>
+<li>If you set K = 2 in Exercise 1.3, can the reranker still find the best document? Why or why not?</li>
+</ol>
+<p>Your instructor will discuss the answers after the exercise.</p>
+</div>
+
+<h2>Stretch challenges (if you finish early)</h2>
+<div class="card"><ul>
+<li>1.1: Try your own analogies, for example <code>positive=["dosa","italy"], negative=["india"]</code>. Which ones work? Which fail?</li>
+<li>1.2: Add 5 sentences about cricket and 5 about cooking. Does the search still keep topics apart?</li>
+<li>1.3: Add a column to the reranked table that shows each document's old position, so you can see how far it moved.</li>
+</ul></div>
+<footer>Created by Shivank Agarwal. Solutions are shared by your instructor after the exercise.</footer>
+</main>
+</body>
+</html>

@@ -27,3 +27,7 @@
 1. [01 Langchain Foundation](./code/01-langchain-foundation/)
 2. [02 AI Harness](./code/02-ai-harness/)
 3. [03 Inference Optimization & Observablity](./code/03-inference-optimization-observablity/)
+4. [04 Embeddings, Similarity and Reranking](./code/04-embeddings-similarity-reranking/)
+5. [05 Chunking Strategies](./code/05-chunking-strategies/)
+6. [06 Tool Calling Basics](./code/06-tool-calling-basics/)
+7. [07 Inventory Agent](./code/07-inventory-agent/)
