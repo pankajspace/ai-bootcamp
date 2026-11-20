@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>11. Understanding the Concurrency Problem – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="11. Understanding the Concurrency Problem"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>11. Understanding the Concurrency Problem</h1>
+  <p class="lede">Find the race condition hiding in Part 2's bid code with your own eyes, then ask Codex to prove it exists with a four-window “Bidding War” Playwright test before anyone touches the fix.</p>
+  <div class="meta"><span class="pill">Part 2 · bidding-war test begins</span><span class="pill">≈ 15–25 min hands-on</span><span class="pill">New chat · Playwright</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+<li>Read the Part 2 bid route in VS Code and see exactly why “check, then insert” breaks when two bids arrive at the same instant.</li>
+<li>Start a fresh chat for this new piece of work instead of piling onto the long Part 2 chat.</li>
+<li>Ask Codex if it sees the problem, and read how it describes the bug and the fix.</li>
+<li>Ask Codex to <strong>reproduce the bug first</strong> with a headed Playwright test: one seller and three bidders fighting over a 20-second auction in four visible browser windows.</li>
+<li>Understand why I insist on a test before a fix: tests are the “back pressure” that lets an agent check its own work.</li></ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+<li>You finished guide 10: Part 2 lets you post auctions and place bids, and it is running at <code>http://localhost:5102</code>. Or you caught up from the reference project.</li>
+<li>Docker Desktop is running. The test we ask for talks to the Part 2 database inside it.</li>
+<li><strong>Microsoft Edge</strong> or <strong>Google Chrome</strong> is installed. The test opens four real browser windows on your screen. From guide 12 onwards we use Edge.</li>
+<li>Have the Part 2 folder open in VS Code (Step 1 opens it for you).</li></ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Look at the bid code in VS Code</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Before we ask Codex anything, I want you to find the bug yourself. It is only a few lines and you already know the rules it enforces (guide 10). Open the Part 2 folder in VS Code with the command below. Then press <strong>Cmd+P</strong> (quick open), type <code>server/src/app.ts</code> and press Enter. In that file press <strong>Cmd+F</strong> and search for <code>INSERT INTO bids</code>.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">code ~/codex-course/workshop/part-2-create-auction-and-bid</pre></div>
+    <p><code>code &lt;folder&gt;</code> opens that folder as a VS Code workspace, so the file tree on the left shows only Part 2. Now read the bid route from top to bottom. Notice the <em>order</em> of what it does: first it reads the auction and its current highest bid from the database, then it runs the checks, and only after that does it write the new bid.</p>
+    <div class="call concept"><b class="t">📘 Concept: race condition (“check, then insert”)</b><p>A <strong>race condition</strong> is a bug that only appears when two things happen at almost the same time, and the result depends on who gets there first. Our bid route does “check, then insert”: it reads the current price, checks that the new bid beats it, then inserts. Imagine two bidders, Priya and Sam, both bidding $101 on an auction at $100, half a millisecond apart. Priya's request reads “$100”, Sam's request reads “$100” too (Priya has not inserted yet). Both pass the “at least $101” check. Both insert. Now the auction has two $101 bids and no clear highest bidder, and the second one should have been rejected. Nothing in the code is “wrong” line by line; the gap <em>between</em> the read and the write is the bug. Any system with many users and shared data (seats, stock, wallets, bids) has this problem unless you design against it.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The bid route, <code>app.post('/api/auctions/:slug/bids', …)</code>. It does its checks first: sellers cannot bid on their own auction, the auction must not have ended (compared with <code>Date.now()</code>, the current time in milliseconds), and the bid must be at least $1 (100 cents) above the current price. <strong>Then</strong>, as a separate statement, it runs <code>INSERT INTO bids (auction_id, bidder_user_id, amount_cents) VALUES ($1, $2, $3)</code>. The <code>$1, $2, $3</code> are placeholders that the <code>pg</code> library fills in safely with the real values.</p>
+    <p>There is no <code>BEGIN</code>, no transaction and no lock anywhere near it. That gap is the bug. Your line numbers and variable names may differ, since your Codex wrote your copy, but the shape (read → check → insert, as separate database calls) will be the same.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Why it slipped through: every test Codex wrote in guide 10 sends one bid at a time, so “check, then insert” always worked. Tests only catch what they try. Sequential tests cannot find a concurrency bug; you need a test that deliberately sends bids at the same moment, which is exactly what we build next.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Check how full your Part 2 chat is</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Go to the Codex app and open your Part 2 chat from the sidebar (Codex names chats automatically; mine was called “Add auctions and bidding”). Hover over the small circle just left of the model picker, under the message box. This is the context-window meter you switched on in guide 10.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A tooltip like <strong>Context window: 3% used (97% left) · 8k / 258k tokens used</strong>. Your numbers will differ. You may also see a line saying “Context compacted” in the chat itself. That is the compaction you ran at the end of guide 10: Codex summarised the older messages, which is why the chat that was 76% full is now almost empty.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Even with lots of room left, I start a new chat for each new piece of work. A clean context keeps Codex focused on one problem, and with an API key it also costs less per message, because less history is re-sent every time. The meter is for knowing when you <em>must</em> start fresh; good habit is to start fresh before you must.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Start a new chat in the workshop project</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Finding and fixing the concurrency bug is a new task, so it gets a new chat. In the Codex sidebar, under <strong>Projects</strong>, hover over <strong>workshop</strong> and click the small pencil (new chat) icon that appears next to it. Or click <strong>New chat</strong> at the top of the sidebar and make sure the project shown above the message box is <strong>workshop</strong>, not something else.</p>
+    <div class="call concept"><b class="t">📘 Concept: new chat per task</b><p>A chat is Codex's short-term memory. Everything in it is re-sent to the model on every message, so an old chat full of form-building details makes the model slower, costlier and more likely to mix old decisions into the new work. A new chat has none of that. Codex still knows your project because the durable facts live in files it reads on demand: the root <code>AGENTS.md</code>, Part 2's <code>AGENTS.md</code> and <code>GRILL.md</code>, and the code itself. This is why we write decisions down instead of keeping them only in a conversation. My rule: one task, one chat. Fixing a bug is a task. Adding a feature is a task.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>An empty chat that says <strong>What should we build in workshop?</strong>, with <code>workshop · Local · master</code> above the message box. <code>Local</code> means Codex works on the files on your Mac; <code>master</code> is the Git branch. The model picker still reads <strong>5.6 Sol Medium</strong>; settings carry over between chats.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Ask Codex whether it sees the problem</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Now let's see if Codex can spot what you just found. I ask it in a deliberately casual, slightly teasing way, without telling it where the bug is or what it is. If the agent can find the problem from a one-line hint, it understands the code; if it cannot, that tells you something too. Paste the message exactly and press Enter.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Codex message box (new chat)</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">lol you don&#x27;t see a problem with bid concurrency?</pre></div>
+    <p>Codex's answer will mention two database ideas we have not met yet. Read these two callouts first so the reply makes sense.</p>
+    <div class="call concept"><b class="t">📘 Concept: transaction (BEGIN / COMMIT)</b><p>A <strong>transaction</strong> groups several database statements into one all-or-nothing unit. You start it with <code>BEGIN</code>, run your reads and writes, and finish with <code>COMMIT</code> (make it permanent) or <code>ROLLBACK</code> (undo everything). If the server crashes halfway, the database throws the half-done work away, so you never end up with a bid inserted but the auction price not updated. Think of it as a bank transfer: debit one account and credit another must both happen or neither. A transaction on its own, though, does <em>not</em> stop two bidders reading the same price at the same time; for that you need the next idea.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: row lock (<code>SELECT … FOR UPDATE</code>)</b><p>Inside a transaction, <code>SELECT … FOR UPDATE</code> reads a row <em>and locks it</em> until the transaction ends. If a second transaction tries to lock the same row, it has to <strong>wait</strong>. Apply that to bids: Priya's request locks the auction row, reads $100, checks, inserts $101, commits. Only now does Sam's request get the row; it reads $101, checks its $101 bid, and correctly rejects it. The lock turns a race into a queue, one bidder at a time, but only for that one auction. Bids on other auctions are not slowed at all. This is the fix we will build in Part 3 (guide 14).</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Within about 15 seconds, a reply similar to: <strong>“Lol, yes—you're right. I missed a real lost-race bug.”</strong> Codex explains that the bid endpoint does three separate steps (read the current max bid, validate the amount, insert the bid) with <strong>no transaction or auction-row lock</strong> in <code>app.ts</code>. It gives an example like two requests both reading <code>$100</code> and both inserting <code>$101</code>. It suggests wrapping the bid in a transaction with <code>SELECT … FOR UPDATE</code> on the auction row, and may point out that <code>GRILL.md</code> records concurrency as deferred to Part 3.</p>
+    <p>What it means: Codex found the same gap you found in Step 1, and it proposes the same fix the two callouts describe. It has not changed any code yet; it only answered the question.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If Codex asks which folder you mean, answer <code>part 2</code>. The root <code>AGENTS.md</code> tells it to ask when the part is not clear from your message, which is good behaviour in a repo with eight parts.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Ask for the Bidding War Playwright test</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Stay in the same chat. Codex has already offered the fix, and the temptation is to say “go ahead”. I do not. First I want a test that <strong>shows</strong> the bug happening, so that later we can run the same test and watch it stop happening. Read the prompt before you paste it. It is prescriptive on purpose: it names the tool (Playwright), the number of windows (4), the roles (one seller, three bidders), the auction length (20 seconds), the layout (tiled on screen) and the behaviour (bids at the same time and at different times). The more precisely you describe the scene, the less the agent has to guess.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Same chat</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">you&#x27;re to reproduce the issue first, and here&#x27;s how you&#x27;re going to do it: you&#x27;re going to make a Bidding War playwright test. Basically, you will open 4 windows. First window will be the person creating the auction - you will create an auction with 20 seconds left before the auction ends. Then, you will open 3 other windows, have them be separate users, and all attempt to bid on the item up to and at the end of the auction.
+
+Tile the windows on the screen so we can see what&#x27;s going on. You will reproduce this by making them attempt to bid at the same time, different times, etc. Really make it chaotic! Make it a fun visual! Ensure that the frontend shows the bidding process and bids while they&#x27;re happening.</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: end-to-end test with Playwright (headed)</b><p>The tests Codex wrote so far are <strong>unit and API tests</strong>: they call a function or an endpoint directly and check the answer. An <strong>end-to-end (E2E) test</strong> instead drives a real browser like a user would: open the page, click Sell, type a price, press Place bid, read what appears on screen. <strong>Playwright</strong> is the library that does this driving; it can control Chrome, Edge, Firefox and WebKit from a script. Normally it runs <strong>headless</strong>, meaning the browser runs invisibly in the background, which is fast and fine for automation. <strong>Headed</strong> means the browser windows are actually shown on your screen. We want headed here because the point is to <em>watch</em> four users collide. Each Playwright “context” is like a separate browser profile with its own storage, which is how the three bidders become three different users.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: red before green</b><p>In testing, <strong>red</strong> is a failing test and <strong>green</strong> is a passing one. “Red before green” means: write a test that fails because of the bug <em>before</em> you fix the bug. Two reasons. First, it proves the test actually detects the problem; a test that was never red might pass for the wrong reasons. Second, when you then apply the fix and the same test turns green, you have evidence the fix works, not just a feeling. With an agent this matters even more, because the agent will happily say “fixed” whether it is or not. The red test is how you hold it accountable.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Within a minute, a reply similar to: <strong>“I'll build this in <code>part-2-create-auction-and-bid</code> as a headed Playwright ‘Bidding War’ demonstration: one seller window, three bidder windows, a 20-second auction, coordinated and staggered bids, and live on-screen activity. I'll keep all four Chrome/Edge windows open in a 2×2 grid.”</strong> It then reads the part's <code>AGENTS.md</code> and the existing test setup before writing anything.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Caught up from the reference in guide 10? Your Part 2 already contains the finished test (<code>tests/bidding-war.spec.ts</code>). You can still send the prompt; Codex will probably find the test and simply run it. The catch-up box at the bottom of guide 12 shows how to run it yourself.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>This is a long run: 10 or more minutes across this guide and the next. Codex writes the test, installs Playwright and a browser, launches windows and takes screenshots to check the layout. That costs a fair number of tokens on your API key. Let it finish rather than interrupting halfway.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Let Codex build and launch the test</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Now just watch. Do not close Codex, the chat, or the Terminal running Part 2. While it works, I want to give you the idea behind all of this. Every time Codex finishes a change, something has to tell it whether the change is right. Type checks do that for shapes of data. Tests do that for behaviour. Code review does that for design. Each of these is <strong>back pressure</strong>: a force pushing back on the agent, catching mistakes before they reach you. The more back pressure you give an agent, the more it can correct itself without you, and the faster you can safely move. A test that reproduces this bug is back pressure we did not have before.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Over the next few minutes, in roughly this order:</p>
+    <ul><li>Codex adds Playwright to the project, creates a <code>playwright.config.ts</code> (Playwright's settings: which browser, headed or headless, timeouts), a <code>tests/bidding-war.spec.ts</code> file (the test itself) and a <code>test:bidding-war</code> script in <code>package.json</code> so you can run it with <code>npm run test:bidding-war</code>.</li>
+    <li>It explains that to make the race reliable (not “maybe we get lucky”), the test installs a <strong>temporary PostgreSQL trigger</strong> that slows down inserts for that one test auction, so simultaneous bids always collide. A trigger is a small piece of code the database runs automatically on an event such as “before a row is inserted”; here it just adds a short delay, which widens the gap between check and insert so the bug shows up every time.</li>
+    <li>It runs the baseline checks (server and web tests, TypeScript) to make sure nothing was broken while adding Playwright.</li>
+    <li>Finally it runs <code>BIDDING_WAR_HOLD_MS=3600000 npm run test:bidding-war</code> and browser windows start popping up on your screen. <code>BIDDING_WAR_HOLD_MS=3600000</code> is an environment variable: a setting passed to the command through the shell. Here it tells the test to hold the windows open for 3,600,000 milliseconds (one hour) after the auction ends, so you can look at the result instead of the windows vanishing instantly.</li></ul>
+    <p>This guide ends while Codex is still working. Carry on in guide 12 in this <strong>same chat</strong>.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>macOS may show a dialog asking whether Codex can control your browser or record the screen (Codex takes screenshots to check the window layout). Guide 12 tells you what to click for each of these prompts.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+<p>If your Part 2 is broken or very different from what this guide describes (no bid route, bids not accepted, the app will not start), replace it with the finished Part 2 from the reference project. Note: the reference folder is the <strong>end state of the whole part</strong>: all Part 2 slices <strong>plus</strong> the finished bidding-war test from guides 11 and 12. After this you can skip straight to running the test (see the catch-up box in guide 12).</p>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Catch up: copy the finished Part 2 from the reference</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-2-create-auction-and-bid &amp;&amp; cp -R ../reference/part-2-create-auction-and-bid ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 2 from reference&quot;</pre></div>
+<p>The command deletes your Part 2 folder, copies the reference's Part 2 in its place, and commits the result so your Git history shows exactly when you caught up. Then run <code>npm install &amp;&amp; npm start</code> inside the new Part 2 folder before you continue.</p></div>
+<div class="box"><h2>Key takeaways</h2><ul>
+<li>“Read, check, insert” as separate statements is a race condition: two simultaneous requests can both pass the check and both write. The fix, coming in Part 3, is a transaction with a row lock (<code>SELECT … FOR UPDATE</code>), which makes bidders on one auction wait their turn.</li>
+<li>Reproduce the bug <strong>before</strong> fixing it. A test that is red because of the bug, and turns green after the fix, is proof. An agent's “done” is not.</li>
+<li>Sequential tests cannot find concurrency bugs. You need a test that deliberately makes things happen at the same time; a headed Playwright test with four windows lets you watch it happen.</li>
+<li>Tests, type checks and reviews are <strong>back pressure</strong>: they let Codex check and correct itself. More back pressure means you can move faster, not slower.</li>
+<li>One task, one chat. A fresh chat plus well-kept <code>AGENTS.md</code> and <code>GRILL.md</code> files beats a long chat every time.</li></ul></div>
+<div class="nav"><a href="10. Bidding &amp; Constraints.html"><span>← Previous guide</span>10. Bidding &amp; Constraints</a><a class="r" href="12. Concurrency Playwright Tests.html"><span>Next guide →</span>12. Concurrency Playwright Tests</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

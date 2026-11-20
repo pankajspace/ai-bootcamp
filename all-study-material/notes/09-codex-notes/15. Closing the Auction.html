@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>15. Closing the Auction – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="15. Closing the Auction"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>15. Closing the Auction</h1>
+  <p class="lede">Build Slice 2 (an injected app clock, and auction pages that switch to “Ended” exactly on time), use two side chats to learn isolation levels and to find your blind spots, then commit Part 3 and run one last, fully protected bidding war.</p>
+  <div class="meta"><span class="pill">Part 3 · slice 2 + commit</span><span class="pill">≈ 25–35 min hands-on</span><span class="pill">Two side chats</span><span class="pill">Part 3 done</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Ask Codex to remind you what the next slice is, then tell it to start.</li>
+  <li>Use one side chat to learn transaction isolation levels at <strong>your</strong> level, and a second side chat to ask “what am I not thinking about?”</li>
+  <li>Read the Slice 2 handoff and understand each change: the clock, the timestamp, the closed-auction error, the “Ended” transition.</li>
+  <li>Commit the finished Part 3 to Git, so guide 16 has a clean change to review.</li>
+  <li>Watch the final bidding war: strictly increasing bids, and every open page switches to “Ended” on its own.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+  <li>You finished guide 14. Slice 1 is built, you watched the protected bidding war, and Codex is waiting in the Part 3 chat for your go-ahead on Slice 2. Keep using that same chat.</li>
+  <li>Docker Desktop is running (the database lives there). Microsoft Edge is installed, because the bidding war opens real Edge windows.</li>
+  <li>If you caught up from the reference folder at the end of guide 14, both slices are already built in your Part 3. Read Steps 1–5 so you understand what Slice 2 does, then do Steps 6 and 8 and skip Step 7 (the catch-up command already committed).</li>
+</ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div><div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div><div class="set"><span>Reasoning</span><b>Medium</b></div><div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div>
+  <div class="call concept"><b class="t">📘 Concept: what “closing” an auction really means</b><p>Every auction has an <code>endsAt</code> time. After that moment, no bid may be accepted. That sounds trivial, but there are two separate problems hidden inside it. First, the <strong>backend</strong> must decide, for every bid, “did this arrive before or after the deadline?”, and it must make that decision with a clock it controls and can test. Second, the <strong>frontend</strong> must show the user that bidding is over at the right moment, even if they have had the tab open for ten minutes and never refreshed. Slice 2 solves both. The backend is the authority: whatever the browser shows, the server's decision is final.</p></div>
+</div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Ask what the next slice is</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>We are back in the Part 3 chat (the one that started with grilling in guide 13). The plan for Slice 2 is somewhere far up in the conversation. Instead of scrolling, ask Codex. The chat still has the whole plan in its context, so it can restate the slice in a few lines, and you get a fresh summary to check against what you decided in grilling.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Part 3 chat</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">what&#x27;s the next slice again I don&#x27;t wanna scroll up</pre></div>
+    <p>Read the list it gives you carefully, because every line maps to a grilling answer you gave. “Inject an app clock” was your answer to question 3. “Check the clock after acquiring the lock” and “store that reading as <code>createdAt</code>” were question 11. “Switch to Ended at <code>endsAt</code>” and “recheck when a backgrounded tab becomes visible” were questions 7 and 16. If something in the list is not what you agreed to, say so now, before any code is written. Changing a plan costs one sentence; changing built code costs a lot more.</p>
+    <div class="call concept"><b class="t">📘 Concept: injected app clock (why we don't call Date.now() directly)</b><p>The obvious way to get the current time in JavaScript is <code>Date.now()</code>. The problem is that it always returns the <em>real</em> current time, so a test can never say “pretend it is one second before closing and send a bid”. The fix is to put the clock behind a tiny object, for example <code>clock.now()</code>, and <strong>inject</strong> it (pass it in from outside) when the app is created. In production we pass a real clock. In tests we pass a fake clock that we can set to any moment and move forward by hand. The bid-checking code calls <code>clock.now()</code> either way and never knows which one it got. This is why your tests can prove the closing rule exactly at the boundary, deterministically, every time.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: polling</b><p><strong>Polling</strong> means the browser asks the server “anything new?” again and again on a timer, for example every two seconds. It is simple, and it is wasteful: a thousand open tabs mean a thousand requests every two seconds, most of them returning “nothing changed”. For the “Ended” switch we do not need polling at all. The page already knows <code>endsAt</code>, so it can set a timer in the browser that fires at that moment, and re-check once if the tab wakes up after sleeping. The server is still the authority on whether a bid is accepted; the timer only updates what the user sees.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to: <strong>“Next is Slice 2: authoritative auction closing and live page transitions.”</strong></p>
+    <ul><li>Inject an app clock so backend time is mockable.</li>
+    <li>After acquiring the auction lock, check that clock before accepting the bid.</li>
+    <li>Store that same clock reading as the bid's <code>createdAt</code>.</li>
+    <li>Reject bids whose serialized decision occurs at or after closing.</li>
+    <li>Automatically change an open page to “Ended” and disable bidding at <code>endsAt</code>.</li>
+    <li>Recheck the deadline when a backgrounded tab becomes visible.</li>
+    <li>Add deterministic clock-boundary and frontend timer tests.</li></ul>
+    <p>“No continuous polling—the backend remains authoritative.” (“Deterministic” means the test gives the same result every run, because the fake clock removes all timing luck.)</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Start Slice 2</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>If the summary matches your decisions, give the go-ahead. Two words are enough; the plan is already in <code>GRILL.md</code> and in this chat.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Part 3 chat</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">go for it</pre></div>
+    <p>Notice the phrase “as independently testable pieces” in Codex's reply. The backend clock and the frontend deadline watcher are two separate changes, each with its own tests. That is good engineering: if the “Ended” switch misbehaves later, you know the backend clock is not the suspect.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to: <strong>“I'm starting Slice 2 now. I'll close the finished bidding-war windows before changing the app, then add the injected backend clock and the frontend deadline watcher as independently testable pieces…”</strong> A step counter (Step 1 / 4) and a growing file count appear, just like in guide 14. If your Edge windows from guide 14 were still open, Codex closes them first.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>This is another multi-minute build: code, backend tests, frontend tests, a typecheck and a headed browser run. Let it work. Use the time for Steps 3 and 4, which is exactly how I use it in class.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Side chat: isolation levels in plain words</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>In guide 14, “READ COMMITTED isolation” appeared in the list of things to Google. Let's actually learn it now. Open a fresh side chat (right-panel button at the top-right → <strong>Side chat</strong>, or <strong>⌥⌘S</strong>; close any old side chat first). The trick in this prompt is the last sentence: <strong>tell Codex what you already know</strong>. Without it, the answer is either too basic or too advanced. With it, Codex pitches the explanation at your level and skips what you already understand.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Side chat</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">tbh, I thought postgres was a type of plant, and I don&#x27;t understand isolation level at all. please explain it to me in basic terms. I know the basics of SQL.</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: transaction isolation levels</b><p>When two transactions run at the same time, the database has to decide how much each one is allowed to see of the other's unfinished work. The <strong>isolation level</strong> is that setting. Picture two accountants working on the same ledger at the same desk. At the weakest level they can read each other's pencil notes before the ink is dry (“dirty reads”). At <strong>Read Committed</strong>, PostgreSQL's default, you only see what the other person has finished and signed off; but if you read a value, then they commit a change, then you read again, you may see two different values inside one transaction. At <strong>Repeatable Read</strong> you work from a fixed photocopy taken when your transaction began. At <strong>Serializable</strong>, the strictest, the database guarantees the result is as if the transactions ran one after another, and it <strong>cancels</strong> one of them if that is impossible, so your code must be ready to retry. Stricter levels cost performance and add retry logic. Our auction keeps the default Read Committed and adds one explicit row lock on the auction. That gives us the exact serialisation we need, only where we need it, and nothing has to be retried.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to: “PostgreSQL—usually called Postgres—is a database system, not a plant.” An isolation level answers <strong>“When two database transactions happen at the same time, how much are they allowed to see and interfere with each other?”</strong> Then the levels from weakest to strongest:</p>
+    <ul><li><strong>Read Uncommitted</strong>: could see unfinished changes (“dirty reads”); Postgres treats it as Read Committed</li>
+    <li><strong>Read Committed</strong>: the Postgres default; each statement sees data committed before it began. It does not by itself protect a read-validate-write sequence</li>
+    <li><strong>Repeatable Read</strong>: a stable snapshot for the whole transaction</li>
+    <li><strong>Serializable</strong>: strongest; Postgres may <strong>cancel</strong> a transaction, so the app must retry</li></ul>
+    <p>And <strong>“What our auction uses”</strong>: the default Read Committed <strong>plus a row lock</strong>, like a single checkout lane per auction.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>“I know the basics of SQL” is still vague. Being specific (“I know SELECT, UPDATE and what a transaction is, but I have never used locks”) gets you a better-fitted answer. The more precisely you describe your starting point, the less time the model wastes.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Second side chat: what am I not thinking about?</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click the <strong>+</strong> next to the side-chat tab at the top of the panel. A second tab, <strong>Side chat 2</strong>, opens with its own empty context. Now ask a different kind of question. So far you have asked Codex to explain things you knew you did not understand. This prompt asks about the things you do not even know to ask about. When you are new to a domain, this is the single most useful question you can put to an AI, because your own list of worries is limited by your experience.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Side chat 2</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">in the work that we&#x27;re doing right now, what am I NOT thinking about? what&#x27;s important or risky that should be surfaced?</pre></div>
+    <p>Read the answer as a senior engineer's review notes, not as a to-do list. I read it, I nod at a few points, and I do <strong>not</strong> act on it today. The slice we agreed on is the slice we build; everything else goes into a mental “later” pile. This is scope discipline, and it is the reason Part 3 gets finished in this guide instead of growing for another week. Some items (no authentication, identity controlled by the client) are real gaps that we knowingly accept in a course project.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A numbered list of about 10 risks, similar to: app clocks can disagree across servers; define the exact acceptance moment; injected timestamps can break history ordering; browser time vs backend time; sleeping tabs and clock changes; a failed refresh can leave contradictory UI; lost responses (no idempotency); identity is completely client-controlled (no auth). It ends with something like <strong>“My strongest ‘fix now’ recommendations are #2, #3, #5, and #8.”</strong><br>Your list will differ in order and wording. The clock-related items should dominate, for the reason in the tip below.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>A side chat can see the main chat, so its answer is biased by that conversation. Here the main chat is deep in clock work, so the risks it lists are mostly about clocks. For an unbiased review, ask the same question in a brand-new chat in the workshop project and tell it which folder to look at; it will read the code cold and often raise different points.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Read the Slice 2 handoff</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Go back to the main chat and wait for Slice 2 to finish. Edge windows will open and close on their own while Codex runs the headed test. When it is done you get a handoff like the one in guide 14: a summary, a list of changes, the test counts, a Mermaid diagram and a URL. Click the diagram to zoom in if you like.</p>
+    <p>Match each change to the concept behind it. <code>buildApp</code> accepting a <code>Clock</code> is the injection: the function that creates the server now takes the clock as an input, so tests can hand it a fake one. Reading the time <strong>after</strong> acquiring the lock matters because the lock is the moment the bid is actually judged; reading it before the lock could stamp a bid with a time from before it waited in line. <code>AUCTION_CLOSED</code> is the typed 409 error code the frontend uses to show “Bidding has ended” instead of a generic failure. And “recheck when a tab comes back” handles a laptop that went to sleep: the browser timer may have been paused, so the page checks the deadline again as soon as it becomes visible.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to: <strong>“Slice 2 is complete. The app clock is officially in charge—no database-clock funny business.”</strong> What changed:</p>
+    <ul><li><code>buildApp</code> accepts an injected <code>Clock</code></li>
+    <li>bid time is read <strong>after</strong> acquiring the auction lock and stored as <code>createdAt</code></li>
+    <li>bids at or after the deadline return <code>AUCTION_CLOSED</code></li>
+    <li>open pages transition to “Ended” at the deadline and recheck when a tab comes back</li></ul>
+    <p>Tests: about <strong>8 backend and 8 frontend</strong> pass, plus the headed Edge run. A Mermaid diagram (Bid request → Fastify API → Lock auction → PostgreSQL; Read time after lock → Injected App Clock; 201 or AUCTION_CLOSED back to the web app). “Both planned slices are now implemented and verified.” The app stays running at the URL Codex gives (in my run <code>http://localhost:5103</code>).</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Optional: watch an auction close in Chrome</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>I trust the tests here, and the bidding war in Step 8 shows the “Ended” switch anyway. But if you want to see it happen on a page you created yourself, it takes three minutes:</p>
+    <ol>
+      <li>Open the Part 3 URL in Chrome (in my run <code>http://localhost:5103</code>). The app should still be running from Codex's handoff; if the page does not load, ask Codex in the main chat to start the Part 3 app.</li>
+      <li>Click <strong>Sell</strong> in the top navigation and post a new auction whose closing time is about <strong>2 minutes</strong> from now. The form insists on a closing time at least one minute in the future, so do not try to make it close immediately.</li>
+      <li>Leave the auction's page open and watch the countdown reach zero. Do <strong>not</strong> refresh the page; the whole point is that the switch happens without a reload.</li>
+    </ol>
+    <div class="call expect"><b class="t">✓ You should see</b><p>At the deadline, without a reload, the page switches to <strong>Ended</strong>, the <strong>Place bid</strong> button is disabled, and the guidance text reads <strong>“Bidding has ended.”</strong> If you switch to another tab before the deadline and come back after it, the page shows Ended immediately: that is the “recheck when the tab becomes visible” behaviour from the handoff.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Commit Part 3</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Part 3 is functionally done, so we save a snapshot of it in Git. You can commit from any Git tool you like (VS Code's Source Control panel, for example), but I do it from the Terminal because it is the same two commands every time and the message is explicit. Run this in the Terminal app, or in Codex's bottom-panel terminal.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Part 3: bid concurrency protection and auction closing&quot;</pre></div>
+    <p>Piece by piece: <code>cd ~/codex-course/workshop</code> moves to the root of your workshop, where the Git history lives. <code>git add -A</code> stages every new, changed or deleted file under it, which right now is everything Codex created in Part 3. <code>git commit -m "…"</code> saves that staged set as one snapshot with the message in quotes. Write messages that say <em>what</em> the snapshot contains, like this one; “done” or “fixes” tells future-you nothing.</p>
+    <div class="call concept"><b class="t">📘 Concept: git commit and git diff</b><p>A <strong>commit</strong> is a saved snapshot of the whole project at one moment, with a message. Git stores the chain of commits, so you can always go back to any snapshot. A <strong>diff</strong> is the difference between two snapshots (or between the last commit and your current files): which lines were added, which were removed, in which files. This is what makes AI-assisted work reviewable. Because you committed at the end of Part 2, the diff since then is exactly “what Codex did in Part 3”, no more, no less. In guide 16 we hand that diff to two different reviewers and ask them to find problems in it. Without a clean commit boundary, there would be no clean diff to review.</p></div>
+    <p><strong>Why this matters:</strong> commit at the end of every part, before the next one starts. It costs five seconds, it gives you an undo point, and it gives the code review in guide 16 a precise scope.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A new commit containing the files in <code>part-3-business-rules-concurrency</code> (AGENTS.md, GRILL.md, package.json, server/…, web/…, tests/…). Git prints a line like <code>[main abc1234] Part 3: bid concurrency protection and auction closing</code> followed by <code>N files changed</code>. In my run it was 34 files; your count will differ. Guide 16 reviews this commit.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>BIDDING WARS!!!!!</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>My rule: it is not done until I have seen it done. Codex has told us twice that the tests pass. Now we watch the complete Part 3 behaviour, both slices together, in real browser windows. The prompt is silly on purpose; Codex knows exactly what it means from the context of this chat.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Main chat</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">BIDDING WARS!!!!!</pre></div>
+    <p>Watch for two things this time. First, the bid history: every accepted amount must be higher than the one before it (Slice 1). Second, the ending: when the auction's closing time arrives, all four windows must flip to Ended by themselves, with no reload, and any bid sent after that must be rejected (Slice 2).</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Four tiled Edge windows on the Part 3 app. Near the end, every window flips to <strong>ENDED</strong> on its own, <strong>Place bid</strong> is disabled, and late bids show <strong>“$108 rejected: This auction has ended.”</strong> Codex reports similar to:<br><strong>BIDDING WAR PROTECTED</strong>. Accepted history: <code>$101 → $102 → $103 → $104 → $106 → $107</code>. No duplicate bids; <code>$106</code> won the mixed stale wave; every page transitioned to Ended, disabled bidding, and rejected post-close attempts.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If the seller's window looks oddly laid out when you resize it, that is CSS injected by the test to squeeze the auction into a quarter of the screen, not a bug in your app. Open the same URL in a normal Chrome window and it looks fine.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>If the “what am I not thinking about?” list sends Codex off on fixes you did not ask for, that is because you asked in the <em>main</em> chat by mistake. Tell it “stop, do not implement any of that, finish Slice 2 only”. Side questions always go in a side chat or a separate new chat.</p>
+  <p>If Slice 2 or the final bidding war fails, replace your Part 3 with the finished reference version. The command deletes your Part 3 folder (cannot be undone), copies the reference Part 3 in, and commits. The reference folder is the <strong>end state of the whole part</strong>: both slices done, which is exactly where this guide ends. Because it commits for you, skip Step 7 afterwards and go on to Step 8 or straight to guide 16.</p>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-3-business-rules-concurrency &amp;&amp; cp -R ../reference/part-3-business-rules-concurrency ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 3 from reference&quot;</pre></div>
+</div>
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li><strong>Inject the clock.</strong> Never call <code>Date.now()</code> inside business rules. An injected app clock makes every time-based rule testable at the exact boundary, and a single clock source means the app and the database can never disagree about “now”.</li>
+  <li>Read the time <strong>after</strong> taking the row lock, so the decision and the stored timestamp belong to the same moment.</li>
+  <li>Isolation levels decide how much concurrent transactions can see of each other. We keep PostgreSQL's default (Read Committed) and add one explicit row lock, instead of paying for Serializable and writing retry logic.</li>
+  <li>Two side-chat habits: tell the model what you already know, and ask “what am I NOT thinking about?” when you are new to a domain. Read the risk list, but do not let it change today's scope.</li>
+  <li>Commit at the end of every part. The commit boundary is what makes the diff reviewable in guide 16.</li>
+  <li>Backend plumbing matters, and so does what the user sees. Verify both in a real browser, then commit.</li>
+</ul></div>
+<div class="nav"><a href="14. Row Locking in PostgreSQL.html"><span>← Previous guide</span>14. Row Locking in PostgreSQL</a><a class="r" href="16. Code Reviews with Codex &amp; Claude.html"><span>Next guide →</span>16. Code Reviews with Codex &amp; Claude</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

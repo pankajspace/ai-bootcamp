@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>5. Install Custom Skills – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="5. Install Custom Skills"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>5. Install Custom Skills</h1>
+  <p class="lede">Your first real build. You create a throwaway Codex project, send my first build prompt and watch Codex create a whole React site from nothing. While it works, you install the grilling skills we use for the rest of the course. Then you review what Codex changed, run the site and open it in Chrome.</p>
+  <div class="meta"><span class="pill">Throwaway project</span><span class="pill">≈ 30–40 min</span><span class="pill">Installs the /grill skills</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Add your first <strong>Codex project</strong> (an empty folder) and send your first real build prompt.</li>
+  <li>Install the four grill skills (<code>grill-me</code>, <code>grilling</code>, <code>grill-with-docs</code>, <code>domain-modeling</code>) with one <code>npx</code> command, and understand what a skill actually is.</li>
+  <li>Find the skills in Codex's <code>/</code> menu and read one of them.</li>
+  <li>Read Codex's summary, review the files it created, run the site with <code>npm run dev</code> and open it in Chrome.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+  <li>You finished guides 1–2: Node.js is installed, Codex is set to <strong>5.6 Sol Medium</strong> and permissions are <strong>Approve for me</strong>.</li>
+  <li>This project is a warm-up. We delete it in guide 7, so don't worry if your site looks different from mine. The point is to see the full loop once: prompt → build → review → run.</li>
+  <li>Have both the <strong>Codex</strong> app and the <strong>Terminal</strong> app open. Step 4 runs in Terminal while Codex is busy in step 3.</li>
+</ul>
+  <div class="call concept"><b class="t">📘 Concept: skills (slash commands)</b><p>A <strong>skill</strong> is a reusable prompt saved as a file, with a name you can call by typing <code>/</code> and the name in the message box. Instead of typing “ask me ten hard questions about my plan before you build anything” every time, you install a skill called <code>grilling</code> once, and from then on <code>/grilling</code> does it. Each skill is a folder containing a <code>SKILL.md</code> file: plain text instructions that Codex reads and follows when you call it. Skills live in <code>~/.agents/skills</code> on your Mac, which means they are available in every project. They are the only add-on this course uses.</p></div>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>auctionhouse throwaway (<code>~/codex-course/auctionhouse-throwaway</code>)</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div>
+    <div class="set"><span>Also</span><b>Speed: Standard</b></div>
+  </div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Create an empty folder for the throwaway project</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Codex needs a folder to work in. We give it a brand-new empty one, so there is nothing to confuse it and nothing of yours it could damage. I keep everything for this course under <code>~/codex-course</code>, so the throwaway goes there too. Paste into Terminal:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">mkdir -p ~/codex-course/auctionhouse-throwaway
+ls -A ~/codex-course/auctionhouse-throwaway | wc -l</pre></div>
+    <p>Line by line:</p>
+    <ul>
+      <li><code>mkdir -p ~/codex-course/auctionhouse-throwaway</code> creates the folder. <code>-p</code> also creates any missing parent folders and does not complain if the folder already exists.</li>
+      <li><code>ls -A … | wc -l</code> lists everything in the folder, including hidden files, and counts the lines. It is a quick way to prove the folder is truly empty.</li>
+    </ul>
+    <div class="call expect"><b class="t">✓ You should see</b><p><code>0</code>: the folder exists and is empty. That is the “blank slate” we start from. Nothing else prints; <code>mkdir</code> is silent when it succeeds.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Add the folder as a Codex project</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <div class="call concept"><b class="t">📘 Concept: Codex project</b><p>A <strong>project</strong> in Codex is simply a folder on your Mac that you have given Codex permission to read and edit. Everything Codex does in a chat, reading files, writing code, running commands, happens inside that folder. It cannot wander off into your Documents or your photos. One project can have many chats; the sidebar groups them under the project name. This is also why we made the folder first: Codex wants an existing folder to point at.</p></div>
+    <ol>
+      <li>In Codex, click <strong>New chat</strong> at the top of the left sidebar.</li>
+      <li>Click <strong>Choose project</strong> (the grey bar just above the message box). A list of projects opens; yours is empty. Click <strong>+ New project</strong> at the bottom of the list.</li>
+      <li>In the <strong>Create project</strong> dialog, type the project name below into the name field.</li>
+      <li>Under <strong>Source folders</strong>, click <strong>Add folders Codex can read and edit</strong>. A Finder window opens. Press <strong>Cmd+Shift+G</strong> (“Go to folder”), paste the folder path below, press <strong>Enter</strong>, then click <strong>Open</strong>.</li>
+      <li>Click <strong>Create project</strong>.</li>
+    </ol>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">Project name</span><span class="where">Create project → name</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">auctionhouse throwaway</pre></div>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">Folder path</span><span class="where">Finder → Cmd+Shift+G</span><button class="cbtn" data-target="s2c1">Copy</button></div><pre id="s2c1">~/codex-course/auctionhouse-throwaway</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Before you click Create, the dialog shows <strong>auctionhouse throwaway</strong> as the name with <strong>auctionhouse-throwaway</strong> listed under Source folders.<br>After: the sidebar's <strong>Projects</strong> list has <strong>auctionhouse throwaway</strong> with “No chats” under it, and the main area asks <strong>What should we work on in auctionhouse throwaway?</strong>. The bar above the message box shows the project name instead of “Choose project”.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Before sending anything, check the two buttons under your message box. The left one should say <strong>Approve for me</strong> and the right one <strong>5.6 Sol Medium</strong>. If either is different, fix it now using guide 2 steps 4 and 7. The build in the next step depends on both.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Send the first build prompt</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Paste my prompt into the message box and press <strong>Enter</strong>. Read it once before you send it. I am deliberately specific: I name the framework (React), I limit the scope (two routes only), I give a number (six sample auctions), and I ask for three different looks so I can pick one instead of accepting the first design. The more precise the request, the less Codex has to guess, and guesses are where things go wrong.</p>
+    <div class="call concept"><b class="t">📘 Concept: route</b><p>A <strong>route</strong> is one address inside a web app. <code>/</code> is the home page; <code>/auction/42</code> is “the page for auction number 42”. In a React app, a router looks at the address in the browser bar and decides which screen to show. “Two routes” therefore means two screens: the list of auctions, and one auction's detail page. Keeping it to two is how I stop Codex from building a login page, a seller dashboard and a dozen other things nobody asked for.</p></div>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Codex message box (auctionhouse throwaway)</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">I would like to build an auction site. it&#x27;s going to roughly model how other popular auction sites look online.
+
+please use React
+keep it to two routes right now:
+- Home page with auctions on it as well as some sample auctions (6)
+- separate route to actually view the auction
+
+I&#x27;d like you to build it with three different looks/themes, have those available on the homepage, and let me click between them</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Your message appears in the chat, and the lines starting with <code>- </code> turn into bullets. A new chat appears under the project in the sidebar with a spinning indicator; after a few seconds it renames itself to something like “Build React auction site”. Codex writes a short opening line similar to “The workspace is empty, so I'm setting this up as a fresh Vite React app…”, and then you see it working: creating files, running commands, thinking. It runs for a few minutes; mine took about <strong>4½ minutes</strong>.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If Codex pauses and asks you to approve a command, for example <code>npm install</code> (which downloads the packages the project needs from the internet), click Approve. Don't sit and watch the spinner: leave this chat working and go straight to step 4 in Terminal. If Codex ever stops before it's done (you see “You stopped…” or it simply goes quiet with no summary), send the single word <code>continue</code> in the same chat and it picks up where it left off.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>This is your first real build. Codex reads and writes a lot of text over several minutes on Sol, so expect a noticeable charge on your API bill. Check platform.openai.com → Usage afterwards so you learn what a build like this costs. That number is useful: it tells you what a “build me a site” prompt actually costs, and you will budget better for the rest of the course.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Install the grill skills</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>While Codex builds, switch to the <strong>Terminal</strong> app and run the command below. It is an interactive installer: it asks you a series of questions. Use the <strong>arrow keys</strong> to move, <strong>Space</strong> to tick or untick an item, and <strong>Enter</strong> to confirm and move to the next question.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">npx skills@latest add schneidenbach/skills</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: npx</b><p><code>npm</code> installs packages into a project. <code>npx</code> downloads a package and runs it immediately, without installing it anywhere permanent, which is perfect for one-off tools like this installer. <code>skills@latest</code> means “the newest version of the tool called skills”, and <code>add …</code> tells it which collection of skills to fetch. The first time you run it, npm asks permission to download the tool; that is the “Ok to proceed?” question below.</p></div>
+    <p>Answer the questions exactly like this:</p>
+    <ol>
+      <li>“Need to install the following packages… Ok to proceed? (y)” → type <code>y</code> and press <strong>Enter</strong>.</li>
+      <li><strong>Select skills to install</strong> → use the arrow keys and Space to tick exactly these four: <strong>domain-modeling</strong>, <strong>grill-me</strong>, <strong>grill-with-docs</strong>, <strong>grilling</strong>. Leave everything else unticked. Press <strong>Enter</strong>.</li>
+      <li><strong>Which agents do you want to install to?</strong> → just press <strong>Enter</strong>. The “Universal (.agents/skills)” group is always included, and that is the one Codex reads.</li>
+      <li><strong>Installation scope</strong> → choose <strong>Global</strong> → <strong>Enter</strong>. Global means the skills are available in every project on this Mac, not just one folder.</li>
+      <li><strong>Installation method</strong> → <strong>Symlink (Recommended)</strong> → <strong>Enter</strong>. A symlink is a shortcut: the skill files are downloaded once and <code>~/.agents/skills</code> points at them, so updating later is easy.</li>
+      <li><strong>Proceed with installation?</strong> → <strong>Yes</strong>.</li>
+    </ol>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A “Security Risk Assessments” table where every row says <strong>Safe / 0 alerts / Low Risk</strong> (the installer scans each skill's text for anything dangerous before installing), then <strong>Installed 4 skills</strong>, listing <code>~/.agents/skills/grilling</code>, <code>grill-with-docs</code>, <code>grill-me</code> and <code>domain-modeling</code>, and finally “Done! Review skills before use; they run with full agent permissions.” That last line is a fair warning: a skill is a prompt, and Codex will follow it with the same permissions it has for everything else, so only install skills from sources you trust.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The list of skills offered may be longer than four, because the collection grows over time. Only the four above matter for this course. Confirm they landed by running <code>ls ~/.agents/skills</code> in Terminal; it should print <code>domain-modeling  grill-me  grill-with-docs  grilling</code>. If you ticked something extra by mistake, it does no harm, but you can delete its folder from <code>~/.agents/skills</code>.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Find the skills in the / menu</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Back in Codex, click <strong>New chat</strong>. It opens inside the same project, and your build keeps running in its own chat; you can see it still spinning in the sidebar. Type the text below in the message box but <strong>don't press Enter</strong>. We only want to see the menu that pops up.</p>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">Type in Codex</span><span class="where">Codex message box (don't press Enter)</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">/grill</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A menu above the box lists three skills whose names start with “grill”:</p><ul>
+      <li><strong>Grill Me:</strong> Sharpen a plan through interview</li>
+      <li><strong>Grilling:</strong> Stress-test thinking a round of questions at a time</li>
+      <li><strong>Grill with Docs:</strong> Grill a design and write its docs</li>
+    </ul><p>Delete the text and type just <code>/</code> to see the full list, which also includes Codex's built-in commands (Init, Model, Plan mode, Reasoning, Status…) and the fourth skill, domain-modeling. Built-in commands and your installed skills live in the same menu; that is the whole idea of “custom slash commands”. Clear the box when you're done.</p></div>
+    <p>I want you to read one skill, so you see that there is no magic inside. Open the grilling skill in VS Code:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s5c1">Copy</button></div><pre id="s5c1">code ~/.agents/skills/grilling/SKILL.md</pre></div>
+    <p>It is a page of plain English telling Codex how to behave when you call <code>/grilling</code>: ask questions one round at a time, challenge weak assumptions, do not start building until the plan is solid. We use it for real in guide 8. For now, just notice that a skill is nothing more than a well-written prompt saved in a file.</p>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If the grill skills don't show up in the <code>/</code> menu, wait until the build in the other chat has finished. Then quit Codex fully (<strong>Cmd+Q</strong>), reopen it, and try again. Codex scans <code>~/.agents/skills</code> when it starts, so a restart is sometimes needed after installing.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Read Codex's summary when the build finishes</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click the build chat in the sidebar (the one named something like “Build React auction site”). Wait until the spinner stops and the chat shows <strong>Worked for …</strong> with a time. Then read the summary Codex wrote. Always read the summary: it is Codex telling you what it believes it built, and the first place you catch a misunderstanding.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A summary similar to:</p><ul>
+      <li>“Built the React auction site with: Homepage featuring six sample auctions · Individual auction routes at <code>/auction/:id</code> · Three switchable themes: Gallery, Modern, and Market · Theme persistence between routes · Responsive desktop and mobile layouts”</li>
+      <li><strong>Key files:</strong> <code>App.jsx</code>, <code>styles.css</code>, <code>data.js</code></li>
+      <li>“Verified with <code>npm run build</code>…” and <strong>Run it with:</strong> <code>npm run dev</code></li>
+      <li>A card <strong>Edited 6 files +519 -0</strong> with <strong>Undo</strong> and <strong>Review</strong> buttons.</li>
+    </ul><p>Your file names, theme names and numbers will differ. That's normal; every run is a little different.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: <code>/auction/:id</code> and the Edited card</b><p>In a route like <code>/auction/:id</code>, the <code>:id</code> part is a placeholder. It means “whatever comes after <code>/auction/</code> is the id of the auction to show”, so one route serves all six auctions. The <strong>Edited 6 files +519 -0</strong> card is Codex's receipt: six files touched, 519 lines added, 0 removed (it is a new project, so nothing existed to remove). <strong>Undo</strong> reverts everything from this turn; <strong>Review</strong> shows you the changes line by line. You will see this card after every build in the course.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Review what Codex changed</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click <strong>Review</strong> on the “Edited … files” card. A panel opens on the right showing the changes. At the top of that panel there is a dropdown that reads <strong>Last Turn ▾</strong>; click it to see the other views, then switch back to Last Turn.</p>
+    <div class="call concept"><b class="t">📘 Concept: diff</b><p>A <strong>diff</strong> is the difference between two versions of a file, shown line by line. Lines marked with a green <strong>+</strong> were added; lines with a red <strong>−</strong> were removed; unchanged lines are context. Reviewing the diff, rather than the whole file, is how engineers check an AI's work quickly: you look only at what moved. The dropdown's other views (Uncommitted, Unstaged, Staged, Committed, Branch) are different Git slices of the same idea; we use them from guide 15 onwards when we start committing each part.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A list of new files (<code>index.html</code>, <code>package.json</code>, <code>src/App.jsx</code>, …), each with green <strong>+</strong> lines, because everything is new. The dropdown offers <strong>Last Turn</strong>, Uncommitted, Unstaged, Staged, Committed, Branch. I stick with <strong>Last Turn</strong> here, which means “what this chat just changed”, and I do not read every line of a throwaway. In guide 7, when we build the real app, we read much more carefully.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The top-right <strong>toggle side panel</strong> icon also opens <strong>Files</strong>, <strong>Side chat</strong>, <strong>Browser</strong> and <strong>Terminal</strong>. I use <strong>Side chat</strong> a lot: it lets me ask “what does this file do?” without adding noise to the main chat that is doing the work. If you don't see Side chat in your version, open a <strong>New chat</strong> in the same project for side questions instead. The Uncommitted/Staged views need Git, and this throwaway folder is not a Git repo, so they may be empty. That's expected.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Run the site</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click the <strong>toggle bottom panel</strong> icon (left of the two icons at the top-right). The terminal opens, already inside the project folder. Run:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Codex bottom panel (auctionhouse throwaway)</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">npm run dev</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: dev server, localhost and ports</b><p><code>npm run dev</code> runs the “dev” script from <code>package.json</code>, which starts <strong>Vite's development server</strong>: a small web server on your own Mac that serves the site and reloads the page instantly whenever a file changes. <strong>localhost</strong> is the address that means “this very computer”. The number after the colon, <strong>5173</strong>, is the <strong>port</strong>: one machine can run many servers at once, and each listens on its own numbered door. Vite's default door is 5173. Later, our backend will listen on a different port, and the database on yet another.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Vite starts and prints something like <code>VITE v8.x ready in 68 ms</code> and <code>➜ Local: http://localhost:5173/</code>. The command does not finish and return to the prompt; it keeps running, serving the site, until you stop it with Ctrl+C. That is correct behaviour for a server.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If you see <code>vite: command not found</code>, Codex didn't install the packages. Run <code>npm install</code> first (it reads <code>package.json</code> and downloads everything listed there into a <code>node_modules</code> folder), then <code>npm run dev</code> again. If the prompt isn't in the project folder, run <code>cd ~/codex-course/auctionhouse-throwaway</code> first; <code>pwd</code> tells you where you are.</p></div>
+  </div></div>
+
+<div class="step" id="s9"><div class="sh"><div class="num">9</div><div class="st"><h3>Open it in Chrome</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Codex has a built-in browser in the side panel, but it does not work with an API-key sign-in, so go straight to Chrome. Copy the address below into the address bar and press Enter.</p>
+    <div class="copy k-url"><div class="copy-h"><span class="ic">↗</span><span class="lbl">Open in browser</span><span class="where">Chrome</span><button class="cbtn" data-target="s9c0">Copy</button></div><pre id="s9c0">http://localhost:5173</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A polished, very “AI-looking” auction site. In my run, Codex named the site <strong>GAVEL</strong>, with the tagline “Remarkable objects. Open for bidding.”, luxury lots (a Porsche, an Eames Lounge Chair, a Rolex), a theme switcher at the top-right, and a <strong>Choose your viewing style</strong> section offering <strong>Gallery / Modern / Market</strong>. Clicking a lot opens its own page, for example <code>/auction/eames-lounge-chair</code>; that is the second route. Click between the three themes and watch the whole look change. Your names and designs will differ from mine, but the structure (six lots, detail pages, three themes) should match the prompt.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p><strong>Leave <code>npm run dev</code> running</strong> in the bottom panel and keep this Chrome tab open. Guide 6 continues in this same chat with the site still up. If you need to stop it later, click in the bottom panel and press Ctrl+C.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>Nothing later depends on this throwaway site, because we delete it in guide 7, so there is no reference copy to catch up from. If the build stopped halfway, send the first message below in the build chat. If the site is broken in the browser, copy the error text from the terminal or from Chrome into the chat and let Codex fix it, or just move on. What <strong>does</strong> matter is the skills: if step 4 went wrong, run the install again and check the folder.</p>
+  <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">the build chat</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">continue</pre></div>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="stuck1">Copy</button></div><pre id="stuck1">npx skills@latest add schneidenbach/skills
+ls ~/.agents/skills</pre></div>
+  <p>The second line lists the installed skills folder; you want to see all four names. If a skill is missing, re-run the installer and make sure it is ticked (Space) before you press Enter.</p>
+</div>
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li>Be <strong>prescriptive</strong>: say the stack and the shape you want (React, two routes, six sample auctions). Asking for three looks to choose from costs very little extra and gives you a real choice instead of one guess.</li>
+  <li><strong>Skills</strong> are custom slash commands: reusable prompts saved as <code>SKILL.md</code> files. They live in <code>~/.agents/skills</code>, work in every project, and are the only add-on this course uses.</li>
+  <li><strong>Grilling</strong> front-loads the thinking: Codex asks you hard questions <strong>before</strong> it builds. I skipped it here on purpose, because a throwaway is a good place to see what happens without it. From guide 8 we always grill first.</li>
+  <li>After every build: read the summary, open <strong>Review → Last Turn</strong> to see exactly what changed, then run it and look at it in a real browser. Prompt → build → review → run is the loop for the whole course.</li>
+  <li><code>npm run dev</code> starts a local dev server on <code>localhost:5173</code>. It keeps running until you stop it; that is normal for any server.</li>
+</ul></div>
+<div class="nav"><a href="4. Specifying a Tech Stack.html"><span>← Previous guide</span>4. Specifying a Tech Stack</a><a class="r" href="6. Browser Use &amp; Agents.md.html"><span>Next guide →</span>6. Browser Use &amp; Agents.md</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

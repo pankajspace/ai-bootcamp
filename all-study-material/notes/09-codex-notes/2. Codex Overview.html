@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2. Codex Overview – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="2. Codex Overview"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>2. Codex Overview</h1>
+  <p class="lede">A guided tour of the Codex app. You will find each part of the window, set the permission level, choose the model, effort and speed, and open the built-in terminal once. After this guide, when I say “click the model button” or “open the bottom panel”, you will know exactly what I mean.</p>
+  <div class="meta"><span class="pill">App tour</span><span class="pill">≈ 10–15 min</span><span class="pill">No project needed yet</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Learn the four areas of the Codex window: left sidebar, main chat, right side panel and bottom terminal.</li>
+  <li>Set permissions to <strong>Approve for me</strong>, the setting we use for the whole course, and understand what the other two options would do.</li>
+  <li>Change one setting (default file open destination → VS Code) so that any file Codex shows you opens in a proper code editor.</li>
+  <li>Pick the model, effort and speed from the menu under the message box, and learn what each of the three actually controls.</li>
+  <li>Open the bottom terminal panel and the right side panel once, so they are not a surprise when we need them later.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+  <li>You finished guide 1: tools are installed, and both <code>~/codex-course/reference</code> and <code>~/codex-course/workshop</code> exist on your Mac.</li>
+  <li>Open the <strong>Codex</strong> app. On some Macs the menu bar at the top of the screen says “ChatGPT” instead of “Codex”. That is normal: Codex ships inside OpenAI's ChatGPT desktop app. Same thing, same screens.</li>
+  <li>Nothing in this guide touches your project folders. You only click around the app and send one tiny test message.</li>
+</ul>
+  <div class="call concept"><b class="t">📘 Concept: what a coding agent is</b><p>Codex is a <strong>coding agent</strong>. Strip away the nice interface and every coding agent is the same four things: a <strong>loop</strong>, an <strong>LLM</strong> (the language model that reads and writes text), <strong>access to your files</strong> and <strong>access to your command line</strong>. The loop works like this: you send a message; the model decides whether to read a file, edit a file or run a command; it does that one action; it looks at the result; it decides the next action; and it repeats until it believes the job is done, then reports back to you. A plain chatbot can only talk. An agent can act on your computer. Everything else you see in the Codex window, the sidebar, the settings, the pet, is convenience built around that loop.</p></div>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div>
+    <div class="set"><span>Also</span><b>Speed: Standard (see step 7)</b></div>
+  </div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Find the four areas of the window</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Look at the Codex window and find each of these areas. Do not click anything yet; I only want you to know where things are.</p>
+    <ul>
+      <li><strong>Left sidebar:</strong> “Codex ▾” at the top, then <strong>New chat</strong>, Pull requests, Sites, Scheduled, Plugins, and below those three groups: <strong>Pinned</strong>, <strong>Projects</strong> and <strong>Recents</strong>. Think of the sidebar as your history and your folder list. Every conversation you have with Codex is a <strong>chat</strong>, and old chats show up under Recents. A <strong>project</strong> is a folder on your Mac that Codex is allowed to read and edit; your projects are listed under Projects.</li>
+      <li><strong>Main window:</strong> the big “What should we build?” area with the <strong>message box</strong> at the bottom. This is where you type prompts and where Codex's answers, file edits and command output appear. You will spend most of the course looking at this area.</li>
+      <li><strong>Top-right corner:</strong> two small square icons. The left one toggles the <strong>bottom panel</strong>, which is a terminal. The right one toggles the <strong>right side panel</strong>. We open both in steps 8 and 9.</li>
+      <li><strong>Pet:</strong> a little animated creature somewhere near the top-right. It is just for fun and does nothing.</li>
+    </ul>
+    <div class="call expect"><b class="t">✓ You should see</b><p>“What should we build?” in the middle of the window, a <strong>Choose project</strong> button just above the message box, and the message box itself showing the placeholder text <strong>Do anything</strong>. “Choose project” being there means no folder is selected yet, which is exactly where we want to be in this guide.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Your Projects list is empty for now. You add your first project in guide 5. If you don't see a pet, that's fine; pets are not needed for anything in this course. If your sidebar has one or two items more or fewer than my list, that is just a version difference. The four areas are what matter.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Open the profile menu (bottom-left)</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click your <strong>name at the bottom-left</strong> of the sidebar. This is the account menu. We come back here in step 5 for Settings, so I want you to know where it is.</p>
+    <div class="call concept"><b class="t">📘 Concept: usage and tokens</b><p>Everything you send to Codex, and everything it writes back, is measured in <strong>tokens</strong>. A token is a piece of a word; on average, 100 tokens is about 75 English words. Code uses more tokens than prose because of all the brackets and symbols. With an API key you pay per token, both for what goes in (your prompt plus the files Codex reads) and for what comes out (the answer, the code it writes, and the hidden “thinking” it does before answering). This is why a small “hello” costs almost nothing and a “build the whole feature” prompt can cost a lot.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A small menu opens with <strong>Usage</strong>, Hide pet, Invite a friend, <strong>Settings</strong> (shortcut ⌘,) and Log out. The Usage line is designed for ChatGPT plans, where it shows a percentage of the plan left (for example “78% left”).</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>You signed in with an API key, so your Usage line may look different or show no percentage at all. Your real spend is at <a href="https://platform.openai.com/usage" target="_blank" rel="noopener">platform.openai.com/usage</a>. Bookmark it and check it after each of the bigger build guides. In guide 3 I show you how to set a spending alert there so you never get a surprise.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Type in the message box</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click the message box (the one that says “Do anything”) and type the text below. There is no project selected, so Codex cannot touch any files; it will simply chat. I want you to press <strong>Enter</strong> and actually send it. It is the cheapest possible test that your API key works, and I would rather you find a key problem now than in the middle of guide 7 when Codex is halfway through building something.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Codex message box · no project selected</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">hello world</pre></div>
+    <p>Two keyboard habits to learn right now, because you will use them in every guide: <strong>Enter</strong> sends the message. <strong>Shift+Enter</strong> adds a new line inside the message without sending, which you need when a prompt has several lines. All the prompts in these guides have a Copy button, so you paste them in one go and then press Enter.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The text appears in the box. After you send it, your message shows at the top of the chat and Codex replies with a short greeting within a few seconds. That greeting proves three things at once: the app can reach OpenAI, your key is accepted, and your account has credits to spend.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If sending shows an authentication or billing error, go to <a href="https://platform.openai.com/" target="_blank" rel="noopener">platform.openai.com</a> and check two things: the key is still active (not revoked) and the account has credits. The key needs “All” permissions, and the account needs prepaid credit; how much the course costs you depends on how many big builds you run, which is why guide 3 sets a budget.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Set permissions to “Approve for me”</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Under the message box, on the <strong>left</strong>, there is a small shield-style button. It shows the current permission level, for example “Approve for me” or “Ask for approval”. Click it. A menu opens with the question “How should ChatGPT actions be approved?” and three options. Choose <strong>Approve for me</strong>.</p>
+    <div class="call concept"><b class="t">📘 Concept: approvals (permissions)</b><p>Remember that Codex can run commands on your Mac: install packages, start a server, run tests, create and delete files. The <strong>approval level</strong> decides how much it has to ask you before doing these things. <strong>Ask for approval</strong> means every single command stops and waits for your click. <strong>Approve for me</strong> means routine commands inside your project run on their own, and Codex only stops to ask when it detects something potentially unsafe, like touching files outside the project or reaching out to the internet. <strong>Full access</strong> means it never asks. Think of it as how much you trust a new intern: watch every keystroke, let them work and check in on the risky bits, or hand them the keys to everything.</p></div>
+    <div class="settings"><div class="settings-h">⚙ Codex settings</div><div class="set-grid"><div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Three options:</p><ul>
+      <li><strong>Ask for approval:</strong> always ask to edit external files and use the internet</li>
+      <li><strong>Approve for me:</strong> only ask for actions detected as potentially unsafe</li>
+      <li><strong>Full access:</strong> unrestricted access to the internet and any file on your computer (shown in red)</li>
+    </ul><p>After you choose, a ✓ sits next to <strong>Approve for me</strong>, and the button under the message box now reads “Approve for me”.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>Don't pick <strong>Full access</strong> on a computer that has your work or personal files on it. The only place it is acceptable is a spare machine that holds nothing important. “Ask for approval” is safe but very slow: in guide 7 Codex runs dozens of commands while building the first version of our app, and you would be clicking Approve thirty or forty times. <strong>Approve for me</strong> is the practical middle: the course is designed around it.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Set VS Code as the default file opener</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>When Codex edits files, it shows their names in its answer and in “Edited N files” cards. Clicking a file name opens it, and this setting decides in which app. We want <strong>VS Code</strong>, because it shows syntax colours, the folder tree and, later, the Git changes side by side. Do the following:</p>
+    <ol>
+      <li>Open <strong>Settings</strong>: click your name at the bottom-left → <strong>Settings</strong>, or press <strong>⌘,</strong> (Command and comma together).</li>
+      <li>You land on the <strong>General</strong> page. Scroll down until you see the section also called <strong>General</strong>.</li>
+      <li>Find <strong>Default file open destination</strong>. It is a dropdown. Open it and pick <strong>VS Code</strong>.</li>
+      <li>Click <strong>← Back to app</strong> at the top-left when you're done. The setting is saved automatically; there is no Save button.</li>
+    </ol>
+    <div class="call expect"><b class="t">✓ You should see</b><p><strong>Default file open destination</strong> shows <strong>VS Code</strong>. From now on, clicking any file name in a Codex answer opens that file in VS Code, in the correct folder, ready for you to read. We rely on this from guide 7 onwards every time I ask you to “open the file and read what Codex wrote”.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>While you're in Settings, glance at the left list so you know what is there: General, Profile, Appearance, <strong>Pets</strong>, Keyboard shortcuts, Usage &amp; billing, and under Integrations <strong>Plugins</strong> and <strong>Browser</strong>. Leave everything on its default. You may also see a place for <strong>MCP servers</strong>: these are add-ons that give the agent extra tools, such as talking to an external service. This course uses <strong>no MCP servers</strong>; Codex's built-in file and terminal access is all we need, so ignore that part completely.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Optional: pick a pet</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>This one is purely for fun and you can skip it. In Settings, click <strong>Pets</strong> in the left list. You see a small gallery of creatures. Click <strong>Select</strong> next to one you like, then click <strong>← Back to app</strong>.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Your pet appears in the top-right of the window and moves around a little while Codex works. It has no effect on anything Codex does.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If you don't see Pets in your Codex version, skip this step and tick it Done anyway. Nothing later depends on it. If the pet distracts you, the profile menu from step 2 has a <strong>Hide pet</strong> option.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Pick the model, effort and speed</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Under the message box, on the <strong>right</strong>, there is the model button. It reads something like “5.6 Sol Medium ▾”, possibly with a ⚡ in front. Click it. A small menu opens with three rows: <strong>Model</strong>, <strong>Effort</strong>, <strong>Speed</strong>. Hover your mouse over each row and a list opens out to the side. Set them like this:</p>
+    <ul>
+      <li><strong>Model</strong> → <strong>5.6 Sol</strong>. The list is 5.6 Sol, 5.6 Terra, 5.6 Luna, 5.5, 5.4, 5.4 Mini, 5.3 Codex Spark. They are ordered from most to least powerful. My rule for serious work: use the top model. A weaker model saves a little money and then costs you an hour of debugging.</li>
+      <li><strong>Effort</strong> → <strong>Medium</strong>. The choices are Light, Medium, High, Extra High, Ultra. We use Medium for almost the whole course. It is a good balance of intelligence and speed, and guide 3 is entirely about when to move up or down.</li>
+      <li><strong>Speed</strong> → <strong>Standard</strong>. The other choice, <strong>Fast</strong>, is described as “1.5x speed, more usage”. I keep you on Standard; see the warning below.</li>
+    </ul>
+    <div class="call concept"><b class="t">📘 Concept: model vs effort vs speed</b><p>These three are easy to mix up. The <strong>model</strong> is which brain you are using; a bigger model knows more and makes fewer mistakes. <strong>Effort</strong> (also called reasoning level) is how long that brain is allowed to think before it acts. More effort means more hidden reasoning tokens, which gives better answers on hard problems but costs more and takes longer. <strong>Speed</strong> does not change the answer at all; it only changes how quickly the tokens stream back to you, and Fast bills you extra for that. So: model = quality ceiling, effort = how hard it tries, speed = how long you wait.</p></div>
+    <div class="settings"><div class="settings-h">⚙ Codex settings</div><div class="set-grid">
+      <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+      <div class="set"><span>Reasoning</span><b>Medium</b></div>
+      <div class="set"><span>Also</span><b>Speed: Standard</b></div>
+    </div></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Click away from the menu to close it. The button now reads <strong>5.6 Sol Medium</strong>. If there is a ⚡ in front of the label, Fast is still on; open the menu again and switch Speed to Standard, and the ⚡ disappears.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If your menu has no Speed row, or Ultra isn't in the Effort list, that's normal for some accounts and versions. Just set Model and Effort and move on.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>With an API key, Fast speed uses more of your budget for exactly the same work. Standard gives the same results, only a bit slower. Turn on Fast only if you care more about time than cost. For learning, Standard is the right choice.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Open the terminal panel at the bottom</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click the <strong>left</strong> of the two icons in the top-right corner (toggle bottom panel). A terminal opens along the bottom of the Codex window. Click inside it, paste the command below and press Enter.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Codex bottom panel</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">pwd</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: terminal, prompt and <code>pwd</code></b><p>A <strong>terminal</strong> is a text window where you type a command, press Enter, and the computer answers in text. The line that waits for your input is called the <strong>prompt</strong>. A Mac prompt looks like <code>yourname@Your-MacBook / %</code>: your username, then your Mac's name, then the folder you are currently “standing in”, then <code>%</code> meaning “ready, type something”. <code>pwd</code> stands for <strong>print working directory</strong>: it prints the full path of that current folder. A lone <code>/</code> is the very top of your disk. Whenever you are unsure which folder a terminal is in, type <code>pwd</code>. It is the first thing I do in any terminal I open.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A terminal tab at the bottom with your normal Mac prompt, something like <code>yourname@Your-MacBook / %</code>. After <code>pwd</code>, one line with a folder path, for example <code>/</code> or <code>/Users/yourname</code>. Later in the course we use this panel to run commands and start servers without leaving Codex, and the Codex agent itself uses the same kind of terminal when it runs commands for you.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Click the same icon again to hide the panel. You can also keep using the separate Terminal app you used in guide 1; both work exactly the same. The only difference is the starting folder: the Terminal app starts in your home folder, while this panel starts in the current project folder once one is selected. When a copy block in these guides says “Codex bottom panel”, I mean this one.</p></div>
+  </div></div>
+
+<div class="step" id="s9"><div class="sh"><div class="num">9</div><div class="st"><h3>Look at the right side panel</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click the <strong>right</strong> of the two icons in the top-right corner (toggle side panel). A panel opens on the right edge of the window. Have a look at what it offers, then close it again.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A panel on the right with options like <strong>Browser</strong> and <strong>Terminal</strong>. The Browser option is a small web browser inside Codex, meant for previewing the app you are building. I rarely use it: a real browser window is bigger, you can resize it, open developer tools, and keep it on a second screen while Codex works.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The built-in <strong>Browser</strong> needs a ChatGPT sign-in, so it will not work with your API key. That's fine and you lose nothing. Whenever a step needs to look at the running app, the guides have you open the page in <strong>Chrome</strong> or <strong>Edge</strong> yourself, using the “Open in browser” copy blocks. Click the icon again to close the panel.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>If the model list keeps spinning on “Loading models”, quit Codex completely (Cmd+Q, not just the red close button) and open it again. If it still spins, your API key is probably missing permissions or credits; check both on platform.openai.com.</p>
+  <p>If your window looks different from my description (different item names in the sidebar, no Speed row, no Pets page), that is a version difference and not a problem. Find the four areas from step 1, the shield button and the model button under the message box, and the two toggle icons at the top-right. Those are the only things the rest of the course depends on.</p>
+  <p>If the terminal panel does not open, or opens blank, close it with the same icon, wait two seconds and open it again. As a fallback, every terminal command in this course also works in the normal Terminal app.</p>
+</div>
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li>Every coding agent, Codex included, is a <strong>loop + an LLM + file-system access + command-line access</strong>. You could write a basic one in a few hundred lines of code. The real skill is in how you direct it, which is what the rest of this course teaches.</li>
+  <li>We do the whole course in the <strong>Codex desktop app</strong>, not the command-line version. The ideas (prompts, skills, plan mode, AGENTS.md) are the same in both, so nothing you learn is wasted if you switch later.</li>
+  <li>Course defaults: <strong>5.6 Sol</strong>, <strong>Medium</strong> effort, <strong>Standard</strong> speed, <strong>Approve for me</strong>. Use the top model, keep effort at Medium unless I say otherwise, and never choose Full access on a machine you care about.</li>
+  <li>Model is which brain, effort is how long it thinks, speed is how long you wait. Only the first two change the quality of the answer.</li>
+  <li>With an API key, the built-in browser preview is not available. We open the app in Chrome or Edge ourselves, and that is actually the better habit.</li>
+</ul></div>
+<div class="nav"><a href="1. Introduction.html"><span>← Previous guide</span>1. Introduction</a><a class="r" href="3. Thinking Levels.html"><span>Next guide →</span>3. Thinking Levels</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

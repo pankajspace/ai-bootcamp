@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3. Thinking Levels – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="3. Thinking Levels"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>3. Thinking Levels</h1>
+  <p class="lede">A short settings tour. You look at the five effort levels and learn when each one is worth its cost, find the custom-instructions box where my token-saving trick lives, understand why we skip Ultra, and set a spend alert so your API bill can never surprise you.</p>
+  <div class="meta"><span class="pill">Settings only</span><span class="pill">≈ 5–10 min</span><span class="pill">No prompts to run</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Open the <strong>Effort</strong> menu and read what each level is for. You stay on <strong>Medium</strong>.</li>
+  <li>Find <strong>Settings → Personalization → Custom instructions</strong>, the box where the “let Luna write the code” trick goes. You will look at it but not save anything yet.</li>
+  <li>Learn what <strong>Ultra</strong> does under the hood and why it is so expensive.</li>
+  <li>Set a monthly budget and an email alert on your OpenAI account, because you pay per token.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+  <li>You finished guide 2: permissions are on <strong>Approve for me</strong> and the model button reads <strong>5.6 Sol Medium</strong>.</li>
+  <li>Keep the Codex app open. For step 4 you also need a browser and your OpenAI Platform login.</li>
+</ul>
+  <div class="call concept"><b class="t">📘 Concept: reasoning tokens</b><p>When you give a model a hard task, it can “think out loud” to itself before it answers: break the problem down, consider options, check its own logic. That hidden thinking is made of <strong>reasoning tokens</strong>, and you pay for them exactly like the tokens in the visible answer. The <strong>effort</strong> level is simply how many reasoning tokens the model is allowed to spend. Light means “answer quickly, think a little”. Ultra means “take as long as you need, and bring help”. The art is matching the level to the task, because paying for deep thought on a trivial job is wasted money, and skimping on a hard bug is wasted time.</p></div>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium (no change)</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div>
+  </div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Look at the effort levels</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click the model button under the message box (it reads “5.6 Sol Medium ▾”) and hover over the <strong>Effort</strong> row. A list opens next to it. Don't change anything; just read the list and the small notes beside each level.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p><strong>Light, Medium, High, Extra High, Ultra</strong>. Ultra carries the note “Consumes usage limits faster”. The ✓ stays on <strong>Medium</strong>. Click anywhere outside the menu to close it.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>How I think about the levels:</p><ul>
+      <li><strong>Medium:</strong> what we use for this whole course. It is a good balance of quality and speed, and it is still sharp enough to find the tricky concurrency bugs we plant later in the course.</li>
+      <li><strong>High / Extra High:</strong> what I reach for in my own day-to-day work when a problem is genuinely hard: a gnarly bug nobody can reproduce, or a design decision with many moving parts.</li>
+      <li><strong>Light:</strong> fine for renaming things or answering a quick question about the code. I rarely use it for real changes.</li>
+      <li>More thinking is <strong>not</strong> always better. On a simple task, a high level makes the model overthink: it invents edge cases that do not exist and takes three times as long. Match the level to the task.</li>
+    </ul></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Find the custom-instructions box (the pro tip)</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <ol>
+      <li>Open <strong>Settings</strong>: click your name at the bottom-left → <strong>Settings</strong>, or press <strong>⌘,</strong>.</li>
+      <li>Click <strong>Personalization</strong> in the left list.</li>
+      <li>Find <strong>Custom instructions</strong>: a big text box with a <strong>Save</strong> button at its top-right.</li>
+    </ol>
+    <div class="call concept"><b class="t">📘 Concept: custom instructions</b><p>Whatever you type in this box is silently attached to the start of <strong>every</strong> chat you open, in every project. It is the place for rules you never want to repeat: “always answer in short bullet points”, “prefer TypeScript”, or, as here, which model should do the heavy lifting. Project-specific rules go somewhere else (the AGENTS.md file, which we meet in guide 6); this box is for rules that apply to you everywhere.</p></div>
+    <p>My pro tip, for the day you are short on tokens, is to put this one sentence in that box. Read it now, but <strong>do not save it yet</strong>:</p>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">My custom instruction (pro tip, don't save it yet)</span><span class="where">Settings → Personalization → Custom instructions</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">All coding work should be done using GPT 5.6 Luna with Max thinking effort to save tokens.</pre></div>
+    <p>Why it works: you keep <strong>Sol</strong> as your main model, so Sol does the thinking that matters, it plans the work and writes the tests. Then, because of this instruction, it hands the actual code-writing to <strong>Luna</strong>, the cheapest model, running at maximum effort. The tests act as guardrails: Luna's code has to make them pass, so the quality stays high even though the cheaper model typed it. You pay Sol prices only for the planning, and Luna prices for the bulk of the output.</p>
+    <div class="call concept"><b class="t">📘 Concept: tests as guardrails</b><p>A <strong>test</strong> is a small program that runs your code and checks that it did the right thing, for example “placing a bid of 50 on an auction whose current bid is 60 must be rejected”. If a test fails, something is wrong. When a strong model writes the tests first and a weaker model writes the code to make them pass, the tests define what “correct” means, and the weaker model cannot quietly get it wrong without a red test telling you. We use this idea heavily from guide 11 onwards.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A Personalization page with a <strong>Custom instructions</strong> box (its placeholder text starts with “Give ChatGPT extra instructions and context for all chats…”) and a <strong>Save</strong> button at the top-right of the box.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>Leave the box <strong>empty</strong> for now and click <strong>← Back to app</strong>. If you save this sentence today, Codex hands all coding to Luna, and your results will not match what I describe in the “You should see” boxes of the later guides. Keep the trick for after the course, when you build your own projects and want to cut cost.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Know why you'll skip Ultra</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Nothing to click in this step. I just want you to understand what the top level does, so you are never tempted to switch it on “because more must be better”.</p>
+    <div class="call concept"><b class="t">📘 Concept: sub-agents</b><p><strong>Ultra</strong> tells Codex to split the work across several <strong>sub-agents</strong> that run in parallel. Picture a team lead with four engineers: the lead (the main agent) reads your request, cuts it into independent pieces, hands one piece to each engineer, waits for them to finish, then merges their results and checks that everything fits together. Each of those engineers is a full model call reading the same project files, so the token bill is roughly multiplied by the number of agents, plus the lead's own work. This is great for a big job, say building three separate features at once in one go. For the single, focused tasks we do in this course, it is overkill: you would pay five times the tokens for the same result, and sometimes a worse one, because merging the pieces introduces its own mistakes.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Effort stays on <strong>Medium</strong>. Ultra is never needed anywhere in this course.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If you don't see Ultra in your Effort menu at all, that's fine. Some accounts and versions do not show it, and the course never uses it.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Set a spend alert for your API key</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>ChatGPT has monthly plans ($0 / $8 / $20 / $100) with a fixed usage allowance. You are not on any of those. You signed in with an <strong>API key</strong>, so you pay per token, and there is no built-in ceiling unless you set one. Let's set one now, before the build-heavy guides:</p>
+    <ol>
+      <li>Open the limits page below in your browser and sign in to your OpenAI Platform account.</li>
+      <li>Set a <strong>monthly budget</strong>. When your spend reaches this amount, OpenAI stops accepting requests until next month. Pick a number you would be genuinely fine spending on learning.</li>
+      <li>Set an <strong>email notification threshold</strong>, the alert. A good habit is to put it at about half the budget, so you get a warning while there is still room to finish what you are doing.</li>
+    </ol>
+    <div class="copy k-url"><div class="copy-h"><span class="ic">↗</span><span class="lbl">Open in browser</span><span class="where">Chrome or Edge</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">https://platform.openai.com/settings/organization/limits</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: budget vs alert</b><p>The two settings do different jobs. The <strong>budget</strong> is a hard stop: requests fail once you hit it, which protects your card but can also halt Codex in the middle of a task. The <strong>alert</strong> is only an email; nothing stops. Having both means you get warned early and, if you ignore the warning, you are still protected.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Your budget and alert amounts are saved on the limits page. From now on, check <a href="https://platform.openai.com/usage" target="_blank" rel="noopener">platform.openai.com/usage</a> after each build-heavy guide (7, 9, 10, 18 and 23 are the big ones) to see what it cost. You will quickly develop a feel for what a prompt costs.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If that link doesn't open the right page, go to platform.openai.com → <strong>Settings</strong> (gear icon at the top-right) → <strong>Limits</strong> in the left menu. If you see a message about needing to be an organisation owner, you are probably logged in to someone else's organisation; switch to your own personal one from the organisation picker at the top-left.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>If there is no <strong>Personalization</strong> page in your Settings, look under <strong>General</strong> for a “Custom instructions” box instead; older and newer versions move it around. If you cannot find it anywhere, skip step 2; the trick is for later and nothing in the course needs it.</p>
+  <p>If the Effort list shows slightly different names in your version, map them by position: the second-lowest level is our Medium. Keep the ✓ there.</p>
+</div>
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li>The thinking level is <strong>task-dependent</strong>. More thinking is not always better: high levels overthink simple tasks and cost more for no gain.</li>
+  <li>The course uses <strong>Sol + Medium</strong> throughout, for balance. In your own work, step up to High or Extra High only when the problem is genuinely hard.</li>
+  <li>Token-saving trick for later: let the strong model plan and write the tests, and let <strong>Luna at max effort</strong> write the code against them. Tests are the guardrail that keeps the quality up.</li>
+  <li><strong>Ultra</strong> = several sub-agents working in parallel. Powerful for huge jobs, very token-hungry, never needed here.</li>
+  <li>With an API key there is no ceiling until you set one. A monthly budget plus an email alert at half of it is the minimum protection.</li>
+</ul></div>
+<div class="nav"><a href="2. Codex Overview.html"><span>← Previous guide</span>2. Codex Overview</a><a class="r" href="4. Specifying a Tech Stack.html"><span>Next guide →</span>4. Specifying a Tech Stack</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

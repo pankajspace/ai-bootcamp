@@ -32,4 +32,7 @@
 6. [06 RAG: Chunking Strategies](./code/05-rag-chunking-strategies/)
 7. [07 RAG: Tool Calling Basics](./code/06-rag-tool-calling-basics/)
 8. [08 RAG: Inventory Agent](./code/07-rag-inventory-agent/)
-9. [09 Codex: Building an Auction Website with Codex](./code/08-auction-website-with-codex/)
+
+## Codex Projects
+1. [09 Codex: Notes](./code/09-codex-notes/)
+2. [09 Codex: Building an Auction Website with Codex](./code/08-auction-website-with-codex/)

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>20. Closing Auction Plan – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="20. Closing Auction Plan"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>20. Closing Auction Plan</h1>
+  <p class="lede">Start Part 6. This time I tell Codex exactly which architecture I want for closing auctions: a polling close worker → RabbitMQ → a notification worker → a WebSocket popup. We go through two rounds of grilling, get an ADR for the transactional-outbox decision and two proposed slices. Optionally, you run a vague version of the same request in a second chat and compare the two designs.</p>
+  <div class="meta"><span class="pill">Part 6 · plan</span><span class="pill">≈ 30–45 min hands-on</span><span class="pill">grill-with-docs + ADR</span><span class="pill">Optional: vague vs prescriptive</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Copy Part 4 into <code>part-6-async-close-rabbitmq</code> and describe the exact architecture you want: a polling service, a separate notification service, and RabbitMQ between them.</li>
+  <li>Answer two grilling rounds plus one follow-up question, keeping the RabbitMQ work to the minimum (outbox only, no dead-letter queues, no retry logic).</li>
+  <li>Read the ADR Codex writes for the <strong>transactional outbox</strong> decision and understand what that pattern protects you from.</li>
+  <li>Optional: send a vague version of the prompt in a second chat, accept every recommendation there, and compare the design it comes up with on its own.</li>
+  <li>Stop right before approving Slice 1. Guide 21 starts from that point.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+  <li>You finished guide 19, or at least Part 4 is done and committed. Part 6 is copied from <strong>Part 4</strong>, not Part 5, so it does not inherit the planted <code>FOR SHARE</code> bug.</li>
+  <li>Docker Desktop is running. From Part 6 onwards, <code>npm start</code> also starts a <strong>RabbitMQ</strong> container next to Postgres and Redis, and runs two extra worker processes. You will actually run all of that in guide 21; today is planning only, but Codex still reads the Docker setup.</li>
+  <li>Model is back on <strong>5.6 Sol Medium</strong>. We are not using Luna for this. Planning and grilling are where the strong model earns its price.</li>
+</ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Send the prescriptive Part 6 prompt</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The goal of Part 6 is to model a real-world way of triggering workflows. Until now everything in our app happened because a <em>user</em> clicked something. But an auction ending is different: nobody clicks “end”. The clock simply passes <code>endsAt</code>. Some piece of the backend has to notice that on its own, declare the auction closed, work out who won, and tell the people who care. In guide 19 I explained vague vs prescriptive prompts. In guide 17 I was fairly open and let Codex propose the design. Here I am deliberately <strong>prescriptive</strong>, because I already know the architecture I want, and it is the architecture most real companies use for this kind of job. Three concepts before you read the prompt:</p>
+    <div class="call concept"><b class="t">📘 Concept: polling worker</b><p>A <strong>worker</strong> is a backend program that is not a web server. Nobody sends it requests; it runs in the background and does jobs. A <strong>polling</strong> worker wakes up on a timer, every second in our case, and asks the database one question: “are there any auctions whose <code>endsAt</code> is in the past and that I have not closed yet?” If yes, it closes them and records the winner. If no, it goes back to sleep. Polling is the simplest way to react to time passing. It is a bit wasteful (most checks find nothing), but it is easy to understand, easy to test, and it keeps working after a crash because it just asks again on the next tick.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: message queue, RabbitMQ, producer, consumer, ack, redelivery</b><p>A <strong>message queue</strong> is a post box between two programs. One program, the <strong>producer</strong>, drops a message in (“auction 42 closed, winner is Maya”) and moves on; it does not wait for anyone to read it. Another program, the <strong>consumer</strong>, picks messages out of the box and acts on them. The two never talk directly, so you can restart, slow down or scale either one without the other noticing. <strong>RabbitMQ</strong> is a popular, battle-tested message queue server; we run it in Docker like Postgres. When a consumer finishes handling a message, it sends an <strong>ack</strong> (acknowledgement) and RabbitMQ deletes the message. If the consumer crashes <em>before</em> acking, RabbitMQ assumes the work was not done and hands the same message to a consumer again. That is <strong>redelivery</strong>, and it is why queues promise <strong>at-least-once</strong> delivery rather than exactly-once. It also means your consumer must cope with seeing the same message twice; more on that in step 4.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: notification worker → WebSocket popup</b><p>Our second worker is the <strong>notification worker</strong>. It is the consumer of the queue: it waits for “auction closed” messages. For each one it decides who should be told (the winner, the seller) and then pushes a message to those people's browsers over the <strong>WebSocket</strong> channel we built in Part 4. The browser receives it and shows a popup. So the full chain is: clock passes → close worker notices → close worker writes to Postgres and produces a message → RabbitMQ → notification worker consumes it → Socket.IO (via the Redis backplane) → browser popup. Five hops, each one small and testable on its own. That is the whole point of splitting it up.</p></div>
+    <p>Now click <strong>New chat</strong> under <strong>workshop</strong> in the sidebar, check the picker reads <strong>5.6 Sol Medium</strong>, and send the prompt. Read it once before sending: every sentence maps to one of the three concepts above. The last line, in capitals, calls the grill-with-docs skill, so Codex grills us <em>and</em> writes the answers into GRILL.md and CONTEXT.md as we go.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">New chat · workshop · main chat</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">copy files from directory 4 to 6 and work out of 6 please
+
+once the auction is in the past, I want to trigger a workflow for notifying the winning bid user that the auction has ended. we&#x27;ll do that with a popup notification on the screen triggered by web socket. the service for polling the auction table for ended auctions will be separated from the service that actually handles and triggers notifications. they will be triggered and bound together via rabbit MQ.
+
+GRILL ME WITH DOCS!</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The chat gets a name like “Grill auction notifications design”. Codex says it is using the grilling skill to stress-test the workflow and the domain-modeling skill to capture decisions in docs, then copies the Part 4 baseline into <code>part-6-async-close-rabbitmq</code>. It gives a short code audit: auctions only have an <code>ends_at</code> timestamp and no durable “closed” state, and RabbitMQ is already defined in Docker Compose but nothing uses it yet. Then it prints <strong>Grill — Round 1: Product semantics</strong> with about 9 questions, each followed by a ➡️ recommendation.</p><p>The audit is useful on its own: it tells you Codex understood that “ended” is currently just a comparison with the clock, and that we need to turn it into a saved fact in the database.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>Grilling, plus the optional second comparison chat in step 2, is a lot of tokens on your API key. If you are watching cost, do the main chat only; the comparison is purely for learning and the course does not depend on it.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Optional: send a vague version in a second chat</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>I wanted to see what Codex would design <strong>without</strong> being told the architecture. Would it also reach for two workers and a queue, or would it do something simpler, or something strange? Click <strong>New chat</strong> under <strong>workshop</strong> (so you now have two chats open side by side in the sidebar) and send the same request with the opinionated parts removed: no polling, no separate services, no RabbitMQ. Only the goal and the popup. It targets folder 7 so it does not clash with the main chat, which is working in folder 6.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex (second chat)</span><span class="where">Second new chat · workshop</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">copy files from directory 4 to 7 and work out of directory 7 please
+
+once the auction ends, I want to trigger a workflow for notifying the winning bid user that the auction has ended. we&#x27;ll do that with a popup notification on the screen
+GRILL ME WITH DOCS!</pre></div>
+    <p>Why this matters: running two chats with two prompts is the cheapest second opinion you will ever get on a design. In a company you would book a meeting with a senior engineer; here you spend a few minutes of tokens.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A second chat named something like “Grill auction end notifications” asks its own Round 1. In my run the questions were: who declares the auction ended, who exactly counts as the winner, what to do about winners who are offline, where the popup appears, how intrusive it should be, and so on. It writes a <code>GRILL.md</code> into <code>part-7-winner-checkout</code>. You will clean that up in step 8.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>This chat writes into <code>part-7-winner-checkout</code>, which must be <strong>empty</strong> when we start Part 7 in guide 23. Step 8 resets it. Do not skip step 8 if you do this step.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Optional: accept all recommendations in the second chat</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>I do not steer this one at all. I am curious what architecture Codex picks when it is left alone, so I simply accept whatever it recommends. In the <strong>second</strong> chat, send:</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex (second chat)</span><span class="where">Second chat only</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">take recommend on all</pre></div>
+    <p>“Take recommend” is the shorthand our grilling skill understands: for every question, use the ➡️ recommendation Codex itself proposed.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>It records round 1 in its GRILL.md and moves on to the next round. Reply “take recommend on all” to any later round in this chat as well, until it presents a diagram and slices. Then switch back to the main chat; we compare the two designs in step 8.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Answer round 1 in the main chat</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Back in the main chat (“Grill auction notifications design”). Codex asks its <strong>own</strong> questions, and the wording and order will differ from mine, so match by topic, not by number. Here is what my answers decided and why:</p>
+    <ol>
+      <li><strong>What “auction ended” means</strong> → take recommend: <code>endsAt</code> is the business cutoff, and a worker records a durable close afterwards. In other words, the clock decides when bidding stops, but the database row only says “closed” once the worker has processed it.</li>
+      <li><strong>Who the winner is</strong> → take recommend: the highest accepted bid in PostgreSQL, never anything the browser or the socket layer believes. The database is the single source of truth.</li>
+      <li><strong>Zero bids</strong> → take recommend: still close it and publish <code>AuctionClosed</code> with no winner. The seller still needs to know it ended.</li>
+      <li><strong>Exactly-once experience</strong> → RabbitMQ can redeliver, so Codex asked whether a duplicate popup is acceptable. My answer is a loud no: we must handle <strong>idempotency</strong>.</li>
+      <li><strong>Notify offline winners later</strong> → no. Live only. Storing notifications for later is a whole feature by itself, and not today's.</li>
+      <li><strong>Where the popup appears</strong> → a modal over the whole screen, anywhere in the app, not only on the auction page.</li>
+      <li><strong>Who receives it</strong> → the winner <strong>and</strong> the auction owner (seller), so the seller sees that their auction ended.</li>
+      <li><strong>Popup behaviour</strong> → requires dismissal. It should not fade away on its own. Make it really annoying, in a good way.</li>
+      <li><strong>Timing</strong> → take recommend: within about 5 seconds of <code>endsAt</code>.</li>
+    </ol>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">My answers (round 1), adjust the numbers to match your questions</span><span class="where">Main chat</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">1. take recommend
+2. take recommend
+3. take recommend
+4. NO! We must handle idempotency! e.g. take recommend
+5. no
+6. modal with a modal screen
+7. the winner and the auction owner (to see that their auction ended)
+8. require dismissal
+9. take recommend</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: idempotent consumer</b><p><strong>Idempotent</strong> means “doing it twice has the same result as doing it once”. Pressing a lift button twice does not call two lifts. Because RabbitMQ delivers at-least-once (see step 1), the notification worker <em>will</em> occasionally receive the same “auction 42 closed” message twice: after a network blip, or if the worker crashed just before sending its ack. An <strong>idempotent consumer</strong> notices “I already handled auction 42” and quietly skips the duplicate, instead of showing the winner two popups. The usual way is to give every message a unique id and record handled ids in the database; before acting, check the record. This one habit separates toy queue code from production queue code.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: modal</b><p>A <strong>modal</strong> is a popup window that takes over the page: the rest of the screen dims, and you cannot click anything behind it until you deal with the modal. “Modal” means it changes the page's mode from normal to “answer this first”. Compare it to a toast, the small notice that appears in a corner and disappears by itself. We want a modal here because a won auction is important: the user must see it and must close it deliberately. Answers 6 and 8 together describe exactly that.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>“Round 1 is recorded in <code>GRILL.md</code> and the clarified domain language is in <code>CONTEXT.md</code>.” Then <strong>Grill — Round 2: Reliability and service boundaries</strong>, numbered on from round 1 (Q10–Q18 in my run). The topic has shifted from “what should happen” to “how do we make sure it happens reliably”, which is the right order: product semantics first, plumbing second.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Answer 4 is the one I want you to remember. Any time someone offers you a message queue, your first question is “what happens when a message arrives twice?” If they have no answer, the design is not finished.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Answer round 2</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Round 2 is about reliability and about which program owns which job. What my answers decided:</p>
+    <ul>
+      <li><strong>Q10 Who owns each responsibility</strong> → take recommend: an <strong>Auction Close Worker</strong> polls Postgres and records the close; a separate <strong>Notification Worker</strong> consumes the event and emits the WebSocket message; the API server keeps doing HTTP and sockets and nothing else.</li>
+      <li><strong>Q11 End-to-end idempotency</strong> → take recommend, <strong>with the outbox pattern</strong> (explained below).</li>
+      <li><strong>Q12 Connected sessions and identity</strong> → take recommend: a user may have three tabs open, so send to every connected session of each recipient.</li>
+      <li><strong>Q13 Modal copy by outcome</strong> → take recommend: different text for the winner, for a seller whose auction had a winner, and for a seller whose auction had no bids.</li>
+      <li><strong>Q14 Several auctions closing together</strong> → take recommend: queue the modals and show one at a time, never stack five popups on top of each other.</li>
+      <li><strong>Q15 Reliable database → RabbitMQ handoff</strong> → take recommend: a transactional outbox.</li>
+      <li><strong>Q16 Topology and poison messages</strong> → Codex offered retry with backoff and a dead-letter queue (a side queue where messages that keep failing are parked for a human to inspect). My answer: don't build any of that today. Real concerns, wrong day.</li>
+      <li><strong>Q17 Polling and competing workers</strong> → take recommend: poll every second and claim due auctions in batches with <code>SKIP LOCKED</code>, a PostgreSQL option that lets two copies of the worker run at once without grabbing the same rows.</li>
+      <li><strong>Q18 Durable auction status</strong> → take recommend: the close is real auction state, saved in the table, and the detail page shows it.</li>
+    </ul>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">My answers (round 2), adjust the numbers to match your questions</span><span class="where">Main chat</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">10. take recommend
+11. take recommend w/ outbox pattern
+12. take recommend
+13. take recommend
+14. take recommend
+15. take recommend
+16. don&#x27;t build any of that today
+17. take recommend
+18. take recommend</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: transactional outbox</b><p>Here is the problem. The close worker must do two things: save “auction 42 is closed, winner Maya” in Postgres, and publish a message to RabbitMQ. Those are two different systems, and you cannot wrap both in one database transaction. If the worker saves to Postgres and then crashes before publishing, the auction is closed but nobody is ever told. If it publishes first and then the save fails, people are told about a close that did not happen. The <strong>transactional outbox</strong> fixes this with a trick: instead of publishing directly, the worker writes the message into an <code>outbox</code> table <strong>in the same transaction</strong> as the close. Either both rows land or neither does. A separate small loop (the publisher) then reads unpublished outbox rows, sends them to RabbitMQ, and marks them published only once RabbitMQ confirms it has them. If anything crashes in between, the row is still sitting in the outbox and gets sent on the next loop. Nothing is lost; at worst, something is sent twice, which is exactly why the consumer must be idempotent.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex records the round and then says something like “One final conflict needs resolution”. In my run it was <strong>Q19 – Minimum RabbitMQ reliability</strong>: the outbox pattern needs <em>publisher confirms</em> (RabbitMQ telling the publisher “got it”) before an event can be marked published, and that seems to clash with my “don't build any of that today” in Q16. Codex is right to ask; the two answers do look contradictory.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Resolve the final conflict</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Our AGENTS.md rule caps the grill at two rounds but allows one extra question when there is an obvious conflict in the answers. This is that question. Resolve it so Codex builds exactly what the outbox needs (publisher confirms, because without them the outbox cannot know when a row is safely delivered) and nothing more (no dead-letter queues, no retry schedules):</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Main chat</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">build only enough to make outbox work. don&#x27;t do anything else like dead letters right now</pre></div>
+    <p>Why this matters: scope control is the hardest part of working with a capable agent. It can build everything, so it will offer everything. Your answer draws the line: the minimum that makes the chosen pattern correct, and not one feature beyond that.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>“Grilling is complete. The design is captured in <code>GRILL.md</code>, the glossary in <code>CONTEXT.md</code>, and the outbox decision in <code>ADR 0001</code>.” Then a wide Mermaid diagram (⏱️ Auction Close Worker → 🐘 PostgreSQL → 🐇 RabbitMQ → 🔔 Notification Worker → 🔴 Redis → 🔌 Socket.IO → 🌐 Web App), and two proposed slices, similar to:</p>
+      <ol><li><strong>Automatic authoritative auction close</strong>: migrations, close worker, winner selection, transactional outbox creation, final outcome API/UI, concurrency and idempotency tests.</li>
+        <li><strong>Live seller and winner modals</strong>: confirmed RabbitMQ publishing, notification worker, idempotent recipient delivery, user Socket.IO rooms, queued dismiss-required modals, multi-window browser verification.</li></ol>
+      <p>And the closing line: “Please confirm Slice 1, and I'll implement and verify that slice before stopping for browser review.” <strong>Do not confirm yet.</strong> Guide 21 starts exactly there.</p>
+      <p>Notice the split. Slice 1 is everything up to and including the outbox row, with no RabbitMQ consumer at all. Slice 2 is everything from RabbitMQ to the popup. Each slice is testable on its own, and if Slice 1 goes wrong you have not wasted any work on Slice 2.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Read the ADR</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Codex wrote an ADR for the outbox decision. Click <strong>ADR 0001</strong> in Codex's summary to open it in the app, or print it in Terminal with the command below. The <code>*</code> in the filename is a wildcard, so the command works whatever title Codex chose after <code>0001-</code>.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">cat ~/codex-course/workshop/part-6-async-close-rabbitmq/docs/adr/0001-*.md</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: ADR (architecture decision record)</b><p>An <strong>ADR</strong> is a short text file, usually half a page, that records one lasting architectural choice: what we decided, why, what the alternatives were, and what we knowingly gave up. They live in the repo (here under <code>docs/adr/</code>) and are numbered in order, so a year later a new engineer can read 0001, 0002, 0003 and understand how the system came to look the way it does. The habit matters even more with coding agents: a future Codex session will read these files and respect the decision, instead of “helpfully” replacing the outbox with direct publishing because it looked simpler. Think of an ADR as a note to your future self and to your future agent.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A one-paragraph ADR titled similar to <strong>“Publish auction close events through a transactional outbox”</strong>: the close worker records the close plus an <code>AuctionClosed</code> outbox row in one PostgreSQL transaction and marks it published only after RabbitMQ confirms. Retries and dead-letter infrastructure are deliberately deferred. The filename may differ slightly; mine was <code>0001-close-events-through-a-transactional-outbox.md</code>. Check that the “deferred” part is there: that is your step 6 answer, written down so it does not get lost.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Optional: compare the vague chat, then reset Part 7</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>If you ran the second chat, open it now and look at its final design. In my run it came up with almost the same architecture, an Auction Close Worker and a Notification Worker, without being told any of it. Impressive, until I found out why: the root <code>AGENTS.md</code> lists exactly those service names in its Mermaid emoji legend. The model had read them as part of its instructions and used them. I had steered it myself without realising. Compare the two chats' diagrams and slice lists, and note any real differences (for example, whether the vague chat also chose a queue, or went for a simpler direct call).</p>
+    <p>Then put Part 7 back to an empty folder so it is ready for guide 23:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-7-winner-checkout &amp;&amp; mkdir part-7-winner-checkout &amp;&amp; ls -A part-7-winner-checkout | wc -l</pre></div>
+    <p>What it does: goes to the workshop root, deletes the Part 7 folder with everything the second chat wrote into it (<code>rm -rf</code>), creates a fresh empty folder with the same name (<code>mkdir</code>), then lists its contents including hidden files (<code>ls -A</code>) and counts the lines (<code>wc -l</code>) so you can confirm it is empty.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p><code>0</code>: Part 7 is empty again. You can archive the second chat now (hover over it in the sidebar, click the three dots, Archive); you will not need it again.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The lesson: context you forgot about quietly steers the model. AGENTS.md, other docs in the repo, even Git history. When you want a truly independent second opinion, check what the model can see before you trust that it “came up with it on its own”.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p><strong>Part 4 isn't done?</strong> Part 6 starts from Part 4, so catch up Part 4 first with the command below, then begin at step 1.</p>
+  <p><strong>Want to skip Part 6 entirely?</strong> Run the same command with <code>part-6-async-close-rabbitmq</code> in place of the Part 4 folder name. Be aware that the reference Part 6 is the <strong>end state of the whole part</strong>: both slices fully built as in guide 21, not just this guide's plan. If you skip, still read steps 4, 5 and 7 above, because the concepts come back in Parts 7 and 8.</p>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Catch up: Part 4</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-4-realtime-socketio-redis &amp;&amp; cp -R ../reference/part-4-realtime-socketio-redis ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 4 from reference&quot;</pre></div>
+  <p>If your grill asked very different questions, that is normal; answer by topic using the lists in steps 4 and 5. If Codex never asked the final conflict question (step 6), it means your round 2 answers did not clash, so simply move on to step 7.</p></div>
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li><strong>Prompts range from vague to prescriptive.</strong> When you already know the architecture you want, say so in plain sentences. A vague prompt lets the model choose, and hidden context like AGENTS.md may end up choosing for it.</li>
+  <li><strong>Two workers, one queue.</strong> A polling close worker turns “the clock passed” into a saved fact in Postgres. RabbitMQ carries the event. A notification worker turns the event into a WebSocket popup. Each hop is small and testable alone.</li>
+  <li><strong>Message queues are at-least-once.</strong> A consumer crash before ack means redelivery. Design idempotency at every boundary: one close per auction, one outbox event, one delivery per recipient, one modal per notification.</li>
+  <li><strong>Transactional outbox:</strong> write the state change and the event in the same database transaction, then publish from the outbox table. Nothing gets lost between Postgres and RabbitMQ.</li>
+  <li><strong>Record decisions in ADRs.</strong> A half-page note today saves a future human, and a future agent, from undoing the decision by accident.</li>
+  <li><strong>Keep scope tight.</strong> Dead-letter queues and retry backoff are real production concerns. “Don't build any of that today” keeps the slice small enough to finish and review.</li>
+</ul></div>
+<div class="nav"><a href="19. Finding a Concurrency Defect.html"><span>← Previous guide</span>19. Finding a Concurrency Defect</a><a class="r" href="21. Messaging with RabbitMQ.html"><span>Next guide →</span>21. Messaging with RabbitMQ</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

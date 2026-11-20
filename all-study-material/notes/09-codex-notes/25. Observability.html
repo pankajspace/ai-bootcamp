@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>25. Observability – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="25. Observability"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>25. Observability</h1>
+  <p class="lede">Start Part 8. You ask Codex to add OpenTelemetry tracing and Jaeger to the auction app using a single short grilling round, finish and save Part 7, and then let Codex build the whole tracing change as one slice.</p>
+  <div class="meta"><span class="pill">Part 8 · start</span><span class="pill">≈ 30–45 min hands-on</span><span class="pill">Grill with docs · 1 round</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Send the Part 8 Jaeger prompt in a new chat and answer one compact round of grilling questions.</li>
+  <li>Wrap up Part 7: check that Slice 2 finished, commit it, and watch the seller's view flip from <strong>Awaiting payment</strong> to <strong>Paid</strong> the moment the winner pays.</li>
+  <li>Tell Codex to build its three proposed slices as one, because this is a plain instrumentation change and not three product features.</li>
+  <li>Optional: see where a “delegate coding to a cheaper model” custom instruction goes, and what it does to your bill.</li>
+</ul></div>
+
+<div class="box"><h2>Before you start</h2><ul>
+  <li>Finished guide 24: Part 7 Slice 2 is running or already done in the <strong>Define winner checkout flow</strong> chat.</li>
+  <li>Docker Desktop is running. Jaeger runs as a Docker container and is already listed in the workshop's <code>docker-compose.yml</code>, so there is nothing new to install.</li>
+  <li>You will work in <strong>two chats at the same time</strong> in this guide: the Part 7 chat (<strong>Define winner checkout flow</strong>) and a new Part 8 chat. Every prompt box tells you which chat it belongs to in the grey label on the right. Read that label before you paste.</li>
+</ul>
+<div class="call concept"><b class="t">📘 Concept: observability (logs vs metrics vs traces)</b><p><strong>Observability</strong> means understanding what your running system is doing from the outside, without adding print statements and restarting it. There are three kinds of signal. <strong>Logs</strong> are text lines a service writes (“bid accepted for auction 42”): good for detail, bad for the big picture. <strong>Metrics</strong> are numbers over time (requests per second, error rate): good for dashboards and alarms, but they cannot tell you what happened to one specific request. <strong>Traces</strong> follow <em>one</em> request through several services and show how long each step took. Our app now has an API, a database, Redis, RabbitMQ, two workers and a payment service. Logs from seven places are useless unless you can join them. Tracing joins them. That is what Part 8 adds.</p></div>
+<div class="call concept"><b class="t">📘 Concept: trace and span</b><p>A <strong>span</strong> is one timed step with a name and a few labels, for example “<code>auction.bid.accept</code>, auction 42, took 12 ms”. A <strong>trace</strong> is the whole family of spans that belong to one request or one story, even when they happen in different services and minutes apart. Think of a courier parcel: each scan at a depot is a span, and the tracking page that lists every scan in order is the trace. Spans have parents and children: “handle the bid” is the parent, “run the INSERT query” is one of its children. In Jaeger you see this as an indented timeline.</p></div>
+<div class="call concept"><b class="t">📘 Concept: OpenTelemetry (OTel)</b><p><strong>OpenTelemetry</strong>, shortened to <strong>OTel</strong>, is the open-standard library that creates spans inside your code and ships them out of the process. Ours is the Node.js version. It can wrap common libraries (HTTP, PostgreSQL, Redis) so they produce spans automatically, and it lets you create your own named spans for business steps. OTel does not store or display anything; it only produces the data and sends it to a backend you choose. Here that backend is Jaeger.</p></div>
+<div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+  <div class="set"><span>Project / folder</span><b>workshop</b></div>
+  <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+  <div class="set"><span>Reasoning</span><b>Medium</b></div>
+  <div class="set"><span>Approvals</span><b>Approve for me</b></div>
+  <div class="set"><span>Also</span><b>New chat on <strong>Local</strong>, branch master</b></div>
+</div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Send the Part 8 prompt in a new chat</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click <strong>New chat</strong> in the top-left of the Codex app. In the chips above the message box, make sure the project is <strong>workshop</strong>, keep <strong>Local</strong> (not a worktree) and branch <code>master</code>. Then paste the prompt below and press Enter.</p>
+    <p>Read the prompt before you send it; every line does a job. The first line tells Codex to copy Part 7 into the empty <code>part-8-cross-stack-debugging</code> folder and build there, as every part has copied the one before it. The middle paragraph says <em>what</em> we want (Jaeger for observability) and, more importantly, <em>how much</em>: as little noise as possible, high-signal only, focused on the auction-checkout path. Without that, tracing libraries record every file read, DNS lookup and timer tick, and one bid becomes 300 spans nobody can read. The last line changes how the grilling skill behaves. You can send this while Part 7's Slice 2 is still running in the other chat; Codex does not touch the Part 7 folder until you confirm the slices in step 5.</p>
+    <div class="call concept"><b class="t">📘 Concept: Jaeger</b><p><strong>Jaeger</strong> is a free, open-source tool that receives spans from all your services, stores them and shows them as traces in a web page. Think of it as the CCTV control room for your app: every service sends its footage to one place, and you watch the replay there. In our project Jaeger runs as a Docker container. It listens on one port for incoming spans and serves its web UI on port <code>16686</code>, so you open <code>http://localhost:16686</code> to look at traces. You never send data to Jaeger by hand; the OpenTelemetry library in each service does that.</p></div>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">new chat · Local</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">work out of part 8 directory, using part 7
+
+we want to add Jaeger for observability. please make it so that it&#x27;s as little noise as possible inside of our spans and traces - high signal stuff only for the purposes of this workshop. focus on the auction checkout side of things- I want to see a trace that contains spans across auction bids, closes, and communication.
+
+Grill me shorter - just one round of questions please!</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: a single short grilling round</b><p>The grilling skill normally asks two or three rounds of questions, each digging deeper, before it writes a plan. That is right for a feature with many product decisions, like Part 7's checkout. Adding tracing has far fewer decisions, mostly technical, so I tell the skill up front: one round only. The skill reads that like any other instruction, and Codex says out loud that it is doing a “single, compact round”. Why this matters: each round costs tokens and your time. You are in charge of the grill. Ask for less when the problem is small, and for more when it is not.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The chat gets a name like <strong>Add Jaeger auction tracing</strong>. Codex starts with “I'm using the grilling skill for a single, compact round, as requested…”, reads the repo for about 45 seconds, then posts <strong>one</strong> round of about 8 questions (Q1–Q8), each with a recommended answer marked by an arrow. It may mention that Part 7 already contains some OpenTelemetry scaffolding and that Part 8 is empty. It ends with “Reply with “all recommended” or list any overrides by question number.” No file has changed yet.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Answer the single round</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Codex words its questions in its own way, and your numbering may not match mine. Read each of your questions and match it to the list below. I said yes to everything except one change in Q4. What each question is really asking:</p>
+    <ul>
+      <li><strong>Q1 Golden trace:</strong> one trace tells the whole story: winning bid → auction close → outbox publish → RabbitMQ → Socket.IO notification → checkout → Mock Stripe payment → webhook → paid purchase. A “golden trace” is the one you would show a new teammate to explain the whole system end to end.</li>
+      <li><strong>Q2 Trace continuity:</strong> save the trace context in the database row and inside the RabbitMQ messages, so Jaeger shows one continuous trace even though the close happens a minute after the bid and the checkout later still.</li>
+      <li><strong>Q3 Which bids:</strong> only the winning bid joins the golden trace. Every other bid gets its own short trace, so an auction with 20 bids does not become one giant trace.</li>
+      <li><strong>Q4 Span budget:</strong> about 8–10 named business spans, with the automatic Redis, filesystem, DNS, timer and framework spans switched off. <strong>But keep the PostgreSQL query spans.</strong> This is my one change. The database is where the row locking and the slow inserts live, and where real problems usually show up, so I want to see it.</li>
+      <li><strong>Q5 Checkout boundary:</strong> Mock Stripe appears as its <em>own service</em> in Jaeger, so you see the request leave our API and come back, as a real payment provider would.</li>
+      <li><strong>Q6 Business outcomes:</strong> a rejected bid, a duplicate message or a declined card is a normal outcome, recorded as a label on the span, not as a red error span. Red is reserved for real failures like a crash or a refused connection.</li>
+      <li><strong>Q7 Trace data:</strong> spans carry IDs, the auction slug, amounts, event IDs, user role and outcome, but <strong>never</strong> names, user handles, card data, message payloads or SQL text. Traces are stored for weeks and seen by many people; personal and card data must not end up there.</li>
+      <li><strong>Q8 Demo surface:</strong> a Jaeger startup in the project and a written browser walkthrough. No new screen in the Auction House app. You look at traces in Jaeger at <code>localhost:16686</code>.</li>
+    </ul>
+    <div class="call concept"><b class="t">📘 Concept: following one request across API → Postgres → RabbitMQ → worker</b><p>When the winning bid arrives at the API, OpenTelemetry creates a <strong>trace ID</strong>, a random identifier for this story. Every span created while handling that request records the same ID, including the Postgres query spans, which become children of the API span. The hard part comes later: the close worker runs a minute afterwards in a different process, and the notification worker in a third. For Jaeger to show one trace, the ID has to travel with the data. It is saved in the auction's database row and put into the headers of the RabbitMQ message; the worker reads it and continues the same trace instead of starting a new one. This is <strong>trace context propagation</strong>, exactly what Q2 asked for. Without it you would see three unrelated traces and match them by timestamp by hand.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: instrumenting code</b><p><strong>Instrumenting</strong> means adding small pieces of code that record what the program is doing: “start a span named <code>auction.bid.accept</code> here, attach the auction ID, end it there”. <strong>Automatic instrumentation</strong> is when the OTel library hooks into packages you already use, such as <code>pg</code> or the HTTP server, and produces spans for every call without you writing a line: quick but noisy. <strong>Manual business spans</strong> are the ones you create and name after a business step (accept bid, close auction, publish event). Q4 keeps the automatic Postgres spans, turns the other automatic ones off, and adds 8–10 hand-named business spans.</p></div>
+    <p>Now type your answers, one per line, numbered to match <em>your</em> questions. “take recommend” means “use your own recommendation”. Line 4 is the only real override. Line 7 is just me being emphatic that the IDs and amounts belong in the spans; Codex reads the intent, not the volume.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">My answers, adjust the numbers to match your questions</span><span class="where">Add Jaeger auction tracing chat</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">1. yes
+2. yes
+3. take recommend
+4. everything yes except let&#x27;s see Postgres
+5. yes
+6. yes
+7. YES!!!!! Spans should OF COURSE INCLUDE THOSE!!
+8. yes</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A summary similar to: “Shared understanding: one high-signal trace will follow the winning bid through close, RabbitMQ notification, checkout, Mock Stripe, webhook, and paid purchase. PostgreSQL operations within that path will remain visible; routine framework, Redis-internal, timer, filesystem, and polling noise will be suppressed.”</p><p>Then a large <strong>Mermaid diagram</strong> (a diagram drawn from text; click it to zoom) of the moving parts: Auction Close Worker → RabbitMQ (“AuctionClosed + trace context”) → Notification Worker → Redis → Socket.IO → web app → Fastify API, with the API talking to PostgreSQL and Mock Stripe, and every box feeding OpenTelemetry → Jaeger. Under it, three proposed slices: <strong>Winning bid → durable auction close</strong>, <strong>Auction close → communicated outcome</strong>, <strong>Outcome → paid winner purchase</strong>, and “Confirm these three slices and I'll start Slice 1.”</p><p><strong>Do not reply yet.</strong> The moment you confirm, Codex copies Part 7 into Part 8. First we make sure Part 7 is finished and saved (step 3).</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Shortcut: when you agree with every recommendation, reply “all recommended”. I wanted the Q4 change, so I answered line by line. Both work.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Check that Part 7 Slice 2 is done, then save it</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click <strong>Define winner checkout flow</strong> in the chat list on the left. Scroll to the bottom and wait until Codex has posted its Slice 2 summary and the running counter has gone. Only then commit Part 7. Why this matters: Part 8 is going to be a copy of Part 7. Committing now gives Git a clean “Part 7 finished” snapshot, so everything Codex changes for Part 8 shows up separately when we review it in the next guide.</p>
+    <p>Open the <strong>Terminal</strong> app (Cmd+Space, type <code>Terminal</code>, Enter) and run this line. <code>cd ~/codex-course/workshop</code> moves into your workshop folder, <code>git add -A</code> stages every new, changed and deleted file, and <code>git commit -m "…"</code> saves the snapshot with the message in quotes.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Part 7 slice 2: seller payment view&quot;</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>In Codex, something like: “Slice 2 is complete and verified… Theo won at $107 and completed checkout; Avery's seller view converges to <code>Paid</code>.” Under <strong>Implemented</strong>: the seller sees only Awaiting payment or Paid, unrelated users see no payment details, and a Mock Stripe session that disappeared after a restart gets replaced. Under <strong>Verification</strong>: 24 backend, 16 frontend and 4 Mock Stripe tests passed. Then “Both Part 7 slices are now complete.”</p><p>In Terminal, a commit summary such as <code>[master 3f9a1c2] Part 7 slice 2: seller payment view</code> followed by the number of files changed. Your hash and counts will differ.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>If Slice 2 is still running, wait for it. Do not send the step 5 message until this commit is done, otherwise Part 8 starts from a half-written Part 7 and you will chase strange bugs later.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Run the bidding war again and keep it open</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Stay in the <strong>Define winner checkout flow</strong> chat. Slice 2 added the seller's payment view, and I want you to see it live rather than take Codex's word for it. Ask for one more bidding war and tell Codex to leave the windows open.</p>
+    <p>Reminder: the bidding war is the Playwright test from guides 11–12 that opens four real browser windows, one per demo user, and has them bid against each other until the auction closes. A test normally closes its browsers the moment it finishes; “keep it open” makes Codex run it with a hold, so the windows stay on screen for you.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Define winner checkout flow chat</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">do bidding wars again and keep it open</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Four tiled browser windows on <code>http://localhost:5107/items/bidding-war-gpu-…</code>. Codex picks the port; in my run it was 5107. The pattern in this course is 51xx, where xx is the part number, so Part 8 will use 5108. Bids climb to about $107 and the auction closes. The <strong>seller's</strong> window (Avery Chen) now shows a yellow panel: <strong>WINNER PAYMENT · Awaiting payment · The winning bidder has not completed payment yet.</strong> That yellow panel is Slice 2. Leave all four windows open for step 6.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>How to tell the windows apart: the seller's window says “Your auction has closed” with the yellow payment panel. The winner's window (Theo Brooks) says “Congratulations” and has a <strong>Complete purchase</strong> button. The other two just see that the auction ended. Codex also names the winner's window in its reply.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Tell Codex to build the slices as one</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Go back to the <strong>Add Jaeger auction tracing</strong> chat. Codex proposed three slices because the grilling skill is designed for product features, where each slice is something a user can see and you can ship on its own. That does not fit here. We are adding recording around code that already works, nothing a user can see. Three slices would mean three rounds of build, test and review for one change. So we push back. Why this matters: the agent proposes, you decide. Accepting a plan that does not fit the work just because the agent wrote it wastes time and tokens.</p>
+    <p>Two words in the prompt: a <strong>refactor</strong> is a change to how the code is written that does not change what the app does for the user, and adding tracing is exactly that: bids, closes and payments behave the same, the code just reports what it is doing. <strong>OTel</strong> is the short form of OpenTelemetry. Send this <strong>only after step 3 is committed</strong>. This is the message that makes Codex copy Part 7 into Part 8.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Add Jaeger auction tracing chat</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">I would do them all together - we&#x27;re just adding OTel and jaeger. this is a super straightforward refactor</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Something like: “Agreed—this is one cohesive observability slice, not three product increments. I'll implement the full bid → close → communication → checkout trace in Part 8, verify the complete path, and hand it back as one reviewable result.” Codex copies Part 7 into <code>part-8-cross-stack-debugging</code> and starts. A few minutes in, it reports its approach: “Part 8 will use explicit business spans as trace roots, automatic PostgreSQL child spans, and selective HTTP propagation…” and you see a counter like <code>Step 1 / 4</code>.</p><p>In plain words: the hand-named business spans sit at the top of each trace (the <strong>roots</strong>), the Postgres query spans hang under them as <strong>children</strong>, and the trace ID is passed along only on the HTTP calls that matter, such as the one to Mock Stripe (<strong>selective propagation</strong>). Let it run. We look at the result in the next guide.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>This is a full build with tests and browser checks across five services: API, close worker, notification worker, Mock Stripe and the web app. It is one of the bigger runs in the course, typically 10–20 minutes and a lot of tokens. Keep an eye on <a href="https://platform.openai.com/usage" target="_blank" rel="noopener">platform.openai.com → Usage</a>, and do not interrupt it.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Pay as the winner and watch the seller flip to Paid</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>While Part 8 builds, go back to the four bidding-war windows from step 4. Put the <strong>winner's</strong> window (Theo Brooks) and the <strong>seller's</strong> window (Avery Chen) side by side. In the winner's window click <strong>Complete purchase</strong>. The browser goes to the Mock Stripe checkout page at <code>http://127.0.0.1:7107/checkout/cs_test_…</code>, showing the item and <strong>$107.00</strong>. Type the card number below, any future expiry and any 3-digit CVC. I typed <code>03/44</code> and <code>334</code>. Click <strong>Pay $107.00</strong> and immediately look at the seller's window.</p>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">Success test card</span><span class="where">Card number</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">4242 4242 4242 4242</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: webhook</b><p>After the card is accepted, our API does not keep asking Mock Stripe “is it paid yet?”. Mock Stripe makes an HTTP request of its own <em>into</em> our API, carrying a <code>checkout.session.completed</code> event. A request that an outside service sends to your server when something happens is a <strong>webhook</strong>. It is signed, so the API can check it really came from Mock Stripe. The API then marks the purchase paid in the database and pushes the new state to the seller's browser over the live Socket.IO connection, so the page updates without a reload.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Within about a second the seller's yellow <strong>Awaiting payment</strong> panel turns green: <strong>WINNER PAYMENT · Paid · The winning bidder completed payment.</strong> The winner's window lands back on the auction page with <strong>Payment received · Your purchase is paid.</strong></p><p>In that blink: the payment went to Mock Stripe, its signed webhook reached our API, the API updated the purchase row in Postgres, and the seller's page received the new state over the live connection. Remember this chain. It is exactly the path Part 8's golden trace records, and in the next guide you see each hop as a span.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Want the other outcome? In another run, pay first with the decline card <code>4000 0000 0000 0002</code>: the Mock Stripe page shows an error and lets you retry, and the seller's panel stays yellow. Then pay with 4242 and watch it go green. In Part 8 that decline is recorded as an outcome label on the span, not a red error, as decided in Q6.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Optional: the delegate-to-a-cheaper-model trick</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>One trick I use to stretch my token budget: let the main model (Sol) do the planning, grilling and review, and let a cheaper model write the actual code. Codex has a place for a sentence that gets added to every chat you open. Open <strong>Settings</strong> with <strong>Cmd+,</strong> (Command and the comma key). In the search box at the top type <code>instructions</code>. Click <strong>Personalization</strong>, find the <strong>Custom instructions</strong> text box and type the line below into it.</p>
+    <div class="call concept"><b class="t">📘 Concept: custom instructions and model delegation</b><p><strong>Custom instructions</strong> are a text box in Codex settings. Whatever you write there is silently added to the start of every chat, in every project. It is like <code>AGENTS.md</code>, but it belongs to you rather than to one repo. <strong>Delegating</strong> means the main model does not write the code itself; it hands that part to a helper agent on a different model and checks the result. <strong>5.6 Luna</strong> is the smallest, cheapest tier. <strong>Max</strong> is the highest reasoning level, so Luna thinks longer to make up for being smaller. Planning stays on the strong model; the many lines of typing happen on the cheap one.</p></div>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">My custom instruction</span><span class="where">Settings → Personalization → Custom instructions</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">Please delegate all coding work to 5.6 Luna Max!!!! NO EXCEPTIONS!!!</pre></div>
+    <p>Click <strong>Save</strong> (top right of the settings panel) only if you want this in <strong>every</strong> chat from now on. It is a model change: coding runs on <strong>5.6 Luna</strong> at <strong>Max</strong> reasoning instead of on Sol. If you only want to look, close Settings without saving.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The box under <strong>Custom instructions</strong> holds your text, with a <strong>Save</strong> button at the top right. Nothing changes in existing chats until you save and start a new one.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>With an API key this can lower your bill, but check the per-token prices of Sol and Luna on platform.openai.com first; Max reasoning makes Luna use more tokens per task. It works best when the project has good tests, as ours does, so the cheaper model's mistakes get caught. If you turn it on, your results in the next guide will differ a bit from mine. To turn it off, delete the text and Save again. If your Codex version has no Custom instructions box, put the same line at the top of the root <code>AGENTS.md</code> in the workshop folder instead.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>If the Part 8 build fails, runs out of budget, or you want to move on, catch up to the finished Part 8 from the reference copy. The reference folder is the <strong>end state of the whole part</strong>: Jaeger tracing done and the golden trace documented in its README. The command also restores the finished <code>stripe-service/</code>, which gets its own tracing in Part 8. Afterwards the app is at <code>http://localhost:5108</code> and Jaeger at <code>http://localhost:16686</code>.</p>
+  <p>The first line deletes your Part 8 and Mock Stripe folders, copies both from <code>../reference</code>, and commits the result so Git has a clean “caught up” snapshot. The second moves into Part 8, installs its packages with <code>npm install</code> and starts everything with <code>npm start</code>.</p>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-8-cross-stack-debugging stripe-service &amp;&amp; cp -R ../reference/part-8-cross-stack-debugging ../reference/stripe-service ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 8 from reference&quot;
+cd part-8-cross-stack-debugging &amp;&amp; npm install &amp;&amp; npm start</pre></div>
+  <p>If the grilling comes back as two rounds, Codex ignored the last line of the prompt; reply “one round only please, pick your recommendation for the rest” and carry on. If the bidding war in step 4 opens no windows, check that Microsoft Edge is installed and Docker Desktop is running, then ask again.</p></div>
+
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li><strong>Observability</strong> means you can follow one story (bid → close → notification → payment) across many services. Spans are the timed steps, a trace is the whole story, OpenTelemetry produces them and Jaeger shows them.</li>
+  <li>The trace ID has to travel with the data, inside the database row and the RabbitMQ message, or the story breaks into separate traces at every service boundary.</li>
+  <li>High signal beats more data. Decide which business spans matter, which automatic spans to switch off, and which fields are safe to record: IDs and amounts yes, names and card data never.</li>
+  <li>You control the grill. “Grill me shorter - just one round” worked, and so did pushing back on three slices that did not fit the work. The agent proposes, you decide.</li>
+  <li>Finish and commit the previous part before Codex copies it forward. Clean snapshots make the next review easy.</li>
+  <li>Good tests make it safe to hand the typing to a cheaper model: they catch its mistakes before you see them.</li>
+</ul></div>
+
+<div class="nav"><a href="24. Reviewing the Pull Request.html"><span>← Previous guide</span>24. Reviewing the Pull Request</a><a class="r" href="26. Observability with Jaeger.html"><span>Next guide →</span>26. Observability with Jaeger</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

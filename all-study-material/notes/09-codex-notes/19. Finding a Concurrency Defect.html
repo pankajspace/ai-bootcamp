@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>19. Finding a Concurrency Defect – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="19. Finding a Concurrency Defect"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>19. Finding a Concurrency Defect</h1>
+  <p class="lede">Part 5 is a game. We ask the strong Sol model to plant a subtle concurrency bug in a copy of Part 4 and delete the tests that would catch it. Then we switch to the small 5.6 Luna model in a fresh chat, with no memory of the crime, and see whether it can find the bug.</p>
+  <div class="meta"><span class="pill">Part 5</span><span class="pill">≈ 15–25 min hands-on</span><span class="pill">Model switch: 5.6 Luna</span><span class="pill">Bug hunt</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Copy Part 4 into <code>part-5-hidden-defect-review</code> and have Codex plant a concurrency defect in the PostgreSQL bidding query.</li>
+  <li>Hide the evidence by deleting the tests that fail because of the defect.</li>
+  <li>Open a new chat on <strong>5.6 Luna</strong> and ask it to find the bug, first with a vague question, then with a hard boundary that limits it to the Part 5 folder.</li>
+  <li>Understand the difference between the <code>FOR UPDATE</code> and <code>FOR SHARE</code> row locks, which is the whole bug.</li>
+  <li>Learn why agents “cheat” by reading other folders and Git history, and how to stop them when you want a fair test.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+  <li>You finished guide 18 with Part 4 committed, or you caught up from the reference copy (see the box at the bottom of guide 18).</li>
+  <li>Docker Desktop is running. Codex will run Part 5's tests, and those tests talk to a real PostgreSQL. Part 5's <code>npm start</code> brings up <strong>Postgres + Redis</strong>, exactly like Part 4. Codex will give Part 5 its own addresses: web 5105, API 3105 and database <code>auction_part_5</code>. You do not need to open the app in the browser in this guide; everything happens in Codex and Terminal.</li>
+  <li><strong>Do not commit Part 5 until the hunt is over</strong> (step 7). LLMs love reading Git history, and a commit message like “plant concurrency defect” would hand the answer to the hunting model on a plate.</li>
+</ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol (steps 1–3), then 5.6 Luna (steps 4–6)</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div>
+  <div class="call concept"><b class="t">📘 Concept: planting a defect, and small vs large models</b><p>Why would anyone deliberately break working code? Because it is the cheapest way to test two things at once. First, it tests <strong>you</strong>: can you recognise a concurrency bug when you see one? Second, it tests the <strong>tool</strong>: can a small, cheap model do real detective work in a codebase? Models come in sizes. <strong>Sol</strong> is the largest and smartest tier, slow and expensive. <strong>Luna</strong> is the smallest: fast, cheap, and weaker on big open-ended tasks. The question we answer today is practical: for a focused investigation in a small codebase, is Luna good enough? If yes, you can save a lot of money by using Sol to <em>plan</em> and Luna to <em>investigate</em>.</p></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Plant the defect (with Sol)</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click <strong>New chat</strong> under <strong>workshop</strong> in the left sidebar. Check the picker under the message box still reads <strong>5.6 Sol Medium</strong>. We use the strong model to plant the bug because we want it <em>subtle</em>: a one-line change that compiles, typechecks and passes most tests, not a crash. Then send:</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">New chat · workshop · 5.6 Sol</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">copy 4 to 5 and work from 5
+
+introduce a concurrency defect in the postgres bidding query, we&#x27;re going to see if another LLM can find it</pre></div>
+    <p>Two things in the wording. “Copy 4 to 5 and work from 5” is the same pattern we used for every new part: Codex copies the previous part's folder, renames ports and database so the two do not collide, and from then on only touches the new folder. The second line tells Codex exactly where to put the bug (the bidding query) and why (another model will hunt it). Telling it the purpose makes it pick a <em>realistic</em> defect rather than something silly.</p>
+    <div class="call concept"><b class="t">📘 Concept: concurrency defect (race condition)</b><p>A <strong>concurrency defect</strong> is a bug that only appears when two or more things happen at the <em>same time</em>. Run the code with one user and it is perfect. Run it with two users clicking “bid” in the same millisecond and it breaks. The classic example is ours: two bidders both read “current price is 100”, both decide “105 is valid”, and both bids get accepted, when only the first should have. This is called a <strong>race condition</strong> because the two requests race each other and the result depends on who wins by a few microseconds. These bugs are nasty because they do not show up in normal testing and they are hard to reproduce. The usual protection is a <strong>row lock</strong> in the database, which makes the second bidder wait until the first is done.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex inspects Parts 4 and 5, copies Part 4 into <code>part-5-hidden-defect-review</code> and gives it its own config (database <code>auction_part_5</code>, API <code>3105</code>, web <code>5105</code>, Redis <code>56379</code>). It then changes the bid transaction's locking and runs the checks. The summary is similar to: “A subtle PostgreSQL bidding concurrency defect is planted. Verification: server and web typechecks pass; 9 unaffected server tests pass; all 10 web tests pass; the concurrency test fails as intended: three simultaneous equal bids are accepted instead of one.”</p><p>Read that last sentence again. Three equal bids accepted instead of one. That <em>is</em> the race condition, and exactly one test in the project knows about it.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Want to play detective yourself first? Do not open the diff, and do not read step 3, until after step 6. Read Part 5's <code>server/src/app.ts</code> around the bid handler and see if you can spot the change on your own.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Delete the failing tests</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>A failing test would point straight at the bug. The hunting model would just run the tests, read the failure message and be done in ten seconds. That is not a test of its code-reading skill. So we remove the evidence first. Stay in the same Sol chat and send:</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Same Sol chat</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">delete the failing tests</pre></div>
+    <p>Why this matters beyond the game: this is also what happens in real teams, by accident. Someone changes a query, a test starts failing, and instead of understanding why, they delete or skip the test. Then the bug ships. Keep that picture in your head whenever you are tempted to delete a red test.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to: “Done :) Removed: the concurrency test and its PostgreSQL delay fixture, <code>tests/bidding-war.spec.ts</code>, the obsolete <code>test:bidding-war</code> npm script. Verification: both typechecks pass; all remaining tests pass. The bidding defect remains planted.” An “Edited 3 files” card lists <code>package.json</code>, <code>server/src/app.test.ts</code> and <code>tests/bidding-war.spec.ts</code>. “All remaining tests pass” is the scary part: the project now looks healthy and is not.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Optional spoiler: look at the planted change</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>I wanted to see exactly what Codex had done. The diff view inside Codex was too large to read comfortably, because the copy step touched many files, so I opened <code>server/src/app.ts</code> in VS Code instead. The command below is even quicker: it prints only the lines that differ between Part 4's and Part 5's copy of that one file. Skip this step if you want to hunt the bug yourself.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">cd ~/codex-course/workshop
+diff part-4-realtime-socketio-redis/server/src/app.ts part-5-hidden-defect-review/server/src/app.ts</pre></div>
+    <p>Line by line: <code>cd ~/codex-course/workshop</code> moves to the root of your practice copy. <code>diff A B</code> compares two files and prints only the differing lines: lines starting with <code>&lt;</code> are from the first file (Part 4), lines starting with <code>&gt;</code> are from the second (Part 5), and a header like <code>286c286</code> means “line 286 changed into line 286”.</p>
+    <div class="call concept"><b class="t">📘 Concept: FOR UPDATE vs FOR SHARE</b><p>Both are <strong>row locks</strong> you add to the end of a <code>SELECT</code> inside a transaction. Picture the auction row as a chair. <code>SELECT … FOR UPDATE</code> says “I am sitting on this chair and I am going to change it; nobody else may sit or change it until I stand up (commit).” A second bidder's transaction has to <strong>wait</strong>, and when it finally reads the row it sees the new price. That is what makes bids on one auction run strictly one after another. <code>SELECT … FOR SHARE</code> says “I am looking at this chair, please don't move it while I look”, and it lets <strong>many</strong> transactions hold that lock at the same time. Two bidders both read price 100, both pass the “is my bid higher?” check, and both get written. The lock is still there, so the code <em>looks</em> safe. That is why this is a good planted bug: one word, and the protection is gone.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>In my run the change was a single line around line 286, in the query that loads the auction inside the bid transaction. <code>diff</code> prints something like <code>286c286</code>, then a <code>&lt;</code> line ending in <code>FOR UPDATE</code> (Part 4) and a <code>&gt;</code> line ending in <code>FOR SHARE</code> (Part 5).</p><p>Your Codex may have planted a different defect, for example removing the lock clause entirely, or moving the price check outside the transaction. Any of those is fine for the game; the hunt in steps 5 and 6 works the same way.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If the diff also shows other lines, with port numbers or the database name, those come from the copy step in step 1, not from the bug. Look only for the change to the locking query.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Open a new chat and switch to 5.6 Luna</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The hunting model must start clean. A fresh chat has no memory of planting the bug; the Sol chat obviously knows where it is, so asking there would be cheating. Click <strong>New chat</strong> under <strong>workshop</strong>. Then click the model picker at the bottom right of the message box, choose <strong>Model → 5.6 Luna</strong>, and keep <strong>Effort → Medium</strong>.</p>
+    <div class="settings"><div class="settings-h">⚙ Codex settings</div><div class="set-grid"><div class="set"><span>Model</span><b>5.6 Luna</b></div><div class="set"><span>Reasoning</span><b>Medium</b></div></div></div>
+    <p>Why this matters: a new chat does not just give the model amnesia, it also gives <em>you</em> a fair measurement. If the same chat finds the bug, you learned nothing about the model's ability; it simply remembered.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The picker under the message box reads <strong>5.6 Luna Medium</strong>. The same menu also has a <strong>Speed</strong> setting (Standard / Fast); leave it on Standard.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Luna is the smaller, faster and cheaper model. People ask me about running Luna on <strong>Ultra</strong> effort. Ultra mostly makes it spin up sub-agents, which costs a lot and rarely helps a small model think better, so I usually stop at Extra High with Luna. A pattern I like on real work: Luna on Extra High doing the legwork, directed by a stronger model like Sol that writes the plan.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Ask Luna to find the bug</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Send my deliberately vague question. I do not hint at concurrency, I do not name a file, I do not even say what “bug” means. This is how a real bug report from a user sounds: “bidding is broken”. We want to see what the small model does with almost no information.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">New chat · 5.6 Luna</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">in part 5 there is a bug with bidding, can you find it?</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Within about 30 seconds, something like: “Yes. The bidding bug is in <code>server/src/app.ts</code> (line 283): <code>FOR SHARE</code> allows multiple bid transactions to acquire the lock simultaneously… Part 3 correctly used <code>FOR UPDATE</code>… Part 5 appears to have regressed.”</p><p>It found the bug. But look at <em>how</em>: it mentions Part 3. It read <code>app.ts</code> from another part's folder and compared the two. With a correct version sitting right next door, spotting the one-word difference is trivial. It <strong>cheated</strong>. I call this breaking out of the sandbox: we meant “look at Part 5” and it looked wherever it could.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>This is not the model misbehaving. It did the smart thing: when you have a known-good copy, diff against it. The lesson is about <em>you</em>: if you want a fair test, you have to say what is off-limits.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Try again, limited to Part 5</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Start <strong>another New chat</strong>, still on <strong>5.6 Luna Medium</strong>, so the model also forgets the first hunt. Send the same question, this time with a hard boundary. The capital letters are not politeness, they are emphasis; models do pay attention to shouted constraints.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Another new chat · 5.6 Luna</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">in part 5 there is a bug with bidding, can you find it? DO NOT LOOK IN ANY OTHER FOLDERS! JUST FOLDER 5!</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: prescriptive prompt vs vague prompt</b><p>A <strong>vague prompt</strong> states the goal and leaves the method to the model: “find the bug.” It is fast to write and it lets the model use every trick it knows, including tricks you did not expect, like comparing against another folder. A <strong>prescriptive prompt</strong> adds rules about <em>how</em>: which folders to read, which files not to touch, which steps to take and in what order. It costs you a few more words and buys you predictability. Neither is “correct”. Use vague prompts when you want speed and do not care how the answer is reached. Use prescriptive prompts when the method matters: a fair test, a fragile production system, a security boundary, or a task where the obvious shortcut is wrong. Step 5 was vague; this step is prescriptive. Watch how the model's behaviour changes with one extra sentence.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>First an acknowledgement: “I'll inspect only <code>part-5</code> (including its local instructions), trace the bidding flow, and run the tests documented there. I won't read any other project folders.” It reads Part 5's AGENTS.md, CONTEXT.md, README.md and <code>app.ts</code>, then answers similar to: “The bidding bug is in <code>server/src/app.ts</code> (line 283): <code>FOR SHARE</code> allows concurrent bid transactions to read the same auction state. Two bidders can therefore both see the same current price, pass validation, and submit identical bids. This should use <code>FOR UPDATE</code>… All existing Part 5 tests pass, but they don't cover two simultaneous bids, so this defect is currently undetected. No files were changed.”</p><p>Two things to notice: it reasoned about the lock from first principles this time, with no other folder to copy from, and it correctly pointed out that the test suite has a hole. “No files were changed” is also right: we asked it to find, not to fix.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Even the smallest model finds it fast. In a codebase this small, <code>FOR SHARE</code> on a bidding query is a dead giveaway to any model that has read about database locks. Leave the bug in place: I do not fix it, and Part 6 is copied from Part 4, not Part 5, so the defect never spreads.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Commit Part 5</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The hunt is over, so it is finally safe to commit. First switch the model picker back to <strong>5.6 Sol Medium</strong> so the next guide starts on the right model; it is easy to forget and then wonder why Part 6's planning feels weak.</p>
+    <div class="settings"><div class="settings-h">⚙ Codex settings</div><div class="set-grid"><div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div><div class="set"><span>Reasoning</span><b>Medium</b></div></div></div>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Part 5: hidden defect review&quot;</pre></div>
+    <p>Same three-part command as every part: go to the workshop root, stage everything (<code>git add -A</code>), save a snapshot with a message. The message is deliberately neutral; now that the game is done it would not matter, but it is a good habit to write commit messages that describe the change, not the story behind it.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A commit summary listing the new <code>part-5-hidden-defect-review/...</code> files, and the three files edited in step 2 shown as changed within that folder.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>Codex refused to plant a defect, or you want to skip ahead? Replace your Part 5 with the finished reference version. The reference folder is the <strong>end state of the whole part</strong>: Part 4's code with the <code>FOR SHARE</code> defect planted and the bidding-war test removed. You can still run steps 4–6 against it. Skip step 7 afterwards, because this command already commits.</p>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · catch up: Part 5</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-5-hidden-defect-review &amp;&amp; cp -R ../reference/part-5-hidden-defect-review ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 5 from reference&quot;</pre></div>
+  <p>What it does: deletes your Part 5 folder, copies the reference Part 5 in its place (<code>cp -R</code> copies the folder with everything inside), stages and commits. If Luna gave a different answer than the one shown in step 6, that is fine as long as it points at the locking query in <code>app.ts</code>; if it points somewhere else entirely, read step 3's concept box and check the query yourself.</p></div>
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li><strong>Row locks decide who waits.</strong> <code>SELECT … FOR UPDATE</code> makes bids on one auction run strictly one after another. <code>FOR SHARE</code> lets concurrent transactions read the same price, so duplicate or stale bids slip through. One word, and the protection is gone.</li>
+  <li><strong>Concurrency bugs hide from normal tests.</strong> The project passed every remaining test with the defect in place. Only a test that fires simultaneous bids could catch it, and the moment that test was deleted the project looked healthy.</li>
+  <li><strong>Agents look wherever they can:</strong> other folders, Git history, reference copies. Say exactly what is off-limits when you want a fair test. And turn it around when you debug for real: “reproduce the bug, then look at the Git history of the related files to find where it regressed.”</li>
+  <li><strong>Vague vs prescriptive:</strong> a vague prompt gives the model freedom to take shortcuts; a prescriptive prompt controls the method. Choose on purpose.</li>
+  <li><strong>Give agents broad access only on dev systems.</strong> Your local Docker Postgres or Redis, or a test deployment, is fine. Never give an agent production or cloud-admin credentials.</li>
+  <li>A smaller model (Luna) is faster and cheaper, and good enough for focused investigation in a small codebase. Save Sol for planning and big multi-file builds.</li>
+</ul></div>
+<div class="nav"><a href="18. Implementing the Real-Time Updates.html"><span>← Previous guide</span>18. Implementing the Real-Time Updates</a><a class="r" href="20. Closing Auction Plan.html"><span>Next guide →</span>20. Closing Auction Plan</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

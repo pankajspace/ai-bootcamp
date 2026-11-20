@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>4. Specifying a Tech Stack – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="4. Specifying a Tech Stack"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>4. Specifying a Tech Stack</h1>
+  <p class="lede">A tour of the project you downloaded in guide 1, on your own two copies: the folder layout, the README's stack and parts, what lives inside one part, the Docker services, and the AGENTS.md file. By the end you know what every technology in this app is for, and why I chose it instead of letting the AI choose.</p>
+  <div class="meta"><span class="pill">Repo tour</span><span class="pill">≈ 10–15 min</span><span class="pill">No Codex prompts</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>List the course repo's folders and files and learn what each one is: the part folders, <code>docker-compose.yml</code>, <code>AGENTS.md</code>, the README.</li>
+  <li>Read the README's <strong>Stack</strong> line, <strong>The parts</strong> table and <strong>Anatomy of a part</strong>, and understand every word in them.</li>
+  <li>Confirm that your workshop has Part 1 built and Parts 2–8 empty, which is exactly our starting point.</li>
+  <li>Match each technology in the stack to the job it does in the auction app.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+  <li>You finished guide 1: <code>~/codex-course/reference</code> and <code>~/codex-course/workshop</code> exist.</li>
+  <li>VS Code is installed with the <code>code</code> command working from Terminal (guide 1, step 2).</li>
+  <li>Open the <strong>Terminal</strong> app. Every command in this guide runs there. Codex stays closed; today we only read.</li>
+</ul>
+  <div class="call concept"><b class="t">📘 Concept: tech stack</b><p>A <strong>tech stack</strong> is the list of languages, frameworks and services an app is built from, layer by layer: what runs in the browser, what runs on the server, where the data is stored, and the helper services around them. Choosing the stack is one of the most important decisions in any project, because every later decision depends on it. In this course I chose the stack <strong>before</strong> asking Codex to write a single line, and I tell Codex exactly what to use. If you leave the choice to the AI, you get whatever was most common in its training data, and you will not understand why it picked what it picked.</p></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Look at the layout of the course repo</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>You cloned the course repo twice in guide 1, as <code>reference</code> (finished, read-only) and <code>workshop</code> (yours). Let's look at what is in the finished one first. The command below lists everything in the reference folder, including hidden files.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">ls -a ~/codex-course/reference</pre></div>
+    <p><code>ls</code> lists a folder's contents. The <code>-a</code> flag means “all”, so files whose names start with a dot (hidden by default on a Mac) are shown too. We want to see <code>.gitignore</code> and <code>.git</code>.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Folders <code>part-1-foundation</code> … <code>part-8-cross-stack-debugging</code>, <code>scripts</code>, <code>stripe-service</code>, and the files <code>.gitignore</code>, <code>AGENTS.md</code>, <code>README.md</code>, <code>docker-compose.yml</code>, plus the hidden <code>.git</code> folder where Git keeps the history.</p><p>What they are: each <code>part-N-…</code> folder is the whole app at one stage of its growth. <code>scripts</code> holds helper shell scripts. <code>stripe-service</code> is a small fake payment server we use in guide 23. <code>.gitignore</code> tells Git which files never to track (installed packages, logs, secrets).</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>In the reference copy all 8 parts are finished, so you can open any part folder and read working code whenever you are curious or stuck. In your workshop copy only Part 1 has code; Parts 2–8 are empty folders that Codex fills as we go. Keep that difference in your head for the whole course.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Open the reference copy in VS Code and read the README</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Now open the finished reference project in VS Code. In the file list on the left, click <strong>README.md</strong>, then press <strong>Cmd+Shift+V</strong>. That switches the file from raw Markdown text to a formatted preview with headings and tables, which is much easier to read.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">code ~/codex-course/reference</pre></div>
+    <p>If you prefer to stay in the terminal, this prints the same README as plain text (the workshop copy is identical to the reference copy at this point):</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Alternative: read it in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s2c1">Copy</button></div><pre id="s2c1">cat ~/codex-course/workshop/README.md</pre></div>
+    <p><code>cat</code> prints a file's contents to the terminal. Scroll up to read from the top.</p>
+    <div class="call concept"><b class="t">📘 Concept: frontend, backend, database</b><p>Almost every web app has three layers. The <strong>frontend</strong> is what runs in the user's browser: buttons, forms, the list of auctions. The <strong>backend</strong> (also called the API or the server) is a program running on a machine somewhere that the frontend talks to: “give me the auctions”, “place this bid”. The <strong>database</strong> is where the backend stores data permanently, so it survives restarts. The frontend never touches the database directly; it always goes through the backend, which checks the request and enforces the rules. Keep this picture in mind while you read the stack list below.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>In the README, find these three sections:</p><ul>
+      <li><strong>Stack:</strong> TypeScript + ESM, React + Vite, Fastify, Zod, PostgreSQL, Redis + Socket.IO, RabbitMQ worker, OpenTelemetry + Jaeger, Docker Compose (infra in Docker, apps on host).</li>
+      <li><strong>The parts:</strong> a table with one row per folder and the slice each part adds. Part 1 is the React → Fastify → Postgres “health path”: a page that asks the server, which asks the database, “are you alive?”.</li>
+      <li><strong>Anatomy of a part:</strong> inside every part folder, <code>GRILL.md</code> records the questions asked and the decisions locked before building; <code>CODEX.md</code> records the prompts used, what Codex did and the steering feedback given; <code>codex-logs/</code> holds the raw Codex transcripts; everything else is the app itself at that stage.</li>
+    </ul></div>
+    <p>Here is what each item in the Stack line does, in plain words. You do not need to memorise this; come back to it whenever a name confuses you.</p>
+    <ul>
+      <li><strong>TypeScript</strong>: JavaScript with types, so mistakes like passing text where a number is expected are caught before the code runs. The whole app, frontend and backend, is TypeScript. <strong>ESM</strong> is the modern way TypeScript files import each other.</li>
+      <li><strong>React + Vite</strong>: React builds the frontend out of reusable components. Vite is the tool that bundles it and serves it on your machine while you develop.</li>
+      <li><strong>Fastify</strong>: the backend web framework. It receives requests from the browser, runs our logic and sends back responses.</li>
+      <li><strong>Zod</strong>: validates data. When a bid arrives from the browser, Zod checks it has the right shape (a number, not empty, not negative) before our code trusts it.</li>
+      <li><strong>PostgreSQL</strong>: the database. Auctions, bids and users live here as rows in tables.</li>
+      <li><strong>Redis + Socket.IO</strong>: real-time updates. When someone bids, every other browser watching that auction sees the new price instantly without refreshing. Socket.IO keeps the live connection; Redis lets several server copies share those messages.</li>
+      <li><strong>RabbitMQ worker</strong>: a message queue plus a background program. Slow or risky jobs (closing an auction, charging the winner) are put on a queue and handled by a separate worker, so the web server stays fast.</li>
+      <li><strong>OpenTelemetry + Jaeger</strong>: observability. They record what happened inside each request so you can see where time went when something is slow or broken.</li>
+      <li><strong>Docker Compose</strong>: runs the services (Postgres, Redis, RabbitMQ, Jaeger) in containers, while our own apps run directly on the Mac. That is what “infra in Docker, apps on host” means.</li>
+    </ul>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The README also has a <strong>Prompts</strong> section with the exact prompt used for each part, and a <strong>Running a part</strong> section with the start-up commands. We use both from guide 5 onward, and I always give you the prompt in the guide itself, so you never have to hunt for it. If the table lists parts 4 and 5 in a different order than the folders, go by the folder names.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Check your workshop matches the starting point</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Part 1 is the starter code; everything after it is built by Codex during the course. Let's confirm your practice copy is in that exact state. Paste the block into Terminal:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">cd ~/codex-course/workshop
+ls
+ls part-1-foundation
+ls part-2-create-auction-and-bid | wc -l</pre></div>
+    <p>Line by line:</p>
+    <ul>
+      <li><code>cd ~/codex-course/workshop</code> moves into your workshop folder. <code>cd</code> means “change directory”.</li>
+      <li><code>ls</code> lists the top level: the eight part folders and the shared files.</li>
+      <li><code>ls part-1-foundation</code> lists what is inside Part 1, the only part with code.</li>
+      <li><code>ls part-2-create-auction-and-bid | wc -l</code> lists Part 2 and pipes the list into <code>wc -l</code>, which counts lines. An empty folder gives <code>0</code>.</li>
+    </ul>
+    <div class="call concept"><b class="t">📘 Concept: vertical slice</b><p>Each part of this app is a <strong>vertical slice</strong>: one thin feature built all the way through, from the button in the browser, through the backend, down to the database table. Part 1 is the thinnest possible slice (a health check). Part 2 adds “create an auction and place a bid”, again top to bottom. The opposite approach, building the whole database first, then the whole backend, then the whole frontend, means nothing works end to end until the very end. Slices mean you have a working app after every part, and Codex gets a small, clear job each time.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The first <code>ls</code> lists the 8 part folders plus <code>AGENTS.md  README.md  docker-compose.yml  scripts  stripe-service</code>.<br>The second lists Part 1's files: <code>AGENTS.md  CODEX.md  GRILL.md  README.md  codex-logs  package-lock.json  package.json  server  web</code>. Notice <code>server</code> (the backend) and <code>web</code> (the frontend) as separate folders, and <code>package.json</code>, the file that lists which npm packages this part needs.<br>The last line prints <code>0</code>: Part 2 is empty, waiting for Codex.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Look at the Docker services</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p><code>docker-compose.yml</code> is the file that defines the Docker services the app will need. Instead of opening it and reading YAML, ask Docker to list the service names for you:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">cd ~/codex-course/workshop
+docker compose config --services</pre></div>
+    <p><code>docker compose config</code> reads the <code>docker-compose.yml</code> in the current folder and checks it. <code>--services</code> tells it to print only the service names, one per line. This command only reads the file; it does not start anything.</p>
+    <div class="call concept"><b class="t">📘 Concept: Docker Compose and services</b><p>In guide 1 you learned that a <strong>container</strong> is an isolated box running one piece of software. <strong>Docker Compose</strong> lets you describe several containers in one file, <code>docker-compose.yml</code>, and start or stop them all with one command. Each named entry in that file is a <strong>service</strong>: which image to run, which port to open, which password to set. Later, <code>docker compose up -d</code> will start every service in the background, and <code>docker compose down</code> will stop them. Your Mac stays clean because nothing is installed outside the containers.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Four names, in any order: <code>postgres</code>, <code>redis</code>, <code>rabbitmq</code>, <code>jaeger</code>. These are the four pieces of infrastructure the finished app depends on: the database, the real-time message sharer, the job queue and the tracing viewer. Part 1 only needs <strong>postgres</strong>; the others switch on in later parts as the app grows.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If you see “Cannot connect to the Docker daemon”, that's fine for now; the names are usually still printed, because this command only reads the file. If it fails entirely, open the file in VS Code instead (<code>code ~/codex-course/workshop/docker-compose.yml</code>) and look for the four indented names under <code>services:</code>.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Skim the root AGENTS.md</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>AGENTS.md is very important, and we come back to it properly in guides 6 and 7. For now I only want you to open it and see what kind of file it is:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">code ~/codex-course/workshop/AGENTS.md</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: AGENTS.md</b><p><strong>AGENTS.md</strong> is a plain Markdown file that Codex reads automatically at the start of every chat in that project, before it does anything else. Whatever you write in it becomes standing instructions: which technologies to use, which to avoid, how to run the tests, how to name things. Think of it as the onboarding document you would hand a new engineer on day one. The difference from the custom-instructions box in guide 3 is scope: custom instructions follow <em>you</em> everywhere, AGENTS.md belongs to <em>this project</em> and travels with the code. A project can have one at the root and more inside sub-folders; the closer one wins.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A file titled <strong>Project Guidelines</strong>. It holds rules Codex follows automatically, for example “Stay within the core stack: TypeScript, PostgreSQL, Docker Compose, Fastify, Zod, and React/Vite”, plus a <strong>Workshop specific stuff</strong> section (use Mermaid for diagrams, use Chrome or Edge for browsing, limits on how long grilling sessions may run). You don't need to change anything. Just notice that the stack from the README is repeated here as a rule, so Codex cannot drift to a different database or framework halfway through.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>If <code>code</code> says “command not found”, open VS Code, press Cmd+Shift+P, run “Shell Command: Install 'code' command in PATH”, close Terminal fully and open it again.</p>
+  <p>If the Part 2 count is not <code>0</code>, or Part 1 is missing files, your workshop copy was not created correctly. Delete it and redo guide 1 step 5; it takes under a minute.</p>
+  <p>If <code>docker compose</code> says “unknown command”, you have an old Docker that only knows <code>docker-compose</code> (with a hyphen). Update Docker Desktop; the course uses the modern <code>docker compose</code> form throughout.</p>
+</div>
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li><strong>Libraries:</strong> TypeScript (whole stack), React (frontend), Fastify (API), Zod (validate data between frontend and backend), Socket.IO (real-time updates), <strong>Playwright</strong> (end-to-end browser tests, which we meet in guide 6). I consider Playwright possibly the most important of all, because it is how we prove the app actually works.</li>
+  <li><strong>Services:</strong> Docker runs Postgres (database), Redis (cache and pub/sub), RabbitMQ (messaging) and Jaeger (observability). Many real apps can stop at <strong>app + Postgres</strong>; we go further because the extra pieces teach you the hard parts of backend engineering.</li>
+  <li>Two ways to take this course: “I know nothing about this” (ask Codex to explain each concept as you go) or “I know what I want, I just want to go faster” (my way: pick the stack yourself and let Codex type). Both work; the guides support both.</li>
+  <li>Pick your tech stack yourself, or ask the AI to <strong>help you pick</strong> and explain the trade-offs. Never let it just choose for you, because you are the one who has to maintain the result.</li>
+  <li>Every part is a vertical slice with the same anatomy: GRILL.md (decisions), CODEX.md (prompts and steering), codex-logs (transcripts), and the app.</li>
+</ul></div>
+<div class="nav"><a href="3. Thinking Levels.html"><span>← Previous guide</span>3. Thinking Levels</a><a class="r" href="5. Install Custom Skills.html"><span>Next guide →</span>5. Install Custom Skills</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

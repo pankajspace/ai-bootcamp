@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>26. Observability with Jaeger – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="26. Observability with Jaeger"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>26. Observability with Jaeger</h1>
+  <p class="lede">The last guide. Open Jaeger, read the traces Part 8 produces, find an error span and read its exception, then have Codex run the bidding war and walk you through the winning trace across three services.</p>
+  <div class="meta"><span class="pill">Part 8 · finish</span><span class="pill">≈ 25–40 min hands-on</span><span class="pill">Jaeger UI · localhost:16686</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Check that Jaeger is running and open its search page in your browser.</li>
+  <li>Open an <code>auction.bid.accept</code> trace and read its spans, their tags and the PostgreSQL queries under them.</li>
+  <li>Spot an error span and read the exception it recorded.</li>
+  <li>Commit Part 8, then ask Codex to run the bidding war and walk you through the winning trace.</li>
+  <li>Optional: make your own full golden trace, from bid to paid purchase, and read it in Jaeger.</li>
+</ul></div>
+
+<div class="box"><h2>Before you start</h2><ul>
+  <li>Finished guide 25: the <strong>Add Jaeger auction tracing</strong> chat is still building Part 8 or has finished it.</li>
+  <li>Docker Desktop is running. Jaeger is the <code>jaeger</code> container from the workshop's <code>docker-compose.yml</code>.</li>
+  <li>Use Chrome or Edge for the Jaeger pages. Codex opens its own browser window in step 6; you can keep both open.</li>
+</ul>
+<div class="call concept"><b class="t">📘 Concept: observability, in one line</b><p><strong>Observability</strong> is being able to see what your running system did, from the outside, after the fact. In guide 25 we chose <strong>traces</strong> as our main signal because, unlike logs (text lines per service) and metrics (numbers over time), a trace follows <em>one</em> request through every service it touches. Today you read those traces.</p></div>
+<div class="call concept"><b class="t">📘 Concept: trace and span</b><p>A <strong>span</strong> is a single timed operation with a name, a start time, a duration and a few labels called <strong>tags</strong> (for example <code>auction.id = 42</code>). A <strong>trace</strong> is the set of related spans that together make up one full workflow, even when the spans come from different services minutes apart. Spans form a tree: the request that came in is the root, and every piece of work it caused (a database query, a message publish, a call to Mock Stripe) is a child under it. Jaeger draws this tree as an indented timeline, one row per span, with bar length showing duration.</p></div>
+<div class="call concept"><b class="t">📘 Concept: OpenTelemetry and the OTLP listener</b><p><strong>OpenTelemetry (OTel)</strong> is the library inside each of our Node.js services that creates spans and sends them out. It sends them using a standard wire format called <strong>OTLP</strong>. Jaeger has an OTLP listener, a port that accepts spans in that format, plus a web UI to search and view them. So the flow is: service code → OTel → OTLP over the network → Jaeger stores it → you read it at <code>http://localhost:16686</code>. Nothing in the app shows traces; Jaeger is the only place to see them.</p></div>
+<div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+  <div class="set"><span>Project / folder</span><b>workshop</b></div>
+  <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+  <div class="set"><span>Reasoning</span><b>Medium</b></div>
+  <div class="set"><span>Approvals</span><b>Approve for me</b></div>
+</div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Check that Jaeger is running</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The Part 8 build may still be running in the <strong>Add Jaeger auction tracing</strong> chat. I do not want to interrupt it with a question, so I use a <strong>side chat</strong>: a second, smaller chat that opens in a panel to the right of the main one. Look for the <strong>+</strong> button at the top of that right-hand panel and click it. The side chat sees the same project but runs independently, so the main build keeps going while you ask. Type the question below there.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Ask in the side chat</span><span class="where">side chat · workshop project</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">is jaeger running now</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>“Yes. Jaeger is listening at http://localhost:16686.” Codex checks the running Docker containers to answer, so this is a real check, not a guess.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>No side chat in your Codex version? Ask in a new chat, or check from Terminal yourself: <code>docker ps --filter name=jaeger</code> lists running containers whose name contains “jaeger”; you should see exactly one. If the list is empty, start it with <code>cd ~/codex-course/workshop &amp;&amp; docker compose up -d jaeger</code>. <code>up -d</code> means “start it and leave it running in the background”.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Open Jaeger and find a bid trace</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Open the URL below in Chrome or Edge. You land on the <strong>Search</strong> tab, with a form down the left side. Fill it in like this: <strong>Service:</strong> pick <code>auction-api</code> from the dropdown. <strong>Operation:</strong> leave it on <code>all</code>, or pick <code>auction.bid.accept</code> if you want only bid traces. <strong>Lookback:</strong> <code>Last Hour</code>. Leave Tags, duration and limit alone. Click the blue <strong>Find Traces</strong> button at the bottom of the form. Results appear on the right as cards, newest first. Click a card whose title says <code>auction.bid.accept</code>.</p>
+    <div class="copy k-url"><div class="copy-h"><span class="ic">↗</span><span class="lbl">Open in browser</span><span class="where">Chrome or Edge</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">http://localhost:16686</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: the Jaeger UI</b><p>Jaeger's web page has two screens you care about. The <strong>Search</strong> screen filters traces by <strong>service</strong> (which program emitted the root span), <strong>operation</strong> (the root span's name) and <strong>lookback</strong> (how far back in time). Each result card shows the root operation, how many spans and services are inside, and the total duration. Clicking a card opens the <strong>Trace</strong> screen: a header with duration, number of services, depth (how deep the parent/child tree goes) and total spans, then a timeline where every row is one span, indented under its parent and coloured by service. Clicking a row expands it to show its tags, process info and logs.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The <strong>Service</strong> dropdown lists the Part 8 services: <code>auction-api</code>, <code>auction-close-worker</code>, <code>notification-worker</code>, <code>mock-stripe</code> (and possibly <code>jaeger-all-in-one</code>, Jaeger's own). The traces you find come from Codex's own test runs while it built Part 8.</p><p>The trace page header reads something like <strong>auction-api: auction.bid.accept</strong> · Duration 1m 37s · Services 4 · Depth 10 · Total Spans 57, with a timeline and an indented list of spans below it. A long duration like that is normal here: the trace runs from the bid until the test paid for the item.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>No traces yet, or no services in the dropdown? Codex has not reached its test runs. That is fine; step 6 creates fresh traces. Come back to this step afterwards.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Read the spans</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Scroll the <strong>Service &amp; Operation</strong> list on the left of the timeline. Each row is one span: the service name in bold, then the operation name. Rows are indented under their parent, so a Postgres query sits one level under the business step that ran it. Click any row and it expands to show three sections: <strong>Tags</strong> (the labels we chose in guide 25), <strong>Process</strong> (which service and host emitted it) and <strong>Logs</strong> (timestamped events inside the span). Now look for the story you asked for in guide 25:</p>
+    <ul>
+      <li><code>auction-api</code> <strong>auction.bid.accept</strong>, with <code>pg.query:SELECT/INSERT/UPDATE auction_part_8</code> children. These are the Postgres spans you kept in Q4: one row per SQL statement the bid ran, against the <code>auction_part_8</code> database.</li>
+      <li><code>auction-close-worker</code> <strong>auction.close</strong> → <strong>auction.closed.publish</strong>: the worker picked the winner and published the close event to RabbitMQ.</li>
+      <li><code>notification-worker</code> <strong>auction.closed.consume</strong>: the second worker received that message and told the seller and winner.</li>
+      <li><code>auction-api</code> <strong>winner.checkout.start</strong> → <code>mock-stripe</code> <strong>mock-stripe.checkout.create</strong> / <strong>mock-stripe.payment.attempt</strong> → <code>auction-api</code> <strong>winner.purchase.mark-paid</strong>. These only appear if that auction was paid for.</li>
+    </ul>
+    <p>Why this matters: these 8–10 named spans are the whole reason we grilled in guide 25. Anyone on the team can now open one trace and read the business story without opening a single source file.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Clicking a <code>pg.query:INSERT auction_part_8</code> row shows its service, its duration (for example 626µs, that is microseconds, under a millisecond) and tags such as <code>db.name = auction_part_8</code> and the statement type, but <strong>no SQL text</strong>, exactly as agreed in Q7. Rows are indented by parent/child, and the bar colour changes per service, so you can see at a glance where the request crossed from the API into a worker.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Find the error span</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Scan the span list for a row with a small red <strong>!</strong> icon next to its name. In my run it was an <code>auction-api</code> <strong>POST</strong> span sitting under <code>winner.checkout.start</code>. Click it, then click <strong>Logs</strong> to expand the events recorded inside that span.</p>
+    <div class="call concept"><b class="t">📘 Concept: error span</b><p>When code inside a span throws an exception, OpenTelemetry marks the span with the tag <code>error = true</code> and attaches a log event carrying <code>exception.type</code> and <code>exception.message</code>. Jaeger shows such spans with a red marker so they stand out in a list of hundreds. That is exactly why we decided in Q6 that rejected bids and declined cards are <em>not</em> errors: if every normal “no” were red, you would stop noticing the red that matters. Red should mean “something actually broke”.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A span tagged <code>error = true</code> with an exception in its logs. In my run: <code>exception.message  connect ECONNREFUSED 127.0.0.1:7107</code> and <code>exception.type  ECONNREFUSED</code>. ECONNREFUSED means “I tried to open a network connection to this address and nothing was listening there”. Notice the port: 7107 is Part 7's Mock Stripe port, while Part 8 runs Mock Stripe on 7108. My best guess is that one of Codex's early test runs still pointed at the old port before it finished updating the config. Your trace may have no error at all, and that is fine.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>This is tracing earning its keep. Without it you would have a vague “checkout sometimes failed in a test” and a pile of logs from five services. With it, one click tells you which service, which call, which address and which error, in context.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Read Codex's handoff and save Part 8</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Go back to the main <strong>Add Jaeger auction tracing</strong> chat and wait for the final summary; the running counter disappears when it is done. Read the summary; it is Codex's handoff, the list of what it built and how it verified it. Then save Part 8 in Git. Open Terminal and run the line below: <code>cd</code> into the workshop, <code>git add -A</code> stages every change, <code>git commit -m</code> saves the snapshot with the given message.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Part 8: Jaeger tracing&quot;</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>In Codex, something like: a list of passing checks (all TypeScript typechecks pass; browser-verified auction close, winner checkout and a rendered Jaeger timeline), then “The Part 8 database was returned to its clean seeded state. Run <code>npm start</code> from Part 8 to launch everything.” and a card <strong>Edited 19 files +581 −320</strong>. Your numbers will differ. In Terminal, a commit summary with the number of files changed.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Click the <strong>Edited N files</strong> card and skim the diff. You should see a small tracing setup file per service, named spans added around the bid, close, publish, consume and checkout code, and trace-context fields added to the outbox row and RabbitMQ message headers. No business logic should have changed; if you see a bid or payment rule rewritten, ask Codex why.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Ask for the bidding war and a trace walkthrough</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Same chat. Now we create a fresh trace on purpose and let Codex explain it. The prompt asks for two things: run the four-window bidding war, then open Jaeger in a browser and talk us through the trace that belongs to the winning bid. Codex can read Jaeger because Jaeger has an HTTP API as well as a UI; Codex queries that API, finds the right trace and opens it in Chrome or Edge for you.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Add Jaeger auction tracing chat</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">do the bidding wars, then open jaeger full screen and walk us thru the relevant trace</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: following one request across API → Postgres → RabbitMQ → worker</b><p>The trace Codex is about to show you crosses three processes. The winning bid hits the <strong>API</strong>, which writes to <strong>Postgres</strong> (the query spans). A minute later the <strong>close worker</strong>, a separate program, closes the auction and publishes a message to <strong>RabbitMQ</strong>. Then the <strong>notification worker</strong>, a third program, consumes that message. These three never call each other directly, so how do they end up in one trace? The API saved the trace ID in the auction's outbox row; the close worker read it and put it in the RabbitMQ message headers; the notification worker read it from there. Each one continued the same trace instead of starting a new one. This is the trace continuity we asked for in Q2, and it is why Jaeger can show a bid and a notification a minute apart as one story.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Four tiled windows on <code>http://localhost:5108/items/bidding-war-gpu-…</code> (Codex picks the port; 5108 in my run). Bids climb to $107, then the seller sees <strong>Your auction has closed</strong> and Theo sees <strong>Congratulations</strong>.</p><p>In my run Codex then noticed a problem: “the very last <code>$107</code> trace was lost when Playwright shut down the worker processes immediately after the final assertion”. OTel sends spans in batches, and the test killed the workers before the last batch left. Codex re-ran with a short hold, <code>BIDDING_WAR_HOLD_MS=8000 npm run test:bidding-war</code>, giving the workers 8 seconds to flush. Yours may not need this.</p><p>Then a browser window opens Jaeger full screen on the winning trace, and Codex writes a walkthrough similar to:</p><ol>
+      <li><code>auction.bid.accept</code>: the winning $107 bid. The 805ms PostgreSQL <code>INSERT</code> is the intentional concurrency-delay trigger from the bidding-war test, not a slow database.</li>
+      <li><code>auction.close</code>: the close worker selects the winner, records the close and inserts the outbox event.</li>
+      <li><code>auction.closed.publish</code>: publishes the message to the <code>auction.events</code> exchange and marks the outbox row as published.</li>
+      <li><code>auction.closed.consume</code>: the notification worker receives the same message, creates two delivery records, and emits outcomes to seller and winner.</li>
+      <li>Total: 18 spans, three services, 2.29 seconds, depth five.</li>
+    </ol></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Codex read Jaeger with plain <code>curl</code> requests to its API. Letting an agent read traces is powerful: it can chase a slow span or an error across services faster than you can click. In production I only allow this with <strong>read-only</strong> credentials, so the agent can look at anything and change nothing.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Explore the winning trace yourself</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Do not just read Codex's summary; verify it against the screen. In the Jaeger window Codex opened, click each of these spans in turn and expand <strong>Tags</strong> and <strong>Logs</strong>. Tags are the labels attached to the whole span; Logs are events that happened at a specific moment inside it.</p>
+    <ol>
+      <li>The top <strong>auction.bid.accept</strong> span (service <code>auction-api</code>).</li>
+      <li><strong>auction.close</strong> (service <code>auction-close-worker</code>).</li>
+      <li><strong>auction.closed.consume</strong> (service <code>notification-worker</code>).</li>
+    </ol>
+    <p>Compare what you see with the rules from guide 25's Q7: IDs, slug, amount, outcome and role are present; names, handles, card numbers and SQL text are not. Amounts are in cents, so $107 appears as 10700. Why this matters: this check is how you confirm the agent followed your data rules, not just your feature request.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to my run:</p><ul>
+      <li>Header: <strong>auction-api: auction.bid.accept</strong> · Duration 2.29s · Services 3 · Depth 5 · Total Spans 18.</li>
+      <li>auction.bid.accept tags: <code>auction.bid.amount_cents = 10700</code>, <code>auction.bid.id = 22</code>, <code>auction.bid.outcome = accepted</code>. One log event: <code>event = auction.changed.emitted</code>.</li>
+      <li>auction.close tags: <code>auction.close.outcome = winner_selected</code>, <code>auction.id</code>, <code>auction.slug = bidding-war-gpu-…</code>.</li>
+      <li>auction.closed.consume: <strong>Logs (2)</strong>, two <code>auction.outcome.emitted</code> events (one for the seller, one for the winner), each with its own <code>notification.id</code>.</li>
+    </ul></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Optional: make your own full golden trace with checkout</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The bidding-war trace stops at the notification, because the test never pays. Part 8's README describes the full golden trace, which continues through checkout and payment. To see it, play the whole story by hand. First make sure no Codex run of Part 8 is still active (ask Codex to stop its servers, or check that the browser windows are closed), then start Part 8 yourself with the command below. <code>npm start</code> brings up the API, both workers, Mock Stripe and the web app together, and prints the web URL.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · part-8 folder</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">cd ~/codex-course/workshop/part-8-cross-stack-debugging &amp;&amp; npm start</pre></div>
+    <ol>
+      <li>Open the web URL that <code>npm start</code> prints (<code>http://localhost:5108</code> in my run). Pick a user with the user switcher, click <strong>Sell</strong>, and post an auction that closes in about two minutes.</li>
+      <li>Switch to another user and place a bid on it.</li>
+      <li>When the auction closes and the winner popup appears, click <strong>Complete purchase</strong> and pay on the Mock Stripe page with <code>4242 4242 4242 4242</code>, any future expiry and any CVC.</li>
+      <li>In Jaeger: Service <code>auction-api</code>, Operation <code>auction.bid.accept</code>, <strong>Find Traces</strong>, and open the newest card.</li>
+    </ol>
+    <div class="call expect"><b class="t">✓ You should see</b><p>One trace that keeps going after the close: <code>auction.close</code> → <code>auction.closed.publish</code> → <code>auction.closed.consume</code> → <code>winner.checkout.start</code> → <code>mock-stripe.checkout.create</code> → <code>mock-stripe.payment.attempt</code> → <code>winner.purchase.mark-paid</code>, now with <strong>4 services</strong> including <code>mock-stripe</code>. That is the golden trace from guide 25's Q1, end to end: bid, close, message, notification, checkout, payment, webhook, paid.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>An exercise I recommend before you leave the course: break something on purpose. Stop the notification worker, or point the API at the wrong Mock Stripe port, then ask Codex to find the problem using <strong>only Jaeger</strong>. Watch how it reasons from a missing or red span back to the cause. That is cross-stack debugging, and it is the skill Part 8 is named after.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>If Part 8 never finished, or Jaeger shows nothing useful, catch up to the finished Part 8 from the reference copy. The reference folder is the <strong>end state of the whole part</strong>: tracing done and the golden trace documented in its README. The command also restores the finished <code>stripe-service/</code> with its tracing. The first line deletes your Part 8 and Mock Stripe folders, copies both from <code>../reference</code> and commits the result; the second installs Part 8's packages and starts everything. Then follow step 8 to create a trace: app at <code>http://localhost:5108</code>, Jaeger at <code>http://localhost:16686</code>.</p>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-8-cross-stack-debugging stripe-service &amp;&amp; cp -R ../reference/part-8-cross-stack-debugging ../reference/stripe-service ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 8 from reference&quot;
+cd part-8-cross-stack-debugging &amp;&amp; npm install &amp;&amp; npm start</pre></div>
+  <p>If Jaeger's Service dropdown is empty even after a bidding war, the services could not reach Jaeger: check <code>docker ps</code> shows the <code>jaeger</code> container, restart Part 8 with <code>npm start</code>, and run one more bid. Spans are sent in batches, so give it a few seconds and click <strong>Find Traces</strong> again.</p></div>
+
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li>A span is one timed operation; a trace is the related spans of one whole workflow. OpenTelemetry creates them inside each service, Jaeger receives, stores and shows them, free and local.</li>
+  <li>Saving the trace context in the database row and in the RabbitMQ message is what turns a bid, a close a minute later and a notification into one trace across three processes.</li>
+  <li>Traces surface real problems fast: a red <code>ECONNREFUSED</code> span tells you which service, which address and which error; an 805ms <code>INSERT</code> stands out in the timeline without reading any logs.</li>
+  <li>Agents are good at digging through traces. Let them, but with read-only access when it is production.</li>
+  <li>Look at what you built across Parts 1 to 8: a real auction house with a React frontend, PostgreSQL with row locking for concurrent bids, Redis for live updates, RabbitMQ with a transactional outbox for reliable close events, Stripe-style checkout with webhooks, and Jaeger tracing across all of it. You planned every part by grilling before building, proved it with bidding-war tests instead of hoping, used <code>/goal</code> for issue-driven work, and learned to hand simple work to cheaper models while keeping the review yourself. That workflow, not any single prompt, is what you take with you.</li>
+</ul></div>
+
+<div class="nav"><a href="25. Observability.html"><span>← Previous guide</span>25. Observability</a><a class="r" href="index.html"><span>Course complete →</span>Back to all guides</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

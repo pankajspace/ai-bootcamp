@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>21. Messaging with RabbitMQ – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="21. Messaging with RabbitMQ"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>21. Messaging with RabbitMQ</h1>
+  <p class="lede">Build Part 6. Approve both slices: first the auction close worker with its transactional outbox, then RabbitMQ → notification worker → popup modals. Review the code while Codex works, and finish with a bidding war that ends in “Congratulations” for the winner and “Your auction has closed” for the seller.</p>
+  <div class="meta"><span class="pill">Part 6 · build</span><span class="pill">≈ 40–60 min hands-on</span><span class="pill">RabbitMQ + 2 workers</span><span class="pill">Web http://localhost:5106</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Approve Slice 1. Codex adds the <code>auction_closes</code> and <code>outbox_events</code> tables and a separate <strong>Auction Close Worker</strong> that polls PostgreSQL with <code>SKIP LOCKED</code>.</li>
+  <li>Read the diff while Codex is still working, and queue “go ahead on slice 2” before Slice 1 finishes.</li>
+  <li>Get Slice 2: confirmed RabbitMQ publishing, a <strong>Notification Worker</strong>, and dismiss-required modals for the seller and the winner.</li>
+  <li>Run the four-window bidding war, then run Part 6 yourself by hand and peek inside RabbitMQ's dashboard.</li>
+  <li>Commit Part 6.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+  <li>You finished guide 20. Continue in the <strong>same main chat</strong> (“Grill auction notifications design”), which ended with the two proposed slices and the question “Please confirm Slice 1”.</li>
+  <li>Docker Desktop is running. Part 6's <code>npm start</code> brings up <strong>three</strong> containers: Postgres, Redis and RabbitMQ (RabbitMQ comes from the root <code>docker-compose.yml</code>: the message protocol, AMQP, on <code>localhost:56726</code> and the management web UI on <code>localhost:15676</code>). It then starts <strong>four processes</strong>: the API, the Auction Close Worker, the Notification Worker and the web app. Jaeger is in the compose file too but is not used until Part 8.</li>
+  <li>In my result Part 6 runs at web http://localhost:5106, API 3106, database <code>auction_part_6</code>. Codex tells you your URLs at the end of each slice; use those.</li>
+</ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Mode</span><b>Normal chat (the main chat from guide 20)</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div>
+  <div class="call concept"><b class="t">📘 Concept: worker processes</b><p>Until Part 5 our backend was one program: the API server. From Part 6 it is three. A <strong>process</strong> is simply one running program with its own memory. The API process answers HTTP requests and holds the WebSocket connections. The <strong>close worker</strong> process does nothing but poll the database and close auctions. The <strong>notification worker</strong> process does nothing but read messages from RabbitMQ and push popups. They share the same codebase (all three live in <code>server/src/</code>) and the same database, but each one can be started, stopped, crashed and restarted on its own. That is why <code>npm start</code> now prints four prefixes in the log: one per process, plus the web app.</p></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Approve Slice 1</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Send a short approval, in the same style as our Part 4 approval in guide 18. Codex has the whole design in GRILL.md and the ADR, so it needs nothing more than a clear yes for Slice 1 only. While it works, which takes a while, read the two concept boxes below; they explain what RabbitMQ is doing under the hood.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Main chat · same thread as guide 20</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">go for slice 1</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: exchange, routing key, queue, ack</b><p>Inside RabbitMQ a message does not go straight into a queue. The producer sends it to an <strong>exchange</strong>, a kind of sorting office, together with a <strong>routing key</strong>, a short label such as <code>auction.closed</code>. The exchange looks at the key and copies the message into every <strong>queue</strong> that has asked for messages with that key (this is called a binding). A <strong>consumer</strong> reads from a queue, one message at a time. When it has finished the work it sends an <strong>ack</strong>; only then does RabbitMQ delete the message. If the consumer dies before acking, the message goes back on the queue and is delivered again. In our project Codex declares one exchange (<code>auction.events</code> in the reference copy) and one queue (<code>auction.notifications</code>) bound to it. You will see both in the dashboard in step 7.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: loose coupling (why not just call the other service?)</b><p>The obvious alternative is for the close worker to call the notification service directly over HTTP: “hey, auction 42 closed, go notify people”. That builds a <strong>chain</strong>: for a close to succeed, the notification service must be up, reachable and fast at that exact moment. Add two more services to the chain and the whole feature breaks whenever any one of them is restarting. A queue works like a post office: the close worker drops the letter and walks away, and the notification worker collects it whenever it is ready, even if that is ten seconds later after a restart. Neither service needs to know the other's address or whether it is alive. This is <strong>loose coupling</strong>, and it is the main reason real systems put a queue between workers.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to: “I'll first normalize Part 6's copied configuration and map the existing query/test seams, then implement and run the required backend, frontend, typecheck, and browser verification before stopping for your review.” A progress pill above the message box counts up, for example <strong>Step 2 / 5 · 21 files changed +563 −32</strong>. Along the way Codex explains it is using a dedicated <code>auction_closes</code> table plus a uniquely keyed <code>outbox_events</code> row created in the same transaction, and that the worker will lock due auction rows with <code>SKIP LOCKED</code>. Those three phrases are the design from guide 20, now becoming code.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>Two build slices in a row is the most expensive part of this guide. Each can run 10 minutes or more on Sol. Do not switch models mid-slice; let it finish.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Review Slice 1's code while it works</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>You do not have to sit and watch the progress pill. Open the review panel (the icon at the top right, or <strong>Review</strong> on the edited-files card) and set the dropdown at its top to <strong>Last Turn</strong>, so you see only the files changed in this run. The list grows as Codex works. Here is what I check, in this order:</p>
+    <ul>
+      <li><code>002_auction_closes_outbox.sql</code> in <code>server/migrations/</code>: the two new tables, <code>auction_closes</code> and <code>outbox_events</code>.</li>
+      <li><code>server/src/auctionClose.ts</code>: the heart of the slice. It claims due auctions with <code>FOR UPDATE OF a SKIP LOCKED</code>, inserts one row into <code>auction_closes</code> and one into <code>outbox_events</code>, then <code>COMMIT</code>. That is the transactional outbox from guide 20: close and event in <strong>one transaction</strong>, so you can never have one without the other.</li>
+      <li><code>server/src/close-worker.ts</code>: the separate polling process. A loop with a one-second sleep that calls the function above.</li>
+      <li><code>server/src/app.ts</code>: the API now returns the winning-bid fields on an auction, read from the close row.</li>
+      <li><code>tests/bidding-war.spec.ts</code>: updated to point at the Part 6 URL and database, so the war from Part 4 still runs here.</li>
+    </ul>
+    <div class="call concept"><b class="t">📘 Concept: migration and SKIP LOCKED</b><p>A <strong>migration</strong> is a numbered SQL file that changes the database's structure: create a table, add a column. They run in order (001, 002, 003…) on every machine, so everyone's database ends up with the same shape. Codex adds <code>002_…</code> because Part 4 already had <code>001</code>. <code>SKIP LOCKED</code> is a PostgreSQL option on a locking <code>SELECT</code>: “give me the due auctions, but if another transaction is already holding one of those rows, skip it instead of waiting”. The result is that you can run two or three close workers at once and they will never fight over the same auction, nor block each other. One line of SQL, and the worker is safe to scale.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Mostly green (new) lines. A migration similar to:<br><code>CREATE TABLE auction_closes (auction_id … PRIMARY KEY, closed_at …, winning_bid_id … UNIQUE REFERENCES bids(id))</code><br><code>CREATE TABLE outbox_events (id uuid PRIMARY KEY, event_type …, payload jsonb …, published_at timestamptz, UNIQUE (event_type, auction_id))</code></p><p>Read the constraints: <code>auction_id … PRIMARY KEY</code> means an auction can be closed only once. <code>UNIQUE (event_type, auction_id)</code> means there can be only one <code>AuctionClosed</code> event per auction. <code>published_at</code> being empty is how the publisher knows a row still needs sending. The database itself enforces “one close, one event”, which is idempotency at the first boundary.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>I like that the winning bid is stored on the close row (<code>winning_bid_id</code>) rather than recomputed from the bids table every time someone opens the page. A close is a historical fact; store it. And the polling worker? Is it a perfect architecture? Maybe not. Will it keep working reliably for years? Yes. Simple and boring beats clever here.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Queue “go ahead on slice 2”</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Watch the progress messages. When Codex reports Slice 1's tests passing (it says something like “The full regression suite is green”), I am confident enough to type the next instruction <strong>while Codex is still working</strong> and press Enter. Codex does not interrupt itself; it holds the message and sends it the moment the current turn ends. This saves you from staring at the screen waiting for the exact second it finishes.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Main chat · while Slice 1 is still running</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">go ahead on slice 2</pre></div>
+    <p>Why this matters: it is a judgement call. Queuing means you trust the tests more than your own browser check for this slice. I do that here because Slice 1 is backend-only (tables and a worker) and its tests are exactly the ones that matter: concurrency and idempotency. For Slice 2, which has a visible UI, I do not queue; I look at it first.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>First Slice 1 finishes: “Slice 1 is complete and verified in Part 6.” It shows a Mermaid diagram (⏱️ Auction Close Worker polls due auctions every second → 🐘 PostgreSQL auctions, closes, outbox; ⚡ Fastify API reads the authoritative outcome; 🌐 Web App refreshes after the deadline) and an “Edited 23 files” card. Then your queued message is sent automatically and Codex starts Slice 2 (“Designing notification delivery migration and idempotent emission…”).</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Prefer to check Slice 1 in the browser first? Then don't queue. Wait for Codex's review steps, try them (step 6 shows how to run Part 6; at this stage you would only see the auction show as ended after the deadline, with no popup yet), then send this message. If your Codex version does not hold messages typed during a run, simply send it after the turn ends.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Review Slice 2's code</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Same review panel, <strong>Last Turn</strong> again, which now shows only Slice 2's files. New pieces to look at:</p>
+    <ul>
+      <li><code>003_notification_deliveries.sql</code> in <code>server/migrations/</code>: a table with one row per event <em>and</em> recipient, with <code>UNIQUE (outbox_event_id, recipient_user_id)</code>. This is the idempotent consumer from guide 20 made real: if RabbitMQ redelivers the same event, the second insert for the same recipient fails the unique check, so no second popup.</li>
+      <li><code>server/src/close-worker.ts</code>: the close worker now also publishes pending outbox rows to RabbitMQ on a <strong>confirm channel</strong>, meaning it waits for RabbitMQ's “got it” before setting <code>published_at</code>.</li>
+      <li><code>server/src/notification-worker.ts</code>: the <strong>separate</strong> process that consumes from RabbitMQ, decides the recipients, and emits through Redis to Socket.IO.</li>
+      <li><code>server/src/notificationDelivery.ts</code>: <code>INSERT … ON CONFLICT DO NOTHING</code>, then emit. “On conflict do nothing” is PostgreSQL for “if this row already exists, skip quietly instead of throwing an error”. Insert first, emit second: if the insert was skipped, there is nothing to emit.</li>
+      <li><code>tests/outcome-notification.spec.ts</code>: the multi-window Edge check that opens seller, winner and an unrelated user and asserts who gets a modal.</li>
+      <li><code>web/src/…/OutcomeModal.tsx</code>: the React component for the popup itself, with the dismiss button and the three text variants.</li>
+    </ul>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex works through <strong>Step 1 / 6 → 6 / 6</strong> (about 23 files changed, roughly +1,000 lines). It ends with “Slice 2 is complete and verified”, lists key files like <code>outboxPublisher.ts</code>, <code>notification-worker.ts</code>, <code>realtime.ts</code> and <code>OutcomeModal.tsx</code>, and gives review steps similar to: “To review, run <code>npm start</code>, open several windows at http://localhost:5106, select seller/winner/unrelated users, and let a short auction end. Seller and winner sessions receive the appropriate modal; unrelated and offline users do not.”</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Trace one message through the files in your head: close worker writes outbox row → publisher sends it to the exchange and marks <code>published_at</code> → queue → notification worker reads it → inserts delivery rows (unique) → emits to Socket.IO rooms via Redis → browser shows <code>OutcomeModal</code>. If you can tell that story, you understand Part 6.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Run the bidding war</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>It isn't verified until bidding wars. This time the war has a new ending: after the countdown, the close worker should close the auction, the message should travel through RabbitMQ, and two of the four windows should get a modal. Stop any <code>npm start</code> you have running for Part 6 (Ctrl+C in Terminal) so the test can start its own servers, then send:</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Main chat</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">BIDDING WARS, it ain&#x27;t verified until bidding wars bayyyy</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>“You're right. Slice 2 doesn't get the victory lap without the four-window war.” Four Edge windows tile the screen at <code>localhost:5106/items/bidding-war-gpu-…</code> (SELLER · AVERY, BIDDER 1 · MAYA, BIDDER 2 · THEO, BIDDER 3 · PRIYA). Bids climb, every window shows <strong>ENDED</strong> with a final outcome like “@priya won with $107”, and then, a few seconds later:</p>
+      <ul><li>the <strong>seller's</strong> window shows a modal <strong>“Auction ended — Your auction has closed”</strong>: “Your auction for BIDDING WAR GPU … ended. Priya Shah won with $107.” with <strong>Dismiss</strong> and <strong>View auction</strong> buttons</li>
+        <li>the <strong>winner's</strong> window shows <strong>“Congratulations”</strong>: “You won BIDDING WAR GPU … with a bid of $107.”</li>
+        <li>the two losing bidders get <strong>no modal</strong>, exactly as decided in guide 20</li></ul>
+      <p>The few seconds of delay are real: up to one second for the poll, then the publish, then the consume. That is the cost of loose coupling, and for a notification it is perfectly fine.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>No Edge installed? Tell Codex to run the headed bidding war in Google Chrome instead (see guide 18, step 8). If the windows show ENDED but no modal ever appears, do not guess; go to step 6 and read the worker logs.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Run Part 6 yourself in Chrome</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The war proves it works for the test's users. Now try the close workflow by hand, with an auction you create. First start everything:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · leave it running</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">cd ~/codex-course/workshop/part-6-async-close-rabbitmq
+npm install
+npm start</pre></div>
+    <p>Line by line: <code>cd</code> into the Part 6 folder; <code>npm install</code> fetches the new packages, including the RabbitMQ client library (<code>amqplib</code>) Codex added; <code>npm start</code> brings up the three containers, runs migrations 001–003 on <code>auction_part_6</code>, then starts the four processes. Leave this Terminal window open. Then:</p>
+    <ol>
+      <li>Open the web URL Codex gave you (in my run http://localhost:5106). In this window, click <strong>Sell</strong> in the top navigation and post an auction with a <strong>closing time about 2 minutes from now</strong>. The form insists on at least 1 minute, and 2 gives you time to set up the second window.</li>
+      <li>Copy the new auction's address and open it in a second Chrome window (<strong>Cmd+N</strong>). This window gets a different random demo user. If it happens to be the same user as the seller, switch to another one with the footer switcher. Place a bid.</li>
+      <li>Arrange the two windows so you can see both, and wait for the deadline. Watch the Terminal too: within a second of the deadline you should see a <code>[close-worker]</code> line, then a <code>[notification-worker]</code> line.</li>
+    </ol>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Terminal shows the postgres, redis and rabbitmq containers as healthy, migrations applied, then interleaved logs from four processes (in my version prefixed <code>[api]</code>, <code>[close-worker]</code>, <code>[notification-worker]</code>, <code>[web]</code>). A few seconds after the deadline, both pages show the auction as ended, with no reload. The seller window shows <strong>“Your auction has closed”</strong> and the bidder window shows <strong>“Congratulations”</strong>. Each modal stays on screen until you click <strong>Dismiss</strong>; clicking elsewhere does nothing, which is the dismiss-required behaviour you asked for.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Nothing pops up? Work backwards along the chain. Does the Terminal show a <code>[close-worker]</code> log line at the deadline? If not, the poll is not running. Does it show a <code>[notification-worker]</code> line? If not, check that the <strong>rabbitmq</strong> container is running in Docker Desktop. If both lines are there but no modal, the problem is between Redis and the browser; check the browser's address matches the API's port. In every case, paste the exact error line into the Codex chat and let it debug with you.</p><p>Stop the servers with Ctrl+C when done. The containers keep running in Docker; that is fine.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Optional: look inside RabbitMQ</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>This step makes the exchange-and-queue concepts from step 1 concrete. RabbitMQ ships with a web dashboard called the <strong>management UI</strong>. With Part 6 still running (<code>npm start</code> from step 6), open the address below and log in with username <strong>auction</strong> and password <strong>auction</strong>. Those credentials come from the root <code>docker-compose.yml</code>; they are for your local container only.</p>
+    <div class="copy k-url"><div class="copy-h"><span class="ic">↗</span><span class="lbl">Open in browser</span><span class="where">Chrome · Part 6 must be running</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">http://localhost:15676</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The RabbitMQ dashboard with an Overview graph. The <strong>Exchanges</strong> tab lists the exchange Codex declared (in the reference copy it is <code>auction.events</code>) alongside RabbitMQ's built-in ones. The <strong>Queues and Streams</strong> tab lists the notification queue (<code>auction.notifications</code> in the reference) with <strong>1 consumer</strong>, which is your Notification Worker, connected and waiting. Click the queue to see its bindings to the exchange. Now create and close another short auction as in step 6 and watch the message-rate graph: a small blip of one published and one delivered message, then the “Ready” count returns to 0 because the consumer acked it.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If the page does not load, your Codex may have set RabbitMQ up with a different port or user. Ask it in the chat: “what is the RabbitMQ management URL and login for Part 6?” If you stop the notification worker (Ctrl+C the whole <code>npm start</code>) and close an auction with only the containers running, you would see the message sit in the queue as “Ready”; that is the post office holding the letter.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Commit Part 6</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Both slices are built and verified. Commit with the short message “part 6”. First stop <code>npm start</code> with Ctrl+C in its Terminal window, then:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;part 6&quot;</pre></div>
+    <p>As always: go to the workshop root, stage every change (<code>git add -A</code>), save the snapshot with a message. From guide 22 onwards we start using Git more seriously (worktrees, pull requests), so having each part as one clean commit will pay off.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A commit summary listing <code>part-6-async-close-rabbitmq/…</code> files, including <code>docs/adr/0001-…</code>, <code>server/migrations/002_…</code> and <code>003_notification_deliveries.sql</code>, <code>server/src/close-worker.ts</code> and <code>server/src/notification-worker.ts</code>. If you also see <code>part-7-winner-checkout</code> changes, you forgot step 8 of guide 20; run that command first and commit again.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>A slice won't go green, or you want to skip ahead? Replace your Part 6 with the finished reference version. The reference folder is the <strong>end state of the whole part</strong>: both slices, with GRILL.md, CONTEXT.md and the ADR. After copying, run it with <code>npm install &amp;&amp; npm start</code> inside the Part 6 folder and open http://localhost:5106 to confirm the modals appear.</p>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · catch up: Part 6</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-6-async-close-rabbitmq &amp;&amp; cp -R ../reference/part-6-async-close-rabbitmq ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 6 from reference&quot;</pre></div>
+  <p>What it does: deletes your Part 6 folder, copies the reference Part 6 in its place, stages and commits. Skip step 8 afterwards, because this already commits.</p>
+  <p>Other common problems: <code>npm start</code> fails on the RabbitMQ container → Docker Desktop is not running, or port 56726 is taken by an old container (check Docker Desktop's Containers tab). Modals appear twice → your consumer is not idempotent; ask Codex to check the unique constraint on <code>notification_deliveries</code>. Only the winner gets a modal, not the seller → re-read your round 1 answer 7 in GRILL.md and ask Codex to add the seller recipient.</p></div>
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li><strong>Message queues decouple services.</strong> The close worker drops a message in RabbitMQ and moves on. The notification worker picks it up when it is ready. No chain of HTTP calls that all have to be up at the same time.</li>
+  <li><strong>Outbox + publisher confirms + idempotent consumer</strong> is the full reliability recipe: the close and its event commit together in Postgres, the event is marked published only after RabbitMQ confirms it, and a unique delivery row per (event, recipient) stops duplicate popups when a message is redelivered.</li>
+  <li><strong>Let the database enforce “only once”.</strong> <code>PRIMARY KEY</code>, <code>UNIQUE</code> and <code>ON CONFLICT DO NOTHING</code> do more for correctness than any amount of careful application code.</li>
+  <li><strong>Polling with <code>SKIP LOCKED</code></strong> lets several close workers run safely side by side. Polling is simple and boring, and that is a compliment.</li>
+  <li><strong>Work alongside Codex:</strong> read the diff while it builds, and queue the next instruction when the tests you care about are green. Save your own browser check for slices that have a visible UI.</li>
+  <li><strong>Verify the whole chain, not just the code:</strong> the bidding war, a hand-made auction, and the RabbitMQ dashboard each showed you a different part of the same message's journey.</li>
+</ul></div>
+<div class="nav"><a href="20. Closing Auction Plan.html"><span>← Previous guide</span>20. Closing Auction Plan</a><a class="r" href="22. Codex Goals.html"><span>Next guide →</span>22. Codex Goals</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

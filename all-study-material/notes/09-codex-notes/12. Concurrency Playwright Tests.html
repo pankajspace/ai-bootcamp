@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>12. Concurrency Playwright Tests – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="12. Concurrency Playwright Tests"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>12. Concurrency Playwright Tests</h1>
+  <p class="lede">Finish the four-window Bidding War test and watch the race condition happen on your own screen. Along the way, practise steering Codex mid-run: stop it, queue messages, and send it a screenshot instead of a paragraph.</p>
+  <div class="meta"><span class="pill">Part 2 · bidding-war test</span><span class="pill">≈ 20–30 min hands-on</span><span class="pill">Stop · Steer · Queue</span><span class="pill">Continues guide 11's chat</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+<li>See which files Codex added for the Playwright test and what each one is for.</li>
+<li>Allow the macOS prompts that let Codex move and screenshot your browser windows.</li>
+<li><strong>Stop</strong> Codex and redirect it to Edge, then try <strong>queued</strong> messages and the <strong>Steer</strong> button.</li>
+<li>Paste a screenshot so Codex can fix the window tiling for your screen size.</li>
+<li>Watch four bidders race, see duplicate bids appear in the bid history, and understand why that is the proof we wanted.</li></ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+<li>Guide 11's chat is still open and Codex is working on (or has just run) the bidding-war test. Do not start a new chat; this guide continues that conversation.</li>
+<li>Docker Desktop is running and Part 2 is still running in its Terminal window (<code>http://localhost:5102</code>).</li>
+<li><strong>Microsoft Edge</strong> installed is easiest; we switch the test to Edge in Step 3 and it stays on Edge for the rest of the course. Chrome-only works too, with the adapted message in Step 3.</li>
+<li>Close or move away any full-screen apps. The test opens four browser windows and Codex screenshots your screen to check their layout.</li></ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Look at what Codex added</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Before the windows start flying around, look at what Codex has actually written. You have three ways: the <strong>Review</strong> panel in Codex (click the “N files changed” line under Codex's message to open a diff of every file), VS Code's Source Control view (Ctrl+Shift+G), or the Terminal command below, which lists changed files one per line.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">cd ~/codex-course/workshop &amp;&amp; git status --short</pre></div>
+    <p>Open <code>tests/bidding-war.spec.ts</code> in VS Code and skim it even if you cannot follow every line. You will recognise the story from your prompt: create a seller, post an auction that ends in 20 seconds, open three bidder windows, fire bids. A test file reads like a script of what a user does, and that is exactly how I want you to read it.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Four changed files in <code>part-2-create-auction-and-bid</code>, similar to:</p>
+    <ul><li><code>package.json</code>: a new <code>test:bidding-war</code> script (so <code>npm run test:bidding-war</code> works) and Playwright added as a dev dependency, meaning a package needed for development and testing, not for running the app in production.</li>
+    <li><code>package-lock.json</code>: npm's exact record of which package versions were installed. It changes automatically whenever a dependency is added.</li>
+    <li><code>playwright.config.ts</code>: new. Playwright's settings: which browser to launch, headed or headless, timeouts, where the app is running.</li>
+    <li><code>tests/bidding-war.spec.ts</code>: new. The test itself. Inside, the seller is <strong>Avery</strong> and the bidders are <strong>Maya</strong>, <strong>Theo</strong> and <strong>Priya</strong>, four of the ten seeded users from guide 9.</li></ul></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Codex may also add extras you did not ask for, like an on-screen “current bidder” label or a countdown timer in each window. I got those too. They come from the “make it a fun visual” line in the prompt, and they turn out to be useful for reading the race.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Allow the macOS permission prompts</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>While Codex works, macOS may pop up permission dialogs. This is normal. Codex runs small scripts to bring the test windows to the front and arrange them, and it takes screenshots to check that the layout looks right. macOS treats both as sensitive, so it asks you once per app. Allow them:</p>
+    <ul><li>“<strong>Codex</strong> wants access to control <strong>Google Chrome</strong> / <strong>Microsoft Edge</strong>” → click <strong>Allow</strong>. The dialog may name the app as ChatGPT instead of Codex; it is the same app.</li>
+    <li>A <strong>Screen Recording</strong> request → open System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording, and switch Codex on. macOS may ask you to quit and reopen Codex afterwards; do that, your chat is saved.</li></ul>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The dialogs go away and Codex carries on with its to-do list. On first use you may need to approve several of these in a row (one for each browser, one for screen recording). After that macOS remembers your answer.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Move other apps out of the way. In my run, a presentation app was covering the browser windows, so Codex's screenshot showed that app instead of the browsers and the layout check failed. Codex sees your screen exactly as you do; if something is in front, it is in front for Codex too.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Stop Codex and steer it</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>In my run Codex got stuck: the browser was blocked by a permission and the windows were covered. Rather than wait for it to flail, I pressed the <strong>Stop</strong> button (the round ■ at the right end of the message box, where the send arrow normally is). Then I sent a new message telling it what had changed and, while I was at it, told it to use Edge. Do the same if your Codex is stuck on a blocked browser or a covered window. If it is working fine, you can still send the Edge message so your setup matches the rest of the course.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">My message (after pressing Stop)</span><span class="where">Same chat</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">presentation is gone, chrome is allowed, but go ahead and use edge</pre></div>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Adapted for your setup: Chrome instead of Edge (only if you don't have Edge)</span><span class="where">Same chat</span><button class="cbtn" data-target="s3c1">Copy</button></div><pre id="s3c1">chrome is allowed, go ahead and use chrome</pre></div>
+    <p>Notice the shape of the message: first what changed in the world (“presentation is gone, chrome is allowed”), then the new instruction. After a Stop, Codex has no idea why you stopped it, so tell it.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A reply similar to: <strong>“Perfect—I'll switch the demonstration to Microsoft Edge. I'm also correcting the harness timeout…”</strong> Then a working line like “Modifying project for Edge channel launch”. In the finished test, <code>playwright.config.ts</code> uses <code>channel: 'msedge'</code> (Playwright's name for “launch the Edge that is installed on this Mac”) and the npm script runs with <code>--project=edge</code>.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Stop + new message throws away the rest of Codex's current plan; it keeps the chat history but abandons whatever it was in the middle of. Use it when Codex is clearly going the wrong way. For small nudges, the next step shows two gentler options.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Try a queued message (and Steer)</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>While Codex is working, type something in the message box and press Enter. It is not sent right away. It sits in a strip above the box as a <strong>queued</strong> message. Each queued message has three controls:</p>
+    <ul><li><strong>Steer</strong>: interrupt Codex now, send this message, and let it continue its work with the new information.</li>
+    <li>a trash icon: delete the message without sending it.</li>
+    <li><strong>⋯</strong>: Edit message, Open in side chat, Turn off queueing.</li></ul>
+    <p>If you leave a queued message alone, it goes out automatically when Codex finishes its current turn. Try it with a throwaway word, then delete it. I did exactly this as a demo.</p>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">My demo message</span><span class="where">type while Codex is busy, then delete it</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">thing</pre></div>
+    <p>A little later, when I saw the windows stacked on top of each other instead of tiled, I queued this one for real:</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Later I queued this</span><span class="where">Same chat</span><button class="cbtn" data-target="s4c1">Copy</button></div><pre id="s4c1">the windows arent tiled lol</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: side chat</b><p>“Open in side chat” starts a <strong>second, separate conversation</strong> about the same project, next to the main one, without interrupting the work in progress. Use it for questions that should not become part of the main task's history: “explain what this trigger does”, “what does <code>channel: 'msedge'</code> mean?”, “is there a simpler way to tile windows?”. The main chat keeps building; the side chat answers you; and the main chat's context stays clean. Think of it as asking a colleague a question at the next desk without stopping the person who is typing.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The message sits in a strip above the input with <strong>Steer</strong>, a trash icon and <strong>⋯</strong>. Delete the <code>thing</code> message with the trash icon. About a minute after I queued “the windows arent tiled lol”, Codex started tiling the windows on its own, so I deleted that one too before it was sent. Queued messages are cheap to write and free to cancel.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Three levels of intervention: <strong>Queue</strong> = “do this next”. <strong>Steer</strong> = “change course now, but keep going”. <strong>Stop</strong> = “halt, I'll give new instructions”. Pick the lightest one that does the job.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Watch the first bidding war</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Let Codex run the test. It runs <code>BIDDING_WAR_HOLD_MS=3600000 npm run test:bidding-war</code> (guide 11 explained that environment variable: hold the windows open for up to an hour afterwards so you can inspect them). Keep your hands off the mouse while the windows appear; clicking into a window during the run can steal focus from the test.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Four browser windows open on the Part 2 app (in my run the URL was <code>localhost:5102/items/bidding-war-gpu-…</code>, a fresh auction the test created), each with a coloured label in the corner: <strong>SELLER · AVERY</strong>, <strong>BIDDER 1 · MAYA</strong>, <strong>BIDDER 2 · THEO</strong>, <strong>BIDDER 3 · PRIYA</strong>, plus a countdown like <code>T-12.5s</code>. At first they may be stacked on top of each other, not tiled; we fix that in Step 6. The bidders bid at the same moment; labels show things like <strong>“RACE: duplicate $102 bids accepted”</strong>.</p>
+    <p>Codex reports something like: the corrected run found the concurrency defect, <strong><code>$102</code> accepted twice</strong> and <strong><code>$107</code> accepted three times</strong>. That is the race condition from guide 11, happening live: three bidders read the same current price, all passed the check, all got inserted.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Codex may say Edge “collapsed” the separate profiles into one process and switch to one Edge process with four separate <strong>contexts</strong>. A context is Playwright's isolated browser session, with its own cookies and storage, so four contexts still behave as four different users. That is Codex fixing its own harness; let it.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>Screenshots and reruns cost tokens. Every screenshot Codex takes is an image sent to the model, and images are expensive compared with text. That is why in the next step I send my own screenshot with a one-line description instead of asking Codex to look again.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Send a screenshot to fix the tiling</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>If the 2×2 grid is partly off-screen or the windows overlap, show Codex rather than describe it. First find your screen's logical size, the “looks like” resolution that macOS actually lays windows out in (it is smaller than the pixel count on a Retina display):</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">system_profiler SPDisplaysDataType | grep -i &quot;looks like&quot;</pre></div>
+    <p><code>system_profiler SPDisplaysDataType</code> prints everything macOS knows about your displays; <code>| grep -i "looks like"</code> keeps only the line containing that phrase (<code>-i</code> ignores upper/lower case). It prints something like <code>UI Looks like: 1512 x 982 @ 120.00Hz</code>. Those two numbers are your screen size for the prompt.</p>
+    <p>Now take the screenshot with <strong>Cmd+Ctrl+Shift+4</strong> and drag a rectangle over the browser windows. Adding Ctrl copies the picture to the clipboard instead of saving a file. Click the Codex message box and press <strong>Cmd+V</strong>; a thumbnail appears. (Plain Cmd+Shift+4 saves a file on the Desktop instead; you can drag that file into the message box.) Then paste the prompt below, replace <code>1440x900</code> with your numbers, and send.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">My prompt: change 1440x900 to your screen size</span><span class="where">paste the screenshot first</span><button class="cbtn" data-target="s6c1">Copy</button></div><pre id="s6c1">the screen we&#x27;re working on is 1440x900, the tiles are slightly askew, see picture</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A thumbnail of your picture above the message, then a reply similar to: <strong>“Yep—the harness used 1728×1080 logical bounds, so on this 1440×900 display the right column and bottom row extend past the usable screen. I'll retile to exact 720-pixel columns and 437-pixel rows beneath the macOS menu bar…”</strong> Codex makes the tiling display-aware, adds screen width and height overrides (environment variables you can set yourself; see the Stuck box), and reruns the test. This time: four windows in a neat 2×2 grid.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Codex models are <strong>multimodal</strong>: they read images as well as text. A screenshot you take yourself is quicker, cheaper and more precise than three sentences describing which window overlaps which. Use pictures whenever the problem is visual.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Stop the countdown when the auction ends</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>One small polish. The label timer in each window kept counting <em>up</em> after the auction ended (for example <code>+109.2s</code>), which is distracting when you are trying to read the result. Ask Codex to freeze it. This is the kind of short, conversational follow-up you send while the previous work is still fresh in the chat.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Same chat</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">looks good, can you stop the timer when it ends and just put ended, and not show the seconds countdown</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A reply similar to: <strong>“Yep—I'll keep the live T–s countdown while bidding is open, then freeze it permanently at ENDED once the deadline passes. No post-close +109.2s count-up.”</strong> Codex edits <code>tests/bidding-war.spec.ts</code> and launches the final run in the 2×2 grid. Four windows again, a 20-second auction, bids flying.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Look at the proof: duplicate bids</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>When the auction ends, click the <strong>seller's</strong> window (Avery) and scroll down to <strong>Bid history</strong>. This is the moment the whole exercise was for. Read the list slowly.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Every window's label reads <strong>ENDED</strong>. The seller's label says <strong>“BUG REPRODUCED — duplicate valid-looking bids”</strong>. In Bid history you see two (or more) bids for the <strong>same amount at the same time</strong>; in my run, Maya and Priya both at $107. Codex's message says something like: “Done. The countdown runs during bidding, then freezes at ENDED…”</p>
+    <p>What it means: in a correct auction, two bids can never share the same amount, because the second one should have been rejected as “not at least $1 higher”. Two bids at $107 prove that both requests read the same old price before either wrote. You now have a repeatable test that shows the concurrency bug on demand. Part 3 fixes it, and this same test will tell us whether the fix works.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The windows stay open for up to an hour (<code>BIDDING_WAR_HOLD_MS=3600000</code>). Close them yourself when you are done looking (Cmd+Q in Edge closes all four).</p></div>
+  </div></div>
+
+<div class="step" id="s9"><div class="sh"><div class="num">9</div><div class="st"><h3>Optional: commit a checkpoint</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>You do not strictly need a commit here; the next required one is at the end of Part 3, in guide 15. But a commit now means that when you review Part 3's changes later, the diff shows only the fix and not the test harness mixed in. I recommend it.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s9c0">Copy</button></div><pre id="s9c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Part 2: bidding war test reproduces the race&quot;</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A line like <code>[master 1a2b3c4] Part 2: bidding war test reproduces the race</code> with about 4 files changed (your branch may be called <code>main</code> instead of <code>master</code>; both are fine). The message is deliberately descriptive: six months from now, “reproduces the race” tells you exactly what this commit was for.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+<p>If your test will not run, or looks very different from what this guide describes, take the finished Part 2 from the reference project. The reference folder is the <strong>end state of the whole part</strong>: all Part 2 slices plus this finished bidding-war test. Then run the test yourself in two Terminal windows: one keeps the app running, the other runs the test against it. The reference test needs <strong>Microsoft Edge</strong>. Set <code>BIDDING_WAR_SCREEN_WIDTH</code> and <code>BIDDING_WAR_SCREEN_HEIGHT</code> to your “looks like” numbers from Step 6 if your screen is not 1440×900.</p>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">1. Catch up: copy the finished Part 2 from the reference</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-2-create-auction-and-bid &amp;&amp; cp -R ../reference/part-2-create-auction-and-bid ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 2 from reference&quot;</pre></div>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">2. Terminal window 1: start Part 2 (leave it running)</span><span class="where">Terminal app · first window</span><button class="cbtn" data-target="stuck1">Copy</button></div><pre id="stuck1">cd ~/codex-course/workshop/part-2-create-auction-and-bid &amp;&amp; npm install &amp;&amp; npm start</pre></div>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">3. Terminal window 2: run the bidding war (change the screen size to yours)</span><span class="where">Terminal app · second window (Cmd+N)</span><button class="cbtn" data-target="stuck2">Copy</button></div><pre id="stuck2">cd ~/codex-course/workshop/part-2-create-auction-and-bid &amp;&amp; BIDDING_WAR_SCREEN_WIDTH=1440 BIDDING_WAR_SCREEN_HEIGHT=900 BIDDING_WAR_HOLD_MS=600000 npm run test:bidding-war</pre></div>
+<p>In the third command, the three <code>NAME=value</code> pairs before <code>npm</code> are environment variables passed only to that one command: the screen size for tiling, and a 600,000 ms (10 minute) hold so the windows stay open while you look. Change the two screen numbers to yours.</p></div>
+<div class="box"><h2>Key takeaways</h2><ul>
+<li>You do not have to wait for Codex to finish. <strong>Stop</strong> and re-instruct when it is going the wrong way, <strong>Steer</strong> to nudge it mid-run, or <strong>queue</strong> the next message so it goes out when the current turn ends.</li>
+<li>Screenshots are a fast, cheap way to show Codex what is wrong. Letting Codex take its own screenshots works, but it is token-heavy; a picture from you plus one line of text is usually better.</li>
+<li>Use a <strong>side chat</strong> for questions, so the main chat's context stays about the task.</li>
+<li>The bidding-war test currently <strong>passes by proving the bug</strong>: duplicate bids at the same amount. It is a reproduction, not yet a protection. In Part 3 the same scene must end with zero duplicates.</li>
+<li>I run Playwright tests in every web project. They exercise the app the way a real user does, in a real browser, as close to production as a test can get.</li></ul></div>
+<div class="nav"><a href="11. Understanding the Concurrency Problem.html"><span>← Previous guide</span>11. Understanding the Concurrency Problem</a><a class="r" href="13. Create Plan for Fixing Concurrency.html"><span>Next guide →</span>13. Create Plan for Fixing Concurrency</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

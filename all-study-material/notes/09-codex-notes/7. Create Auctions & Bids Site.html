@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>7. Create Auctions &amp; Bids Site – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="7. Create Auctions &amp; Bids Site"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>7. Create Auctions &amp; Bids Site</h1>
+  <p class="lede">The warm-up is over. In this guide you throw away the practice project, read the rules file that will steer Codex for the rest of the course, add <code>~/codex-course/workshop</code> as your Codex project, and get Part 1 of the real auction app running at <code>http://localhost:5101</code>. Every later guide starts from here.</p>
+  <div class="meta"><span class="pill">Part 1 · run it</span><span class="pill">≈ 20–30 min</span><span class="pill">No prompts, setup only</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+<li>Remove the throwaway project from Codex and delete its folder from disk.</li>
+<li>Read the root <strong>AGENTS.md</strong> of the workshop: the rules that shape how Codex behaves in every guide from here on.</li>
+<li>Add <strong><code>~/codex-course/workshop</code></strong> as a Codex project called <strong>workshop</strong>, and understand the three chips (project, location, branch) above the message box.</li>
+<li>Run Part 1 (<code>npm install</code> → <code>npm start</code>) from Codex's terminal, which also starts the PostgreSQL database in Docker, and open the site in Chrome.</li>
+<li>Check that the three layers (React frontend → Fastify API → PostgreSQL) are actually talking to each other.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+<li>You finished guides 1, 5 and 6. Guides 2–4 are recommended but not required for this one.</li>
+<li><strong>Docker Desktop is open</strong> and the bottom-left corner says “Engine running”. Part 1 needs its PostgreSQL container, and nothing will start without Docker.</li>
+<li>You have the <code>workshop</code> folder from guide 1 at <code>~/codex-course/workshop</code>, with Part 1 built and Parts 2–8 empty.</li>
+</ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop (<code>~/codex-course/workshop</code>)</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div>
+    <div class="set"><span>Also</span><b>Work in: Local, on your current branch (no worktree)</b></div></div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Stop the throwaway site</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The Vite server from guide 5 is probably still running in the throwaway chat's bottom panel. A running server holds on to its port, and leaving old servers running is the number one cause of “port already in use” errors later. So we stop it cleanly first.</p>
+    <p>In Codex, click the throwaway chat in the sidebar, open the bottom panel with the <strong>toggle bottom panel</strong> icon (top-right), click inside the terminal and press <strong>Ctrl+C</strong>. Ctrl+C is the universal “stop the program running in this terminal” key; it is not Copy on a terminal. Also close the Playwright Chrome window from guide 6 if it is still open.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The Vite output stops and you get your shell prompt back (a line ending in <code>%</code> or <code>$</code>). Nothing is listening on port 5173 any more, so <code>http://localhost:5173</code> now shows a “can't connect” page in Chrome. That is what we want.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If you cannot find that terminal, quitting Codex completely (<strong>Cmd+Q</strong>) and reopening it stops every terminal Codex was running, including this one.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Remove the throwaway project from Codex</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>In the left sidebar, under the <strong>Projects</strong> heading, move your mouse over <strong>auctionhouse throwaway</strong>. A small <strong>…</strong> (three dots) button appears at the right end of that row. Click it and choose <strong>Remove project</strong> from the menu.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The menu offers Pin, Edit, Reveal in Finder, Archive chats and <strong>Remove project</strong>. After you click Remove project, the project and all its chats disappear from the sidebar, and the main page goes back to <strong>What should we build?</strong> with no project selected.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Remove project only takes the project out of Codex's list. The folder and its files are still on your disk. We delete those in the next step, so you do not end up with a forgotten half-gigabyte <code>node_modules</code> folder lying around.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Delete the throwaway folder</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The practice project did its job: you learned how to prompt, install skills, review a diff and curate an AGENTS.md. We do not need it any more, so we remove it completely and start fresh in the workshop. Open the Terminal app and run:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">rm -rf ~/codex-course/auctionhouse-throwaway
+ls ~/codex-course
+ls ~/.agents/skills</pre></div>
+    <p>Line by line:</p>
+    <ul>
+      <li><code>rm -rf ~/codex-course/auctionhouse-throwaway</code> deletes the folder and everything inside it. <code>-r</code> means recursive (go into every subfolder), <code>-f</code> means force (don't ask for confirmation). This command is permanent; there is no Trash to recover from. Check the path before pressing Enter.</li>
+      <li><code>ls ~/codex-course</code> lists what is left in the course folder, so you can confirm you deleted the right thing.</li>
+      <li><code>ls ~/.agents/skills</code> lists your installed skills. The skills were installed globally in guide 5 (into your home folder, not into the project), so deleting the project must not affect them. This line proves it.</li>
+    </ul>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The second line prints <code>reference  workshop</code>: only the two course folders remain. The third line prints <code>domain-modeling  grill-me  grill-with-docs  grilling</code>, the four skills untouched.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Open the workshop in VS Code and read the root AGENTS.md</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>In guide 6 you learned that AGENTS.md is sent with every prompt. The workshop already ships with one at its top level, and I want you to read it top to bottom before you send a single prompt in this project. Everything Codex does in the next twenty guides, from how many questions it asks to how it slices the work, comes from this file. If you later wonder “why did Codex do that?”, the answer is usually here.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">code ~/codex-course/workshop</pre></div>
+    <p>VS Code opens with the workshop folder in the Explorer. Click the <strong>AGENTS.md</strong> at the top level, directly under the folder name, not the one inside <code>part-1-foundation</code>. Press <strong>Cmd+K</strong> then <strong>V</strong> for the formatted preview, as in guide 6.</p>
+    <div class="call concept"><b class="t">📘 Concept: vertical slice</b><p>A <strong>vertical slice</strong> is one thin, complete piece of a feature that cuts through every layer of the app: a bit of database, a bit of API, a bit of UI, all working together end to end. The opposite is building horizontally: finish the whole database first, then the whole API, then the whole frontend, and only see anything work at the very end. Slices are better with an agent because after each slice you can open the browser and check real behaviour, catch a wrong assumption early, and correct it before it spreads. Our AGENTS.md tells Codex to build every part in 2–4 slices and to stop after each one for you to look.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: PostgreSQL tables and migrations</b><p><strong>PostgreSQL</strong> (often just “Postgres”) is the database we use. It stores data in <strong>tables</strong>: a table is like a spreadsheet with fixed columns (<code>id</code>, <code>title</code>, <code>current_bid</code>) and one <strong>row</strong> per record (one row per auction, one row per bid). A <strong>migration</strong> is a small, numbered script that changes the shape of the database: create a table, add a column, add an index. Migrations are saved in the project and run in order, so every developer, every test run and the production server end up with exactly the same database structure. The rule “keep DB changes in explicit migrations” means Codex must never alter the database by hand; it must write a migration file we can read and review.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A section <strong># Project Guidelines</strong> that tells Codex to:</p><ul><li>work in one specific numbered <code>part-</code> directory, and ask if it is unclear which one</li><li>stay within the core stack: TypeScript, PostgreSQL, Docker Compose, Fastify (the Node.js web framework our API uses), Zod (a library that checks incoming data has the right shape), React/Vite</li><li>keep each part self-contained, and read the part's own AGENTS.md and CONTEXT.md before working</li><li>use strict types, validate all inputs, and keep database changes in explicit migrations</li><li>run tests after changes, and start services only through the documented npm and Docker commands</li></ul><p>Then a section <strong>## Workshop specific stuff</strong> that covers:</p><ul><li>draw Mermaid diagrams (text-based diagrams that render as pictures) with emoji after grilling</li><li>“use Chrome/Edge, not the built-in browser”</li><li>Playwright always runs <strong>headed</strong>, so you can watch</li><li>screenshots go in a temp directory, not in the repo</li><li>grilling uses grill-with-docs, with <strong>8–10 questions per round, 2 rounds max</strong></li><li>then build in <strong>2–4 vertical slices</strong>, confirmed with you first, stopping after each one so you can check in the browser</li></ul></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The Chrome/Edge rule and the headed-Playwright rule already suit your API-key setup, so you do not need to edit anything. If your copy ends with a short quotation, ignore it; it changes nothing. Also open <code>part-1-foundation/AGENTS.md</code>: that is Part 1's own file, with its ports (API <strong>3101</strong>, web <strong>5101</strong>) and its commands. Each part has one, and Codex reads the root file plus the part's file together.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Add the workshop as a Codex project</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Now we point Codex at the workshop folder. This is the same dialog you used in guide 5, so it will feel familiar:</p>
+    <ol>
+      <li>In Codex, click <strong>New chat</strong> at the top of the left sidebar. Then click <strong>Choose project</strong>, the grey bar just above the message box, and pick <strong>+ New project</strong> at the bottom of the list.</li>
+      <li>In the Create project dialog, type the project name from the first box below.</li>
+      <li>Under <strong>Source folders</strong>, click <strong>Add folders Codex can read and edit</strong>. A Finder window opens. Press <strong>Cmd+Shift+G</strong> (Go to Folder), paste the path from the second box, press <strong>Enter</strong>, then click <strong>Open</strong>.</li>
+      <li>Click <strong>Create project</strong>.</li>
+    </ol>
+    <div class="settings"><div class="settings-h">⚙ Codex settings</div><div class="set-grid"><div class="set"><span>Project / folder</span><b>workshop</b></div><div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div><div class="set"><span>Reasoning</span><b>Medium</b></div><div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">Project name</span><span class="where">Create project → name</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">workshop</pre></div>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">Folder path</span><span class="where">Finder → Cmd+Shift+G</span><button class="cbtn" data-target="s5c1">Copy</button></div><pre id="s5c1">~/codex-course/workshop</pre></div>
+    <p>Why the whole workshop and not just <code>part-1-foundation</code>? Because the root AGENTS.md lives at the workshop level, and because Codex will need to read Part 1's code while it builds Part 2. Giving it the parent folder lets it see every part, while the “work in one part directory” rule keeps its edits contained.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Before you click Create, the dialog shows <strong>workshop</strong> as the name with <strong>workshop</strong> listed under Source folders. After creating it: <strong>workshop</strong> appears under Projects in the sidebar, the page asks <strong>What should we build in workshop?</strong>, and the bar above the message box now shows three chips: <strong>workshop · Local · master</strong>. The third chip is your Git branch name; yours may say <code>main</code> instead of <code>master</code>, depending on your Git defaults. Both are fine.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Check the two buttons under the message box still say <strong>Approve for me</strong> and <strong>5.6 Sol Medium</strong>. Project settings are remembered per project, so a fresh project sometimes comes up with different defaults.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Leave “Local” and your branch as they are</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The throwaway folder was not a Git repository, so you never saw these chips before. Now that the workshop has Git history, Codex offers choices about <strong>where</strong> it works. Let's look at them once so they do not confuse you later, and then leave them alone.</p>
+    <p>Click the <strong>Local</strong> chip to see the “Work in” options, read them, then press <strong>Esc</strong> to close the menu without changing anything. Next click the branch chip (<strong>master</strong> or <strong>main</strong>) to see the branch list, then press <strong>Esc</strong> again.</p>
+    <div class="call concept"><b class="t">📘 Concept: Git branch and Git worktree</b><p>A <strong>branch</strong> is a named line of history inside a Git repo. The default branch (<code>master</code> or <code>main</code>) is where our work goes. A <strong>worktree</strong> is a second, separate folder on disk that is checked out to a different branch of the <em>same</em> repo. Why would you want that? Because two agents editing the same files in the same folder at the same time would trample each other. With a worktree each agent gets its own folder and its own branch, and you merge the results later. It is a powerful setup for running several Codex tasks in parallel, and I recommend it for real projects, but in this course we keep things simple and stay in one folder on one branch.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Under <strong>Work in:</strong> four options: Local ✓, New local worktree, Connect Codex web, Cloud. Under <strong>Branches:</strong> your single branch with a ✓ next to it, plus “Create and checkout new branch…”. Keep <strong>Local</strong> and your current branch for the whole course.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p><strong>Connect Codex web</strong> and <strong>Cloud</strong> run Codex on OpenAI's servers instead of your Mac. Both need a ChatGPT sign-in, so they will not work with your API key. You lose nothing: everything in this course runs locally.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Install Part 1's packages from Codex's terminal</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>From now on we run the app from the terminal built into Codex, so that the app and the agent live in one window. Click the <strong>toggle bottom panel</strong> icon (top-right). The terminal opens already inside the workshop root folder. Run:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Codex bottom panel · workshop</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">ls
+cd part-1-foundation
+npm install</pre></div>
+    <p>Line by line:</p>
+    <ul>
+      <li><code>ls</code> lists the workshop root, so you can confirm the terminal is in the right place before you go deeper.</li>
+      <li><code>cd part-1-foundation</code> moves into Part 1's folder. Every part is its own small project with its own <code>package.json</code>, so commands must be run inside the part, not at the root.</li>
+      <li><code>npm install</code> reads <code>package.json</code>, downloads every package the project depends on (Fastify, React, Vite, the Postgres driver and so on) and puts them in a <code>node_modules</code> folder. The cloned repo does not include <code>node_modules</code>, because it is huge and can always be rebuilt from the list, so this step is mandatory on a fresh clone.</li>
+    </ul>
+    <div class="call expect"><b class="t">✓ You should see</b><p><code>ls</code> prints <code>AGENTS.md  README.md  docker-compose.yml  part-1-foundation … part-8-cross-stack-debugging  scripts  stripe-service</code>. <code>npm install</code> runs for a minute or two and ends with <code>added … packages</code>. A few <code>npm warn</code> lines about deprecated packages are normal; only red <code>npm ERR!</code> lines are a problem.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If you run the app before installing, you get <code>sh: concurrently: command not found</code>. <code>concurrently</code> is one of the installed packages: it runs the frontend and the backend together in one terminal. No install, no package, no app. That is why <code>npm install</code> always comes first in a fresh folder.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Start Part 1</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Still inside <code>part-1-foundation</code>, start everything with one command. Use <code>npm start</code>, not <code>npm run dev</code>. The <code>start</code> script does three things in order: it starts the PostgreSQL container through Docker Compose, it creates Part 1's database (<code>auction_part_1</code>) and runs its migrations, and only then does it launch the two development servers (frontend and API).</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Codex bottom panel · part-1-foundation</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">npm start</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: Docker Compose services</b><p>In guide 1 you met Docker containers. <strong>Docker Compose</strong> is the tool that starts several containers together from one file, <code>docker-compose.yml</code> at the workshop root. Each entry in that file is a <strong>service</strong>: a named container with its image, its ports and its settings. Right now the only service we need is <code>postgres</code>. In later guides the same file also gives us Redis, RabbitMQ and Jaeger, each one a service we start with a single command instead of installing anything on the Mac. All eight parts share this one Postgres container, but each part gets its own database inside it, which is why the database is named <code>auction_part_1</code>.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Three phases of output:</p><ul><li>Docker lines as the <code>postgres</code> container starts. The very first time, Docker downloads the <code>postgres:16-alpine</code> image (a few hundred MB), so give it a minute. Later starts are instant.</li><li>A migration line such as <code>0 migrations applied</code> or <code>1 migration applied</code>. Either is fine; it just means the database is now at the structure Part 1 expects.</li><li>Then interleaved lines tagged <code>[web]</code> (the Vite frontend) and <code>[server]</code> (the Fastify API): <code>[web] VITE v7.x ready</code>, <code>[web] ➜ Local: http://localhost:5101/</code>, and <code>[server] … "msg":"Server listening at http://…:3101"</code>.</li></ul><p>Two ports, two servers: <strong>5101</strong> serves the pages you look at, <strong>3101</strong> answers the data requests those pages make.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Leave this running for the rest of the guide. If you see “Cannot connect to the Docker daemon”, Docker Desktop is not running: open it, wait for “Engine running”, then run <code>npm start</code> again. You can stop everything any time with <strong>Ctrl+C</strong>; the Postgres container keeps running in the background, which is fine.</p></div>
+  </div></div>
+
+<div class="step" id="s9"><div class="sh"><div class="num">9</div><div class="st"><h3>Open Part 1 in Chrome</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Time to see the real app. You can hold <strong>Cmd</strong> and click the <code>http://localhost:5101/</code> link in the terminal, or copy the URL below and paste it into Chrome's address bar.</p>
+    <div class="copy k-url"><div class="copy-h"><span class="ic">↗</span><span class="lbl">Open in browser</span><button class="cbtn" data-target="s9c0">Copy</button></div><pre id="s9c0">http://localhost:5101</pre></div>
+    <p>This is the foundation we build on for the whole course. Unlike the throwaway site, which invented luxury lots, this one sells server hardware, and the six items you see are sample rows that the migrations put into the database. Notice how different it looks from the throwaway: this is what a prescriptive AGENTS.md and a planned stack produce.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p><strong>Auction House</strong>: a search bar, the categories Featured · GPUs · CPUs · Memory · Chassis · Networking · Cooling, the hero line “<strong>Serious hardware. Less serious prices.</strong>”, and a section <strong>Equipment worth watching</strong> with six lots: NVIDIA H100 SXM 80GB ($18,450), AMD EPYC 9654 · 96 cores ($4,725), 1.5TB DDR5 ECC memory kit ($6,890), a Supermicro chassis, an NVIDIA Quantum-2 switch and a cooling loop. Click the H100 card to open its page at <code>/items/nvidia-h100-sxm-80gb</code>. The <strong>Place bid</strong> button does nothing yet. Building bidding is exactly what Part 2 is for, starting in the next guide.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Open the browser's developer console once (right-click → Inspect → Console tab). It should be empty of red errors. Getting used to glancing at the console now will save you a lot of confusion when Codex's code misbehaves later.</p></div>
+  </div></div>
+
+<div class="step" id="s10"><div class="sh"><div class="num">10</div><div class="st"><h3>Check the API and database are connected</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>A pretty page does not prove the backend works; a static page would look identical. Part 1's whole purpose is a working path “React → Fastify → Postgres”, so let's prove each link in that chain with the health check endpoint.</p>
+    <div class="call concept"><b class="t">📘 Concept: API route (endpoint), request and response</b><p>An <strong>API</strong> is the part of the backend that the frontend talks to. It has no pages, only <strong>routes</strong> (also called endpoints): URLs that accept a <strong>request</strong> and return data as a <strong>response</strong>, usually in JSON format. When the auction page loads, the React code sends a request to a route like <code>GET /api/items</code>, the Fastify server queries Postgres, and sends back a JSON list the page renders. A <strong>health</strong> route is a special, tiny route whose only job is to answer “I'm alive, and here is whether I can reach my database”. Every production service has one, and monitoring systems call it every few seconds.</p></div>
+    <div class="copy k-url"><div class="copy-h"><span class="ic">↗</span><span class="lbl">Open in browser</span><button class="cbtn" data-target="s10c0">Copy</button></div><pre id="s10c0">http://localhost:5101/api/health</pre></div>
+    <p>Why port 5101 and not 3101? The Vite dev server on 5101 is configured to forward anything starting with <code>/api</code> to the Fastify server on 3101. The browser thinks it is talking to one server; behind the scenes there are two. This is called a proxy, and it is why the frontend code can use simple relative URLs like <code>/api/items</code>.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Plain JSON text in the browser: <code>{"ok":true,"db":"ok","requestId":"…"}</code>. <code>ok:true</code> means the API answered, <code>db:"ok"</code> means the API could reach Postgres, and <code>requestId</code> is a unique id the server attaches to every request for tracing. You are now at the starting point for the real build: Part 1 running from <code>~/codex-course/workshop</code>, and Codex open on the <strong>workshop</strong> project. Leave both exactly as they are for guide 8.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p><code>"db":"down"</code> means the API is running but cannot reach Postgres. Make sure Docker Desktop is running, press Ctrl+C in the terminal, and run <code>npm start</code> again so the compose step gets another chance to bring the container up.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2><p>Part 1 in the reference copy is the same starter code you have, so the reference's <code>part-1-foundation</code> is the finished state of Part 1. If you changed or broke your <code>part-1-foundation</code>, replace it with the reference version using the first command, then run <code>npm install</code> and <code>npm start</code> in it again with the second. If you see port 5101 or 3101 “already in use”, an old dev server is still running somewhere: stop it with Ctrl+C in its terminal, or quit and reopen Codex.</p>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-1-foundation &amp;&amp; cp -R ../reference/part-1-foundation ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 1 from reference&quot;</pre></div>
+<p>That one line does four things: moves into the workshop, deletes your Part 1, copies the reference Part 1 in its place (<code>cp -R</code> copies a folder with everything inside), and commits the result so your Git history records the catch-up.</p>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Then run Part 1 again</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck1">Copy</button></div><pre id="stuck1">cd ~/codex-course/workshop/part-1-foundation &amp;&amp; npm install &amp;&amp; npm start</pre></div></div>
+<div class="box"><h2>Key takeaways</h2><ul>
+<li>The root <strong>AGENTS.md</strong> sets the guardrails for the whole course: the fixed stack, one part directory at a time, strict types, migrations for every database change, tests after changes, and npm/Docker commands only. Its workshop rules make Codex draw diagrams, use Chrome or Edge, run Playwright headed, cap grilling at 2 rounds, and build in 2–4 reviewable vertical slices.</li>
+<li>Keep AGENTS.md <strong>groomed</strong> like a garden. Stale or contradictory rules make the agent drift, and you will not notice until the code is wrong.</li>
+<li>Each part is its own small project with its own ports (Part 1: web <strong>5101</strong>, API <strong>3101</strong>; Part 2: 5102/3102, and so on) and its own database inside the shared Postgres container, so parts can run side by side without clashing.</li>
+<li><code>npm install</code> downloads the packages; <code>npm start</code> brings up Docker Compose services, runs migrations and starts both servers. In a fresh folder, install always comes first.</li>
+<li>The <code>/api/health</code> route proves the full chain React → Fastify → Postgres is alive. Check it whenever something looks broken before blaming the code.</li>
+<li>We work <strong>Local</strong> on one branch. Worktrees are for running several agents on one repo in parallel; Cloud options need a ChatGPT sign-in.</li>
+</ul></div>
+<div class="nav"><a href="6. Browser Use &amp; Agents.md.html"><span>← Previous guide</span>6. Browser Use &amp; Agents.md</a><a class="r" href="8. Plan Mode &amp; Grilling.html"><span>Next guide →</span>8. Plan Mode &amp; Grilling</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

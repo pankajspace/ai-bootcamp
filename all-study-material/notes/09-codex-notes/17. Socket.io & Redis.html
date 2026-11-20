@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>17. Socket.io &amp; Redis – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="17. Socket.io &amp; Redis"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>17. Socket.io &amp; Redis</h1>
+  <p class="lede">Start Part 4: ask Codex to copy Part 3 into Part 4 and grill you on real-time bid updates with WebSockets and a Redis backplane. Optionally send the same request in Plan mode in a second chat, so you can compare the two ways of planning with your own eyes.</p>
+  <div class="meta"><span class="pill">Part 4 · start</span><span class="pill">≈ 30–45 min hands-on</span><span class="pill">Uses grill-with-docs</span><span class="pill">Optional: Plan mode</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Kick off Part 4 with my prompt. Codex copies Part 3 into <code>part-4-realtime-socketio-redis</code> and starts a grilling session about real-time updates.</li>
+  <li>Answer two grilling rounds the way I did, and keep the design small: one Redis server, the auction detail page only, no multi-replica demo.</li>
+  <li>Optional: send the same request in <strong>Plan mode</strong> in a second chat and see how it differs from grilling.</li>
+  <li>End with <code>GRILL.md</code> and <code>CONTEXT.md</code> written in Part 4. The slice list and the build come in guide 18.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+  <li>You finished Part 3 (guides 11–15), or caught up from the reference (box at the bottom of this page). Guide 16's review did not change any files, so your last commit is still Part 3.</li>
+  <li>Docker Desktop is running.</li>
+  <li>The grilling skills from guide 5 are installed. Writing “grill me with docs” in a prompt is what triggers the <strong>grill-with-docs</strong> skill.</li>
+  <li>What is new in this part: <strong>WebSockets</strong> (through a library called Socket.IO) push bid updates to the page the moment they happen, and <strong>Redis</strong> acts as the “backplane” that forwards those events between API instances. From now on <code>npm start</code> starts a <strong>Redis</strong> container as well as the Postgres one. The three concept boxes below explain each of these words.</li>
+</ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div><div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div><div class="set"><span>Reasoning</span><b>Medium</b></div><div class="set"><span>Mode</span><b>Normal chat for the grill. Plan mode only in the optional comparison chat.</b></div><div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div>
+  <div class="call concept"><b class="t">📘 Concept: WebSocket vs HTTP polling</b><p>Normal web traffic is <strong>HTTP</strong>: the browser asks, the server answers, the connection is done. The server cannot speak first. So if a page wants to know about a new bid, it has two options. <strong>Polling</strong>: ask “anything new?” every second or two. Simple, but wasteful, and still up to two seconds late. <strong>WebSocket</strong>: open one connection and <em>keep it open</em>, like a phone call instead of a series of text messages. Now either side can talk whenever it likes, so the server can push “new bid on auction X” to the page within milliseconds, and nobody has to keep asking. Our Part 3 pages refresh only after you place a bid or when the auction ends; Part 4 makes them update live, for every watcher, the instant any bid is accepted.</p></div>
+  <div class="call concept"><b class="t">📘 Concept: Socket.IO</b><p><strong>Socket.IO</strong> is a Node.js library that makes WebSockets easy to use. Raw WebSockets give you a pipe for messages and nothing else. Socket.IO adds the things every real app needs: named events (“auction:changed”), <strong>rooms</strong> (a browser joins the room for one auction and only gets that auction's events), automatic reconnection when the network drops, and a fallback to HTTP long-polling for networks that block WebSockets. It has a server part that plugs into our Fastify API and a client part that runs in the React page. It also has an official <strong>adapter</strong> for Redis, which is how the backplane in the next box is wired up.</p></div>
+  <div class="call concept"><b class="t">📘 Concept: Redis and why a backplane is needed</b><p><strong>Redis</strong> is a very fast in-memory data store that runs as its own server (for us, in a Docker container next to Postgres). It is often used as a cache, and it has a built-in messaging feature we use here. Now the problem it solves. Picture the app in production with <strong>two API replicas</strong>, two identical copies of the server behind a <strong>load balancer</strong> that spreads users across them. Bidder A's browser is connected to replica 1; bidder B's to replica 2. B places a bid, which lands on replica 2. Replica 2 pushes “auction changed” to <em>its</em> connected browsers, but replica 1 never hears about it, so A's page stays stale. The fix is a <strong>backplane</strong>: every replica publishes each event to Redis, and Redis forwards it to every replica, which then pushes it to its own browsers. Redis is the shared channel behind all the replicas. With a single replica you do not need it, but we build for the distributed case from the start, because retrofitting it later is painful.</p></div>
+</div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Commit everything so far</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Before I start a new part I always make sure the previous one is committed. A clean commit boundary lets you see exactly what Codex changes for Part 4, nothing mixed in from before. You committed Part 3 in guide 15, so this is most likely a no-op; run it anyway, in the Terminal app.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Part 3 done&quot;</pre></div>
+    <p><code>cd</code> moves into the workshop; <code>git add -A</code> stages anything that changed; <code>git commit -m "Part 3 done"</code> saves a snapshot with that message. If there is nothing to save, Git simply tells you so.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Either a short commit summary (a line starting with <code>[main …] Part 3 done</code> and a file count) or <code>nothing to commit, working tree clean</code>. Both are fine; both mean your Part 3 is safely saved.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Start Part 4 with the grilling prompt</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>In Codex, click <strong>New chat</strong> in the sidebar under the <strong>workshop</strong> project. New part, new chat: the Part 3 chat is full of locking and clock details that would only distract here. Check that the picker under the message box reads <strong>5.6 Sol Medium</strong>, then paste this prompt and send it.</p>
+    <p>A confession first. This is my <strong>second</strong> version of the prompt. My first version said the app needs to be distributed “because we have 100000 users on our waitlist”. It was a joke. Codex took it literally and started asking about capacity targets, connections per second and scaling plans, none of which we want. So I threw that chat away and started again with the cleaner prompt below. Use this one.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">New chat in workshop</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">start in directory 4 and copy files from directory 3 for this slice
+
+we want to make the frontend use websockets to update as soon as bids come through. we want to protect against when this app is distributed that the websockets will succeed. grill me with docs!!!!!!!</pre></div>
+    <p>Three parts to this prompt. The first line is the housekeeping: copy Part 3 into the Part 4 folder and work there. The middle is the actual feature request in two sentences: live updates over WebSockets, and it must keep working when the app runs as several copies (“distributed”). The last line triggers the grill-with-docs skill, which makes Codex question you about the design and ground its questions in the existing code and docs before writing anything.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex names the chat something like “Grill WebSocket bid updates”. It reads the root and part-level <code>AGENTS.md</code> / <code>CONTEXT.md</code>, then reports something similar to: “Part 3's source, tests, manifests, and documentation are now copied into <code>part-4-realtime-socketio-redis</code>; generated dependencies and test output were excluded.” (Generated dependencies means the <code>node_modules</code> folder, which it reinstalls rather than copies.)</p>
+    <p>Then it splits “WebSockets succeed when distributed” into two guarantees (events cross API replicas; clients recover after interruptions) and starts <strong>Grill — Round 1: Product guarantees</strong>. You get about 10 numbered questions. Each has a ❓ question and a ➡️ “I recommend…” line, and the round ends with “Answer Q1–Q10 in order.”</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Everything you write biases the model. A joke became a requirement. And Codex will probably pick Redis without being asked, because the root <code>AGENTS.md</code> already mentions it as the stack for this part. My habit: leave out explanations, jokes and background, and just ask for what you want. If the model needs context, it will ask.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>A grilling session reads a lot of files and writes long answers, so expect a noticeable token cost on your API key. Two rounds for Part 4 is a normal-sized run; do not start extra grills “to see what happens”.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Optional: send the same request in Plan mode</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>While the grill runs, I want to show you Codex's built-in <strong>Plan mode</strong> in a second chat, with the same request, so you can compare the two approaches side by side. It is only a comparison and does not change your code. Skip Steps 3 and 4 if you want to save tokens.</p>
+    <ol>
+      <li>Click <strong>New chat</strong> under <strong>workshop</strong>.</li>
+      <li>In the message box type <code>/plan</code> and pick <strong>Plan mode – Turn plan mode on</strong> from the menu.</li>
+      <li>Paste the prompt below and send it. It is the same request as Step 2, minus the copy instruction (Part 4 already exists now) and minus “grill me with docs”.</li>
+    </ol>
+    <div class="settings"><div class="settings-h">⚙ Codex settings</div><div class="set-grid"><div class="set"><span>Mode</span><b>Plan mode on (this chat only)</b></div></div></div>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex (Plan mode chat)</span><span class="where">Second new chat in workshop</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">start in directory 4
+
+we want to make the frontend use websockets to update as soon as bids come through. we want to protect against when this app is distributed that the websockets will succeed.</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: Plan mode vs grilling</b><p><strong>Plan mode</strong> is built into Codex. You describe a task, Codex reads the code, asks you a few multiple-choice questions in a card, and then writes one long plan document that you read and accept before any code is written. It is read-only until you approve. <strong>Grilling</strong> is a skill we installed in guide 5. It also asks before building, but differently: 8–10 pointed questions per round, up to two rounds, each with a recommendation, and it records every answer in <code>GRILL.md</code> and the agreed vocabulary in <code>CONTEXT.md</code>. Plan mode is quick and good for small features that fit the existing patterns. Grilling is slower and surfaces the decisions you did not know you had to make, which is what you want for anything with concurrency, time or infrastructure in it.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A <strong>Plan</strong> chip appears next to “Approve for me” under the message box, and the empty box says “Describe your task to generate a plan…”. After you send the prompt, Codex reads files, says it has reduced things to a few product choices, then shows a question card labelled “1 of 3”.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If <code>/plan</code> does not show Plan mode in your Codex version, skip this step and the next one. They do not change your code.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Optional: answer Plan mode's 3 questions</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Plan mode asks multiple-choice questions in a card, each with one option marked <strong>Recommended</strong>. Click an option to answer and the next card appears. Notice how few questions there are compared with the grill running in the other chat. I picked:</p>
+    <ol>
+      <li><strong>Which screens should react to accepted bids?</strong> → Auction detail only. The homepage and search cards can stay as they are; live-updating a whole list is more work for little gain.</li>
+      <li><strong>How should an API instance behave when Redis is unavailable?</strong> → Stay HTTP-ready (Recommended). Bidding must keep working even if live updates are down.</li>
+      <li><strong>Should users see realtime connection status?</strong> → Subtle status. A tiny indicator, not a banner.</li>
+    </ol>
+    <p>Then I sent one more line. Both chats are working on the <em>same</em> Part 4 folder, and I did not want the plan chat to write files while the grill chat was also writing there. Two agents editing one folder at the same time is a recipe for confusion.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex (Plan mode chat)</span><span class="where">Plan mode chat</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">continue without editing files plz</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>“Absolutely — this remains read-only planning. I won't edit or generate any project files.” Plan mode keeps working and ends with one long plan document that you are asked to read and accept.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>My view after using both: Plan mode is fine for small, native features, but you end up reading one big plan at the end, and big plans get skimmed. Grilling asks better questions one at a time, and I actually read each one because I have to answer it. You do not need to accept this plan. Just go back to the grill chat.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Answer grill round 1</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Go back to the grill chat. Codex writes its <strong>own</strong> questions each run, so the wording, order and count may differ from mine (the root <code>AGENTS.md</code> caps it at 8–10 questions per round, 2 rounds max). Each question ends with a recommendation. Writing “take recommend” accepts it. Read each question properly before answering; this is where you shape the design.</p>
+    <p>What my answers decided, and why. Match these to your question numbers by topic:</p>
+    <ol>
+      <li><strong>What counts as real-time success</strong> → take recommend: pages normally update within about a second, and always end up matching the database. “Eventually correct” is the real guarantee; “instant” is the goal.</li>
+      <li><strong>Which screens go live</strong> → only the auction detail page, not the homepage or search cards. Smallest useful scope.</li>
+      <li><strong>Distribution boundary</strong> → several API replicas in one region, <strong>one Redis server</strong> as the backplane. We are not designing for multiple data centres.</li>
+      <li><strong>Restrictive networks / long-polling / sticky sessions</strong> → keep it super simple, only Redis as backplane. (Long-polling is the HTTP fallback for networks that block WebSockets; sticky sessions make a load balancer send the same user to the same replica every time. Both are real production concerns, and both are out of scope today.)</li>
+      <li><strong>Where bid writes live</strong> → take recommend: bids stay on HTTP, sockets only push updates. The write path we hardened in Part 3 does not change at all; the socket is read-only notification.</li>
+      <li><strong>Redis unavailable</strong> → take recommend: keep accepting bids, Postgres is the source of truth. Live updates are a nice-to-have; accepting bids is the business.</li>
+      <li><strong>How interrupted clients recover</strong> → take recommend if it is simple. A laptop sleeps, the Wi-Fi drops; the page must catch up when it comes back.</li>
+      <li><strong>Who may subscribe</strong> → take recommend: public, read-only, same as the REST API. There is no login in this app, so there is nothing to protect.</li>
+      <li><strong>Show connection health in the UI</strong> → no. (Different from the Plan-mode answer, on purpose; I wanted even less UI here.)</li>
+      <li><strong>Prove distribution with a multi-replica demo</strong> → don't add that right now. Building and running two replicas locally is a project of its own.</li>
+    </ol>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">My answers (round 1), adjust the numbers to match your questions</span><span class="where">Grill chat</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">1. take recommend
+2. only the auction detail page
+3. take recommend, just one Redis server as the backplane plz
+4. just keep it super simple, don&#x27;t worry too much about distributed systems EXCEPT redis as backplane
+5. take recommend
+6. take recommend
+7. take recommend if it&#x27;s simple enough
+8. take recommend
+9. no
+10. don&#x27;t add that right now</pre></div>
+    <p><strong>Why this matters:</strong> look at how many of these answers cut scope. Grilling is not only about getting the design right; it is about saying no to everything you do not need yet. The model will happily build sticky sessions and a replica demo if you let it.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex replies with something similar to: “Round 1 is recorded in <code>GRILL.md</code> and the resolved domain language in <code>CONTEXT.md</code>.” Then <strong>Grill — Round 2: Technical shape</strong> starts, with about 9 more questions. Round 1 was about <em>what</em> the product guarantees; round 2 is about <em>how</em> to build it.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If Codex keeps asking about scale or extra infrastructure, steer it the way I do: “just keep it super simple” or “don't add that right now”. Real-world questions like sticky sessions matter, but not for this slice.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Answer grill round 2</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Round 2 is about the technical shape. The questions get more specific, and a couple of them hide important ideas. What my answers decided, and why:</p>
+    <ol>
+      <li><strong>Recovery architecture</strong> → take recommend: the ordinary Redis Pub/Sub adapter for Socket.IO, plus an automatic HTTP refetch after every reconnect. After a disconnect the page simply asks the API for the current state once, instead of trying to replay missed events.</li>
+      <li><strong>WebSocket-only transport</strong> (no long-polling fallback) → yes. One transport, less to test.</li>
+      <li><strong>Event = notification or full state</strong> → take recommend: a small <code>auction:changed</code> notice (slug + bid ID), then the browser refetches the auction over HTTP. The socket says “something changed”; the API, which already has the correct, tested read logic, says <em>what</em>. This keeps the socket payload tiny and keeps one source of truth.</li>
+      <li><strong>Subscription rooms</strong> → take recommend: one room per auction slug. A page watching auction A never receives events about auction B.</li>
+      <li><strong>Emission boundary</strong> → take recommend: broadcast only <strong>after</strong> the bid transaction commits. If we emitted before the commit and the transaction then rolled back, every watcher would see a bid that does not exist. This connects straight back to guide 14.</li>
+      <li><strong>Should the bidder get their own event</strong> → yes. Simpler than special-casing the sender, and harmless.</li>
+      <li><strong>Redis failure at startup</strong> → don't start the API unless Redis is running. I chose this on purpose: when Redis is down, Codex notices immediately in the startup error and starts the container itself, instead of the app half-working and us hunting for why live updates are silent.</li>
+      <li><strong>Silent refresh failures</strong> → take recommend: keep the last good snapshot on screen, no error UI. A failed background refetch should not scare the user.</li>
+      <li><strong>Verification</strong> → yes to focused tests and a normal two-window check, but <strong>no</strong> multi-replica demo.</li>
+    </ol>
+    <div class="call concept"><b class="t">📘 Concept: pub/sub</b><p><strong>Publish/subscribe</strong> is a messaging pattern. A sender <strong>publishes</strong> a message to a named <strong>channel</strong> without knowing or caring who is listening. Any number of receivers <strong>subscribe</strong> to that channel and get a copy of every message. The sender and receivers never talk to each other directly; the channel decouples them. Redis has this built in. In our design every API replica subscribes to the Socket.IO channel in Redis; when a bid commits on any replica, that replica publishes “auction:changed” once, Redis delivers it to all replicas, and each replica forwards it to the browsers in that auction's room. Socket.IO's Redis adapter does all of this for us behind one line of configuration.</p></div>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">My answers (round 2), adjust the numbers to match your questions</span><span class="where">Grill chat</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">1. take recommend
+2. yes
+3. take recommend
+4. take recommend
+5. take recommend
+6. yes
+7. don&#x27;t start unless redis is also started
+8. take recommend
+9. yes, also we&#x27;re not doing any multi-replica demonstration at all, don&#x27;t overcomplicate things plz</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>An “Edited 2 files” card: <code>part-4-realtime-socketio-redis/GRILL.md</code> and <code>CONTEXT.md</code>. Open <code>CONTEXT.md</code> in VS Code if you like: it now defines terms like <strong>Accepted bid</strong>, <strong>Auction watcher</strong> and <strong>Authoritative auction state</strong>. This shared vocabulary is what Codex will use consistently in code, tests and messages in guide 18. Codex then shows “Preparing feature slices proposal…”. This guide ends here. Leave this chat open; guide 18 continues in it with the slice list and the build.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Why I stay on <strong>Medium</strong> reasoning for grilling: a model that thinks longer also tends to <em>design</em> longer, adding layers we never asked for. LLMs can absolutely overthink a small slice. Medium gives good questions without the gold-plating.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p><strong>Codex went off on scale and capacity questions?</strong> You probably added extra context to the prompt. Start a new chat and send the Step 2 prompt exactly as written.</p>
+  <p><strong>Part 3 is not finished?</strong> Replace your Part 3 with the finished reference version, then start this guide at Step 1. The reference folder is the <strong>end state of the whole part</strong> (all slices done). The command deletes your Part 3 folder (cannot be undone), copies the reference in, and commits.</p>
+  <p>If you would rather skip Part 4 entirely, use the same command with <code>part-4-realtime-socketio-redis</code> in place of the Part 3 folder name. Be aware that this copies the finished real-time code from guide 18, not just this guide's grilling docs, so you would then skip guide 18 as well.</p>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Catch up: Part 3</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-3-business-rules-concurrency &amp;&amp; cp -R ../reference/part-3-business-rules-concurrency ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 3 from reference&quot;</pre></div>
+</div>
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li><strong>WebSockets</strong> keep one connection open so the server can push updates the moment they happen; polling asks again and again and is always a little late.</li>
+  <li><strong>Redis as a backplane:</strong> with one API instance, Socket.IO works on its own. With several instances behind a load balancer, Redis pub/sub forwards each event to every instance, so a browser gets the update whichever instance it is connected to.</li>
+  <li><strong>Prompts bias the model.</strong> A joke about 100,000 users became capacity requirements, and <code>AGENTS.md</code> nudged the choice of Redis. Write only what you mean.</li>
+  <li><strong>Grilling vs Plan mode:</strong> Plan mode asks a few questions and then hands you a big plan to accept. grill-with-docs asks better questions round by round and records every decision in <code>GRILL.md</code> and <code>CONTEXT.md</code>.</li>
+  <li>Use your answers to <strong>cut scope</strong>: “detail page only”, “one Redis server”, “don't add that right now”. Real-world distributed-systems questions are important, but only when you actually need them.</li>
+  <li>Emit events only <strong>after</strong> the transaction commits, and let the socket carry a small “something changed” notice while HTTP stays the source of truth.</li>
+</ul></div>
+<div class="nav"><a href="16. Code Reviews with Codex &amp; Claude.html"><span>← Previous guide</span>16. Code Reviews with Codex &amp; Claude</a><a class="r" href="18. Implementing the Real-Time Updates.html"><span>Next guide →</span>18. Implementing the Real-Time Updates</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

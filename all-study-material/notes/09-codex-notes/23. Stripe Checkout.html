@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>23. Stripe Checkout – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="23. Stripe Checkout"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>23. Stripe Checkout</h1>
+  <p class="lede">Start Part 7: ask Codex for winner checkout through the mock Stripe service, answer two rounds of grilling questions, confirm the two slices and let Codex build and test Slice 1. By the end, the auction winner can pay.</p>
+  <div class="meta"><span class="pill">Part 7 · start</span><span class="pill">≈ 45–60 min hands-on</span><span class="pill">Grill with docs · 2 rounds</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Put the mock Stripe service (<code>stripe-service/</code>) back to its starting version, so Codex finds the same problems in it that I describe below.</li>
+  <li>Send the Part 7 prompt and answer Codex's two rounds of grilling questions about payments.</li>
+  <li>Approve the waiting Drizzle goal from guide 22 (only if you started it).</li>
+  <li>Ask for the Mermaid diagram, confirm the two slices, and watch Codex build and test Slice 1.</li>
+</ul></div>
+
+<div class="box"><h2>Before you start</h2><ul>
+  <li>Finished guide 22, or at least Part 6 works (see the catch-up box in guide 22).</li>
+  <li>Docker Desktop running. Part 7 needs the PostgreSQL database, and the tests Codex runs at the end need it too.</li>
+  <li>Know where the mock lives: <code>~/codex-course/workshop/stripe-service/</code> is a small local web app built with Fastify, the same Node.js web framework our API uses. It <strong>pretends</strong> to be Stripe. No real Stripe account and no real money are involved anywhere in this course.</li>
+</ul>
+  <div class="call concept"><b class="t">📘 Concept: Stripe Checkout, and why we use a mock</b><p><strong>Stripe</strong> is a payment company. With <strong>Stripe Checkout</strong>, your server never touches a card number. Instead, the server asks Stripe to create a <strong>Checkout Session</strong>: “this customer owes $107 for this item”. Stripe returns a link to a payment page that Stripe hosts. The buyer is sent to that page, types the card there, and is redirected back to your site. Afterwards Stripe tells your server “session paid” through a <strong>webhook</strong>, a message sent to your server (explained properly in step 5). That is the real flow. Our <strong>mock Stripe service</strong> copies it exactly: Auction House creates a session on it, the winner pays on its hosted card page (port 7107), and it sends a signed <code>checkout.session.completed</code> webhook back to our API. Why a mock? Because it runs on your Mac with no account, no internet, no test-mode keys and no risk, and it is deliberately imperfect, so you learn what can go wrong with payments without any money moving.</p></div>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div><div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div><div class="set"><span>Reasoning</span><b>Medium</b></div><div class="set"><span>Approvals</span><b>Approve for me</b></div><div class="set"><span>Also</span><b>New chat on <strong>Local</strong> (not a worktree), branch master</b></div></div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Reset stripe-service to its starting version</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Your workshop already has a <code>stripe-service/</code> folder, because it came with the course repo. But that copy is the <strong>finished</strong> version: its problems were fixed during Part 7 and tracing was added in Part 8. Part 7 is exactly where we find and fix those problems, so we swap in the version the mock started as. Paste this block into the Terminal app. Line by line:</p>
+    <ul>
+      <li><code>cd ~/codex-course/workshop</code>: into the workshop folder.</li>
+      <li><code>rm -rf stripe-service</code> deletes the finished copy. <code>-r</code> means “the whole folder, recursively”, <code>-f</code> means “don't ask”.</li>
+      <li><code>git -C ../reference archive 457ddbe stripe-service | tar -x</code> is the interesting one. <code>git -C ../reference</code> runs Git inside the reference folder without leaving your current folder. <code>archive 457ddbe stripe-service</code> packs up only the <code>stripe-service</code> folder as it looked at commit <code>457ddbe</code>, the point in the reference history where the mock was first added. The <code>|</code> pipes that package into <code>tar -x</code>, which unpacks it right here, in your workshop. Result: the original mock, inside your workshop, with no other files touched.</li>
+      <li><code>ls stripe-service</code> shows what arrived, so you can confirm.</li>
+      <li><code>git add -A &amp;&amp; git commit -m "…"</code> saves this swap as a commit, so the change is on record.</li>
+    </ul>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">cd ~/codex-course/workshop
+rm -rf stripe-service
+git -C ../reference archive 457ddbe stripe-service | tar -x
+ls stripe-service
+git add -A &amp;&amp; git commit -m &quot;Mock Stripe service: starting version&quot;</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p><code>package.json  src  tsconfig.json</code>, with no <code>package-lock.json</code> yet (that missing lockfile is one of the things Codex will point out), then a commit summary.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Skipping this step is fine too. Codex then simply reports fewer problems with the mock in step 3, because most of them are already fixed in the finished copy. I prefer you do the reset, so you see Codex catch real issues in a dependency.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Send the Part 7 prompt in a new chat</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>I usually send this prompt while the Drizzle goal from guide 22 is still running in its own chat; the two don't interfere because the goal lives in a worktree. In Codex, click <strong>New chat</strong>, project <strong>workshop</strong>. Look at the chips above the message box: this time keep <strong>Local</strong> (not a worktree), branch <code>master</code>. Part 7 should be built in your real workshop folder. Paste and send.</p>
+    <p>The prompt has two lines, and both matter. “work out of folder 7, copy from folder 6” is our course convention: each part starts as a copy of the previous part and adds one capability, so Part 7 begins as Part 6 plus checkout. “please grill me with docs” calls the <strong>grill-with-docs</strong> skill you installed in guide 5: Codex asks you design questions in rounds, with a recommendation for each, and writes every decision into <code>GRILL.md</code> before any code is written.</p>
+    <div class="settings"><div class="settings-h">⚙ Codex settings</div><div class="set-grid">
+      <div class="set"><span>Project / folder</span><b>workshop</b></div><div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div><div class="set"><span>Reasoning</span><b>Medium</b></div><div class="set"><span>Approvals</span><b>Approve for me</b></div><div class="set"><span>Also</span><b>Local · master</b></div></div></div>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">new chat · Local</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">work out of folder 7, copy from folder 6
+
+I want to implement winner checkout using the mock Stripe service inside of this repo. please grill me with docs</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>After about 40 seconds Codex sums up its audit of the repo, something like: “<code>part-7-winner-checkout</code> is empty… Part 6 provides authoritative auction closes and winner identity. I'll document our decisions in Part 7's <code>GRILL.md</code>, then copy Part 6 only after the grilling design tree is settled and you confirm the vertical slices.” Notice the order it promises: decide first, copy and build later.</p><p>Then <strong>Round 1 — Product and integration boundaries</strong>: about 9 questions (❓ Q1 … Q9), each with a ➡️ recommendation, ending with “Please answer Q1–Q9. Short answers like “all recommendations” plus exceptions are perfect.” The chat gets a name in the sidebar such as <strong>Define winner checkout flow</strong>; I refer to it by that name below.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>Two grilling rounds plus building Slice 1 is one of the heavier runs in the course. Keep an eye on platform.openai.com → Usage. If you want to save, switch the model to Terra for the two answer rounds and back to Sol before step 8, where the building happens.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Answer round 1</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Read each of Codex's questions and match it to the list below. Your questions may be worded, ordered or numbered differently, so match by topic, not by number. These are my choices and why:</p>
+    <ul>
+      <li><strong>Q1 Mock Stripe boundary:</strong> a separate service, and it already exists. Codex should use <code>stripe-service/</code> at the repo root and review it for problems. We do not want it to invent a second mock.</li>
+      <li><strong>Q2 Checkout interaction:</strong> like Stripe Checkout. The server creates a session, the browser goes to a hosted payment page. The card form never lives in our app.</li>
+      <li><strong>Q3 Charge amount:</strong> exactly the winning bid, in USD. No shipping or tax. The server decides the amount; the browser is never trusted with it.</li>
+      <li><strong>Q4 Eligibility:</strong> only the winning bidder, and only after the auction has closed.</li>
+      <li><strong>Q5 Demo identity:</strong> keep the demo user switcher we have had since Part 1. No real login system.</li>
+      <li><strong>Q6 Entry points:</strong> a checkout button in the winner's outcome popup <strong>and</strong> a “Complete purchase” panel on the closed auction page, so a winner who dismissed the popup can still pay.</li>
+      <li><strong>Q7 Payment outcomes:</strong> success, card decline and cancel on the mock page. <code>4242 4242 4242 4242</code> succeeds, <code>4000 0000 0000 0002</code> declines. These are the standard test card numbers real Stripe uses in test mode, which is why the mock uses them too.</li>
+      <li><strong>Q8 Who sees payment state:</strong> the winner sees Payment required / Processing / Paid; the seller sees only Awaiting payment / Paid; everyone else sees nothing.</li>
+      <li><strong>Q9 Fulfillment:</strong> nothing. No shipping, payouts, email or notifications. Just taking payments. Scope control: one capability per part.</li>
+    </ul>
+    <p>“take recommend” means “use your recommendation”. I type it once, copy it, and paste it on each line. Spend your typing only on the exceptions.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">My answers (round 1), adjust the numbers to match your questions</span><span class="where">Define winner checkout flow chat</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">1. we already have the stripe service for you, just copied it into the root, directory stripe-service/, please look at it and tell me if there&#x27;s any issue
+2. take recommend
+3. take recommend
+4. take recommend
+5. take recommend
+6. take recommend
+7. take recommend, use the 4242 number for success and the other typical number for failure
+8. take recommend
+9. nope, none of that, just taking payments</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex says “Round 1 is settled”, then inspects <code>stripe-service/</code>. You may see a helper task named something like <strong>Inspect stripe</strong> start working; that is Codex spinning off a small side job to read the mock while the main chat continues. It then lists problems in the mock, similar to: a completed session can be paid again, session creation is unauthenticated, the page shows the decline card but not that <code>4242 4242 4242 4242</code> succeeds, no lockfile. And it says clearly: “No files have been changed yet.” Read that list; each item is a real payment bug class.</p><p>Then <strong>Round 2 — Integrity and recovery</strong> with about 10 more questions (Q10–Q19). These are the harder ones: what happens when things go wrong.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Why this matters: round 1 decided <em>what</em> we build (boundaries, who, how much). Round 2 decides <em>how it stays correct</em> under failure. Real payment bugs almost always come from the second category, and this is where grilling earns its cost.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Only if your Drizzle goal is waiting: approve it</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Switch to the <strong>Pull GitHub issue 2</strong> chat from guide 22. If its bar says <strong>Goal stalled</strong>, it is because Codex asked permission to create the branch <code>issue-1-drizzle-refactor</code> and has been waiting for you. Send the message below there. It does two things: it answers the question (“approved”) and it restates the finish line (“don't stop until you issue a PR”), so the goal does not stall again at the next small decision. Skip this step if you cleared that goal in guide 22 or if it never asked.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Pull GitHub issue 2 chat</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">approved, GO! don&#x27;t stop until you issue a PR</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Something like: “Approved. I'm creating <code>issue-1-drizzle-refactor</code> from <code>master</code>, then I'll refactor every Part 6 service and its tests to Drizzle… and open the PR before stopping.” The bar changes back to <strong>Pursuing goal</strong> and shows <code>Step 1 / 5</code>. It keeps running in the background while you return to Part 7. Guide 24 picks this goal up again.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If the bar still says <strong>Goal stalled</strong> after you send, click its resume (play) icon. A stalled goal sometimes needs that nudge even after you have answered.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Answer round 2</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Back in the <strong>Define winner checkout flow</strong> chat. Round 2 is about integrity: making sure a purchase can never be paid twice, never marked paid without proof, and never gets stuck. Read the two concept boxes below before you answer; they explain the vocabulary in Q13 and Q14. These are my choices:</p>
+    <ul>
+      <li><strong>Q10 Mock service hardening:</strong> I did not understand what this question was really asking, so I asked “what do you mean?”. Codex explains in the next step. It is fine to do this during grilling.</li>
+      <li><strong>Q11 Mock persistence:</strong> keep checkout sessions in memory inside the mock. Auction House, our app, keeps the durable purchase record in PostgreSQL. The provider can forget; we must not.</li>
+      <li><strong>Q12 Purchase creation:</strong> create the purchase row when the winner first clicks checkout. One purchase per auction, enforced by the database.</li>
+      <li><strong>Q13 Payment authority:</strong> only a signed <code>checkout.session.completed</code> webhook marks a purchase paid. The redirect URL the browser comes back on is <strong>not</strong> proof; anyone can type a URL.</li>
+      <li><strong>Q14 Webhook replay safety:</strong> record each provider event once, and allow only one pending → paid transition per purchase.</li>
+      <li><strong>Q15 Purchase states:</strong> just <code>pending</code> and <code>paid</code>. No refunds, no failed state; a declined card simply leaves it pending.</li>
+      <li><strong>Q16 Checkout retries:</strong> if the winner clicks checkout again, reuse the open session instead of creating a new one. <strong>Also disable the button on click</strong>, so a double-click cannot fire two requests.</li>
+      <li><strong>Q17 Return experience:</strong> after paying, go back to the auction page and reload the real purchase state from our server.</li>
+      <li><strong>Q18 Service access:</strong> <strong>no API keys</strong> between our API and the mock. Keep it simple; this is a local mock.</li>
+      <li><strong>Q19 Repository operation:</strong> keep <code>stripe-service/</code> at the repo root, add its lockfile, and let Part 7's <code>npm start</code> start the mock along with the API and the web app.</li>
+    </ul>
+    <div class="call concept"><b class="t">📘 Concept: webhook</b><p>Normally our server makes requests and waits for answers. A <strong>webhook</strong> turns that around: another system calls <strong>our</strong> server when something happens on their side. The payment provider finishes a payment and sends an HTTP request to a URL we gave it, say <code>POST /webhooks/stripe</code>, with a JSON body describing the event (<code>checkout.session.completed</code>, which session, how much). Because anyone on the internet could send a request to that URL, the provider <strong>signs</strong> each webhook with a secret that only it and we know, and our server checks the signature before believing anything. That is why Q13 says only a <em>signed</em> webhook may mark a purchase paid.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: replay safety (idempotency)</b><p>Webhooks are delivered at least once, not exactly once. If our server is slow to answer, the provider sends the same event again. If we processed “session paid” twice, we might record two payments or two emails. A <strong>replay-safe</strong>, or <strong>idempotent</strong>, handler produces the same result no matter how many times it receives the same event. The usual recipe is exactly what Q14 asks for: store each event's unique id in a table, ignore an id you have seen before, and make the status change itself a guarded update (“set paid only if currently pending”). You met the same idea with RabbitMQ consumers in guide 21; payments are where it matters most.</p></div>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">My answers (round 2), adjust the numbers to match your questions</span><span class="where">Define winner checkout flow chat</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">10. what do you mean?
+11. take recommend
+12. yep take recommend
+13. take recommend
+14. take recommend
+15. take recommend
+16. take recommend, but also just disable the button on click lol
+17. take recommend
+18. no API keys, not necessary, KISS (keep it stupid simple)
+19. take recommend</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex explains the question you asked about, similar to: “Q10 is about whether I'm allowed to modify <code>stripe-service/</code>, not just integrate with it. Right now it permits this broken sequence: …”, listing a sequence such as “pay a session, then pay the same session again”, and it ends with “Should I make those minimal corrections to <code>stripe-service/</code> as part of Part 7?”</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Allow the minimal mock fixes</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Codex has asked whether it may fix the mock itself, rather than only working around its bugs. The answer is yes, but <strong>minimal</strong>: fix what blocks a correct checkout, do not rewrite the service. Send this if Codex asked about fixing <code>stripe-service/</code>.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Define winner checkout flow chat</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">minimal corrections are fine :)</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Something like: “The grilling session is complete and documented in <strong>GRILL.md</strong>. Proposed delivery:</p><ol><li>Winner completes a replay-safe hosted checkout, including minimal mock Stripe corrections, decline/cancel flows, signed webhook confirmation, and authoritative paid state.</li><li>Seller payment visibility and recovery from mock Stripe restarts or webhook interruptions.</li></ol><p>…Please confirm these two slices, and I'll copy Part 6 into Part 7 and begin Slice 1.” A file card shows <strong>Edited GRILL.md +165 -0</strong>: 165 lines of decisions, and still zero lines of application code. That is the point of grilling first.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If you picked the recommendation for Q10 instead of asking “what do you mean?”, Codex goes straight to this summary. Skip this step.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Ask for the diagram</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The workshop rules in <code>AGENTS.md</code> ask Codex for a <strong>Mermaid diagram</strong> after every grilling session. Mermaid is a way of writing a diagram as plain text (boxes and arrows described in a few lines) which Codex and GitHub then draw as a picture. If you don't see one in the chat, ask for it. Keep the wording casual; it works.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Define winner checkout flow chat</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">where my mermaid</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex points out that the diagram is already in <code>GRILL.md</code> and shows it in the chat. Click it to zoom. It looks similar to: <strong>🌐 React/Vite Web App (winning bidder)</strong> → <strong>⚡ Fastify API (winner authorization + webhooks)</strong> → <strong>🐘 PostgreSQL (closes, purchases, webhook events)</strong>; the API creating a session in <strong>💳 Mock Stripe (hosted Checkout Session)</strong>; the winner paying there (“4242 success, 4000 decline or cancel”); Mock Stripe sending a <strong>signed checkout.session.completed</strong> back to the API; and a second <strong>🌐 web app (seller)</strong> reading “awaiting or paid”. Trace the arrows once with your finger: that is the whole of Part 7 on one screen, and it matches the concept box at the top of this guide.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Confirm the slices and let Slice 1 build</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>One word approves the two slices. Codex then copies Part 6 into <code>part-7-winner-checkout</code> and builds Slice 1 only. This takes a while, about 10 minutes in my run, and it is the step where the tokens are spent. Make sure the model is back on Sol if you switched earlier.</p>
+    <div class="call concept"><b class="t">📘 Concept: vertical slice</b><p>A <strong>vertical slice</strong> is a piece of work that cuts through every layer of the app at once (database, API, web page, tests) to deliver one complete, usable behaviour. Slice 1 here is “the winner can pay”: a purchases table, a checkout endpoint, a webhook endpoint, a button in the UI, and a browser test. The opposite approach, building all the database work first and all the UI last, leaves you with nothing testable for a long time. Slices give you something you can click on at the end of each one, which is also exactly what an agent needs: a clear finish line.</p></div>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Define winner checkout flow chat</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">proceed!</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Something like: “Slices confirmed. I'm starting Slice 1 only: copy the Part 6 application into Part 7 while preserving the new <code>GRILL.md</code>, isolate its runtime configuration, then implement and verify the winner's complete hosted-checkout flow.” A counter shows <code>Step 1 / 6</code> and climbs to <code>Step 5 / 6 · 23 files changed +852 -26</code> (your numbers will differ). “Isolate its runtime configuration” means Part 7 gets its own ports and database name, so it can run next to Part 6 without clashing.</p><p>Near the end it runs the browser test <code>npx playwright test tests/winner-checkout.spec.ts --project=edge</code>: <code>npx</code> runs the Playwright test runner, on that one test file, in the Edge browser. The test walks through decline with the 4000 card, cancel and retry, then a successful payment with 4242. You may see an Edge window flash open and closed.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If Codex asks to approve <code>npm install</code>, Docker or Playwright commands, approve them. They are all part of setting up and testing Part 7.</p></div>
+  </div></div>
+
+<div class="step" id="s9"><div class="sh"><div class="num">9</div><div class="st"><h3>Watch the bidding-war browsers</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>After the checkout test, Codex re-runs the older browser workflows from Part 6 to check that nothing it copied has broken. Edge or Chrome windows open on their own. You don't need to do anything; just watch, and resist the urge to click inside them.</p>
+    <div class="call concept"><b class="t">📘 Concept: headed end-to-end test</b><p>An <strong>end-to-end test</strong> drives the real app the way a user would: open the page, click, type, read what appears. Playwright is the tool that does the driving. <strong>Headed</strong> means the browser windows are visible on your screen, as opposed to <strong>headless</strong>, where the same test runs invisibly and faster. We run the bidding war headed because watching four users fight over one auction is the fastest way to understand concurrency, and because you will need the windows open to pay in the next guide.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Four browser windows in a 2×2 grid on a URL like <code>http://localhost:5107/items/bidding-war-gpu-…</code> (Codex picks the port; in my run it was 5107, following the pattern of 510<em>N</em> for Part <em>N</em>): the seller (<strong>Avery Chen</strong>) and three bidders (<strong>Maya Thompson</strong>, <strong>Theo Brooks</strong>, <strong>Priya Shah</strong>). A countdown runs, bids climb from $101 to around $106, and stale bids are rejected with messages like “Bid not placed — another bidder moved the minimum…”. That rejection is the row locking from guide 14 still doing its job in Part 7.</p></div>
+  </div></div>
+
+<div class="step" id="s10"><div class="sh"><div class="num">10</div><div class="st"><h3>Complain if there's no popup or checkout</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>In my run the four windows closed as soon as the auction ended, without showing the winner's outcome popup or a checkout page. Slice 1 claims “the winner can pay”, and I had not seen a winner pay, so I told Codex right away, while it was still working. Casual wording is fine; what matters is that you report what you saw, not what you assume. Send this if the same happens to you.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Define winner checkout flow chat</span><button class="cbtn" data-target="s10c0">Copy</button></div><pre id="s10c0">bidding wars came up, but no noty? no checkout page??????</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Your message appears and Codex starts looking into it, with an activity line similar to “Diagnosing checkout route delay”. This guide ends here. Guide 24 continues in this same chat: you will run the bidding war with the browsers left open and pay for the item yourself with the 4242 card.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If your run did show the winner popup and a checkout page, skip this message and let Codex finish Slice 1 on its own.</p><p>Why this matters: a passing test is a claim. Seeing the feature work with your own eyes is the check. In guide 24 you will see what happens when an agent's claim and reality disagree.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>Catch up to the finished Part 7 from the reference copy. The reference folder is the <strong>end state of the whole part</strong> (both slices done, including the seller's payment view), and this also restores the finished <code>stripe-service/</code>. Then run it; Codex isn't needed. Line by line: the first line deletes your Part 7 and mock, copies both from the reference, and commits. The second line moves into Part 7, installs its packages (<code>npm install</code>) and starts the database, API, web app and mock together (<code>npm start</code>). Open the URL that <code>npm start</code> prints (http://localhost:5107 in my run).</p>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-7-winner-checkout stripe-service &amp;&amp; cp -R ../reference/part-7-winner-checkout ../reference/stripe-service ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 7 from reference&quot;
+cd part-7-winner-checkout &amp;&amp; npm install &amp;&amp; npm start</pre></div>
+  <p><strong>Grilling went a very different way?</strong> That is normal; the questions depend on what Codex finds. Keep answering by topic using my choices as your guide. The decisions that must not change: server owns the amount, only a signed webhook proves payment, duplicates must be safe, two slices.</p></div>
+
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li>Stripe Checkout keeps card numbers off your server: you create a session, the buyer pays on a hosted page, and a signed webhook tells you it is paid. A local mock that behaves the same way (hosted page, test cards, signed webhooks) lets you build and test the whole flow with no account and no money.</li>
+  <li>Grilling surfaced the real design decisions before any code existed: the server owns the amount, only a signed webhook proves payment, and every webhook must be replay-safe.</li>
+  <li>Short answers like “take recommend” keep grilling fast. Spend your words on the exceptions (“no API keys, KISS”, “just disable the button on click”) and on honest questions (“what do you mean?”).</li>
+  <li>Work is delivered in vertical slices with a clear finish line, and a finished slice is something you can click, not just a green test.</li>
+  <li>Codex runs several chats at once. The Part 7 grill and the Drizzle goal ran side by side, one in your folder and one in a worktree.</li>
+</ul></div>
+
+<div class="nav"><a href="22. Codex Goals.html"><span>← Previous guide</span>22. Codex Goals</a><a class="r" href="24. Reviewing the Pull Request.html"><span>Next guide →</span>24. Reviewing the Pull Request</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

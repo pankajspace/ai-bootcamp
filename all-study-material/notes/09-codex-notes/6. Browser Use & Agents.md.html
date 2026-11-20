@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>6. Browser Use &amp; Agents.md – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="6. Browser Use &amp; Agents.md"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>6. Browser Use &amp; Agents.md</h1>
+  <p class="lede">We are still in the throwaway project. In this guide you make Codex open your site in a real Chrome window and click through it on its own, then you generate an AGENTS.md file and trim it down to the rules that matter.</p>
+  <div class="meta"><span class="pill">Throwaway project · continued</span><span class="pill">≈ 20–30 min</span><span class="pill">Browser use with an API key</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+<li>Ask Codex to open the running site in Chrome and navigate it for you. This is called <strong>browser use</strong>: the agent drives a browser the way a tester would.</li>
+<li>Generate an <strong>AGENTS.md</strong> file with one short prompt, and understand what that file does to every prompt you send afterwards.</li>
+<li>Open the file in VS Code and delete the “what the app looks like today” parts, keeping only constraints, commands and the verification checklist.</li>
+<li>Optional: add a one-line <strong>CLAUDE.md</strong> so that Claude Code reads the same rules if you use both tools.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+<li>You finished guide 5. Keep working in the <strong>same chat</strong> you used there (mine renamed itself to “Build React auction site”) inside the <strong>auctionhouse throwaway</strong> project. Do not open a new chat for this guide; Codex needs the memory of what it just built.</li>
+<li>Google Chrome is installed. Microsoft Edge also works if you prefer it, because the prompt asks for “edge or chrome”.</li>
+<li>Nothing in this guide touches your <code>workshop</code> folder. This is still practice on the throwaway site, so you can experiment freely.</li>
+</ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>auctionhouse throwaway (same chat as guide 5)</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Make sure the throwaway site is still running</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>At the end of guide 5 you left <code>npm run dev</code> running in Codex's bottom panel. That command starts the <strong>Vite development server</strong>, the small program that serves your React site to the browser and reloads it whenever a file changes. Codex can only “navigate the site” if that server is still up, so check it first.</p>
+    <p>In the Codex app, look at the top-right corner for the <strong>toggle bottom panel</strong> icon (a rectangle with a bar along its bottom edge). Click it. A terminal panel appears at the bottom of the window. If you can still see the Vite output from guide 5 (the line with <code>Local: http://localhost:5173/</code>), you are set and can skip to Step 2. If the panel is empty, or shows a plain prompt, start the server again:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Codex bottom panel · auctionhouse-throwaway</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">cd ~/codex-course/auctionhouse-throwaway
+npm run dev</pre></div>
+    <p>Line by line:</p>
+    <ul>
+      <li><code>cd ~/codex-course/auctionhouse-throwaway</code> moves the terminal into the throwaway project folder. Codex's bottom panel usually opens there already, but running <code>cd</code> again costs nothing and avoids the “no such file” errors you get when you are in the wrong folder.</li>
+      <li><code>npm run dev</code> asks npm to run the script named <code>dev</code> from the project's <code>package.json</code>. In a Vite project that script starts the development server. It keeps running until you stop it with Ctrl+C, so leave this terminal alone.</li>
+    </ul>
+    <div class="call concept"><b class="t">📘 Concept: localhost and ports</b><p><code>localhost</code> is a name that always means “this computer”. When you open <code>http://localhost:5173</code>, the browser does not go to the internet; it talks to a program running on your own Mac. The number after the colon is the <strong>port</strong>. One computer can run many servers at once, so each listens on its own numbered door: Vite uses 5173 by default, our backend API later uses 3000, PostgreSQL uses 5432. If a port is already taken, Vite simply picks the next one (5174), so always read the port from the terminal output instead of assuming.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p><code>➜ Local: http://localhost:5173/</code> in the bottom panel, with a blinking cursor below it and no red error text. Open that URL in Chrome once to confirm the auction site loads.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If you see <code>vite: command not found</code>, the packages were never installed. Run <code>npm install</code> once in the same panel, wait for it to finish, then run <code>npm run dev</code> again.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Ask Codex to open the site in Chrome and click through it</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Here is the idea I want you to take away from this step: instead of you opening the site and clicking around to check Codex's work, you ask <strong>Codex itself</strong> to open the site and show you around. The agent becomes the demo-giver, and you become the reviewer who points out what is wrong. That is a much better use of your time than clicking every link yourself.</p>
+    <p>Codex has a built-in browser and “computer use” feature that can do this directly, but that feature only works when you are signed in with a ChatGPT plan. We are signed in with an API key, so we take a different route: we ask Codex to drive Chrome through <strong>Playwright</strong>. The result on screen is the same, a Chrome window opening and moving through the pages by itself.</p>
+    <div class="call concept"><b class="t">📘 Concept: Playwright, headed and headless browsers</b><p><strong>Playwright</strong> is a library that lets a program control a real browser: open a URL, click a button, type into a form, read the page, take a screenshot. Testers use it to write <strong>end-to-end tests</strong> that behave like a human user. A browser run by Playwright can be <strong>headless</strong>, meaning it runs invisibly in the background (fast, good for automated test runs), or <strong>headed</strong>, meaning a real window opens on your screen so you can watch what happens. For a demo we want headed, which is why the prompt says so explicitly. We will meet Playwright again in guides 11 and 12, when we use it to make four users bid on the same auction at once.</p></div>
+    <p>Paste this into the same chat. The first sentence is the actual request. The second sentence tells Codex how to do it on our setup, so it does not waste a turn trying its built-in browser and failing.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">same chat as guide 5</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">open this in edge or chrome and navigate the site for me. The built-in browser isn&#x27;t available to me, so use Playwright with a visible (headed, not headless) Google Chrome window, and leave the window open when you&#x27;re done</pre></div>
+    <p>Notice the phrase “leave the window open when you're done”. Without it, Playwright closes the browser the moment the script ends, and you would see a window flash for a second and vanish. Small, precise instructions like this are what make agent prompts work.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex first checks whether Playwright is installed in the project. It may run <code>npm install playwright</code> or <code>npx playwright install chromium</code>; approve those if it asks. After a minute or so a Chrome window opens on <code>localhost:5173</code>, usually with a yellow bar saying “Chrome is being controlled by automated test software”, and moves through the pages on its own. Codex then reports something like “Worked for 50s” and a summary similar to:</p><ul><li>Opened the site and navigated through: Gallery, Modern, and Market themes · Homepage auction catalog · Rolex auction detail · Back to the homepage · Eames Lounge Chair detail</li><li>The browser is left open on an auction page, and the local development server remains running.</li></ul><p>Your auction names and themes will be different, because your Step 3 build in guide 5 was different. What matters is that Codex visited the home page, switched themes and opened at least one auction detail page.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If Codex asks to install Playwright or download a browser, approve it. This is a throwaway project, so there is nothing to protect. If it still cannot open a window after two tries, do not fight it: open <code>http://localhost:5173</code> in Chrome yourself and click through the three themes. The point of this step is the <strong>idea</strong>: let the agent demo the feature so you can spot what is wrong. In my own work I sometimes go one step further and ask it to record the walkthrough as a short screen recording that I can send to a client.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>Browser runs cost more tokens than normal prompts, because Codex takes screenshots and performs many small steps. Use them for demos and final checks, not after every tiny change. Keep an eye on platform.openai.com → Usage while you learn.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Generate an AGENTS.md</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Now we create the single most useful file in any Codex project. Before you send the prompt, understand what you are asking for.</p>
+    <div class="call concept"><b class="t">📘 Concept: AGENTS.md</b><p><strong>AGENTS.md</strong> is a plain Markdown text file in the root of your project. Codex reads it automatically and sends its contents along with <strong>every</strong> prompt you type in that project. Think of it as a standing note pinned above the message box: “always use these commands, never add a new framework, run the build after every change”. You write it once and it shapes every future answer. Because an AI model gives slightly different answers each time (it is non-deterministic), AGENTS.md is one of the main ways to make Codex behave predictably. Every part of our auction app will have one.</p></div>
+    <p>We let Codex write the first draft. It has just built the whole site, so it knows the stack, the commands and the folder layout better than anyone. Paste this into the same chat:</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">same chat</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">generate me an AGENTS.md</pre></div>
+    <p>Why such a short prompt? Codex already has the full context of this chat and can read every file in the project. Telling it in detail what to include would only narrow the result. We let it write too much on purpose, then cut it down by hand in Step 5. Cutting is faster than dictating.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>After about 25 seconds, a message like “Created <strong>AGENTS.md</strong> with project structure, commands, route and theme conventions, UI standards, change guardrails, and a verification checklist” (your wording will differ), plus a card that reads <strong>Edited 1 file +117 -0</strong>. The <code>+117</code> means 117 lines were added and <code>-0</code> means nothing was removed; your line count will be different. Click <strong>Review</strong> on the card to read the file inside Codex.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Codex also has a built-in <code>/init</code> command (type <code>/</code> in the message box and pick “Init: Create an AGENTS.md file with instructions for Codex”). It does the same job with a slightly more structured template. A plain prompt is fine; I use whichever I remember first.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Open the project in VS Code</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>You could edit AGENTS.md inside Codex, but a proper editor is better for cutting whole sections. Open the Terminal app (not Codex's bottom panel this time, because that one is busy running Vite) and run:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">code ~/codex-course/auctionhouse-throwaway</pre></div>
+    <p><code>code</code> is the VS Code command-line launcher you installed in guide 1. Giving it a folder path opens that whole folder as a project, with the file tree (the <strong>Explorer</strong>) on the left.</p>
+    <p>In the Explorer, click <strong>AGENTS.md</strong>. It opens as raw Markdown, with <code>#</code> for headings and <code>-</code> for bullets. To read it comfortably, press <strong>Cmd+K</strong>, release both keys, then press <strong>V</strong>. VS Code opens a formatted preview in a second column to the right, so you see the raw text on the left and the rendered version on the right. Edits on the left update the right side immediately.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The Explorer shows <code>dist</code> (the built, production-ready copy of the site), <code>node_modules</code> (all the installed packages, never edit this), <code>src</code> (the React source code), <code>AGENTS.md</code>, <code>index.html</code>, <code>package-lock.json</code> and <code>package.json</code>. Your AGENTS.md has sections similar to: <strong>Project overview</strong>, <strong>Technology</strong>, <strong>Common commands</strong>, <strong>Project structure</strong>, <strong>Routes</strong>, <strong>Auction data</strong>, <strong>Theme system</strong>, <strong>UI and accessibility conventions</strong>, <strong>External assets</strong>, <strong>Change discipline</strong>, <strong>Verification checklist</strong>.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Read the whole file once before touching it. Ask yourself for each section: is this a <strong>rule</strong> Codex must follow, or a <strong>description</strong> of how the app happens to look right now? That question drives the next step.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Trim it down to rules, commands and checks</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>A generated AGENTS.md is always too long, and the extra length is not harmless. Every line is sent with every prompt, so a bloated file wastes tokens and buries the rules that matter. Worse, the descriptive parts (“there are six auctions”, “breakpoints are 900px and 580px”) go stale the moment the app changes, and then Codex is working from wrong information. Codex can look up the current state of the code any time it wants; it cannot look up your rules.</p>
+    <p>My rule of thumb: <strong>keep rules and constraints, delete descriptions of what the app is today.</strong> Edit AGENTS.md in VS Code with that rule in mind.</p>
+    <p><strong>Delete:</strong></p>
+    <ul>
+      <li>the “It currently has a catalog homepage…” sentence in Project overview. It describes today's state.</li>
+      <li>the “Static sample data in <code>src/data.js</code>” line under Technology. Also a description, and the data source will change.</li>
+      <li>the whole <strong>Project structure</strong>, <strong>Routes</strong>, <strong>Auction data</strong> and <strong>Theme system</strong> sections. These are a snapshot of the code, and the code is the better source of truth.</li>
+      <li>the “current breakpoints are 900px and 580px” sentence. Same reason.</li>
+      <li>the <strong>Change discipline</strong> section (“make minimal changes”, “don't refactor unrelated code”). Current models already behave this way without being told, so these lines are only noise.</li>
+    </ul>
+    <p><strong>Keep:</strong> the product-feel guidance in Project overview, the rest of Technology (especially a line like “Do not introduce a new framework…”, which is a real constraint), <strong>Common commands</strong> including “Run <code>npm run build</code> after material code changes”, <strong>UI and accessibility conventions</strong>, <strong>External assets</strong>, and the <strong>Verification checklist</strong>. A checklist is gold: it tells Codex how to prove its own work before it reports back to you.</p>
+    <p>Press <strong>Cmd+S</strong> to save. Codex reads the file fresh on your next prompt, so there is nothing to reload.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A file roughly half as long as before, ending with a verification checklist similar to this one:</p><ol><li>Run <code>npm run build</code>.</li><li>Load <code>/</code> and confirm all six auctions render.</li><li>Switch among Gallery, Modern, and Market.</li><li>Open at least one <code>/auction/:id</code> route and confirm the selected theme persists.</li><li>Check the browser console for errors.</li><li>Check a narrow viewport for overflow, navigation behavior, and readable auction cards.</li></ol><p>In the Codex app, nothing visible changes, but from now on every prompt in this project carries these rules.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Your file will not match mine heading for heading, and that is fine. Apply the rule, not the exact list. If you delete too much, click <strong>Undo</strong> on Codex's “Edited 1 file” card to restore the generated version, or simply send <code>generate me an AGENTS.md</code> again and start the trim over.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Optional: make Claude Code use the same file</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Skip this step if you only use Codex. If you also use Claude Code (Anthropic's coding agent), you will want both tools to follow the same project rules. Claude Code reads a file called <strong>CLAUDE.md</strong>, not AGENTS.md. Instead of maintaining two copies that drift apart, create a CLAUDE.md whose only line is <code>@AGENTS.md</code>. The <code>@</code> tells Claude Code to import that file, so the rules live in exactly one place. Run this in the Terminal app:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">cd ~/codex-course/auctionhouse-throwaway
+printf &#x27;@AGENTS.md\n&#x27; &gt; CLAUDE.md
+cat CLAUDE.md</pre></div>
+    <p>Line by line:</p>
+    <ul>
+      <li><code>cd ~/codex-course/auctionhouse-throwaway</code> moves into the project folder, so the new file lands next to AGENTS.md.</li>
+      <li><code>printf '@AGENTS.md\n' &gt; CLAUDE.md</code> prints the text <code>@AGENTS.md</code> followed by a newline (<code>\n</code>), and the <code>&gt;</code> redirects that output into a file called <code>CLAUDE.md</code> instead of the screen. If the file exists it is overwritten; if not, it is created.</li>
+      <li><code>cat CLAUDE.md</code> prints the file back, so you can confirm it contains exactly one line.</li>
+    </ul>
+    <div class="call expect"><b class="t">✓ You should see</b><p><code>@AGENTS.md</code> printed in the Terminal, and <code>CLAUDE.md</code> appearing next to AGENTS.md in VS Code's Explorer.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>When you are done, close the Playwright Chrome window from Step 2. Leave the rest of the project exactly as it is. In guide 7 we delete this throwaway project and start the real work in your <code>workshop</code> folder.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2><p>This is still the throwaway project, so there is nothing to catch up from the reference copy. If the Chrome automation did not work, open <code>http://localhost:5173</code> yourself, click through the themes, and move on; nothing later depends on it. If your AGENTS.md got mangled while trimming, press <strong>Undo</strong> on Codex's “Edited 1 file” card to get the generated version back, or regenerate it in the same chat and trim again:</p>
+<div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">same chat</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">generate me an AGENTS.md</pre></div>
+<p>If Codex's bottom panel seems stuck and will not accept commands, the Vite server is probably still running in it. That is expected; open the Terminal app for anything else you need to run.</p></div>
+<div class="box"><h2>Key takeaways</h2><ul>
+<li><strong>Browser use</strong> puts you in the reviewer's chair. Ask the agent to demo a feature in a real browser, watch it, then tell it what is wrong. The same Playwright skill is what we use later to write automated browser tests.</li>
+<li>With an API-key sign-in, the built-in browser is not available, so you ask for <strong>Playwright with a headed Chrome window</strong>. The outcome is the same.</li>
+<li><strong>AGENTS.md</strong> is project context that Codex sends with every single prompt. It is one of the main tools for making a non-deterministic agent behave predictably.</li>
+<li>Always <strong>curate</strong> a generated AGENTS.md. Models write too much and describe the current state, which goes stale. Keep constraints, commands, conventions and a verification checklist; delete everything Codex can look up for itself.</li>
+<li>Claude Code reads <strong>CLAUDE.md</strong>. A single line <code>@AGENTS.md</code> lets both tools share one source of rules.</li>
+</ul></div>
+<div class="nav"><a href="5. Install Custom Skills.html"><span>← Previous guide</span>5. Install Custom Skills</a><a class="r" href="7. Create Auctions &amp; Bids Site.html"><span>Next guide →</span>7. Create Auctions &amp; Bids Site</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

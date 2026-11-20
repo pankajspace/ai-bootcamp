@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>14. Row Locking in PostgreSQL – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="14. Row Locking in PostgreSQL"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>14. Row Locking in PostgreSQL</h1>
+  <p class="lede">Approve the two slices Codex proposed, let it build Slice 1 (one database transaction and one row lock per auction), learn in a side chat how that lock really works, then rerun the bidding war and watch the duplicate bids disappear.</p>
+  <div class="meta"><span class="pill">Part 3 · slice 1</span><span class="pill">≈ 25–35 min hands-on</span><span class="pill">SELECT … FOR UPDATE</span><span class="pill">Side chat Q&amp;A</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Read the architecture diagram Codex drew at the end of grilling and approve the two proposed slices.</li>
+  <li>Let Codex implement Slice 1: concurrent bidding and stale-bid recovery. This is the fix for the duplicate-bid bug you reproduced in guide 12.</li>
+  <li>Use a side chat as your private tutor: what a transaction is, what a row lock is, the exact lines of code that do it, and the terms to Google afterwards.</li>
+  <li>Rerun the bidding war and compare with guide 12: every accepted amount is now different.</li>
+  <li>Optional: reproduce a stale bid yourself in two browser windows and watch the page recover without resubmitting.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+  <li>You finished guide 13. Your grilling chat ends with “Please confirm these two slices.” and <code>GRILL.md</code> in Part 3 holds your decisions. Keep that chat open; we continue in it, because Codex needs that context to build what you agreed on.</li>
+  <li>Docker Desktop is running. The PostgreSQL database lives inside Docker, and nothing in this guide works without it.</li>
+  <li>Microsoft Edge is installed. The bidding war is a <strong>headed</strong> browser test: it opens four real Edge windows so you can watch the bidders fight. A “headless” test would run the same thing invisibly.</li>
+  <li>You do not need to know any SQL yet. The whole point of this guide is to understand one SQL idea, the row lock, well enough to explain it to a friend.</li>
+</ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div><div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div><div class="set"><span>Reasoning</span><b>Medium</b></div><div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div>
+  <div class="call concept"><b class="t">📘 Concept: the race condition we are fixing</b><p>In guide 12 you saw the same amount, $107, accepted three times on one auction. Here is why. When a bid arrives, the server does two things: it <strong>checks</strong> (“is $107 higher than the current price?”) and then it <strong>acts</strong> (“insert the bid”). If three requests arrive at the same moment, all three read the old price, all three pass the check, and all three insert. Nobody did anything wrong; they simply never saw each other. This is called a <strong>check-then-act race condition</strong>, and it is one of the most common bugs in any backend that many people use at once. The fix is not “check more carefully”. The fix is to make the bids for one auction take turns.</p></div>
+</div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Look over the diagram and the proposed slices</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Scroll up a little in the grilling chat, to the end of Codex's last message. You will find a small <strong>Mermaid diagram</strong> (Mermaid is a way of drawing diagrams from plain text; Codex writes the text, the app renders the picture). Click the diagram once and it opens full size. There is a zoom control at the bottom of that view. When you are done, close it with the <strong>✕</strong> at the top-right.</p>
+    <p>Read the diagram from left to right. It is the whole fix in one picture:</p>
+    <ul>
+      <li><strong>React/Vite Web App</strong>: the frontend, the pages you see in the browser. It sends “Submit bid” or “refresh auction” to the API.</li>
+      <li><strong>Fastify API</strong>: the backend server, a Node.js program that receives those requests. Fastify is the library it is built with. This is where the new “Transaction + auction row lock” happens.</li>
+      <li><strong>PostgreSQL</strong>: the database that stores auctions and bids. The lock lives here.</li>
+      <li><strong>Injected App Clock</strong>: the API asks this clock, not the database, what time it is. You chose this in grilling (question 3).</li>
+      <li><strong>201 or typed 409</strong>: what goes back to the browser. These are HTTP status codes. <code>201 Created</code> means “bid accepted and stored”. <code>409 Conflict</code> means “rejected because someone else got there first”. “Typed” means the 409 carries a structured body with a machine-readable code such as <code>BID_TOO_LOW</code> or <code>AUCTION_CLOSED</code>, so the frontend can react properly instead of showing a vague error.</li>
+    </ul>
+    <p>Below the diagram Codex lists two <strong>slices</strong>. A slice is a small, complete piece of work that you can test in the browser on its own. Slice 1 fixes the race (bids take turns, and a losing bidder gets a clean recovery on their page). Slice 2 makes the closing time authoritative (the server decides when an auction is over, using the app clock) and switches open pages to “Ended” without constantly asking the server. We build only Slice 1 in this guide.</p>
+    <div class="call concept"><b class="t">📘 Concept: injected app clock</b><p>Code that needs the current time usually calls <code>Date.now()</code> directly. That is a problem in tests: you cannot make “now” be 11:59:59 to test what happens one second before an auction closes. So instead we build one small <strong>clock object</strong> and hand it (“inject” it) into the API when the app starts. Real runs get a clock that reads the system time; tests get a fake clock they can set to any moment. The code that checks “has this auction ended?” never knows the difference. “Injected” just means “passed in from outside instead of created inside”.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A diagram similar to: <strong>React/Vite Web App</strong> → “Submit bid / refresh auction” → <strong>Fastify API</strong> → “Transaction + auction row lock” → <strong>PostgreSQL</strong>, with the API reading the <strong>Injected App Clock</strong>, and “201 or typed 409” going back to the browser.<br>Below it, two slices:</p>
+    <ol><li><strong>Concurrent bidding and stale-bid recovery</strong>: serialize bids per auction, revalidate after locking, return structured conflicts, refresh stale pages without resubmitting the bid.</li>
+    <li><strong>Authoritative closing and live page transition</strong>: inject the app clock, check it after locking, switch open pages to “Ended” without polling.</li></ol>
+    <p>Your wording may differ slightly. The two ideas should be the same.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Approve the slices</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>If the slices match what you decided in grilling, tell Codex to start. The message can be this short because all the detail already exists: your answers are in <code>GRILL.md</code> and in this chat's context. There is nothing to add. The root <code>AGENTS.md</code> of the workshop tells Codex to build <strong>one slice at a time</strong> and stop after each one, so “get started” means “start Slice 1”, not “build everything”.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Grilling chat</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">looks good to me, get started!</pre></div>
+    <p><strong>Why this matters:</strong> one slice at a time keeps every change small enough for you to read. If Codex built both slices in one go, you would get a huge diff and no idea which part caused a problem.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to: <strong>“I'm starting Slice 1 only: serialized bid acceptance plus stale-conflict recovery. I'll keep the clock/closing transition work for Slice 2…”</strong> A progress line like <strong>Step 1 / 4</strong> appears, and a file counter starts growing, for example “3 files changed +147 -47”. The two numbers are lines added and lines removed, so you can watch how big the change is getting.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>Building a slice runs for several minutes. Codex writes the code, runs the backend and frontend tests, runs a <strong>typecheck</strong> (the TypeScript compiler checks that every value has the type the code claims, without running the app) and runs the headed bidding war in Edge. All of that is normal, but with an API key it is not cheap. Do not interrupt it; use the waiting time for Step 3.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Open a fresh side chat and ask about locking</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>While Slice 1 builds, we learn. Click the right-panel button at the top-right of the Codex window (the last icon in the title bar). A menu opens with Review, Terminal, Browser, Files and <strong>Side chat</strong>. Click Side chat, or press <strong>⌥⌘S</strong>. A side chat is a temporary second conversation in a panel on the right. It can read your project but it does not interrupt the main run on the left, and it disappears when you close the app. If an old side chat is still open from guide 13, close it first so this one starts with a clean context.</p>
+    <p>Now ask the question. I write it deliberately like a complete beginner. There is no prize for sounding smart to an AI; the simpler you ask, the simpler the answer you get, and a simple answer is what you need the first time you meet a concept. Paste it exactly as it is.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Side chat</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">hey man. I&#x27;ma be honest. I thought postgres was a disease of some kind. what is database transaction locking and why does it work here?</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: transaction (BEGIN … COMMIT)</b><p>A <strong>transaction</strong> is a group of database operations that either all happen or none happen. You open it with <code>BEGIN</code>, do your reads and writes, and finish with <code>COMMIT</code> (save everything) or <code>ROLLBACK</code> (throw everything away as if nothing happened). Think of a bank transfer: debit one account, credit another. You never want only the debit to survive a crash. For a bid, the transaction wraps “read the current price, check the amount, insert the bid” so the whole thing is one unit of work.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: row lock (SELECT … FOR UPDATE)</b><p>A database table is like a spreadsheet; each auction is one <strong>row</strong>. <code>SELECT … FROM auctions WHERE slug = $1 FOR UPDATE</code> reads that one row <strong>and locks it</strong> until the transaction ends. If a second request runs the same statement for the same auction, PostgreSQL makes it <strong>wait</strong> at that line until the first transaction commits or rolls back. Then the second one gets the row, reads the <em>new</em> price, and does its own check. This is why the lock <strong>serialises</strong> bids: bids for one auction now happen strictly one after another, like people taking turns with a single talking stick. Bids on a different auction lock a different row, so they are not slowed down at all. The lock is held only for a few milliseconds, so users never notice the waiting.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to: “Totally fair. PostgreSQL (‘Postgres’) is the database—the program that stores auctions and bids.” Then a worked example: Maya bids $103 and Theo bids $106 at the same time, and both read $102 as the current price. With locking the backend does:<br><code>BEGIN</code> → lock this auction's row → read the latest bid → check closing time → check the amount → insert if valid → <code>COMMIT</code>.<br>The lock is described as <strong>“the only talking stick for that specific auction”</strong>. You will probably also get a small Mermaid diagram (Auction A lock / Auction B lock) showing that different auctions do not block each other.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If your Codex version has no Side chat, start a separate New chat in the workshop project and ask there. That chat does not know what the main chat is doing, so add “in part 3's server/src/app.ts” to the question so it looks at the right file.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Ask for the exact lines and terms to Google</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The story with Maya and Theo is nice, but I want you to see the real code that does it. Two reasons. First, you should never accept code you cannot point to and explain. Second, asking for “something to google” gives you the official vocabulary. Once you know the term is “SELECT FOR UPDATE”, you can read the PostgreSQL documentation, blog posts and interview questions about it. Without the words, you cannot even search. Send this in the same side chat.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Side chat</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">show me the exact lines of code and gimme something to google</pre></div>
+    <p>When the answer arrives, match each quoted line to the picture from Step 3: open a connection, <code>BEGIN</code>, lock the row, re-read, insert, <code>COMMIT</code>. The <code>ROLLBACK</code> in the <code>catch</code> block is what runs if anything throws an error halfway, so a half-finished bid is never saved. The <code>client.release()</code> in <code>finally</code> gives the database connection back to the pool whether the bid succeeded or failed. A <strong>pool</strong> is a small set of ready-made connections the server reuses, because opening a fresh connection for every request would be slow.</p>
+    <div class="call concept"><b class="t">📘 Concept: transaction isolation level</b><p>The <strong>isolation level</strong> is a database setting that decides how much one running transaction can see of other transactions that have not finished yet. PostgreSQL's default is <strong>READ COMMITTED</strong>: you only ever see data that another transaction has already committed. That is good, but on its own it does not stop our race, because both bidders can read the same committed price before either of them writes. Stricter levels exist (REPEATABLE READ, SERIALIZABLE) that make the database detect such clashes and fail one of the transactions, which you then have to retry. We chose the explicit row lock instead because it is simple to read and needs no retry logic. Isolation levels come up again in guide 15.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex quotes the real lines from <code>server/src/app.ts</code> (your line numbers will differ), similar to:</p>
+    <ul><li><code>const client = await pool.connect();</code> and <code>await client.query('BEGIN');</code>: reserve one connection and start the transaction</li>
+    <li><code>SELECT … FROM auctions WHERE slug = $1 FOR UPDATE</code>: <strong>lock this auction row</strong> until the transaction ends</li>
+    <li>re-read the latest bid while holding the lock</li>
+    <li><code>await client.query('COMMIT');</code>: save the bid and release the lock</li>
+    <li><code>ROLLBACK</code> in the <code>catch</code> and <code>client.release()</code> in <code>finally</code></li></ul>
+    <p>Then a list titled <strong>Good things to Google</strong>: PostgreSQL SELECT FOR UPDATE, row-level locks, BEGIN COMMIT ROLLBACK, READ COMMITTED isolation, MVCC, check-then-act race condition, TOCTOU race condition, ACID transactions, critical section.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Codex may suggest a follow-up question such as “Explain PostgreSQL SELECT FOR UPDATE, MVCC, and READ COMMITTED using our auction bidding code. Show what each concurrent request sees step by step.” Send it if you have time; it is a good one. MVCC (multi-version concurrency control) is how PostgreSQL lets readers and writers work at the same time by keeping more than one version of a row. TOCTOU (“time of check to time of use”) is just the formal name for check-then-act.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Read the Slice 1 handoff</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Switch back to the main chat on the left. The side chat can stay open. Wait until Codex finishes Slice 1. Part of its own checking is to run the headed bidding war, so four Edge windows may suddenly pop up and tile themselves on your screen while you are reading in the side chat. Do not close them while Codex is working; they close by themselves when the test finishes.</p>
+    <p>When it is done, Codex writes a <strong>handoff</strong>: a summary of what changed, which tests passed, and a short list of steps you can try in the browser to see the change yourself. Then it stops and waits for you before touching Slice 2. Read the handoff slowly. The sentence about “deliberately slows inserts” matters: the concurrency test adds an artificial delay inside the transaction so that several bids are guaranteed to overlap. Without that delay the test might pass by luck, with the bids simply arriving one after another.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to: <strong>“The automated suite passes: 7 backend tests and 6 frontend tests. The concurrency test deliberately slows inserts…”</strong> and <strong>“The headed four-window Edge test passed end to end. Under deliberately delayed inserts, accepted amounts were exactly <code>$101</code>, <code>$102</code>, <code>$106</code>, <code>$107</code>: no duplicate equal bids, <code>$106</code> won the mixed stale wave, and the rejected <code>$102</code> bidder kept their input while the UI refreshed to a <code>$103</code> minimum.”</strong><br>Then it stops, lists what changed with browser steps for you to try, and waits before starting Slice 2. “Strictly increasing amounts” is the one-line proof that the lock works.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Rerun the bidding war and watch it</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Codex says the test passed. I believe it, and I still want to see it with my own eyes. This is a habit I want you to build: the agent's report is a claim, the running app is the evidence. Ask for the bidding war again in the main chat.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Main chat</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">show me bidding wars again</pre></div>
+    <p>Codex runs the same Playwright test you built in guide 12, but with the windows held open so you can look. Watch the four windows: three bidders and one seller. The labels at the top of each window are written by the test itself to tell you what it is checking at that moment.</p>
+    <div class="call concept"><b class="t">📘 Concept: environment variable</b><p>An <strong>environment variable</strong> is a named setting you pass to a program from the outside, without changing its code. <code>BIDDING_WAR_HOLD_MS=600000 npm run test:bidding-war</code> sets the variable <code>BIDDING_WAR_HOLD_MS</code> to 600000 (milliseconds, so 10 minutes) just for this one command. The test reads it and keeps the browser windows open for that long instead of closing them immediately. The same test, run without the variable, closes everything the moment it finishes. This is the usual way to configure ports, database names and behaviour like this in backend projects.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex runs <code>BIDDING_WAR_HOLD_MS=600000 npm run test:bidding-war</code> and tiles four Edge windows on the <strong>Part 3</strong> app (in my run <code>localhost:5103/items/bidding-war-gpu-…</code>; Codex chose your port in guide 13, so yours may differ). The labels show <strong>PROTECTED: $106 leads; stale lower bids rejected</strong>, then <strong>ENDED</strong>, with <strong>“$108 rejected: This auction has ended”</strong> on the bidders and <strong>“PROTECTED — accepted bid history is strictly increasing”</strong> on the seller.<br>Scroll the Bid history in any window: every amount is different, for example <strong>$101, $102, $104, $106, $107</strong>. In guide 12 the same test showed $107 three times. Same test, same four bidders, different result: that difference is the row lock.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The windows stay open for 10 minutes (<code>600000</code> ms). Close them yourself when you are done looking; Codex's chat will report the test as finished either way.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Optional: try a stale bid yourself in Chrome</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Codex's handoff lists browser steps like the ones below. In class I usually skip them to save time, but if you have five minutes, do them: being the losing bidder yourself makes “stale-bid recovery” concrete in a way no test output can. If the Part 3 app is not already running, start it first. Run this in the Terminal app, or in Codex's bottom-panel terminal.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · leave it running</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">cd ~/codex-course/workshop/part-3-business-rules-concurrency &amp;&amp; npm install &amp;&amp; npm start</pre></div>
+    <p>What the command does: <code>cd …</code> moves into the Part 3 folder; <code>npm install</code> makes sure every package the project needs is present (it is safe to run again, it finishes in seconds if nothing is missing); <code>npm start</code> starts the Part 3 API and web app. The terminal keeps printing logs while the app runs. Leave it open; when you are finished, press <strong>Ctrl+C</strong> in that terminal to stop the app.</p>
+    <ol>
+      <li>Open the Part 3 URL Codex gave you (in my run <code>http://localhost:5103</code>) in <strong>two</strong> Chrome windows side by side.</li>
+      <li>Use the user switcher in the page footer so the two windows are signed in as <strong>different</strong> users, and neither of them is the seller of the auction (a seller cannot bid on their own item).</li>
+      <li>Open the same auction in both windows. Type the <strong>same</strong> amount in both bid boxes. Click <strong>Place bid</strong> in the first window, then immediately in the second.</li>
+    </ol>
+    <p>The second window is now a <strong>stale</strong> page: it still shows the old price, and the bid it sends is based on information that is already out of date. This is exactly what happens to a real user who leaves an auction tab open for a minute.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The first bid is accepted: <strong>“Bid accepted — you are the highest bidder.”</strong> The second is rejected with a message similar to <strong>“another bidder moved the minimum to $X”</strong>. Its page refreshes the current price and the minimum bid but <strong>keeps the amount you typed</strong> in the box. Nothing is resubmitted automatically. That is the behaviour you asked for in grilling: refresh the facts, keep the user's input, never auto-retry a bid on someone's behalf.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>If the bidding war does not open any windows, check that Microsoft Edge is installed (guide 1, Step 2); the test is written for Edge. If the side chat's explanation is too technical, reply “explain it again, I have never used a database”; Codex adjusts its level without complaint.</p>
+  <p>If Slice 1 fails outright, or your app behaves very differently from what this guide describes, replace your Part 3 with the finished reference version. The command below deletes your Part 3 folder (this cannot be undone), copies the reference Part 3 into your workshop, and saves a Git commit so the catch-up is a clean snapshot. Note that the reference folder is the <strong>end state of the whole part</strong>: Slice 1 <strong>and</strong> Slice 2 (guide 15) are both already built. So after catching up, skip the build steps of guide 15 and go straight to its commit step.</p>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-3-business-rules-concurrency &amp;&amp; cp -R ../reference/part-3-business-rules-concurrency ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 3 from reference&quot;</pre></div>
+</div>
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li>The duplicate-bid bug was a <strong>check-then-act race</strong>: several requests read the same old price, all passed the check, all wrote. More careful checking cannot fix it; only taking turns can.</li>
+  <li>A <strong>transaction + row lock</strong> (<code>BEGIN</code> … <code>SELECT … FOR UPDATE</code> … <code>COMMIT</code>) makes bids for one auction take turns. Each bid re-reads the latest price <em>after</em> it gets the lock, so its check is always against fresh data.</li>
+  <li>Lock only what you need: one auction's row. Bids on other auctions use other rows and are never blocked.</li>
+  <li>Use Codex as a tutor while it builds: ask for the simple version first, then the exact lines, then things to Google. The vocabulary is what lets you keep learning on your own.</li>
+  <li>Trust, but verify. Codex said the tests passed; we still ran the bidding war and read the bid history ourselves.</li>
+</ul></div>
+<div class="nav"><a href="13. Create Plan for Fixing Concurrency.html"><span>← Previous guide</span>13. Create Plan for Fixing Concurrency</a><a class="r" href="15. Closing the Auction.html"><span>Next guide →</span>15. Closing the Auction</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

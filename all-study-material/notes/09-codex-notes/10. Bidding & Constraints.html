@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>10. Bidding &amp; Constraints – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="10. Bidding &amp; Constraints"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>10. Bidding &amp; Constraints</h1>
+  <p class="lede">Finish Part 2. Check the random-user change, let Codex build Slice 2 (post an auction) and Slice 3 (bids), learn to read and shrink the context window, and prove the bid rules yourself in two browser tabs.</p>
+  <div class="meta"><span class="pill">Part 2 · slices 2–3</span><span class="pill">≈ 30–40 min</span><span class="pill">Context window &amp; /compact</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+<li>Check that each new browser tab gets a random user, then commit Slice 1 as a safe checkpoint.</li>
+<li>Approve Slice 2, watch the changed files in Git while Codex works, and post your own auction in the browser.</li>
+<li>Approve Slice 3 (bids). While it builds, turn on the context-window meter and learn what it tells you.</li>
+<li>Compact the chat with <code>/compact</code> and understand what that does to Codex's memory of the conversation.</li>
+<li>Prove the business rules yourself: a seller cannot bid on their own auction, a bid must beat the minimum, a valid bid is accepted and shows up in the bid history.</li>
+<li>Commit the finished Part 2 so Part 3 starts from a clean point.</li></ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+<li>You finished guide 9. The last thing you sent in that chat was the “randomly assign the user on page load…” follow-up, and Codex may still be working on it.</li>
+<li>Docker Desktop is running (the Part 2 database lives inside it) and Part 2 is open in Chrome at <code>http://localhost:5102</code>. If you closed the browser, open that URL again. If the page does not load, run the “Then run it” command from the Stuck box at the bottom of this guide.</li>
+<li>Everything in this guide happens in the <strong>same Codex chat</strong> you used in guides 8 and 9. Do not start a new chat yet. I tell you exactly when to do that (Step 11).</li></ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop (same chat as guides 8–9)</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div>
+    <div class="set"><span>Also</span><b>Show context window usage: On (Step 8)</b></div></div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Check the random user in new tabs</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>First, wait for Codex to finish the follow-up you sent at the end of guide 9. You will know it is done when the spinner under the message box stops and a final summary message appears. Read that summary before you touch the browser; it tells you what Codex believes it changed, and your job is to confirm it.</p>
+    <p>Then go to Chrome and open <strong>two brand-new tabs</strong> (Cmd+T twice) with the Part 2 URL below. Look at the <strong>top-right corner</strong> of each tab. In guide 9 that corner said “10 Demo users”. Now it should show a real person's name and initial, and the two tabs should usually show two different people.</p>
+    <div class="copy k-url"><div class="copy-h"><span class="ic">↗</span><span class="lbl">Open in browser</span><span class="where">Chrome · open it in two new tabs</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">http://localhost:5102</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex's reply, similar to: “Updated. New browser tabs receive a random seeded user. Identity stays stable through navigation and reloads within that tab. The footer switcher updates both footer and header immediately. The top-right now shows the active user's name and initial. The old “10 Demo users” label is gone. Tests and TypeScript checks pass.”</p>
+    <p>In Chrome, each new tab shows a user's initial in a circle and the user's name at the top right. In my run the first tab showed <strong>Marcus Green</strong> and a later tab showed <strong>Jordan Lee</strong>. Both are from the 10 seeded users you saw in the migration in guide 9.</p>
+    <p>What it means: each tab now gets its own random user and keeps it. Later, when several tabs bid against each other, you can tell at a glance who is who.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Reloading a tab keeps the same user on purpose. The browser gives every tab its own small storage area, and the app saves the chosen user there, so a reload reads the same name back. Only a <strong>new</strong> tab picks a fresh random user. With 10 users, two new tabs will sometimes land on the same person by chance; just open a third tab if that happens.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Commit Slice 1</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Slice 1 works, so save it as a checkpoint before we ask for the next slice. A commit is a saved snapshot of the whole project (guide 1). If Slice 2 goes badly, you can always come back to exactly this state instead of untangling two slices at once. Use any Git tool you like: VS Code's <strong>Source Control</strong> panel (the branch icon in the left bar, or Ctrl+Shift+G) with a message and the ✓ Commit button, or the single Terminal command below.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;part 2 slice 1&quot;</pre></div>
+    <p>What the three parts do, joined by <code>&amp;&amp;</code> (which means “only continue if the previous part succeeded”):</p>
+    <ul><li><code>cd ~/codex-course/workshop</code> moves into your workshop folder, the root of your Git repository.</li>
+    <li><code>git add -A</code> stages every new, changed and deleted file, so all of Codex's Slice 1 work is included in the snapshot.</li>
+    <li><code>git commit -m "part 2 slice 1"</code> saves the snapshot with that message. Keep the messages boring and predictable: “part 2 slice 1”, “part 2 slice 2”, and so on. You will thank yourself when you scroll the history later.</li></ul>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A line like <code>[master 1a2b3c4] part 2 slice 1</code> followed by a count such as <code>42 files changed</code>. The seven-character code is the commit's id; yours will be different. <code>node_modules</code> (the installed packages, thousands of files) is not included because the project's <code>.gitignore</code> file tells Git to skip it. That is correct.</p></div>
+    <p><strong>Why this matters:</strong> committing after every slice keeps each diff small enough to review, and lets you throw away one bad slice without touching the ones before it.</p>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Start Slice 2: post an auction</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>In guide 8, Codex agreed to build Part 2 in three slices and to stop after each one for your review. You have now reviewed Slice 1. Tell Codex it is good and it may move on. The message is deliberately casual; Codex still has the full plan from the grilling session in this chat, so a short nudge is all it needs.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Codex message box, same chat</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">yep this looks good move onto the next slice</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: vertical slices</b><p>A <strong>slice</strong> is one thin, complete piece of a feature that goes all the way through the stack: the database change, the server code, the web page, and the tests for it. “Post an auction” is a slice: a form in the browser, a server route that receives the form, a row written to the database, and a page that shows the new auction. The alternative, building the whole database first, then the whole server, then the whole frontend, means you cannot click anything until the very end. With slices you can check something real in the browser after every step, which is exactly how I want you to work with an agent: build a little, verify, commit, repeat.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A reply similar to: “I'm starting Slice 2: a complete “post an auction” path. I'll add the validated Fastify endpoint, derive artwork and seller ownership server-side, add the Sell navigation and <code>/auctions/new</code> page, redirect successful posts to their database-backed detail page, and verify that the new auction survives refresh and appears in catalog/search. I'll stop again after this slice for your review.”</p>
+    <p>A new to-do list appears above the message box showing <strong>Step 1/3</strong>. In my run this slice took about 7 minutes. Let it work; the next step shows you what to look at while you wait.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>“Derive seller ownership server-side” is a small but important phrase. It means the server decides who the seller is (the currently active user) instead of trusting a value sent from the browser. Anything the browser sends can be edited by a user, so the server must never trust it for ownership or money.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Watch the changes in Git</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>While Codex builds, I like to watch the list of files it is touching. You do not need to read every line; you want to know <em>which</em> files change, and whether that matches what Codex said it would do. Any Git view works: VS Code's <strong>Source Control</strong> panel (Ctrl+Shift+G) lists changed files live, or run this command in Terminal every minute or so.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">cd ~/codex-course/workshop &amp;&amp; git status --short</pre></div>
+    <p><code>git status --short</code> prints one line per changed file. The two letters at the start tell you the kind of change: <code> M</code> means an existing file was modified, <code>??</code> means a new file that Git has not seen before, <code> D</code> means deleted. Because you committed in Step 2, everything listed now belongs to Slice 2 only.</p>
+    <div class="call concept"><b class="t">📘 Concept: API route (endpoint)</b><p>The browser and the server talk over HTTP. The server exposes a list of addresses it answers to, called <strong>routes</strong> or <strong>endpoints</strong>, each with a method. <code>GET /api/auctions</code> means “give me the auctions”; <code>POST /api/auctions</code> means “here is a new auction, save it”. The web page calls these endpoints behind the scenes when you click. Our server is written with <strong>Fastify</strong>, a Node.js library whose job is to receive these HTTP requests, run our code, and send back a response. When you see “a new create-auction route” in the diff, that is a new <code>POST /api/auctions</code> handler being added to <code>app.ts</code>.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Changed files inside <code>part-2-create-auction-and-bid</code>, similar to <code>server/src/app.ts</code> (the new create-auction route), <code>server/src/app.test.ts</code> (a test for it), <code>web/src/catalog.ts</code>, a new <code>web/src/components/NewAuctionPage.tsx</code> (the Sell form), <code>web/src/App.tsx</code> (the new page wired into the app's navigation) and <code>web/src/style.css</code>.</p>
+    <p>Notice the pattern: one server file, one server test, a few web files. That is the shape of a slice.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>How closely should you watch? My rule: the riskier or more important the feature, the more closely I follow along. Money, permissions and anything concurrent get my full attention. A plain create-and-list slice like this one only needs a quick look at the file list and a proper check in the browser afterwards.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Post your own auction</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>When Codex says Slice 2 is done, read its summary, then go to Chrome. There is now a <strong>Sell</strong> link in the header. Click it (or open the URL below) and fill in the form. Post something simple so you recognise it later; in my run I posted a GPU:</p>
+    <ul><li>Any title you like, Category <strong>GPUs</strong>, pick a condition, and type a short description.</li>
+    <li>Starting price <strong>20000</strong>. Type it as a plain number; the app shows it as dollars.</li>
+    <li>Closing time: keep the default, which is one day from now.</li>
+    <li>Item location <strong>St. Louis, MO</strong> (any city works, this is just text).</li></ul>
+    <p>Then click <strong>Post auction</strong>.</p>
+    <div class="copy k-url"><div class="copy-h"><span class="ic">↗</span><span class="lbl">Open in browser</span><span class="where">Chrome · the Sell page</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">http://localhost:5102/auctions/new</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: input validation (Zod) and prices in cents</b><p>Two things from Codex's summary deserve a word. <strong>Validation</strong> means the server checks every incoming field before it touches the database: is the title non-empty, is the price a positive whole number, is the closing time in the future. <strong>Zod</strong> is the library our server uses to describe those rules and reject bad input with a clear error. <strong>Integer cents</strong> means a price of $20,000 is stored as the whole number <code>2000000</code>, not as <code>20000.00</code>. Computers cannot store most decimal fractions exactly (0.1 + 0.2 is not quite 0.3), so every serious money system stores the smallest unit as a whole number and only formats it as dollars for display. This was your Q6 answer from the grilling session.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex's message, similar to: “<strong>Slice 2 is complete.</strong> The persisted QA auction is open at Mellanox ConnectX-7 400Gb Adapter.” It lists what it built: a Sell link and the <code>/auctions/new</code> form, the active user becomes the seller, Zod validation, prices stored in integer cents, new listings appear in search. Then a diagram (Sell form → <code>POST /api/auctions</code> → Fastify API with Zod validation → PostgreSQL, then a redirect to the detail page) and <strong>Server: 5 tests passed · Web: 3 tests passed</strong>.</p>
+    <p>In Chrome, the form says <strong>Posting as</strong> followed by your current user's name. After you click Post auction you land on <code>/items/&lt;your-title&gt;</code> showing <strong>$20,000</strong>, <strong>0 bids</strong>, <strong>No bids yet</strong>, about <strong>23h 59m</strong> left, and <strong>Sold by</strong> your user. Reload the page: the auction is still there, because it is now a row in PostgreSQL, not something held in the browser's memory.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Codex posts its own test auction while it checks its work (mine was the Mellanox ConnectX-7 adapter). That is normal and a good sign: it verified the form end to end. If test data piles up, <code>npm run db:reset</code> in the Part 2 folder restores the original 10 users and 6 auctions.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Commit Slice 2</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Slice 2 is checked in the browser, so take another checkpoint. Same command as Step 2, only the message changes. If you prefer VS Code's Source Control panel, type the message there and click Commit.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;part 2 slice 2&quot;</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A line like <code>[master 5e6f7a8] part 2 slice 2</code> and the number of files changed. If instead you see <code>nothing to commit, working tree clean</code>, Codex's changes were already committed (some runs commit on their own); that is fine, move on.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Start Slice 3: bids</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Now the last and most interesting slice: placing bids. This is where the rules you decided during grilling (Q11 to Q15) become real code. Ask for it with another short message.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Codex message box, same chat</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">continue to the last slice</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: business rules and constraints</b><p>A <strong>business rule</strong> is a rule of the product, not of the programming language: “a seller cannot bid on their own auction”, “a bid must be at least $1 above the current price”, “no bids after the auction ends”. The server must enforce every one of them, because the browser can be bypassed by anyone with a terminal and <code>curl</code>. Rules can be enforced in two places. In <strong>code</strong>: the route handler reads the auction, checks the rule, and rejects the request if it fails. Or as a <strong>database constraint</strong>: a rule written into the table itself, such as “this column cannot be empty” or “this pair of values must be unique”, which the database refuses to break no matter who writes to it. Slice 3 enforces its rules in code. In Part 3 you will see why some rules also need help from the database.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A reply similar to: “I'm starting the final slice on the existing ConnectX-7 auction. I'll add the sequential bid endpoint and domain checks, return auditable bid history with auction details, wire the active-user bid form with seller/ended/minimum-bid states, and browser-test rejected self/low bids plus accepted bids from multiple users. Simultaneous-bid locking will remain intentionally out of Folder 2, as agreed.”</p>
+    <p>Soon <code>app.ts</code> gets a new <code>POST /api/auctions/:slug/bids</code> route (the <code>:slug</code> part is a placeholder for the auction's URL name). Inside it you will find checks such as <strong>“Sellers cannot bid on their own auctions”</strong> returning HTTP status <strong>409</strong>, an ended-auction check, and a minimum-bid check.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>HTTP <strong>409 Conflict</strong> is the status code a server uses to say “your request is well-formed, but it clashes with the current state of things”. It is the right code for a rejected bid: the request was fine, the rules said no. Compare with 400 (you sent garbage) and 404 (that auction does not exist).</p>
+    <p>“Out of Folder 2, as agreed” is your Q13 answer at work. Two people bidding at the exact same instant is a hard problem, and we deliberately pushed its fix to Part 3. Guide 11 shows you exactly what goes wrong when we do not handle it.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Turn on the context-window meter</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>While Slice 3 builds, let's answer a question every learner asks me: “when should I start a fresh chat?” Codex can show you a meter for how full the current chat is. Turn it on:</p>
+    <ol><li>Open <strong>Settings</strong>: press Cmd+, (Cmd and comma), or click your name at the bottom-left of the sidebar and choose Settings.</li>
+    <li>Stay on the <strong>General</strong> tab and scroll down to the <strong>Composer</strong> section (the composer is the message box you type into).</li>
+    <li>Switch on <strong>Show context window usage</strong>.</li>
+    <li>Close Settings and go back to the chat. A small circle has appeared next to the model name under the message box. Hover your mouse over it.</li></ol>
+    <div class="settings"><div class="settings-h">⚙ Codex settings</div><div class="set-grid"><div class="set"><span>Also</span><b>Settings → General → Composer → Show context window usage: On</b></div></div></div>
+    <div class="call concept"><b class="t">📘 Concept: context window and tokens</b><p>The model does not remember your chat the way you do. Every time you send a message, Codex sends the <strong>whole conversation so far</strong> (your prompts, its replies, the files it read, the command output it saw) to the model again, and the model answers from that. The amount it can take in one go is the <strong>context window</strong>, measured in <strong>tokens</strong>, which are word-pieces of roughly three-quarters of an English word each. A long build like Part 2 fills the window fast because every file Codex reads and every test run it watches is added to it. When the window is nearly full, two bad things happen: older details get pushed out, and the model's answers get vaguer. That is why you want to see the meter.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A small donut chart next to the model picker. Hovering shows something like <strong>Context window: 74% full, 190k / 258k tokens used</strong>. Mine was at 74% after almost three slices of work in one chat, which is a lot.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The underlying model can take close to a million tokens, but Codex caps a chat at about 258k, because models start to drift with very long context. When a chat gets close to the cap, Codex compacts it automatically (Step 9 shows you how to do it yourself). My habit: one chat per feature, a new chat for the next feature, and a new chat any time the agent starts giving odd answers.</p>
+    <p>The <strong>Speed</strong> setting higher up on the same page (Fast shows a ⚡ next to the model name) can stay as it is.</p></div>
+  </div></div>
+
+<div class="step" id="s9"><div class="sh"><div class="num">9</div><div class="st"><h3>Compact the chat</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Wait for Slice 3 to finish (about 4 minutes in my run) and read its summary. Then shrink the chat before we do anything else in it. Type <code>/comp</code> in the message box; a small menu of slash commands pops up above it. Pick <strong>Compact</strong>. Codex writes a summary of the chat so far, and from then on sends that short summary to the model instead of the full history.</p>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">Type in Codex</span><span class="where">message box, then pick Compact from the menu</span><button class="cbtn" data-target="s9c0">Copy</button></div><pre id="s9c0">/comp</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: compaction</b><p><strong>Compaction</strong> replaces the long transcript with a condensed version of it: what the task is, what decisions were made, which files were changed, what is still open. Think of it as a hand-over note you would write for a colleague taking over your work. The model keeps the important facts and loses the noise (every test log, every file it skimmed). The trade-off is real: anything not in the summary is gone for the model, so compact at a natural pause, after a slice is finished and committed, not in the middle of a fix.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The menu shows <strong>Compact – Compact this chat's context (76% full)</strong>. After you pick it, Codex shows <strong>Compacting context</strong> for a few seconds, and the donut drops a lot. In my run it went from about 190k tokens down to about 8k. The chat looks the same to you; only what gets sent to the model has changed.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The Codex app has no <code>/clear</code> command. To start completely fresh, click <strong>New chat</strong>. Also, since you are signed in with an API key, every message re-sends the chat's context and you pay for those tokens. Cached tokens are cheaper than fresh ones, but a 10k-token context still costs far less than a 190k one. Compacting saves money as well as quality.</p></div>
+  </div></div>
+
+<div class="step" id="s10"><div class="sh"><div class="num">10</div><div class="st"><h3>Test the bid rules in two tabs</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Codex says it browser-tested the bid rules. Now you check them yourself; never take an agent's word for a business rule. You need two users, so you need two tabs with two different identities:</p>
+    <ol><li>In the tab where you posted your auction in Step 5 (so you are the seller there), open that auction's page.</li>
+    <li>Open a <strong>new</strong> tab (Cmd+T, not “Duplicate Tab”) and paste the same auction URL. Check the top right shows a <em>different</em> user. If it shows the seller again, use the <strong>Browsing as</strong> switcher in the footer to pick someone else.</li>
+    <li>As that second user, type exactly the starting price, <code>20000</code>, in the bid box and click <strong>Place bid</strong>.</li>
+    <li>Then type the starting price plus one, <code>20001</code>, and place the bid again.</li>
+    <li>Go back to the seller's tab and reload it.</li></ol>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex's summary, similar to: “Minimum bid is current amount plus $1.00. Ended auctions reject bids. Accepted bids update price, bidder, and count immediately. Newest-first bid history with bidder, amount, and timestamp…”, ending with “The intentional boundary remains: ordinary sequential bids are correct, while simultaneous-bid locking is deferred to Folder 3.”</p>
+    <p>In Chrome:</p>
+    <ul><li>As the seller: the text <strong>You are selling this auction.</strong> and a greyed-out <strong>Place bid</strong> button. The rule is enforced in the UI <em>and</em> in the API (the 409 you saw in Step 7).</li>
+    <li>As the other user, bidding <code>20000</code> shows <strong>Enter at least $20,001.</strong> The bid is rejected because it does not beat the current price by at least $1.</li>
+    <li>Bidding <code>20001</code> shows <strong>Bid accepted. You are the highest bidder.</strong> The price becomes <strong>$20,001 · 1 bid</strong>, and the bid appears under <strong>Bid history</strong> with the bidder's name, the amount and the time.</li>
+    <li>After reloading the seller's tab, it also shows $20,001 and 1 bid, because both tabs read from the same database row.</li></ul></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>“Duplicate Tab” copies the tab's saved storage, including the chosen user, so you would still be the seller. That is why I open a plain new tab instead.</p>
+    <p>I would rather let the very first bid equal the starting price exactly, but I leave it as it is for now. It is a product decision, not a bug.</p></div>
+  </div></div>
+
+<div class="step" id="s11"><div class="sh"><div class="num">11</div><div class="st"><h3>Commit the finished Part 2</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Part 2 is done: a database-backed marketplace, posting auctions, and sequential bidding with its rules. Commit it so Part 3 starts from a clean, known-good point.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s11c0">Copy</button></div><pre id="s11c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;part 2 slice 3&quot;</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: new chat per task</b><p>From guide 11 onwards we work in a <strong>new chat</strong>. The Part 2 chat holds a long story about users, forms and bids; Part 3 is about a different problem (two bids at the same instant). If we continued in the old chat, the model would carry all that unrelated history, pay for it on every message, and sometimes mix old decisions into new work. A new chat starts clean, and Codex still knows the project because the facts that matter are written down in files: <code>AGENTS.md</code>, <code>GRILL.md</code> and the code itself. Rule of thumb: one task, one chat. That is also why we write decisions into files rather than leaving them only in a conversation.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A line like <code>[master 9b0c1d2] part 2 slice 3</code> and the number of files changed. Run <code>git status</code> afterwards and it says <code>nothing to commit, working tree clean</code>, which means every change is saved. Leave the app running at <code>http://localhost:5102</code>; guide 11 uses it.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+<p>If Slice 2 or 3 went wrong (a test failed, the Sell page is missing, bids are not accepted), first tell Codex exactly what you see, in the same chat, and let it fix its own work. That is the normal loop and it usually takes one message.</p>
+<p>If you would rather catch up and move on, replace your Part 2 with the version from the reference project. Note that it is the <strong>end state of the whole part</strong>: all three slices, the random user per tab, and a bidding-war Playwright test that we add ourselves in guide 12. After copying, run it and do Steps 5 and 10 of this guide in the browser so you still see the rules in action.</p>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Catch up: copy the finished Part 2 from the reference</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-2-create-auction-and-bid &amp;&amp; cp -R ../reference/part-2-create-auction-and-bid ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 2 from reference&quot;</pre></div>
+<p>That command deletes your Part 2 folder (<code>rm -rf</code>), copies the reference's Part 2 folder in its place (<code>cp -R</code>), and commits the result.</p>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Then run it (open http://localhost:5102)</span><span class="where">Terminal app · leave it running</span><button class="cbtn" data-target="stuck1">Copy</button></div><pre id="stuck1">cd ~/codex-course/workshop/part-2-create-auction-and-bid &amp;&amp; npm install &amp;&amp; npm start</pre></div>
+<p><code>npm install</code> downloads the project's packages; <code>npm start</code> starts the API on port 3102 and the web app on port 5102. Keep that Terminal window open.</p></div>
+<div class="box"><h2>Key takeaways</h2><ul>
+<li>Approve slices one at a time. Check each one in the browser with your own hands before you say “continue”; an agent's “verified” is a claim, not proof.</li>
+<li>Commit after every slice. A commit is a free checkpoint, and it keeps each slice's diff small enough to actually review.</li>
+<li>Business rules live in the API, not just the UI. The server rejects bids on your own auction, bids that are too low, and bids on ended auctions, and answers with 409 Conflict.</li>
+<li>Money is stored as integer cents and validated on the server (Zod), never trusted from the browser.</li>
+<li>Watch the context-window meter. Compact at a natural pause, and start a new chat for a new task or as soon as the agent starts drifting.</li>
+<li>Simultaneous bids are still unsolved on purpose (your Q13). That is the whole story of guides 11 to 14.</li></ul></div>
+<div class="nav"><a href="9. Auctions &amp; Users.html"><span>← Previous guide</span>9. Auctions &amp; Users</a><a class="r" href="11. Understanding the Concurrency Problem.html"><span>Next guide →</span>11. Understanding the Concurrency Problem</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

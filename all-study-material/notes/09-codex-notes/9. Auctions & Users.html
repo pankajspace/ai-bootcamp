@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>9. Auctions &amp; Users – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="9. Auctions &amp; Users"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>9. Auctions &amp; Users</h1>
+  <p class="lede">Codex is building Slice 1. In this guide you learn how to review what an agent writes while it writes it: the database migration first, then the API and its tests, then the written design record. Then you open Part 2 in Chrome and send your first follow-up change.</p>
+  <div class="meta"><span class="pill">Part 2 · slice 1</span><span class="pill">≈ 20–30 min</span><span class="pill">Same chat as guide 8</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+<li>Review Codex's changes while it works, in the order that catches the most mistakes: the database migration first, then the API routes and tests.</li>
+<li>Read <code>GRILL.md</code>, the written record of your grilling decisions, and check it against what you actually answered.</li>
+<li>Watch Codex prove its own work with tests, type checks and a real browser run.</li>
+<li>Open Part 2 in Chrome at <code>http://localhost:5102</code> and try the user switcher.</li>
+<li>Send a follow-up prompt that changes how the active user is picked, and see how a small change is handled.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+<li>You finished guide 8: you sent “approve the slices” and Codex is building Slice 1 in that chat. Stay in that same chat for this whole guide.</li>
+<li>Docker Desktop is running; the Part 2 database lives in it.</li>
+<li>VS Code's <code>code</code> command works (set up in guide 1).</li>
+</ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop (same chat as guide 8)</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Open the list of changed files</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>You do not have to wait for Codex to finish before you start reviewing. While it works, a line like <strong>Step 1/4 · 9 files changed +108 -56</strong> appears under its to-do list. The <code>+108</code> is lines added, the <code>-56</code> lines removed. Click the words <strong>files changed</strong>. A <strong>Review</strong> panel opens on the right side of the Codex window, with one entry per file.</p>
+    <div class="call concept"><b class="t">📘 Concept: diff</b><p>A <strong>diff</strong> shows the difference between two versions of a file, line by line. Lines Codex added are marked with <code>+</code> and shown in green; lines it removed are marked <code>-</code> and shown in red; unchanged lines are grey context. Reading diffs instead of whole files is how professional engineers review each other's work, because it shows only what changed. With an agent it matters even more: you did not type this code, so the diff is your first and best view of what actually happened.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The Review panel, labelled <strong>Last Turn</strong> at the top, lists files like <code>AGENTS.md</code>, <code>GRILL.md</code>, <code>README.md</code>, <code>package.json</code> and <code>001_marketplace.sql</code>, each with a mostly green diff because they are new. The file list and the counts keep growing while Codex works, so do not worry if your numbers are different from mine.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Why review while it runs? Because if the very first file, the migration, is wrong, you can stop Codex with the ■ button and correct it before it builds an API and a UI on top of a wrong foundation. Ten minutes of agent time is cheap; ten minutes of agent time spent on the wrong design is not.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Check the database migration first</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>In the Review panel, click <code>server/migrations/001_marketplace.sql</code>. I always check the database first, because so much goes wrong at the database level, and everything else depends on it. If a column is missing or a price is stored as a decimal, the API and the UI inherit that mistake. Compare each table with your grilling answers from guide 8.</p>
+    <div class="call concept"><b class="t">📘 Concept: SQL, CREATE TABLE, INSERT</b><p><strong>SQL</strong> is the language you use to talk to a relational database like PostgreSQL. A migration file is just SQL statements run in order. <code>CREATE TABLE users (…)</code> defines a new table and its columns, each with a type (<code>TEXT</code>, <code>INTEGER</code>, <code>TIMESTAMPTZ</code> for a timestamp with time zone). A column like <code>seller_user_id</code> that points at a row in another table is a <strong>foreign key</strong>: it links an auction to the user who posted it, and the database refuses to save an auction whose seller does not exist. <code>CREATE INDEX</code> builds a lookup structure so that searching by that column is fast. <code>INSERT INTO users (…) VALUES (…)</code> adds rows; that is how the seed data gets in.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Something similar to:</p><ul><li><code>CREATE TABLE users</code> with columns id, display_name, handle</li><li><code>CREATE TABLE auctions</code> with slug, seller_user_id, title, category, starting_price_cents, ends_at, location, condition, description, specs and more</li><li><code>CREATE TABLE bids</code> with auction_id, bidder_user_id, amount_cents, created_at</li><li>two indexes, then <code>INSERT INTO users</code> with 10 people (Avery Chen, Maya Thompson, Theo Brooks, Priya Shah, Jordan Lee, Sam Rivera, Nora Williams, Eli Martin, Zoe Patel, Marcus Green) and <code>INSERT INTO auctions</code> with the 6 catalog items</li></ul><p>Map it back to your decisions: three tables because you asked for users, auctions and bids; <code>ends_at</code> as a timestamp with time zone because you chose UTC closing times; the <code>_cents</code> suffix on every price because you chose integer cents.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>My run used integer IDs (1, 2, 3…). In another run Codex used GUIDs, long random identifiers like <code>3f9a…</code>. Either is fine for us. What is not fine is a price column without <code>_cents</code> or with a decimal type; if you see that, stop Codex and point at your Q6 answer.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Skim the API and the tests</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Still in the Review panel, open <code>server/src/app.ts</code> and then <code>server/src/app.test.ts</code>. You are not reading every line; you are checking two things: that the routes match the slices you approved, and that the code follows the project's rules. Part 2's <code>AGENTS.md</code> asks for plain SQL through the <code>pg</code> library (the standard Node.js Postgres driver) with no ORM, and Zod for checking inputs.</p>
+    <div class="call concept"><b class="t">📘 Concept: ORM vs plain SQL, and parameterized queries</b><p>An <strong>ORM</strong> (object-relational mapper) is a library that hides SQL behind language objects: you call <code>Auction.find()</code> and it writes the query for you. Convenient, but you stop seeing what hits the database, and that is exactly where our concurrency bugs will live later. So this project writes SQL directly. Direct SQL must be <strong>parameterized</strong>: the query uses placeholders like <code>$1</code> and the values are passed separately, never glued into the string. If a user's search text were pasted straight into the SQL, a malicious search like <code>'; DROP TABLE users; --</code> would run as a command. That attack is called SQL injection, and placeholders make it impossible.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>In <code>app.ts</code>: routes like <code>GET /api/users</code>, <code>GET /api/auctions</code> (with a Zod schema that validates the search query parameters) and <code>GET /api/auctions/:slug</code>, where <code>:slug</code> is a placeholder for one auction's URL-friendly name. All reads, no writes yet; posting and bidding are Slices 2 and 3. In <code>app.test.ts</code>: tests with names such as “lists the ten seeded users” and “lists and searches the six database-backed auctions”.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Test names are the fastest way to check an agent's understanding. Read them as a list of sentences. If a sentence describes behaviour you did not ask for, or an important behaviour is missing from the list, you have found a gap before you have run anything.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Browse the code in VS Code</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The Review panel is good for diffs but awkward for moving around a project. I find VS Code much easier for that, so from here on we read code there and keep Codex for the conversation. Close the Review tab in Codex, then open the workshop in VS Code. Skip the command if VS Code is still open on the workshop from guide 8.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">code ~/codex-course/workshop</pre></div>
+    <p>In the Explorer, expand <code>part-2-create-auction-and-bid</code>, then <code>server</code> and <code>web</code>. The split is the same in every part: <code>server/</code> is the Fastify API (backend), <code>web/</code> is the React app (frontend). Each has its own <code>src/</code> folder with the source code.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Inside <code>part-2-create-auction-and-bid</code>: <code>server/migrations/</code> with the SQL file from Step 2; <code>server/src/</code> with <code>app.ts</code> (routes), <code>index.ts</code> (starts the server), <code>migrate.ts</code> (runs migrations), <code>otel.ts</code> (tracing setup we use in guide 25); and <code>web/src/components/UserSwitcher.tsx</code>, the new footer switcher component, among others. Red squiggly underlines in the editor are normal until <code>npm install</code> has run in this folder and Codex has finished; they mean VS Code cannot find packages yet, not that the code is wrong.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Read GRILL.md</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Now the most important document of the slice. <code>GRILL.md</code> in the Part 2 folder is the grilling session written down: every decision from guide 8, in the form Codex must follow while it builds. It is also what future chats read, so if it is wrong today, every later slice inherits the error. Open it and check it line by line against your round 1 and round 2 answers.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">code ~/codex-course/workshop/part-2-create-auction-and-bid/GRILL.md</pre></div>
+    <p>Giving <code>code</code> a file path instead of a folder opens just that file in the existing VS Code window. Press <strong>Cmd+K</strong> then <strong>V</strong> for the formatted preview.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Sections similar to <strong>Actors</strong> (ten predefined users, footer switcher, no login), <strong>Auctions</strong> (required fields, category illustrations, live on creation, UTC closing), <strong>Money and bidding</strong> (USD integer cents, $1 minimum increment, no self-bidding, ended auctions reject bids), <strong>Reset behavior</strong> (only <code>db:reset</code> wipes <code>auction_part_2</code>) and <strong>Delivery slices</strong> (the three slices you approved). Every item should be something you consciously decided in guide 8.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The domain-modeling skill usually also writes a <code>CONTEXT.md</code> glossary (what “auction”, “bid” and “active user” mean in this project), and sometimes <code>docs/adr/</code> files. In my run it did not; everything went into <code>GRILL.md</code>, and that is fine. If yours created <code>CONTEXT.md</code> or ADRs, read those too. If anything in these files contradicts what you answered, tell Codex in the chat with one sentence, for example “GRILL.md says bids need $5 increments; we agreed $1. Fix the doc and the code.”</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Let Codex check its work in a real browser</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Go back to the Codex chat and let it finish. Near the end of Slice 1 it does four things in order: resets the Part 2 database, runs the migration, runs the tests and the TypeScript type checks, and then opens the app in a real browser to click through it. I want to stress this part. An agent will tell you “done” very confidently whether the code works or not. Confidence is not evidence. The only defence is to give it tools that produce evidence: tests that pass or fail, a compiler that accepts or rejects, a browser that renders or throws errors.</p>
+    <div class="call concept"><b class="t">📘 Concept: automated tests and type checks</b><p>An <strong>automated test</strong> is a small program that runs part of your app and checks the result: “call <code>GET /api/users</code>, expect 10 rows”. You run all tests with one command and get a pass/fail list in seconds, every time anything changes. A <strong>type check</strong> is different: TypeScript reads the code without running it and verifies that every value is used the way its type allows, so passing a string where a number is expected is caught before the app even starts. “Strict” TypeScript, which our AGENTS.md demands, turns on the toughest version of these checks. Tests catch wrong behaviour; type checks catch wrong plumbing. Together they are how Codex proves a slice to you, and how you will later prove your fixes to Codex.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A message similar to: “Database reset, migration, all six tests, and both strict TypeScript checks pass. I'm using the Chrome control skill now because the project requires real browser verification…” followed by a Chrome window opening on the Part 2 site. In my run the browser check found a real bug: the dev server kept restarting because <code>tsx watch</code> (the tool that restarts the server when files change) was also watching OpenTelemetry files inside <code>node_modules</code>. Codex noticed the restarts, worked out the cause and fixed the watch configuration on its own. Tests alone would never have caught that; the browser check did.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>With an API key, Codex's built-in browser is not available. Your Codex will most likely use Playwright with Chrome instead, as in guide 6, and it may ask to install it: approve that. If it says it cannot check in a browser at all, do not worry; you do the check yourself in Step 8.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Read the Slice 1 summary</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>When Codex stops (about 9 minutes after you approved the slices, in my run), read its final message from top to bottom. Do not skip to the URL. The summary is structured so you can verify each claim, and that is what the next step does. Click the diagram to enlarge it and compare it with the one from guide 8: it should be the same architecture, now built.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Something like: “<strong>Slice 1 is complete and verified.</strong> The app remains running at http://localhost:5102…”, then four blocks:</p><ul><li><strong>Implemented:</strong> its own <code>auction_part_2</code> database and ports 3102/5102, the <code>001_marketplace.sql</code> migration, 10 users and 6 auctions seeded, database-backed read APIs in <code>app.ts</code>, the footer switcher in <code>UserSwitcher.tsx</code>, and the decisions recorded in <code>GRILL.md</code></li><li>a diagram: <strong>React/Vite Web App → HTTP reads → Fastify API → Parameterized SQL → PostgreSQL</strong> (users · auctions · bids)</li><li><strong>Verification passed:</strong> server tests 4 passed, web tests 2 passed, both TypeScript checks passed, browser console clean</li><li><strong>To review:</strong> a short list of browser steps for you, ending with “If Slice 1 looks right, tell me to continue with Slice 2: Post an auction.”</li></ul><p>Notice that Codex has stopped and is waiting. That pause between slices is the AGENTS.md rule in action; it will not start Slice 2 until you say so.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Open Part 2 in Chrome</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Codex leaves the app running and tells you the URL, <code>http://localhost:5102</code>. Its reply may also show a <strong>Web preview</strong> card, but that built-in preview does not work with an API key, so open the URL in Chrome yourself. Part 1 is still on 5101 if you left it running; the two do not interfere.</p>
+    <div class="copy k-url"><div class="copy-h"><span class="ic">↗</span><span class="lbl">Open in browser</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">http://localhost:5102</pre></div>
+    <p>Then follow Codex's <strong>To review</strong> list. This is your browser checkpoint for Slice 1:</p>
+    <ol>
+      <li>Look around the homepage. It should look like Part 1, but every item is now coming from the database.</li>
+      <li>Change <strong>Browsing as</strong> in the footer to a different user, then reload the page with Cmd+R. The choice should survive the reload; that is the <code>localStorage</code> decision from Q10.</li>
+      <li>Search for <code>memory</code> in the search bar. The search now runs as a SQL query on the server, not as a filter on a hard-coded list.</li>
+      <li>Open the result and check the seller name and the starting price are shown correctly. The price proves cents-to-dollars formatting works.</li>
+    </ol>
+    <p>If the page does not load at all, the app is not running. Start it yourself from the Terminal app with the command below; it installs the packages for Part 2 and starts everything, exactly like <code>npm start</code> did for Part 1 in guide 7.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Only if the page doesn't load</span><span class="where">Terminal app</span><button class="cbtn" data-target="s8c1">Copy</button></div><pre id="s8c1">cd ~/codex-course/workshop/part-2-create-auction-and-bid &amp;&amp; npm install &amp;&amp; npm start</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The Auction House homepage (“Serious hardware. Less serious prices.”) with a <strong>10 Demo users</strong> label at the top right and <strong>Browsing as … (@handle)</strong> in the footer, for example <strong>Jordan Lee (@jordan)</strong>. After a reload, the user you picked is still selected. Searching <code>memory</code> returns the DDR5 memory kit.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Also open <code>http://localhost:5102/api/users</code> in a new tab. You get raw JSON with the ten users straight from the API, the same data the footer switcher uses. Looking at API responses directly is a habit that will save you hours of guessing whether a bug is in the frontend or the backend.</p></div>
+  </div></div>
+
+<div class="step" id="s9"><div class="sh"><div class="num">9</div><div class="st"><h3>Ask for a random user on page load</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>The slice works, but one detail bothers me: the “10 Demo users” label at the top right is meaningless to a visitor, and every new window starts as the same first user. I want each window to start as a <strong>random</strong> user, with that user's name shown at the top right. The reason is practical: in guides 11 and 12 we open several browser windows and make them bid against each other, and we need to see at a glance who is who in each window. Send this follow-up in the same chat:</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Codex message box, same chat</span><button class="cbtn" data-target="s9c0">Copy</button></div><pre id="s9c0">randomly assign the user on page load AND put the user&#x27;s name on the top right, not &quot;10 demo users&quot;</pre></div>
+    <p>Notice the prompt is short, specific and names the exact text to replace. Two concrete changes, nothing vague. You do not need to re-grill for a tweak like this; grilling is for design decisions, not for every edit. This is also a change to a decision recorded in <code>GRILL.md</code> (Q10 said “start with the first seeded user”), so watch whether Codex updates the document as well as the code. It should.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex replies with a short plan similar to: “I'll make the initial user random per browser tab, then keep that identity stable through navigation and reloads in the same tab; the footer switcher can still override it… replacing “10 Demo users” with the selected user's actual name. This updates the earlier <code>localStorage</code> decision in <code>GRILL.md</code>.” Then it edits a few files, mostly under <code>web/src/</code>, and <strong>runs the tests again</strong> before it stops. Guide 10 starts by checking the result in the browser.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Even a small change ends with tests. “Never stop without running tests” is, in my experience, a big part of why this workflow produces code you can trust. If you ever see Codex finish an edit without running anything, ask it to run the tests before you look at the result.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2><p>If Slice 1 failed or looks very different from what I describe, first tell Codex what you see, in the same chat, with the exact error text or a description of the wrong behaviour. That fixes most problems. To catch up instead, replace your Part 2 with the reference copy's version. Be aware that it is the <strong>end state of the whole part</strong>: all three slices done, the random user per tab, and a bidding-war test that we add in guide 12. In guide 10 you would then skip the build steps and only do the browser checks.</p>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Catch up: copy the finished Part 2 from the reference</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-2-create-auction-and-bid &amp;&amp; cp -R ../reference/part-2-create-auction-and-bid ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 2 from reference&quot;</pre></div>
+<p>That line deletes your Part 2, copies the reference Part 2 in its place, and commits it so the catch-up is recorded in your Git history.</p>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Then run it (open http://localhost:5102)</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck1">Copy</button></div><pre id="stuck1">cd ~/codex-course/workshop/part-2-create-auction-and-bid &amp;&amp; npm install &amp;&amp; npm start</pre></div></div>
+<div class="box"><h2>Key takeaways</h2><ul>
+<li>Review the database first. Tables, column types and the <code>_cents</code> suffix tell you in thirty seconds whether the agent understood your design; everything else is built on top of them.</li>
+<li>Read diffs and test names, not whole files. The diff shows what changed; the test names show what the agent thinks the behaviour is.</li>
+<li><code>GRILL.md</code> (or <code>CONTEXT.md</code> and ADRs) keeps the grilling decisions next to the code, so Codex keeps following them in later chats, and so you can catch a misunderstanding before it spreads.</li>
+<li>Make the agent prove its work: tests, type checks and a real browser check before it says “done”. Confidence is not evidence.</li>
+<li>Small follow-up changes do not need grilling. A short, specific prompt that names the exact change is enough, and it still ends with the tests running.</li>
+<li>On existing projects, a well-kept <code>AGENTS.md</code> plus the docs from grilling save you from answering the same design questions again and again.</li>
+</ul></div>
+<div class="nav"><a href="8. Plan Mode &amp; Grilling.html"><span>← Previous guide</span>8. Plan Mode &amp; Grilling</a><a class="r" href="10. Bidding &amp; Constraints.html"><span>Next guide →</span>10. Bidding &amp; Constraints</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

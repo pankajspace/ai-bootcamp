@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>8. Plan Mode &amp; Grilling – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="8. Plan Mode &amp; Grilling"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>8. Plan Mode &amp; Grilling</h1>
+  <p class="lede">Part 2 begins. You look at Codex's built-in plan mode once, then let the grill skills interview you in two rounds about auctions, bids and users. At the end you approve the build slices and Codex starts writing the first one.</p>
+  <div class="meta"><span class="pill">Part 2 · start</span><span class="pill">≈ 30–45 min hands-on</span><span class="pill">Uses the grill skills</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+<li>Try plan mode once, see what it offers, and understand why I prefer the grill skills for anything non-trivial.</li>
+<li>Send the Part 2 prompt that starts a <strong>grill with docs</strong> session.</li>
+<li>Answer two rounds of design questions about users, auctions, bids, money and time, using my answers as your guide and understanding the reasoning behind each one.</li>
+<li>Read the Mermaid diagram and the proposed vertical slices, then approve them so Codex starts building Slice 1.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+<li>You finished guide 7: Part 1 runs from <code>~/codex-course/workshop</code>, and the <strong>workshop</strong> project is open in Codex. Part 1 can keep running in its terminal; Part 2 uses different ports.</li>
+<li>Docker Desktop is running. Codex will create the Part 2 database (<code>auction_part_2</code>) inside the same Postgres container.</li>
+<li>The grill skills from guide 5 are installed. Step 3 checks this before we depend on them.</li>
+<li>Set aside a quiet 30–45 minutes. Grilling is a conversation; you need to actually read and think, not just paste.</li>
+</ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Mode</span><b>Plan mode off (you try it in Step 2, then turn it off)</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Start a new chat in the workshop project</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Every new task gets a new chat. That is a habit I want you to build from today, so we start Part 2 in a fresh conversation even though the workshop project already has one from guide 7.</p>
+    <p>In the Codex sidebar, under <strong>Projects → workshop</strong>, click <strong>New chat</strong>. Above the message box you should see the chips <strong>workshop</strong> and <strong>Local</strong> (and your branch name). Under the message box, the model picker should say <strong>5.6 Sol Medium</strong> and the approvals button <strong>Approve for me</strong>. If either is different, click it and fix it now, before the long run starts.</p>
+    <div class="call concept"><b class="t">📘 Concept: context window and tokens</b><p>A model does not read words; it reads <strong>tokens</strong>, small chunks of text roughly three-quarters of a word long. Everything in a chat, your messages, Codex's replies, every file it opened, every command output, is converted into tokens and sent to the model again with each new turn. The total amount it can hold at once is the <strong>context window</strong>. When a chat grows long, three things happen: each turn costs more (you pay for all those tokens again), the model gets slower, and it starts to lose track of early details because the window is crowded. A fresh chat per task keeps the window small, focused and cheap. Codex still knows the project, because AGENTS.md and the files are always there.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>An empty chat that asks <strong>“What should we build in workshop?”</strong> with no earlier messages above it.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If you see a ⚡ symbol in front of the model name, the <strong>Speed</strong> setting is on Fast. Fast costs more per token and we do not need it; click the picker and set Speed to Standard.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Try plan mode, then turn it off</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Before we use the grill skills, I want you to see what Codex offers out of the box, so you can judge the difference yourself. Type <code>/plan</code> in the message box and pick <strong>Plan mode – Turn plan mode on</strong> from the menu that pops up. Do not send any message.</p>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">Type in Codex</span><span class="where">message box, then pick Plan mode</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">/plan</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: plan mode</b><p><strong>Plan mode</strong> is a built-in Codex mode where the agent is only allowed to think and write, not to edit files or run commands. You describe a task, it reads the codebase and comes back with a step-by-step plan for your approval. The intention is good: define the feature before building it. The weakness is that it mostly plans from its own assumptions; it asks you few or no questions, so the gaps in your request stay gaps in the plan. For a well-understood task it is fine. For a new feature with real design decisions (who are the users? how is money stored? what happens when two people bid at once?) I want a tool that interrogates me first. That is what grilling does, and it is why plan mode stays off for the rest of this course.</p></div>
+    <p>Look at the message box, then turn plan mode back off: click the <strong>Plan</strong> chip that appeared under the message box, or type <code>/plan</code> again and pick the “turn off” option.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>While it is on: a <strong>Plan</strong> chip next to “Approve for me”, and the placeholder text in the box changes to “Describe your task to generate a plan…”. After you click the chip: the chip disappears and the message box is back to normal, with the usual placeholder.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If your Codex version does not show Plan mode in the <code>/</code> menu, skip this step entirely. Nothing in the course depends on it.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Check that the grill skills are installed</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>We are about to rely on the grill skills for a long run, so confirm they are available first. Type <code>/grill</code> in the message box and do not send it. Codex filters its skill list to the ones whose name matches what you typed.</p>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">Type in Codex</span><span class="where">message box, don't send</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">/grill</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: grilling (interview before building)</b><p><strong>Grilling</strong> flips the usual order. Instead of you writing a long prompt and hoping you covered everything, the agent interviews <em>you</em>: it reads the code, works out what is undecided, and asks numbered questions in rounds, each with options A / B / C and a recommended answer. You answer, it asks the next round, and when nothing is left open it writes the agreed design down and proposes slices to build. The value is that every design decision is made deliberately, by you, <strong>before</strong> a single line of code exists. Without this, the model makes those decisions silently, you discover them only when the code is wrong, and you pay twice to fix them. Grilling costs tokens up front and saves many more later.</p></div>
+    <p>What the three skills do:</p>
+    <ul>
+      <li><strong>Grilling</strong> is the interview itself: numbered questions in rounds until you and Codex agree on one design. Every question comes with options and a recommended answer. The full instructions Codex follows are in <code>~/.agents/skills/grilling/SKILL.md</code>; open it in VS Code when you have a minute, it is just a Markdown file telling the model how to behave.</li>
+      <li><strong>Grill Me</strong> is a shortcut that starts Grilling with a short preamble.</li>
+      <li><strong>Grill with Docs</strong> runs Grilling together with the <strong>domain-modeling</strong> skill, which writes the decisions down as documentation (<code>CONTEXT.md</code>, <code>docs/adr/…</code>) inside the part's folder. Its instructions are in <code>~/.agents/skills/grill-with-docs/SKILL.md</code>. This is the one we use.</li>
+    </ul>
+    <div class="call concept"><b class="t">📘 Concept: ADR (architecture decision record)</b><p>An <strong>ADR</strong> is a short text file that records one decision: what we decided, what the options were, and why we chose this one. For example: “Money is stored as integer cents in USD. Options: floating point dollars, decimal type, integer cents. Chosen: integer cents, because floating point rounds and the app is USD only.” Teams keep ADRs in a <code>docs/adr/</code> folder so that six months later nobody has to guess why the code looks the way it does. For us they have a second use: Codex reads them in future chats, so the decisions you make today keep steering it in guides 9 and 10 without you repeating yourself.</p></div>
+    <p>Delete <code>/grill</code> from the box when you have seen the list. If the skills are missing, reinstall them with the command below, in the Terminal app:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Only if the skills are missing</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s3c1">Copy</button></div><pre id="s3c1">npx skills@latest add schneidenbach/skills</pre></div>
+    <p>As in guide 5: tick exactly <strong>domain-modeling, grill-me, grill-with-docs, grilling</strong>, choose scope <strong>Global</strong> and method <strong>Symlink</strong>. Then quit Codex fully (Cmd+Q) and reopen it, because Codex only scans the skills folder on startup.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Three entries above the message box, each marked <strong>Personal</strong>: <strong>Grill Me</strong> (Sharpen a plan through interview), <strong>Grilling</strong> (Stress-test thinking a round of questions at a time) and <strong>Grill with Docs</strong> (Grill a design and write its docs). “Personal” means the skill came from your own <code>~/.agents/skills</code> folder, not from the project.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Send the Part 2 prompt</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Now the real work starts. Read the prompt before you paste it, because every phrase in it is doing a job:</p>
+    <ul>
+      <li>The first sentence states the feature in plain product language: post auctions, make bids.</li>
+      <li>“stored in the postgres database (see the docker compose file…)” tells Codex <em>where</em> data lives and points it at the file that defines the database service, so it does not invent a different database or an in-memory stand-in.</li>
+      <li><strong>GRILL ME with DOCS!</strong> is the trigger. Because a skill's name appears in the text, Codex loads the grill-with-docs skill on its own; you do not have to pick it from the <code>/</code> menu.</li>
+      <li>The second paragraph says which folder to work in and how to start it: the Part 2 folder is empty, so Codex must copy Part 1 into it and build on top. Remember the root AGENTS.md rule: “work in a specific numbered part directory, and ask if unclear”. We make it clear so it does not need to ask.</li>
+    </ul>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Codex message box</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">I want to add on the ability to post auctions and make bids. these should be stored in the postgres database (see the docker compose file - that&#x27;s where the database should live). GRILL ME with DOCS!
+
+we&#x27;re working out of folder 2 - copy the files from folder 1 and build off of those in folder 2</pre></div>
+    <p>Why both paragraphs in one message? If you send only the first, Codex reads the project, notices that folder 2 is empty, and stops to ask where it should work. That is a wasted turn and wasted tokens. Telling it up front gets you straight to the questions. Press Enter to send.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The status <strong>Working for …</strong> with a running timer, then a short opening statement similar to: “I'm using the grilling skill to stress-test the auction and bidding design against the existing docs and code in Part 1… I'll run at most two focused rounds of 8–10 questions before proposing 2–4 browser-reviewable vertical slices. I'll hold off on copying or implementing until you confirm those slices.”</p><p>After about a minute, during which Codex reads <code>docker-compose.yml</code> and the Part 1 code, it posts <strong>Grilling round 1 — Product and domain boundaries</strong>. You get about 8 numbered questions (❓ <strong>Q1</strong>, <strong>Q2</strong>…). Each has options <strong>A / B / C</strong> and a ➡️ <strong>Recommendation</strong> line. Nothing has been copied or built yet; folder 2 is still empty.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Click the small caret next to <strong>Working for …</strong> to expand what Codex is reading and thinking. You will see it open the compose file, Part 1's AGENTS.md and the server code. The “8–10 questions” and “2 rounds max” limits it mentions come straight from the workshop's root <code>AGENTS.md</code> you read in guide 7; that is the file doing its job.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>Cost: two grilling rounds plus the Slice 1 build is the biggest run so far. Slice 1 alone ran for about 9 minutes in my run on Sol. Check platform.openai.com → Usage afterwards if you are watching your spend.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Answer round 1</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Read every question properly. Your questions may be worded, ordered or numbered differently from mine, because the model is not deterministic, so match them by <strong>topic</strong> and make the same decision. Here is what I decided, and why:</p>
+    <ul>
+      <li><strong>Q1 Who are the actors?</strong> → my own answer, not the recommendation: <strong>predefined users</strong>. A <code>users</code> table with <strong>10 seeded users</strong> and a small <strong>user switcher at the bottom of the page</strong>. No real login. Why: real authentication (passwords, sessions, sign-up) is a whole project of its own and teaches nothing about auctions. A switcher lets us act as different bidders in seconds, which we need badly in guides 11 and 12.</li>
+      <li><strong>Q2 What must a seller provide?</strong> → take the recommendation (A): title, category, description, condition, location, seller name, starting price, closing time. These are the fields the Part 1 catalog already shows, so new listings look like the seeded ones.</li>
+      <li><strong>Q3 How should images work?</strong> → take the recommendation (A): the seller picks a category and the UI shows that category's illustration. No uploads or image URLs. File uploads need storage, size limits and security checks; we skip all of that.</li>
+      <li><strong>Q4 When does an auction become visible?</strong> → take the recommendation (A): it goes live the moment it is created. No draft state, no approval queue.</li>
+      <li><strong>Q5 How is closing defined?</strong> → A: the seller picks a future date and time, and the API stores it as an absolute <strong>UTC timestamp</strong>. UTC is the single world reference time with no time zones or daylight saving. Storing UTC means a bidder in Bangalore and a bidder in New York both see the same auction end at the same real moment; the browser converts it to local time only for display.</li>
+      <li><strong>Q6 How should money be represented?</strong> → A: USD only, stored as <strong>integer cents</strong>. $18,450.00 is stored as <code>1845000</code>. Never store money as a decimal number like <code>18450.00</code> in a floating-point column: computers cannot represent many decimals exactly, and you end up with bids of $10.000000001. Whole integers never round.</li>
+      <li><strong>Q7 What happens to the six existing catalog items?</strong> → A: seed them into Postgres, so the catalog, detail and search screens all read from the database instead of a hard-coded list. One source of truth.</li>
+      <li><strong>Q8 What should database reset mean?</strong> → I was not sure what Codex meant by this, so I asked it to explain rather than guess. It comes back as a question in round 2. Do the same whenever a question is unclear; “explain this better” is a perfectly good answer.</li>
+    </ul>
+    <div class="call concept"><b class="t">📘 Concept: seed data</b><p><strong>Seed data</strong> is the starting content a database is filled with when it is created: our 10 users and 6 hardware items. It is written as a script that runs after the migrations, so every fresh database, on every machine, starts with the same rows. Without seeds a new database is empty and the app looks broken. Seeds are also what makes a “reset” meaningful: drop everything, run migrations, run seeds, and you are back to a known state.</p></div>
+    <p>Type your answers as one message, one line per question. Use the block below as a template and change the numbers if your questions are numbered differently.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">My answers (round 1), adjust the numbers to match your questions</span><span class="where">Codex message box</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">1. the actors are predefined users - go ahead and make a users table as well with 10 user records seeded. at the bottom of the page, add a small switcher so we can switch between users well.
+2. take recommend
+3. take recommend
+4. take recommend
+5. a
+6. a
+7. a
+8. please explain this to me better</pre></div>
+    <p>Shortcuts I use when answering:</p>
+    <ul>
+      <li><code>take recommend</code> means “go with your recommended option”. Codex understands it.</li>
+      <li>A single letter (<code>a</code>, <code>b</code>, <code>c</code>) picks that option. Codex also accepts the compact form “1A, 2B…”.</li>
+      <li>If Codex asks you something I was not asked, <code>take recommend</code> is fine unless it clashes with one of the decisions above. If it clashes, write a sentence stating the decision in your words.</li>
+    </ul>
+    <p>If you type instead of pasting: <strong>Shift+Enter</strong> starts a new line, <strong>Enter</strong> sends. Pressing Enter after the first line sends an incomplete answer.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex sums up what is settled, similar to: “Locked so far: ten seeded users with a persistent page-bottom user switcher, immediate publication, required listing fields, category-based illustrations, UTC closing timestamps, integer USD cents, and a fully database-backed catalog seeded from the six existing items.”</p><p>Then it explains reset: only an explicit <code>npm run db:reset</code> wipes Part 2. It drops only the <code>auction_part_2</code> database, recreates it, runs all migrations and restores the seed data. A normal <code>npm start</code> or a container restart keeps everything. Part 1's database is never touched. Below that comes <strong>Grilling round 2 — Interaction and rules</strong>.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>I find the recommendations right 80–90% of the time, and I still read every single question. “Take all recommends and go” works too, but I almost never do it, and when I have, I have usually regretted it: the 10–20% it gets wrong are exactly the decisions that are expensive to undo later.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Answer round 2</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Same approach: match each question by topic, not by number. Round 2 is about how users interact and what the rules are. My decisions:</p>
+    <ul>
+      <li><strong>Q9 Database reset</strong> → A: restore the 10 users and the 6 original auctions. Only <code>auction_part_2</code> is dropped and rebuilt. This is the follow-up to my “explain this better” in round 1.</li>
+      <li><strong>Q10 Remembering the active user</strong> → A: keep the chosen user ID in <code>localStorage</code>, starting with the first seeded user. <code>localStorage</code> is a small key-value store inside the browser that survives page reloads, so your chosen user stays selected when you refresh. We change this in guide 9 to a random user per browser tab, for reasons you will see then.</li>
+      <li><strong>Q11 Ownership and self-bidding</strong> → A: the active user automatically becomes the seller of anything they post, and bidding on your own auction is rejected. Otherwise a seller could inflate their own price.</li>
+      <li><strong>Q12 Minimum valid bid</strong> → A: at least <strong>$1.00</strong> above the current amount, checked in the API and not only in the browser.</li>
+      <li><strong>Q13 Simultaneous bids</strong> → A: correct one-at-a-time bidding now. Proper locking for two people bidding in the same millisecond waits for Part 3. We deliberately leave this problem in, because guides 11–14 are about discovering and fixing it.</li>
+      <li><strong>Q14 Ended auctions</strong> → A: show “Ended”, disable the bid form, and have the API reject new bids on an ended auction.</li>
+      <li><strong>Q15 Bid visibility</strong> → A: a compact bid history on the auction page with bidder, amount and time.</li>
+      <li><strong>Q16 Posting experience</strong> → A: a <strong>Sell</strong> link in the header that goes to <code>/auctions/new</code>. After posting, you land on the new auction's own page.</li>
+      <li><strong>Q17 Specifications on new listings</strong> → <strong>B</strong>, the one place I go against the recommendation: new listings have no specifications section, and that section is hidden when it is empty. The seeded hardware items have detailed spec tables; asking a seller to fill one in would make the form huge for no benefit.</li>
+    </ul>
+    <div class="call concept"><b class="t">📘 Concept: validate in the API, not only in the browser</b><p>Q12 says the minimum-bid rule is checked “in the API and not only in the browser”. Browser checks are for convenience: they give instant feedback and save a round trip. But anyone can bypass the browser and send a request straight to the API with a tool like <code>curl</code>, or simply have an old page open. If the rule lives only in the browser, a bid of $0.01 above (or below) the current price gets through. The API is the only place every request must pass, so <strong>every business rule is enforced in the API</strong>; the browser copy is a bonus. This is one of the most important habits in backend engineering, and the AGENTS.md rule “validate inputs” is about exactly this.</p></div>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">My answers (round 2), adjust the numbers to match your questions</span><span class="where">Codex message box</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">9. a
+10. a
+11. a
+12. a
+13. a
+14. a
+15. a
+16. a
+17. b</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p><strong>Working for …</strong>, then a summary similar to: “We have a shared design. No implementation has started yet; Folder 2 remains untouched. The final product decisions will be recorded in Folder 2's <code>GRILL.md</code>:” followed by a bullet list of the decisions above (ten seeded users, footer switcher, sellers cannot bid on their own auctions, bids at least $1 higher, <code>db:reset</code> restores users and auctions, and so on). Read that list once and confirm it matches what you meant. This is your last cheap chance to correct a misunderstanding.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If your options are ordered differently, do not type my letters blindly. For each question, pick the letter that means the same decision as in the list above. If a decision you want is not offered at all, write it out in a sentence; Codex accepts free text alongside letters.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Look at the Mermaid diagram and the proposed slices</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Scroll through the rest of Codex's reply. Below the decision list there is a diagram. Click it to open it full size; the viewer has zoom buttons in a corner.</p>
+    <p>A <strong>Mermaid</strong> diagram is a flow chart written as plain text, a few lines like <code>flowchart LR</code> and <code>Web --&gt; API</code>, which Codex renders into boxes and arrows. The root <code>AGENTS.md</code> asks Codex for one after every grilling session, because a picture of “who talks to whom” is the fastest way to check that the model's understanding of the architecture matches yours.</p>
+    <p>Then read <strong>Proposed vertical slices</strong>. Each slice is one thin end-to-end piece of the feature (database → API → UI), and each one ends with a <strong>Browser checkpoint</strong>: a concrete thing you can click in Chrome to confirm the slice works before the next one starts. That checkpoint is your review gate.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A diagram similar to this: inside a box <strong>React/Vite Web App :5102</strong>, Active predefined user → Footer user switcher → localStorage (active user ID). Three screens, Catalog and search, Auction details and bid history, and Post auction, each call <strong>Fastify API :3102</strong> over HTTP, and the API stores users, auctions and accepted bids in <strong>PostgreSQL auction_part_2</strong>. Note the new ports: Part 2 gets 5102 and 3102, so it can run alongside Part 1.</p><p>Then slices similar to:</p><ol><li><strong>Database-backed marketplace and user switching</strong></li><li><strong>Post an auction</strong></li><li><strong>Make and inspect bids</strong></li></ol><p>The reply ends with: Reply “approve the slices” to authorize Slice 1, or tell me what you want rearranged.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Got different slices, or four instead of three? That is expected and perfectly fine, as long as you have 2–4 slices, each with a browser checkpoint, and together they cover users, posting and bidding. If a slice is missing something you decided (for example, no bid history anywhere), say so now in a sentence before approving.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Approve the slices</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Send the approval. This is the moment Codex is allowed to touch files. It builds one slice, checks it with tests and a browser run, then stops and waits for you before starting the next one. You stay in control at every boundary.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Codex message box</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">approve the slices</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex starts <strong>Slice 1</strong>, with an opening like: “Slice 1 is underway. I'll first copy the Part 1 application into Folder 2 while excluding installed dependencies and historical build logs…” A to-do list appears above the message box, showing progress such as <strong>Step 1/4</strong>:</p><ul><li>copy Part 1 into folder 2</li><li>add the migrations, seed users and auctions, and add read APIs</li><li>swap the static catalog for API data and add the user switcher</li><li>run migrations, tests and the browser check</li></ul><p>Each item gets ticked as Codex finishes it.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>Slice 1 ran for about 9 minutes in my run. Let it work; do not send more messages into this chat while the timer is running, because a new message interrupts the current task. Guide 9 continues in this same chat once Slice 1 reports done.</p></div>
+  </div></div>
+
+<div class="step" id="s9"><div class="sh"><div class="num">9</div><div class="st"><h3>Watch the files appear in folder 2</h3></div>
+  <label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>While Codex works, it helps to see what it is actually doing on disk. The to-do list above the message box comes from the Codex app itself (the “harness” that wraps the model and gives it tools), not from the model's text, so it is a reliable progress indicator. To see the files, open the workshop in VS Code from the Terminal app, then expand <code>part-2-create-auction-and-bid</code> in the Explorer.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · any folder</span><button class="cbtn" data-target="s9c0">Copy</button></div><pre id="s9c0">code ~/codex-course/workshop</pre></div>
+    <p>If VS Code is already open on the workshop from guide 7, this just brings that window to the front. Files Codex creates show up in the Explorer within a second or two, with the usual green “new file” colour in the tree.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p><code>part-2-create-auction-and-bid</code> filling up with a copy of Part 1: <code>AGENTS.md</code>, <code>GRILL.md</code>, <code>README.md</code>, <code>package.json</code>, <code>server/</code>, <code>web/</code>. In my run, Codex sensibly left out Part 1's <code>node_modules</code> (it reinstalls them), <code>CODEX.md</code> and <code>codex-logs/</code>. After the copy, Codex keeps editing files inside that folder: a new migration under <code>server/</code>, a seed script, new API routes, and changes to the React pages.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Open <code>part-2-create-auction-and-bid/GRILL.md</code> as soon as it appears. It is the written record of everything you decided in Steps 5 and 6. If something there is wrong, you want to know now, not after Slice 3.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2><p><strong>Start over:</strong> if grilling went off track, or Codex started building something odd, stop it with the ■ button to the right of the message box. Empty folder 2 with the first command below, then start a new chat and send the Step 4 prompt again. Starting over costs a few minutes; building on a wrong foundation costs hours.</p>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Start Part 2 over</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-2-create-auction-and-bid &amp;&amp; mkdir part-2-create-auction-and-bid</pre></div>
+<p>That line moves into the workshop, deletes the Part 2 folder with whatever is in it, and creates it again empty, which is exactly the state the Step 4 prompt expects.</p>
+<p><strong>Catch up:</strong> the second command replaces your Part 2 with the reference copy's version. Be aware that it is the <strong>end state of the whole part</strong>: all three slices done, plus a bidding-war test that we add in guide 12. If you use it, you skip the build steps in guides 9 and 10 and only do their browser checks (run it with <code>npm install</code> and <code>npm start</code> inside that folder).</p>
+<div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Or catch up: copy the finished Part 2 from the reference</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck1">Copy</button></div><pre id="stuck1">cd ~/codex-course/workshop &amp;&amp; rm -rf part-2-create-auction-and-bid &amp;&amp; cp -R ../reference/part-2-create-auction-and-bid ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 2 from reference&quot;</pre></div></div>
+<div class="box"><h2>Key takeaways</h2><ul>
+<li>Plan mode defines a feature before building it, but it plans from the model's assumptions. The grill skills go further: many focused questions, each with options and a recommended answer, so <strong>you</strong> make the design decisions.</li>
+<li>Grilling moves your decisions to the start, where changing them is free. Without it, the agent decides silently and you find out when the code is wrong.</li>
+<li>Read every question. Take the recommendation when it fits and override it when it does not; here that was Q1 (predefined users) and Q17 (no specifications on new listings).</li>
+<li>Three backend fundamentals showed up in the answers: store time as UTC, store money as integer cents, and enforce every business rule in the API, not only in the browser.</li>
+<li>A grilling session ends with 2–4 vertical slices, each with a browser checkpoint. You approve them, Codex builds one, you check it, then the next.</li>
+<li>One task, one chat. A fresh context window is cheaper, faster and more accurate.</li>
+</ul></div>
+<div class="nav"><a href="7. Create Auctions &amp; Bids Site.html"><span>← Previous guide</span>7. Create Auctions &amp; Bids Site</a><a class="r" href="9. Auctions &amp; Users.html"><span>Next guide →</span>9. Auctions &amp; Users</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

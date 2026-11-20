@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>18. Implementing the Real-Time Updates – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="18. Implementing the Real-Time Updates"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>18. Implementing the Real-Time Updates</h1>
+  <p class="lede">Finish Part 4. Read the architecture diagram Codex drew, question it, approve Slice 1, then watch two browser windows update live without a reload. Run the four-window bidding war and use a screenshot to make Codex fix the cramped layout and the leftover page reloads.</p>
+  <div class="meta"><span class="pill">Part 4 · build</span><span class="pill">≈ 30–50 min hands-on</span><span class="pill">Bidding war (headed Playwright)</span><span class="pill">Web http://localhost:5104</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Read the Mermaid diagram and the slice proposal that ended guide 17, ask one sharp question about it, and only then approve <strong>Slice 1</strong> (live auction detail updates).</li>
+  <li>Learn two recovery moves you will use for the rest of your career with coding agents: typing “continue” after Codex was quit mid-run, and <strong>Branch in new chat</strong> when Codex has gone the wrong way.</li>
+  <li>Read the diff of a slice that adds new architecture, so you know what Socket.IO and Redis actually added to the project.</li>
+  <li>Open one auction in two Chrome windows, bid in one, and watch the other change by itself.</li>
+  <li>Run the four-window <strong>bidding war</strong>, catch two problems the unit tests missed, and fix both with one screenshot-driven prompt.</li>
+  <li>Commit Part 4 so Part 5 can copy from it.</li>
+</ul></div>
+<div class="box"><h2>Before you start</h2><ul>
+  <li>You finished guide 17. You continue in the <strong>same grill chat</strong>. The last thing Codex printed there was “Preparing feature slices proposal…”, and by now it has finished and shown you a diagram and two slices.</li>
+  <li>Docker Desktop is running. In Part 4, <code>npm start</code> starts <strong>two</strong> containers, PostgreSQL and Redis, and then the API and the web app. If Docker is not running, the start fails on the very first line.</li>
+  <li><strong>Microsoft Edge</strong> is installed. The bidding-war test that Codex copied over from Part 3 opens Edge windows. Chrome works too, see the tip in step 8.</li>
+  <li>Keep the Terminal app open. Steps 7 and 12 run commands there, in your <code>~/codex-course/workshop</code> folder.</li>
+</ul>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div>
+    <div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div>
+    <div class="set"><span>Reasoning</span><b>Medium</b></div>
+    <div class="set"><span>Mode</span><b>Normal chat (the grill chat from guide 17)</b></div>
+    <div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div>
+  <div class="call concept"><b class="t">📘 Concept: real-time fan-out over WebSockets</b><p>Until now our auction page only knew about a new bid when <em>you</em> reloaded it. In Part 4 we flip that around: the <strong>server tells every open page</strong> the moment something changes. The pipe for this is a <strong>WebSocket</strong>, a connection that stays open between the browser and the server so the server can push a message down at any time, unlike a normal request where the browser must ask first. When a bid is saved, the server sends one small event, “auction 42 changed”, to <em>every</em> browser that is looking at auction 42. Sending one event to many listeners is called <strong>fan-out</strong>. Think of a classroom notice board versus a teacher who walks to each desk: fan-out is the notice board, everyone sees it at once. <strong>Socket.IO</strong> is the library we use; it wraps WebSockets and adds rooms (“everyone watching auction 42”) and automatic reconnects.</p></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Read the diagram and the slice list</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Open the grill chat from guide 17. Codex has finished and printed something like “The grilling session is complete and documented in GRILL.md.” Below that message there is a diagram and a numbered list of proposed slices. Click the diagram once to open it in a larger view. Read the boxes and the arrows slowly, left to right, and then read the slice list. <strong>Do not approve anything yet.</strong> This step is reading only.</p>
+    <p>Why this matters: Codex is about to write a lot of code based on this picture. If the picture has one extra box in it, you will get one extra piece of software you never asked for. It is far cheaper to question a diagram than to delete a service.</p>
+    <div class="call concept"><b class="t">📘 Concept: Mermaid diagram</b><p><strong>Mermaid</strong> is a way of drawing diagrams with plain text. Instead of dragging shapes in a drawing tool, you write lines like <code>Browser --&gt; API --&gt; Database</code> and a renderer turns them into boxes and arrows. Codex likes Mermaid because it can write the text itself, and the Codex app renders it as a picture for you. The important part for you: every box is a <strong>component</strong> (a browser, a server, a database) and every arrow is a <strong>message or call</strong> between two components. If you can follow the arrows, you understand the design.</p></div>
+    <div class="call concept"><b class="t">📘 Concept: Redis backplane</b><p>Imagine we later run <strong>two copies</strong> of our API server to handle more users. Browser A is connected to server 1, Browser B to server 2. A bid arrives at server 1. Server 1 can tell Browser A, but it has no idea Browser B exists. A <strong>backplane</strong> fixes this: every server publishes its events to one shared place, and every server listens to that place. We use <strong>Redis</strong> for it, a very fast in-memory data store that also offers <strong>Pub/Sub</strong> (publish/subscribe): one side publishes a message on a channel, every subscriber gets it instantly. So server 1 publishes “auction 42 changed” to Redis, server 2 hears it, and Browser B gets the update. With one server you would not strictly need this, but we build it in now so the design is ready for more than one.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A diagram with emoji service labels similar to: Bidder and Auction Watcher (🌐 browsers) → <strong>POST bid</strong> → ⚡ Fastify API → 🐘 PostgreSQL. After the database commit, an <code>auction:changed</code> event goes to 🔌 Socket.IO, which uses 🔴 Redis Pub/Sub as its <strong>backplane</strong>, then a WebSocket notification reaches both browsers and each browser <strong>refetches</strong> the auction (asks the API for the latest data).</p>
+      <p>Two slices are proposed, similar to:</p>
+      <ol><li><strong>Live auction detail updates</strong>: Redis-backed Socket.IO, WebSocket-only clients, post-commit notifications, coalesced refetching, focused tests, two-window browser review.</li>
+        <li><strong>Reconnect convergence and lifecycle hardening</strong>: automatic refetch after reconnect, silent background-refresh recovery, Part 4 config and docs.</li></ol>
+      <p>And a closing line like: “Please confirm these two slices. Once confirmed, I'll implement and verify Slice 1 only, then stop for your browser review.”</p></div>
+    <p>Some words in Slice 1 that I want you to understand before you approve it:</p>
+    <ul>
+      <li><strong>WebSocket-only clients</strong>: Socket.IO normally starts with an older fallback technique (repeated HTTP requests) and then upgrades to a WebSocket. We tell it to use WebSockets directly. Fewer moving parts, easier to test.</li>
+      <li><strong>Post-commit notifications</strong>: the server sends “auction changed” only <em>after</em> the database has saved the bid. If we sent it before, a browser could refetch and still see the old price. Order matters.</li>
+      <li><strong>Coalesced refetching</strong>: if five events arrive in one second, the page should fetch the auction once, not five times. “Coalesce” means merge many into one.</li>
+    </ul>
+    <div class="call tip"><b class="t">💡 Tip</b><p>A question I get asked a lot: do I limit the grill to 8–10 questions on real projects too? No. That limit in our AGENTS.md exists only to keep this course moving. On real work I let the grill run, and when it crosses roughly 50 questions I say “can we wrap this up?” or “this doesn't matter, cut this.” You control the depth, not the tool.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Ask what “Auction Watcher” is</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>In my run, one box in the diagram worried me: “Auction Watcher”. It sat next to “Bidder” as if it were a separate thing. Was Codex planning to build a <em>second program</em> that watches auctions? That would be a whole new service to run, deploy and debug. Before approving, I asked. This is exactly how you catch an agent adding complexity you never requested. If your diagram has a different unclear box, ask the same kind of question about that box instead, using the same shape: “is X a logical idea, or a real separate service?”</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Grill chat · same thread</span><button class="cbtn" data-target="s2c0">Copy</button></div><pre id="s2c0">is Auction Watcher represented here as a logical separation, or is it physically meant to be a separate service?</pre></div>
+    <p>Notice the wording. “Logical separation” means “just a role or a label in the picture”. “Physically a separate service” means “a separate process with its own port and its own code”. Giving Codex both options makes it answer precisely instead of guessing what you are worried about.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to: “It's a logical role, not a separate service. ‘Bidder’ and ‘Auction Watcher’ are two browser windows running the same React/Vite frontend; one submits a bid while both receive updates. I'll relabel the diagram to make that explicit before implementation.” That is the answer we want: two windows of the same website, no new service.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Make this a habit. Every time a diagram shows a box you did not ask for, ask “is this a new service?” before you say go. Agents love adding infrastructure. Your job is to keep the design as small as it can be.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Approve Slice 1</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Now send the approval. The prompt is short on purpose: Codex already has the full design in GRILL.md and in this chat, so all it needs is a clear yes and a clear scope. “Go for slice 1” tells it to build the first slice <strong>only</strong> and then stop, which is what it offered to do.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Grill chat · same thread</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">the implementation looks great, go for slice 1</pre></div>
+    <p>Then wait. This is a long run. You will see Codex work through roughly these stages, in order: install the <code>socket.io</code> packages and the Redis adapter with npm; start a Redis container through Docker; edit the server code (a new <code>realtime.ts</code> file and changes in <code>app.ts</code>); edit the web code (a new <code>liveAuction.ts</code> file and the auction detail page); write tests; run the test suite and the TypeScript typecheck; and finally open a headless browser, load the same auction in two pages, bid in one and confirm the other updates.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A long run that ends with “Slice 1 is complete and verified. I stopped before Slice 2.” and a list of key changes similar to:</p>
+      <ul><li>Redis-backed Socket.IO auction rooms in <code>realtime.ts</code></li>
+        <li>Post-commit <code>auction:changed</code> events in <code>app.ts</code></li>
+        <li>WebSocket-only detail-page subscriptions and coalesced refreshes in <code>liveAuction.ts</code></li>
+        <li>Part 4 isolated on API <code>3104</code>, web <code>5104</code>, database <code>auction_part_4</code></li>
+        <li>Design and verification recorded in <code>GRILL.md</code></li></ul>
+      <p>The “isolated on” line matters: Part 4 has its own port numbers and its own database name, so it never collides with Parts 1–3 if you run them side by side.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>I never build <strong>Slice 2</strong> in this course. The reference copy's <code>GRILL.md</code> still marks it “proposed”. You can skip it too; the app works without it. If you want extra practice later, say “go for slice 2” after step 10 and review the result the same way.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>This is a big build run, often 10–20 minutes, and one of the more expensive steps on your API key. Do not interrupt it unless it is clearly going wrong. If you want to save money, this is not the step to switch to a smaller model; a weak model makes more mistakes in exactly this kind of multi-file change.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Only if Codex stopped: type “continue”</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>In my run I had to quit Codex in the middle of the slice. When I reopened the app and the same chat, I sent one word and Codex picked up where it had left off. Do this step <strong>only</strong> if your run was interrupted: you quit the app, your Mac went to sleep, or the run stopped with no final summary. If step 3 ended cleanly with “Slice 1 is complete and verified”, skip to step 5.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Only if the run was interrupted</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">continue</pre></div>
+    <p>Why this works: the chat history is Codex's memory. On “continue” it re-reads the last messages and the files on disk, works out what is already done and what is not, and resumes the same slice. You do not need to repeat the plan.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex re-reads where it was and keeps going with the same slice, ending with the same “Slice 1 is complete and verified” summary. One quirk: after a restart the “Edited N files” card may list <strong>fewer</strong> files than were really changed, because the card only counts changes made in the current run. The earlier work is still on disk. Step 6 shows you how to see the full picture with Git.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>“Continue” is for interruptions, not for bad runs. If a run is clearly heading the wrong way, I stop it and restart from a good point instead of continuing. The next step shows the clean way to do that.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Know “Branch in new chat”</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>My tip for when Codex does something you don't like. Do <strong>not</strong> argue in the same thread (“no, you did it wrong, redo it”). Every wrong turn stays in the chat's context, and the model keeps getting pulled back towards it. Instead, go back to the last message <strong>before</strong> things went wrong and branch from there, so the bad part never existed in the new thread:</p>
+    <ol>
+      <li>Scroll up and hover over the last good Codex message. Small icons appear under it: copy, thumbs up, thumbs down and a <strong>branch arrow</strong>. Hover over the arrow and the tooltip says “Branch in new chat”.</li>
+      <li>Click it. A box titled “Fork chat from here” appears with two choices: <strong>Fork in this workspace</strong> (same folder, same files) or <strong>Fork in a new worktree</strong> (a separate Git copy of the folder, useful when you want to try two approaches side by side). I usually pick the first.</li>
+      <li>In the new chat, say how you want it done <em>and</em> what you do not want it to do. Be specific: “use the existing bids table, do not add a new service”.</li>
+    </ol>
+    <p>Nothing to send right now. Just find the icon on any message so you know where it is when you need it under pressure.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The “Fork chat from here” box with the two options. Press <strong>Esc</strong> to close it without forking.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If your Codex version has no branch icon, the fallback is: start a <strong>New chat</strong>, paste a three-line summary of the decisions so far, add your correction, and continue there. The idea is the same: a clean context with no wrong turn in it.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Review the code changes</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>This slice adds new architecture to the project, a second data store and a push channel, so I read the diff. I do not read every line of every slice, but I always read the first slice that introduces a new technology. Click <strong>Review</strong> on the “Edited N files” card, or open the review panel from the icon at the top right of the Codex window. A side panel opens with one entry per changed file. Look specifically at:</p>
+    <ul>
+      <li>the server test that checks <code>auction:changed</code> is published <strong>only after a successful bid</strong>. A rejected bid (too low, or from the seller) must not trigger an event.</li>
+      <li><code>tests/realtime-bid.spec.ts</code>, the browser test. It waits for a <code>websocket</code> connection to be established and then opens two pages on the same auction.</li>
+      <li><code>web/src/liveAuction.ts</code>, the browser side. Find <code>io(..., { transports: ['websocket'] })</code>, which is the “WebSocket-only” decision from the slice list, and the <code>auction:changed</code> handler, which is the code that runs when the server pushes an event.</li>
+      <li><code>GRILL.md</code>: Slice 1 now says <strong>Status: implemented and verified</strong>. The design document and the code moved together.</li>
+    </ul>
+    <div class="call concept"><b class="t">📘 Concept: reading a diff</b><p>A <strong>diff</strong> shows only what changed between two versions of a file. Lines with a <strong>red</strong> background (and a minus sign) were removed; lines with a <strong>green</strong> background (and a plus sign) were added; unchanged lines around them are shown in grey for context. You do not need to understand every line. Ask three questions per file: Is this file one I expected to change? Does anything get deleted that should not be? Does the new code match what the slice promised? If the answer to all three is yes, move on.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A side panel with green and red diff lines per file. In Codex's summary, the Mermaid diagram has been relabelled (that was the promise from step 2): it now shows <strong>Browser A · submits bid</strong> and <strong>Browser B · watches auction</strong> as two browsers, not two services.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Prefer VS Code? Run <code>code ~/codex-course/workshop</code> in Terminal and click the <strong>Source Control</strong> icon in the left bar (the one with three connected dots). It lists every changed file since your last commit, which is the full picture even if the Codex card lost count after a restart.</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Try it yourself in two Chrome windows</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Codex ended its summary with browser review steps: run <code>npm start</code> in Part 4, open the same auction in two windows, bid as a non-seller in one, and watch both update. The built-in browser preview is not available with an API-key sign-in, so we do it by hand in Chrome. First start the servers:</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · leave it running</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">cd ~/codex-course/workshop/part-4-realtime-socketio-redis
+npm install
+npm start</pre></div>
+    <p>Line by line:</p>
+    <ul>
+      <li><code>cd …/part-4-realtime-socketio-redis</code> moves into the Part 4 folder. Each part is its own small project with its own <code>package.json</code>.</li>
+      <li><code>npm install</code> downloads the packages this part depends on, including the new <code>socket.io</code> and Redis adapter packages Codex added. The first run takes a minute.</li>
+      <li><code>npm start</code> runs the start script: it brings up the Postgres and Redis containers, runs the database migrations for <code>auction_part_4</code>, then starts the API on port 3104 and the web app on port 5104. Leave this Terminal window open; closing it stops the servers.</li>
+    </ul>
+    <p>Now the manual test:</p>
+    <ol>
+      <li>Open the web URL Codex told you. In my run it was <a href="http://localhost:5104" target="_blank" rel="noopener">http://localhost:5104</a>. Click any auction to open its detail page.</li>
+      <li>Copy the address from the address bar. Press <strong>Cmd+N</strong> to open a <strong>second Chrome window</strong> (a window, not a tab, so you can see both at once) and paste the address there. Each new window gets its own random demo user. If both windows show the same user, or one of them is the seller of this auction, use the user switcher in the page footer to change it.</li>
+      <li>Arrange the two windows side by side.</li>
+      <li>In one window, type the minimum bid shown and place it.</li>
+      <li>Look at the <em>other</em> window. Do not touch it.</li>
+    </ol>
+    <div class="call concept"><b class="t">📘 Concept: page reload vs live update</b><p>A <strong>page reload</strong> (pressing refresh, or code calling <code>location.reload()</code>) throws the whole page away and asks the server for everything again: the HTML, the scripts, the data. You see a white flash, scroll position is lost, and every reload is a full round of requests. A <strong>live update</strong> keeps the page as it is and changes only the numbers that changed, because the server pushed a tiny “something changed” message and the page fetched just the auction data. For the user it feels instant and smooth. For the server it is far less work. From now on, a reload on the auction page is a <strong>bug</strong>, not a feature. Keep that in mind for step 8.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Terminal shows the Postgres and Redis containers as healthy, the migrations running, then <code>[server]</code> and <code>[web]</code> log lines. In the browser, the bid appears <strong>in both windows within about a second</strong>, with no reload and no flash: current price, highest bidder, bid count, minimum next bid and the bid history all change in the window you did not touch. That is the fan-out working end to end.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If the second window does not change: open Docker Desktop and check that a <strong>redis</strong> container is running (the root <code>docker-compose.yml</code> maps it to <code>localhost:56379</code>). If Redis is down, the backplane is down, and no events get through. If Redis is fine, ask Codex in the same chat “the second window is not updating, what's wrong?” and let it debug.</p><p>When you are done, press <strong>Ctrl+C</strong> in Terminal to stop the servers. The Redis and Postgres containers keep running in Docker, which is fine and saves start-up time later.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>Run the bidding war</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>My rule since Part 3: it isn't verified until bidding wars. Two windows and one bid is a demo. Four users bidding against each other under a countdown is a test. First make sure your <code>npm start</code> from step 7 is <strong>stopped</strong> (Ctrl+C in Terminal), because the test starts its own servers on the same ports and will fail if they are already taken. Then send the prompt. The silly wording is mine, keep it; Codex knows from Part 3 exactly what “bidding wars” means in this project.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Grill chat · same thread</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">well you know what I&#x27;ma say (or maybe not...) TIME FOR BIDDING WARSS!!!!!!!</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: headed Playwright test</b><p><strong>Playwright</strong> is a tool that drives a real browser from code: open this page, type here, click there, wait for this text. Normally it runs <strong>headless</strong>, with no visible window, which is fast and good for automated checks. A <strong>headed</strong> run opens real browser windows so a human can watch. Our bidding-war test is deliberately headed: it opens four windows, logs in four different users, fires bids on a timer and leaves the windows open at the end. The computer checks the final prices; <em>you</em> check what it looks and feels like. That second check is the one that catches layout problems and unwanted reloads, which no assertion in the code would notice.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex runs the headed Playwright test <code>tests/bidding-war.spec.ts</code>. <strong>Four Edge windows</strong> open in a 2×2 grid: <strong>SELLER · AVERY</strong>, <strong>BIDDER 1 · MAYA</strong>, <strong>BIDDER 2 · THEO</strong>, <strong>BIDDER 3 · PRIYA</strong>, each with a countdown badge (T-…s). Bids fly in, every window shows <strong>ENDED</strong> at the deadline, and Codex reports something like: “BIDDING WAR PROTECTED! Accepted bids: $101 → $102 → $106 → $107. All four tiled Edge windows are open and will remain open for inspection.”</p>
+      <p>Now watch closely, because in my run two things were wrong even though the test passed. First, the bids did show up live, <strong>but the pages also refreshed</strong>, a visible flash on every bid. Second, the layout wasted space: a big search bar at the top pushed the price and the bid form below the visible area, so in a quarter-screen window you could not see what mattered without scrolling. Look for both in your windows. You fix them in the next two steps.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>No Edge? The test's Playwright project is set to Edge (<code>channel: 'msedge'</code>). Either install Microsoft Edge, or tell Codex: “run the headed bidding war in Google Chrome instead”. The root AGENTS.md allows Chrome or Edge, so Codex will change the channel without complaint.</p></div>
+  </div></div>
+
+<div class="step" id="s9"><div class="sh"><div class="num">9</div><div class="st"><h3>Take a screenshot of the four windows</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Leave the four Edge windows open exactly as they are. Press <strong>Cmd+Shift+3</strong> to capture the whole screen. A small thumbnail appears at the bottom-right corner of your screen for a few seconds, and the image is also saved to your Desktop. Bring Codex to the front and drag the thumbnail (or the file from your Desktop) into the Codex message box. You can also click the <strong>+</strong> button in the message box and pick the image file.</p>
+    <p>Why a screenshot: a layout problem is hard to describe in words (“there is too much space above the price and the form is cut off at the bottom in a half-height window…”). A picture says it in one glance, and Codex can read images. For anything visual, this is the fastest way to be understood.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A small image thumbnail sits above your text in the Codex message box. Do not send yet; step 10 adds the text.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Want to capture only part of the screen? <strong>Cmd+Shift+4</strong> gives you a crosshair to drag a rectangle. For this step the full screen is better, because Codex needs to see all four windows together to understand the 2×2 layout.</p></div>
+  </div></div>
+
+<div class="step" id="s10"><div class="sh"><div class="num">10</div><div class="st"><h3>Send the layout and refresh fix</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>With the screenshot attached, send my two-point fix. Two separate points, numbered, so Codex treats them as two separate tasks and reports on each. “Above the fold” is a newspaper term: the part of a folded newspaper you see without unfolding it, so on a web page it means visible without scrolling. “Vestigial” means a leftover that no longer has a purpose, like the test helper that still reloads pages from the Part 3 days. My typo “vestigal” stays in the prompt, because it comes back in step 11.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Grill chat · with the screenshot attached</span><button class="cbtn" data-target="s10c0">Copy</button></div><pre id="s10c0">1. the tiled view is not ideal for the resolution. can you condense the page a little bit so that the demo looks better? see screenshot - lots of wasted space and stuff is not &quot;above the fold&quot;
+2. we noticed page refreshes - those should not be there in these tests anymore. vestigal!</pre></div>
+    <p>Point 2 is the important one for a backend engineer. The reloads were not a bug in the app; they came from the <em>test</em>. In Part 3 the test had to reload each window to see new bids, because there were no live updates then. Codex copied that test into Part 4 and the reload helper came along. With real-time updates in place, the helper is now hiding the very thing we built. Removing it proves the live updates work on their own.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Similar to: “You're right on both counts. The screenshot shows the search bar consuming nearly an entire viewport row, and the test still calls its old <code>syncAuction</code> helper, which reloads every live window…” Codex then compacts the page layout, removes the reload helper from the test, and reruns the headed war. This time the four windows are <strong>compact</strong>, the price and bid form are visible without scrolling, bids arrive <strong>without any reload</strong> (no flash), and the final report is again similar to “$101 → $102 → $106 → $107”, with the windows left open for you.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Codex may run the war twice: once headless to check its fix, once headed to leave the final windows open for you. That is normal. If it only ran headless, say “run it headed and leave the windows open”.</p></div>
+  </div></div>
+
+<div class="step" id="s11"><div class="sh"><div class="num">11</div><div class="st"><h3>Optional: ask a side question in a side chat</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>While Codex was working on the fix, I started doubting my spelling. I did not want to add noise to the main thread, so I used a <strong>side chat</strong>. Select the word <strong>vestigal</strong> in your sent message (click and drag over it). A <strong>Side chat</strong> panel opens on the right with a label “1 selection”. The panel has its own message box. Type there:</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into the side chat</span><span class="where">Side chat panel · not the main thread</span><button class="cbtn" data-target="s11c0">Copy</button></div><pre id="s11c0">did i spell it right</pre></div>
+    <p>Why this matters: everything you type in the main thread becomes part of its context and costs tokens on every later turn. A side chat is a throwaway: you get your answer, the main thread never sees it.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>“Almost—it's spelled vestigial.” The panel also notes that side chats are temporary and disappear when you close the app. The main chat keeps working in the background the whole time.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If your Codex version has no side chat, skip this step. It is only a convenience for quick questions that have nothing to do with the task at hand.</p></div>
+  </div></div>
+
+<div class="step" id="s12"><div class="sh"><div class="num">12</div><div class="st"><h3>Commit Part 4</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Part 4 is done: Slice 1 plus the layout and test fixes. Save it as a commit now, before Part 5 copies from it. If you forget, Part 5's copy still works, but your Git history will show Part 4 and Part 5 changes mixed in one commit, which makes reviewing much harder.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="s12c0">Copy</button></div><pre id="s12c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Part 4: real-time bid updates&quot;</pre></div>
+    <p>What the three parts do: <code>cd ~/codex-course/workshop</code> goes to the root of your practice copy (the commit must happen at the root, not inside Part 4). <code>git add -A</code> stages every added, changed and deleted file. <code>git commit -m "…"</code> saves that snapshot with a message. The <code>&amp;&amp;</code> between them means “only run the next command if the previous one succeeded”.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A commit summary listing new files such as <code>part-4-realtime-socketio-redis/server/src/realtime.ts</code>, <code>web/src/liveAuction.ts</code> and <code>tests/realtime-bid.spec.ts</code>, plus the changed <code>GRILL.md</code>. If it says “nothing to commit”, you already committed, which is fine.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p>Slice 1 refuses to work, or you want to skip ahead? Replace your Part 4 with the finished reference version. The reference folder is the <strong>end state of the whole part</strong>: Slice 1 plus the layout and test fixes; Slice 2 was never built there either. After copying, run it with <code>npm install &amp;&amp; npm start</code> inside the Part 4 folder and open http://localhost:5104 to confirm it works.</p>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · catch up: Part 4</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-4-realtime-socketio-redis &amp;&amp; cp -R ../reference/part-4-realtime-socketio-redis ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 4 from reference&quot;</pre></div>
+  <p>What it does: deletes your Part 4 folder (<code>rm -rf</code>), copies the reference Part 4 in its place (<code>cp -R</code>, where <code>-R</code> means copy the folder and everything inside it), and commits the result so your history records the catch-up.</p>
+  <p>Other common problems: if <code>npm start</code> fails immediately, Docker Desktop is probably not running. If the API complains that port 3104 is in use, a previous run is still alive; press Ctrl+C in that Terminal or quit it. If the bidding war cannot open Edge, see the tip in step 8.</p></div>
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li><strong>Review the diagram before saying go.</strong> One question, “is this a separate service?”, is how you stop an agent from building more than you asked for.</li>
+  <li><strong>Real-time means push, not pull.</strong> The server saves the bid, then fans out one <code>auction:changed</code> event over WebSockets to every page watching that auction; the pages refetch. Redis is the backplane that lets several servers share those events.</li>
+  <li><strong>Recover cleanly:</strong> “continue” resumes after a restart. <strong>Branch in new chat</strong> from the last good message beats arguing in a thread that has already gone wrong.</li>
+  <li><strong>It isn't verified until bidding wars.</strong> The headed, four-window run caught two things the unit tests passed over: leftover page reloads from the old test helper and a cramped layout.</li>
+  <li><strong>A screenshot is a prompt.</strong> For anything visual, attach a picture and write two numbered points. Codex fixes both and reruns the test.</li>
+  <li>Read the diff whenever a slice adds a new technology. You now know where Socket.IO lives on the server (<code>realtime.ts</code>) and in the browser (<code>liveAuction.ts</code>).</li>
+</ul></div>
+<div class="nav"><a href="17. Socket.io &amp; Redis.html"><span>← Previous guide</span>17. Socket.io &amp; Redis</a><a class="r" href="19. Finding a Concurrency Defect.html"><span>Next guide →</span>19. Finding a Concurrency Defect</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>

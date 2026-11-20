@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>24. Reviewing the Pull Request – Codex for Backend Engineering · Future with Shivank</title><style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1c1d1f;--muted:#5d6166;--line:#e4e2dc;--accent:#c8102e;--accent-soft:#fbe9ec;
+--code-bg:#16181b;--code-ink:#e9eaec;--ok:#1d7a46;--ok-bg:#e8f5ee;--tip:#8a5a00;--tip-bg:#fdf3dd;--warn:#a3261b;--warn-bg:#fdecea;
+--set-bg:#eef2f8;--set-ink:#24426b;--chip:#efeeea;--con-bg:#eef6f3;--con-ink:#164a3a;--con-line:#1d7a46}
+@media (prefers-color-scheme: dark){:root{--bg:#121315;--card:#1b1d20;--ink:#e8e8e6;--muted:#a3a6aa;--line:#2c2f33;--accent:#ff5a6e;--accent-soft:#3a1d22;
+--code-bg:#0b0c0d;--code-ink:#e9eaec;--ok:#5fd394;--ok-bg:#15291e;--tip:#f2c35b;--tip-bg:#2c2412;--warn:#ff8a7d;--warn-bg:#331815;
+--set-bg:#18233a;--set-ink:#a9c4ef;--chip:#26292d;--con-bg:#132a22;--con-ink:#bfe6d3;--con-line:#5fd394}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}code{font:0.9em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--chip);padding:1px 5px;border-radius:4px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 80px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.top a{color:var(--muted);text-decoration:none}.top a:hover{color:var(--accent)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 10px}
+.lede{color:var(--muted);margin:0 0 14px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}.pill{font-size:13px;background:var(--chip);border-radius:999px;padding:4px 11px;color:var(--muted)}
+.progress{height:6px;background:var(--chip);border-radius:9px;margin-top:18px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:13px;color:var(--muted);margin-top:6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.box h2{font-size:18px;margin:0 0 8px}.box ul,.box ol{margin:6px 0 0;padding-left:22px}.box p{margin:6px 0}
+.settings{background:var(--set-bg);color:var(--set-ink);border-radius:12px;padding:12px 16px;margin:12px 0}
+.settings-h{font-weight:700;font-size:14px;margin-bottom:6px}.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:6px 18px}
+.set span{display:block;font-size:12px;opacity:.8}.set b{font-weight:600;font-size:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;scroll-margin-top:12px}
+.step.done{opacity:.62}.step.done .num{background:var(--ok);}
+.sh{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px;margin-top:1px}
+.st{flex:1;min-width:0}.st h3{margin:2px 0 2px;font-size:19px;line-height:1.35}
+.vt{display:inline-block;font-size:12px;color:var(--muted);background:var(--chip);border-radius:6px;padding:1px 7px;margin-right:6px}
+.chk{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;margin-top:5px}
+.chk input{width:18px;height:18px;accent-color:var(--ok);cursor:pointer}
+.body{margin-top:8px}.body p{margin:8px 0}.body ul,.body ol{margin:6px 0;padding-left:22px}
+.copy{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.copy-h{display:flex;align-items:center;gap:8px;background:var(--chip);padding:7px 10px 7px 12px;font-size:13px;font-weight:600}
+.copy-h .ic{width:20px;text-align:center}.copy-h .lbl{flex:none}.copy-h .where{color:var(--muted);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.k-prompt .copy-h{background:var(--accent-soft)}.k-prompt .ic{color:var(--accent)}
+.cbtn{margin-left:auto;flex:none;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.cbtn.ok{background:var(--ok)}
+.copy pre{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.call{border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}.call b.t{display:block;font-size:13px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.call p{margin:4px 0}.call ul{margin:4px 0;padding-left:20px}
+.expect{background:var(--ok-bg);color:var(--ok)}.expect *{color:inherit}
+.tip{background:var(--tip-bg);color:var(--tip)}.tip *{color:inherit}
+.warn{background:var(--warn-bg);color:var(--warn)}.warn *{color:inherit}
+.concept{background:var(--con-bg);color:var(--con-ink);border-left:4px solid var(--con-line)}.concept *{color:inherit}.concept code{background:rgba(127,127,127,.15)}
+.expect code,.tip code,.warn code{background:rgba(127,127,127,.15)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.nav a{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a span{display:block;font-size:12px;color:var(--muted);font-weight:400}.nav a.r{text-align:right}.nav a:hover{border-color:var(--accent)}
+.idx a{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.idx a:last-child{border-bottom:0}.idx a:hover{background:var(--chip)}
+.idx .row{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--chip);color:var(--muted);flex:none;align-self:center}
+.tag.go{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.idx{padding:0;overflow:hidden}
+@media (max-width:600px){h1{font-size:24px}.hero{padding:20px}.step{padding:16px}.sh{flex-wrap:wrap}.chk{order:3;margin-left:44px}}
+@media print{.cbtn,.chk,.progress,.ptext{display:none}.step{break-inside:avoid}}
+</style></head>
+<body data-key="24. Reviewing the Pull Request"><div class="wrap">
+<div class="top"><a href="index.html">← All guides</a><span>Codex for Backend Engineering · Future with Shivank</span></div>
+<div class="hero"><div class="eyebrow">Hands-on guide</div><h1>24. Reviewing the Pull Request</h1>
+  <p class="lede">Review the Drizzle pull request your goal opened, catch the test it skipped, pay for a won auction through Mock Stripe with your own hands, and start Part 7's Slice 2. This guide is about trusting an agent's work the right way: verify, then accept.</p>
+  <div class="meta"><span class="pill">Part 7 · slice 1 → 2</span><span class="pill">≈ 30–45 min hands-on</span><span class="pill">GitHub PR + local /review</span></div>
+  <div class="progress"><i></i></div><div class="ptext"></div></div>
+
+<div class="box"><h2>What you'll do</h2><ul>
+  <li>Read the goal's pull request on GitHub like a reviewer: summary, files changed, commits.</li>
+  <li>Ask Codex whether it really ran the Bidding Wars test, and make it run it for real.</li>
+  <li>Run Part 7's bidding war with the browsers left open, then pay as the winner with the 4242 test card.</li>
+  <li>Start Slice 2, and find out why Codex skipped the test (a gap in <code>AGENTS.md</code>, not a Codex failure).</li>
+</ul></div>
+
+<div class="box"><h2>Before you start</h2><ul>
+  <li>Finished guide 23: Codex has finished <strong>Slice 1</strong> in the <strong>Define winner checkout flow</strong> chat and listed browser steps for you to try.</li>
+  <li>Your Drizzle goal from guides 22–23 says <strong>Goal achieved</strong> in the <strong>Pull GitHub issue 2</strong> chat. It took about 17 minutes in my run. Skipped the Drizzle goal? Review your small ADR PR (#3) in steps 1–2 instead, and skip steps 3, 4 and 8.</li>
+  <li><strong>API-key note:</strong> we review the PR ourselves on github.com. Codex's automatic GitHub PR reviews and the browser built into Codex are not available with an API-key sign-in. So we use Chrome (or Edge) for GitHub and the local <code>/review</code> command for an AI second opinion. You lose nothing that matters.</li>
+</ul>
+  <div class="call concept"><b class="t">📘 Concept: reviewing a PR, what to look for</b><p>A pull request review is not “read every line and nod”. A good reviewer asks four questions, in this order. <strong>Does the description match the ticket?</strong> Read the PR summary against the issue's acceptance criteria. <strong>Is the change where I expect it?</strong> Skim the list of changed files; surprises (a file that has nothing to do with the ticket) are a red flag. <strong>Does the code do what the description claims?</strong> Open the three or four most important files and read them properly. <strong>Were the claims verified?</strong> “Tests pass” is a sentence in a text box until you see the tests run. With an AI author, the fourth question matters most, because agents are very good at writing confident summaries. That is the thread we pull on in this guide.</p></div>
+  <div class="settings"><div class="settings-h">⚙ Codex settings for this guide</div><div class="set-grid">
+    <div class="set"><span>Project / folder</span><b>workshop</b></div><div class="set"><span>Model</span><b>GPT-5.6 Sol</b></div><div class="set"><span>Reasoning</span><b>Medium</b></div><div class="set"><span>Approvals</span><b>Approve for me</b></div></div></div></div>
+
+<div class="step" id="s1"><div class="sh"><div class="num">1</div><div class="st"><h3>Open the pull request on GitHub</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>While you were working on Part 7, the goal pushed a branch called <code>issue-1-drizzle-refactor</code> to your GitHub repo and opened a PR from it. Let's look at it the way a teammate would see it. Paste the block into the Terminal app. Line by line:</p>
+    <ul>
+      <li><code>cd ~/codex-course/workshop</code>: into the workshop folder, so <code>gh</code> knows which repo you mean.</li>
+      <li><code>gh pr list</code> prints the open pull requests: number, title, branch.</li>
+      <li><code>gh pr view 4 --web</code> opens PR number 4 in your browser. Use the number <code>gh pr list</code> shows for the Drizzle PR; it was #4 in my run, because #1 and #2 are the issues and #3 is the ADR PR from guide 22.</li>
+    </ul>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder · change 4 to your PR number</span><button class="cbtn" data-target="s1c0">Copy</button></div><pre id="s1c0">cd ~/codex-course/workshop
+gh pr list
+gh pr view 4 --web</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p><code>gh pr list</code> shows two open PRs: <strong>Refactor Part 6 services to Drizzle</strong> (#4) and <strong>Document the ORM decision for Part 6</strong> (#3).</p><p>The PR page in your browser: at the top, “wants to merge 1 commit into <code>master</code> from <code>issue-1-drizzle-refactor</code>”. Below it, a description that starts with <strong>Closes #1</strong> (GitHub reads that phrase and will close issue #1 automatically if the PR is ever merged), then a <strong>Summary</strong>: a shared typed Drizzle schema, API, workers and tests moved to Drizzle, row locking and <code>SKIP LOCKED</code> kept (so the concurrency protection from guides 14 and 20 is still there), and the decision recorded in an ADR. Then a <strong>Validation</strong> list: server tests 21 passed, web tests 15 passed, typechecks passed. Keep that Validation list in mind; we come back to it in step 3.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Three tabs matter on a PR page: <strong>Conversation</strong> (the description and comments), <strong>Commits</strong> (each saved snapshot on the branch), and <strong>Files changed</strong> (the full diff). Reviewers live in the last one.</p></div>
+  </div></div>
+
+<div class="step" id="s2"><div class="sh"><div class="num">2</div><div class="st"><h3>Review the diff yourself</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Click the <strong>Files changed</strong> tab. You get a long page: each changed file is a block, removed lines are red with a minus, added lines are green with a plus. Don't try to read all of it. Skim the file list on the left, then open these three places and read them properly:</p>
+    <ul>
+      <li><code>part-6-async-close-rabbitmq/docs/adr/0002-use-drizzle-across-database-services.md</code>: the decision and the reasoning. Read this first, because it tells you what the rest of the diff is trying to achieve.</li>
+      <li><code>server/src/db/schema.ts</code>: the tables now defined in code with <code>pgTable(…)</code>. Each table from the SQL migrations (auctions, bids, users, …) becomes a TypeScript object listing its columns and their types. This file is what gives the ORM its type safety: every query is checked against it.</li>
+      <li>Tests and services: raw SQL strings such as <code>pool.query('DELETE FROM auctions …')</code> replaced by calls like <code>db.delete(auctions).where(like(…))</code> and <code>db.insert(auctions).values(…)</code>. Pick one service file and compare one red line with the green line that replaced it; you will see the SQL verb (DELETE, INSERT, SELECT) has become a function name.</li>
+    </ul>
+    <p>My point after skimming: it <em>looks</em> right. The description is tidy, the files are where I expect them, the tests are listed as passing. But did it actually work, in the sense of the app still running correctly with four users bidding at once? Nothing on this page proves that.</p>
+    <div class="call expect"><b class="t">✓ You should see</b><p>About 29 files changed, around +950 / −730 (your numbers will differ). Old SQL lines in red, Drizzle calls in green. At the very top of the file list, the new <code>schema.ts</code> and a new <code>drizzle.config.ts</code>, and in <code>package.json</code> the new dependency <code>drizzle-orm</code>.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>GitHub also shows a <strong>Copilot</strong> reviewer button on the PR. That is GitHub's own feature, not Codex. Codex's own GitHub PR reviews need a ChatGPT plan, so with an API key we use the local <code>/review</code> in step 10 instead.</p></div>
+  </div></div>
+
+<div class="step" id="s3"><div class="sh"><div class="num">3</div><div class="st"><h3>Ask whether it ran the bidding war</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Part 6's most important check is not <code>npm test</code>. It is the headed <strong>Bidding Wars</strong> scenario: four real browsers bidding on one auction at the same time, the test that proves the row locking works. The PR's Validation list did not mention it. So go to the <strong>Pull GitHub issue 2</strong> chat in Codex, scroll to the end of the goal's summary, and ask directly. Capitals and question marks are optional; a direct question is not.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Pull GitHub issue 2 chat</span><button class="cbtn" data-target="s3c0">Copy</button></div><pre id="s3c0">did you do the BIDDING WARS?????</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Before you send, look at how the summary ends: a commit hash, <strong>Goal usage: 331,965 tokens over approximately 17 minutes</strong> (yours will differ), a card <strong>Edited 30 files +822 −1,510</strong>, and <strong>Goal achieved in 16m 53s</strong>.</p><p>After you send, Codex admits, something like: “No—not the full headed Playwright Bidding Wars scenario… That was an omission; I shouldn't have implied the full scenario was verified.” Your Codex may answer differently. If it says it did run the scenario, and shows the command and output, skip the next step.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Why this matters: the summary said “tests passed” and that was true. It just was not the whole truth, because the most important test is not part of <code>npm test</code>. An honest “no” to a direct question is worth more than a confident summary. Ask the question every time.</p></div>
+  </div></div>
+
+<div class="step" id="s4"><div class="sh"><div class="num">4</div><div class="st"><h3>Make it run the test for real</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Same chat. Now we tell Codex to run the real scenario and to verify it by driving a browser. With an API key you don't have the browser built into Codex, so this prompt asks for Chrome or Edge through Playwright, <strong>headed</strong>, meaning the windows are visible so you can watch too.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Pull GitHub issue 2 chat</span><button class="cbtn" data-target="s4c0">Copy</button></div><pre id="s4c0">WELL DO IT PLEASE!!!!!! and please verify everything with browser use (use Chrome or Edge with Playwright, headed)</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Something like: “You're right. I'm running the actual Bidding Wars scenario now… If anything fails, I'll fix it and update PR #4.” Four browser windows open for Part 6 (port 5106, Part 6's port) inside the worktree, and the familiar bidding plays out.</p><p>In my run, the real run found a real bug: “Good catch from the real run: it exposed a migration-adoption defect…”. In plain words, the Drizzle version of the database setup tripped over rows that the old setup had already inserted. Codex fixes it and pushes a second commit to the PR. Leave this chat running and go on to step 5; we come back in step 8.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>This run reinstalls packages, runs the migrations and tests Part 6 inside the worktree. It takes a few minutes and more tokens. It is worth it: this is the step that turns “probably works” into “works”.</p></div>
+  </div></div>
+
+<div class="step" id="s5"><div class="sh"><div class="num">5</div><div class="st"><h3>Run Part 7's bidding war and keep the browsers open</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Switch to the <strong>Define winner checkout flow</strong> chat. The bidding war you saw in guide 23 closed its windows the moment the auction ended, so you never got to pay. Ask for a run that leaves them open. This is a normal chat message; Codex works out how to hold the windows.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Define winner checkout flow chat</span><button class="cbtn" data-target="s5c0">Copy</button></div><pre id="s5c0">can you do bidding wars but NOT close the browsers so I can complete checkout?</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: environment variable</b><p>An <strong>environment variable</strong> is a named setting handed to a program when it starts, from outside the code. Writing <code>BIDDING_WAR_HOLD_MS=3600000 npx playwright test …</code> sets the variable <code>BIDDING_WAR_HOLD_MS</code> to 3,600,000 milliseconds (one hour) for that one command only. Inside the test, the code reads that value and keeps the browser windows open for that long before closing them. Same test, different behaviour, no code change. Ports, database passwords and the mock's webhook secret are passed to our app the same way, through its <code>.env</code> file.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>“Yes. I'll run the headed Bidding War in Edge, tile the four user windows, and leave them open after the auction closes…” It runs <code>BIDDING_WAR_HOLD_MS=3600000 npx playwright test tests/bidding-war.spec.ts …</code>.</p><p>Four windows on <code>http://localhost:5107/items/bidding-war-gpu-…</code> (Codex picks the port; 5107 in my run). Bids climb to about $107 and the auction ends:</p><ul><li>Seller (Avery Chen): <strong>Your auction has closed</strong> … “Theo Brooks won with $107.”</li><li>Winner: <strong>Congratulations</strong> … “You won … with a bid of $107”, with buttons <strong>Dismiss</strong>, <strong>View auction</strong>, <strong>Complete purchase</strong>.</li><li>The two losing bidders: a quieter “auction closed” message with no payment button, because only the winner may pay (round 1, Q4 in guide 23).</li></ul><p>Codex: “Done. Four tiled Edge windows are open and being held. Theo won at $107, so use the bottom-left window…”. The winner's name and window position will differ in your run; use what Codex tells you.</p></div>
+  </div></div>
+
+<div class="step" id="s6"><div class="sh"><div class="num">6</div><div class="st"><h3>Pay as the winner with the success card</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Go to the winner's window, the one Codex named. You have two ways in, and both work: click <strong>Complete purchase</strong> straight from the popup, or do what I did: click <strong>View auction</strong> first, scroll to the <strong>Winner checkout · Payment required</strong> panel on the auction page, and click <strong>Complete purchase</strong> there. The second route is the one a winner who dismissed the popup would take.</p>
+    <p>The browser is redirected to the Mock Stripe page. Fill in the card number below, any future expiry (I used <code>03/55</code>) and any 3-digit CVC (I used <code>333</code>), then click <strong>Pay $107.00</strong> (your amount is the winning bid).</p>
+    <div class="copy k-text"><div class="copy-h"><span class="ic">≡</span><span class="lbl">Success test card</span><span class="where">Card number field on the Mock Stripe page</span><button class="cbtn" data-target="s6c0">Copy</button></div><pre id="s6c0">4242 4242 4242 4242</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: paying for a won auction, end to end</b><p>Follow what happens between your click and the “Paid” badge, because every piece of Part 7 is in that chain. (1) You click <strong>Complete purchase</strong>; the web app calls our API. (2) The API checks you are the winner and the auction is closed, creates a <code>purchases</code> row in <code>pending</code> state (or reuses the open one), and asks Mock Stripe to create a Checkout Session for exactly the winning bid. (3) The API sends your browser to the mock's hosted page on port 7107. (4) You enter the card; the mock decides success or decline. (5) On success, the mock sends a <strong>signed webhook</strong> to our API; the API verifies the signature, records the event id, and flips the purchase from <code>pending</code> to <code>paid</code>, once. (6) The mock redirects your browser back to the auction page with <code>?checkout=success</code>, and the page asks our API for the real state and shows <strong>Paid</strong>. Note that step 6 only <em>displays</em> the state; step 5 is the only thing that <em>changes</em> it.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>The Mock Stripe page at <code>http://127.0.0.1:7107/checkout/cs_test_…</code> shows the item, <strong>$107.00</strong>, <strong>Winning Bid · USD</strong>, and a reminder of both test cards (the fix Codex made to the mock in guide 23). After paying you land back on <code>…/items/bidding-war-gpu-…?checkout=success&amp;session_id=cs_test_…</code>, and the panel reads <strong>WINNER CHECKOUT · Payment received · Your purchase is paid.</strong> Click <strong>Complete purchase</strong> again if the button is still there: nothing happens, because the purchase is already paid.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Want to see what Slice 1 protects against? Before paying, use the decline card <code>4000 0000 0000 0002</code>: you get an error on the mock page and can retry. Or click <strong>Cancel</strong>: you return to the auction, still <strong>Payment required</strong>, and can click <strong>Complete purchase</strong> again, which reuses the same session (round 2, Q16).</p></div>
+  </div></div>
+
+<div class="step" id="s7"><div class="sh"><div class="num">7</div><div class="st"><h3>Save Slice 1 and start Slice 2</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Slice 1 works, and you have seen it work with your own eyes. Save it in Git before moving on; I do this at the end of every slice, so that if Slice 2 goes wrong I can always return to a known-good point. The command moves into the workshop folder, stages everything Codex created for Part 7 and commits it with a clear message. Run it in the Terminal app.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · workshop folder</span><button class="cbtn" data-target="s7c0">Copy</button></div><pre id="s7c0">cd ~/codex-course/workshop &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Part 7 slice 1: winner checkout&quot;</pre></div>
+    <p>Then tell Codex to start Slice 2, the seller's side: the seller sees <strong>Awaiting payment</strong> or <strong>Paid</strong>, and the system recovers if the mock restarts and forgets an unpaid session. Codex already has the full plan for this in <code>GRILL.md</code>, so a short message is enough.</p>
+    <div class="copy k-prompt"><div class="copy-h"><span class="ic">✦</span><span class="lbl">Paste into Codex</span><span class="where">Define winner checkout flow chat</span><button class="cbtn" data-target="s7c1">Copy</button></div><pre id="s7c1">start on slice 2 please</pre></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>A commit summary in Terminal. In Codex, something like: “Starting Slice 2 now. I'll add role-limited seller payment status, automatic seller convergence after payment, and recovery when an unpaid Mock Stripe Session disappears after a service restart…” and a counter like <code>Step 1 / 6 · 7 files changed</code>. “Convergence” means the seller's page catches up to the paid state on its own, without a manual refresh. Let it run. When it finishes it gives you browser steps for the seller's <strong>Awaiting payment</strong> / <strong>Paid</strong> view; try them.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Codex may leave the four held browser windows open for up to an hour. Close them yourself when you are done, or ask Codex to close them.</p></div>
+  </div></div>
+
+<div class="step" id="s8"><div class="sh"><div class="num">8</div><div class="st"><h3>See the fix land on the PR</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Back in the <strong>Pull GitHub issue 2</strong> chat, wait for the final answer about the real bidding-war run. Click <strong>Review</strong> on the file card to see the fix; it is one line. Then open the PR again with the command below (same as step 1, without the list) and click the <strong>Commits</strong> tab.</p>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · change 4 to your PR number</span><button class="cbtn" data-target="s8c0">Copy</button></div><pre id="s8c0">cd ~/codex-course/workshop &amp;&amp; gh pr view 4 --web</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: migration, seed and ON CONFLICT DO NOTHING</b><p>A <strong>migration</strong> is a numbered SQL script that changes the database structure: create a table, add a column. They run in order, once each, so every copy of the database ends up with the same shape. A <strong>seed</strong> is the small set of starter rows (our demo users, for example) that a migration inserts so the app is usable on first run. The bug: when the Drizzle version re-ran the setup against a database that already had those seed rows, the <code>INSERT</code> failed because the rows existed. The fix, <code>ON CONFLICT DO NOTHING</code>, tells PostgreSQL “if a row with this key already exists, skip it quietly instead of erroring”. That makes the seed <strong>idempotent</strong>: safe to run any number of times. You met idempotency with webhooks in guide 23; here it is again, at the database level.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex, something like: “YES — the actual Bidding Wars scenario is now done.” The full headed four-user scenario passed, accepted bids <code>$101 → $102 → $103 → $106 → $107</code>, exactly one winner, stale bids rejected. The diff panel shows <code>server/migrations/001_marketplace.sql</code> gaining <code>ON CONFLICT DO NOTHING</code>.</p><p>On GitHub, the <strong>Commits</strong> tab now lists two commits: <strong>refactor: use Drizzle across Part 6 services</strong> and <strong>fix: make legacy seed adoption idempotent</strong>. The PR header now says “wants to merge 2 commits”.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>Don't merge this PR. I leave it open so the repo stays the way the course built it; Parts 7 and 8 keep using plain <code>pg</code>. In your own projects, this is the moment you would click <strong>Merge</strong>: the claims are verified, the fix is in, the reviewer is satisfied.</p></div>
+  </div></div>
+
+<div class="step" id="s9"><div class="sh"><div class="num">9</div><div class="st"><h3>Find out why Codex skipped the test</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Was Codex careless? Let's check Part 6's <code>package.json</code> and <code>AGENTS.md</code>. The bidding war has its own npm script, but the checklist in <code>AGENTS.md</code> and the plain <code>npm test</code> command never mention it. Look for yourself. Line by line:</p>
+    <ul>
+      <li><code>cd ~/codex-course/workshop/part-6-async-close-rabbitmq</code>: into Part 6.</li>
+      <li><code>grep -n "bidding-war" package.json</code> searches <code>package.json</code> for the text <code>bidding-war</code> and prints every matching line with its line number (<code>-n</code>).</li>
+      <li><code>grep -n -A2 "Stable root commands" AGENTS.md</code> finds the heading <code>Stable root commands</code> in <code>AGENTS.md</code> and prints it plus the 2 lines after it (<code>-A2</code>), which is the list of commands Codex is told to rely on.</li>
+    </ul>
+    <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app · Part 6 folder</span><button class="cbtn" data-target="s9c0">Copy</button></div><pre id="s9c0">cd ~/codex-course/workshop/part-6-async-close-rabbitmq
+grep -n &quot;bidding-war&quot; package.json
+grep -n -A2 &quot;Stable root commands&quot; AGENTS.md</pre></div>
+    <div class="call concept"><b class="t">📘 Concept: AGENTS.md as the agent's checklist</b><p><code>AGENTS.md</code> is the instruction file Codex reads before it touches a folder: how the project is laid out, which commands are safe, what “done” means. An agent treats it as the definition of its job. If the file says “run <code>npm test</code> before claiming done”, the agent runs <code>npm test</code>, and nothing else, and reports honestly that tests passed. The lesson is not “agents cheat”. It is “agents do exactly what the checklist says”, which puts the responsibility for the checklist on you.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>One line from <code>package.json</code> with <code>"test:bidding-war": "playwright test tests/bidding-war.spec.ts …"</code>, meaning the scenario exists as a separate script. Then the <code>AGENTS.md</code> list: <code>npm run db:up</code>, <code>npm run db:down</code>, <code>npm run db:reset</code>, <code>npm run migrate</code>, <code>npm run dev</code>, <code>npm start</code>, and <code>npm test</code>. No bidding war anywhere. Codex ran exactly what the instructions told it to run.</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>The fix is a one-liner in <code>AGENTS.md</code>, for example “Before claiming done, also run <code>npm run test:bidding-war</code>.” I call this user error, and I mean mine, not Codex's: the agent is only as good as the checks you give it. If you want, add that line to Part 6's and Part 7's <code>AGENTS.md</code> now.</p></div>
+  </div></div>
+
+<div class="step" id="s10"><div class="sh"><div class="num">10</div><div class="st"><h3>Optional: review the branch with local /review</h3></div><label class="chk"><input type="checkbox"> Done</label></div>
+  <div class="body">
+    <p>Codex cannot review PRs on GitHub with an API key, but it can review the branch on your Mac, which is the same code. In the <strong>Pull GitHub issue 2</strong> chat (it lives in the worktree, on the <code>issue-1-drizzle-refactor</code> branch), type <code>/review</code> in the message box. A small menu appears with review options; pick the one that reviews <strong>against a base branch</strong>, then choose <code>master</code> (or <code>main</code>). That tells Codex “compare this branch with master and review only the difference”, which is exactly what the PR contains.</p>
+    <div class="call concept"><b class="t">📘 Concept: review findings and priorities</b><p>A code review tool lists <strong>findings</strong>, not opinions: each one names a file and line, says what is wrong and why it matters. Findings are ranked. A <strong>P1</strong> is a blocker: a bug, a security hole, data loss; the PR must not merge until it is fixed. A <strong>P2</strong> should be fixed but could ship; and lower levels are style or suggestions. When you read a review, deal with the P1s first and don't let a long list of small items hide one serious one.</p></div>
+    <div class="call expect"><b class="t">✓ You should see</b><p>Codex reads the whole diff and lists findings, most important first, each with the file and line and a short explanation. Or it says it found no blocking issues. Compare its list with what you noticed yourself in step 2: did it flag anything about the migration, the schema or the tests that you missed?</p></div>
+    <div class="call tip"><b class="t">💡 Tip</b><p>If your <code>/review</code> menu looks different, pick whichever option compares this branch with <code>master</code>.</p></div>
+    <div class="call warn"><b class="t">⚠ Heads up</b><p>A review of a 30-file refactor reads a lot of code, so it costs tokens. Skip it if you are watching spend; you have already done the most important review yourself in steps 2–4.</p></div>
+  </div></div>
+
+<div class="box"><h2>Stuck or got a very different result?</h2>
+  <p><strong>Part 7 not working, or Slice 1 never got to checkout?</strong> Catch up to the finished Part 7 from the reference copy. The reference folder is the <strong>end state of the whole part</strong> (Slice 1 and Slice 2 done), and this also restores the finished <code>stripe-service/</code>. The first line replaces your Part 7 and mock with the reference copies and commits; the second installs packages and starts everything. Then play the winner yourself: open http://localhost:5107 (the URL <code>npm start</code> prints). Pick a user, click <strong>Sell</strong> and post an auction that closes in about two minutes. Switch to another user and bid. When it closes, the winner gets <strong>Complete purchase</strong>, and the steps from step 6 apply.</p>
+  <p><strong>Skipped the Drizzle goal?</strong> Nothing to catch up. Steps 3, 4 and 8 only apply to that PR; do steps 1–2 on your ADR PR (#3) and everything else as written.</p>
+  <div class="copy k-terminal"><div class="copy-h"><span class="ic">❯</span><span class="lbl">Run in Terminal</span><span class="where">Terminal app</span><button class="cbtn" data-target="stuck0">Copy</button></div><pre id="stuck0">cd ~/codex-course/workshop &amp;&amp; rm -rf part-7-winner-checkout stripe-service &amp;&amp; cp -R ../reference/part-7-winner-checkout ../reference/stripe-service ./ &amp;&amp; git add -A &amp;&amp; git commit -m &quot;Catch up: part 7 from reference&quot;
+cd part-7-winner-checkout &amp;&amp; npm install &amp;&amp; npm start</pre></div></div>
+
+<div class="box"><h2>Key takeaways</h2><ul>
+  <li>Review agent PRs like any teammate's: read the summary against the ticket, skim the file list, read the few files that matter, then check that the claims (tests, scenarios) actually happened.</li>
+  <li>Agents can over-claim without lying. A direct question (“did you do the BIDDING WARS?”) got an honest “no”, and the real run then found a real bug that the unit tests had missed.</li>
+  <li>Codex only runs the checks it knows about. List every important test command in <code>AGENTS.md</code>, especially the slow, headed, end-to-end ones.</li>
+  <li>Keep a human in the loop for the user-facing part. I paid for the item myself before moving to Slice 2, and that is how I knew Slice 1 was really done.</li>
+  <li>Idempotency showed up twice in two guides: webhooks that may arrive twice, and seeds that may run twice. Whenever something can happen more than once, make the second time harmless.</li>
+</ul></div>
+
+<div class="nav"><a href="23. Stripe Checkout.html"><span>← Previous guide</span>23. Stripe Checkout</a><a class="r" href="25. Observability.html"><span>Next guide →</span>25. Observability</a></div>
+</div>
+<script>
+function copyText(t){if(navigator.clipboard&&window.isSecureContext!==false){return navigator.clipboard.writeText(t).catch(()=>fb(t))}return Promise.resolve(fb(t))}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+document.querySelectorAll('.cbtn').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.target).innerText;copyText(t).then(()=>{b.textContent='Copied ✓';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},1600)})}));
+const KEY='codexguide:'+document.body.dataset.key;let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function upd(){const all=document.querySelectorAll('.step');let d=0;all.forEach(s=>{if(s.classList.contains('done'))d++});const p=document.querySelector('.progress i');if(p)p.style.width=(all.length?100*d/all.length:0)+'%';const pt=document.querySelector('.ptext');if(pt)pt.textContent=d+' of '+all.length+' steps done'}
+document.querySelectorAll('.step').forEach(s=>{const c=s.querySelector('input[type=checkbox]');if(state[s.id]){c.checked=true;s.classList.add('done')}c.addEventListener('change',()=>{s.classList.toggle('done',c.checked);state[s.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}upd()})});upd();
+</script></body></html>
