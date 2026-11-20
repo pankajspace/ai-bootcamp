@@ -1,9 +1,9 @@
 # AI Bootcamp Projects & Resources
 
-## AI Sessions GitHub Repo
+## AI Sessions GitHub Repo (online)
 1. [AI Sessions GitHub Repo](https://github.com/pulkit-scaler/weekend-sessions)
 
-## AI Infusion Notes (Each Note Covers a Specific Topic in the GitHub Repo)
+## AI Weekend Sessions Notes (online)
 1. [Your first AI agent](https://scaler-content.github.io/your-first-agent/)
 2. [Giving agents tools](https://scaler-content.github.io/giving-agents-tools/)
 3. [Agents that remember](https://scaler-content.github.io/Agents-that-remember/)
@@ -13,7 +13,7 @@
 7. [Evals, Observability and Governance](https://scaler-content.github.io/evals-observability-governance/)
 8. [Evals, Observability and Governance PPT](https://scaler2101.github.io/Section7.github.io/#/1/0)
 
-## AI Agents in Finance Projects
+## AI Agents in Finance Notes (online)
 1. [AI Agents in Finance](https://shrijankumar1-maker.github.io/finance-section-1/)
 2. [NPS Analyst in a Box](https://pulkit-scaler.github.io/finance-nps-project/)
 
