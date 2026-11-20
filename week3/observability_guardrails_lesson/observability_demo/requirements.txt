@@ -1,5 +1,0 @@
-openai>=2.0
-langsmith>=0.4
-langgraph>=1.0
-numpy
-python-dotenv
