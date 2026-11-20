@@ -328,7 +328,7 @@ figure.shot figcaption{background:#fff;color:var(--muted);font-size:13px;padding
 <main>
 <details class="mobile-toc"><summary>Contents</summary><a href="#what"><span class="n">1</span>What it teaches</a><a href="#run"><span class="n">2</span>How to run it</a><a href="#changes"><span class="n">3</span>What changed and why</a><a href="#router"><span class="n">A</span>langgraph_router.py</a><a href="#prompt"><span class="n">B</span>prompt_evals_inventory.py</a><a href="#rag"><span class="n">C</span>rag_evals_inventory.py</a><a href="#tools"><span class="n">D</span>tool_evals_inventory.py</a><a href="#review"><span class="n">E</span>annotator + judge_agreement</a><a href="#lecture"><span class="n">↔</span>Link to the lecture</a><a href="#limits"><span class="n">!</span>Known limits</a><a href="#exercises"><span class="n">✎</span>Exercises</a><a href="#gloss"><span class="n">★</span>Glossary</a><a href="#source"><span class="n">{}</span>Full source</a></details>
 <header class="hero">
-  <div class="kicker">By Shivank Agarwal · code explainer · component_evals folder (4 eval files + a review screen)</div>
+  <div class="kicker">By Shivank Agarwal · code explainer · 07-agent-evals/code folder (4 eval files + a review screen)</div>
   <h1>Component evals in code: score an inventory agent's router, prompt, search and tools, then check the judge against a human</h1>
   <p>One warehouse "reorder advisor", evaluated part by part. Each file builds a small test set with known good answers, runs the agent on it, scores every answer, and prints a report you can read at a glance. A review screen and a short script then check whether the LLM judge agrees with a person.</p>
   <div class="legend"><span>OpenAI gpt-6-luna</span><span>text-embedding-3-small</span><span>LangChain</span><span>LangGraph</span><span>pandas</span></div>
@@ -724,7 +724,7 @@ VERSION 2:
   Completeness  ████████████████████ 9/9 (100%)
   Overall       ███████████████████░ 26/27 (96%)
 
-Saved 18 judged answers to /home/learner/component_evals/prompt_eval_results.csv</pre></div>
+Saved 18 judged answers to /home/learner/07-agent-evals/code/prompt_eval_results.csv</pre></div>
   <div class="vbars" role="img" aria-label="Pass rates in the example run. Version 1: Accuracy 67%, Clarity 78%, Completeness 44%, Overall 63%. Version 2: Accuracy 100%, Clarity 89%, Completeness 100%, Overall 96%.">
     <h5>Pass rates in the example run</h5>
     <div class="legend2"><span><span class="sw" style="background:#2a78d6"></span>Version 1 prompt</span><span><span class="sw" style="background:#eb6834"></span>Version 2 prompt</span></div>
@@ -923,7 +923,7 @@ Config C: k=3, grounded           100%      100%      100%      100%      100%
 ------------------------------------------------------------------------------
 Best: Config C: k=3, grounded (100%)
 
-Saved 15 judged answers to /home/learner/component_evals/rag_eval_results.csv</pre></div>
+Saved 15 judged answers to /home/learner/07-agent-evals/code/rag_eval_results.csv</pre></div>
   <div class="vbars" role="img" aria-label="Example run. Config A: Recall@k 50%, overall 60%. Config B: Recall@k 90%, overall 93%. Config C: Recall@k 100%, overall 100%.">
     <h5>Retrieval vs final quality in the example run</h5>
     <div class="legend2"><span><span class="sw" style="background:#2a78d6"></span>Recall@k (passages found)</span><span><span class="sw" style="background:#eb6834"></span>Overall judge score</span></div>

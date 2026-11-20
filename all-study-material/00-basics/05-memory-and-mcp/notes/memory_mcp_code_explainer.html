@@ -311,7 +311,7 @@ section.slide h3{overflow-wrap:anywhere}
 <main>
 <details class="mobile-toc"><summary>Contents</summary><a href="#what"><span class="n">1</span>What it teaches</a><a href="#run"><span class="n">2</span>How to run it</a><a href="#changes"><span class="n">3</span>What changed and why</a><a href="#md1"><span class="n">A</span>memory_demo_1.py</a><a href="#md2"><span class="n">B</span>memory_demo_2.py</a><a href="#stm"><span class="n">C</span>short_term_memory.ipynb</a><a href="#fmcp"><span class="n">D</span>fastmcp_demo_v1.ipynb</a><a href="#lecture"><span class="n">↔</span>Link to the lectures</a><a href="#limits"><span class="n">!</span>Known limits</a><a href="#exercises"><span class="n">✎</span>Exercises</a><a href="#gloss"><span class="n">★</span>Glossary</a><a href="#source"><span class="n">{}</span>Full source</a></details>
 <header class="hero">
-  <div class="kicker">By Shivank Agarwal · code explainer · mcp_and_memory folder (2 Python files, 2 notebooks)</div>
+  <div class="kicker">By Shivank Agarwal · code explainer · 05-memory-and-mcp/code folder (2 Python files, 2 notebooks)</div>
   <h1>Memory and MCP in code: an agent that remembers its customers, a chat that manages its history, and tools served over MCP</h1>
   <p>Two Python files build a customer-service agent that uses semantic, episodic and procedural memory, then teach it to update and save what it learns. One notebook shows the four ways to keep a conversation's history under control. The other serves two real tools (time and weather) from an MCP server and lets the model use them.</p>
   <div class="legend"><span>OpenAI gpt-6-luna</span><span>LangChain</span><span>LangGraph</span><span>FastMCP</span><span>Open-Meteo (free, no key)</span></div>
@@ -853,7 +853,7 @@ Agent Nancy
     <span class="p">))</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">📝 RESPONSE:</span><span class="se">\n</span><span class="si">{</span><span class="n">result3</span><span class="p">[</span><span class="s1">'final_response'</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
-  <div class="outbox example standalone"><div class="outbar">Example output (what you would see; exact text and numbers vary)</div><pre>✅ Episodic memory written to /home/learner/mcp_and_memory/episodic_memory.json
+  <div class="outbox example standalone"><div class="outbar">Example output (what you would see; exact text and numbers vary)</div><pre>✅ Episodic memory written to /home/learner/05-memory-and-mcp/code/episodic_memory.json
 
 ============================================================
 TURN 1  — Normal query (detail_level = &#x27;detailed&#x27;)
@@ -885,7 +885,7 @@ TURN 2  — User requests preference change to &#x27;brief&#x27;
 🔄 Checking for PREFERENCE UPDATES...
    ✏️  Preference updated for user_123: {&#x27;detail_level&#x27;: &#x27;detailed&#x27;} → {&#x27;detail_level&#x27;: &#x27;brief&#x27;}
    📋 New preferences: {&#x27;language&#x27;: &#x27;English&#x27;, &#x27;detail_level&#x27;: &#x27;brief&#x27;}
-   💾 Episodic memory saved to /home/learner/mcp_and_memory/episodic_memory.json
+   💾 Episodic memory saved to /home/learner/05-memory-and-mcp/code/episodic_memory.json
 📦 Executing PROCEDURAL MEMORY...
 💭 Generating response using all memory types...
 
@@ -895,7 +895,7 @@ Got it, Alice: brief answers from now on. Shipping takes 3-5 business days.
 Best regards, Agent Nancy.
 
 🗂️  Stored preference after Turn 2: {&#x27;language&#x27;: &#x27;English&#x27;, &#x27;detail_level&#x27;: &#x27;brief&#x27;}
-📂 Open &#x27;/home/learner/mcp_and_memory/episodic_memory.json&#x27; to see the updated JSON on disk.
+📂 Open &#x27;/home/learner/05-memory-and-mcp/code/episodic_memory.json&#x27; to see the updated JSON on disk.
 
 ============================================================
 TURN 3  — Follow-up query, should now respect &#x27;brief&#x27; preference

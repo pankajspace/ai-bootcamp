@@ -116,4 +116,4 @@ uv run isort .
 | Ollama `ConnectionError` | The Ollama app isn't running. Start it, or run `ollama serve`. |
 | `model 'gemma3:270m' not found` | Run `ollama pull gemma3:270m`. |
 
-**Next:** [Section 2 — Your First Agent](../section-02-first-agent/README.md)
+**Next:** [Section 2 — Your First Agent](../02-ai-harness/README.md)
