@@ -1,0 +1,4 @@
+# Optional code formatters used in the course.
+# Install with:  pip install -r requirements.txt
+black>=25.1
+isort>=6.0
