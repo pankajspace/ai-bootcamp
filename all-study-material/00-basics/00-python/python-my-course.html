@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#0b0d10" />
     <title>Python My Course | TechToday</title>
     <meta name="description"
-        content="Fast-track Python essentials for everyday programming — variables, type hints, keywords, strings, operators, loops, lists, dictionaries, sorting, tuples, sets, unpacking &amp; destructuring, comprehensions, functions, async/await, OOP, error handling, modules &amp; imports, and virtual environments." />
+        content="Fast-track Python essentials for everyday programming — variables, type hints, keywords, strings, operators, loops, lists, dictionaries, sorting, tuples, sets, unpacking &amp; destructuring, comprehensions, functions, async/await, OOP, error handling, modules &amp; imports, virtual environments, decorators, generators, context managers &amp; file I/O, dataclasses &amp; Pydantic, regular expressions, environment variables &amp; logging, testing with pytest, and the standard library toolkit." />
     <link rel="icon" href="../../../logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="python-study.css" />
     <link rel="stylesheet" href="../../../site-header.css" />
@@ -42,12 +42,20 @@
                     <li><a href="#10-tuples-and-sets">Tuples &amp; Sets</a></li>
                     <li><a href="#11-sorting-in-python">Sorting in Python</a></li>
                     <li><a href="#12-unpacking-and-destructuring">Unpacking &amp; Destructuring</a></li>
-                    <li><a href="#13-list-comprehensions">List Comprehensions</a></li>
+                    <li><a href="#13-list-comprehensions">List, Dict &amp; Set Comprehensions</a></li>
                     <li><a href="#14-functions-and-arguments">Functions &amp; Arguments</a></li>
                     <li><a href="#15-async-and-await">Async / Await</a></li>
                     <li><a href="#16-object-oriented-programming">Object-Oriented Programming (OOP)</a></li>
                     <li><a href="#17-modules-and-imports">Modules &amp; Imports</a></li>
                     <li><a href="#18-virtual-environments">Virtual Environments</a></li>
+                    <li><a href="#19-decorators">Decorators</a></li>
+                    <li><a href="#20-generators-and-iterators">Generators &amp; Iterators</a></li>
+                    <li><a href="#21-context-managers-and-file-io">Context Managers &amp; File I/O</a></li>
+                    <li><a href="#22-dataclasses-typeddict-and-pydantic">Dataclasses, TypedDict &amp; Pydantic</a></li>
+                    <li><a href="#23-regular-expressions">Regular Expressions</a></li>
+                    <li><a href="#24-environment-variables-cli-and-logging">Environment Variables, CLI &amp; Logging</a></li>
+                    <li><a href="#25-testing-with-pytest">Testing with pytest</a></li>
+                    <li><a href="#26-standard-library-toolkit">Standard Library Toolkit</a></li>
                 </ol>
             </details>
         </nav>
@@ -57,11 +65,12 @@
                     title="Permanent link">#</a></h1>
             <p class="lede">The high-yield Python course reference: common everyday syntax, type hints, keywords, core
                 collections, functions, async/await concurrency, practical OOP solutions, error handling, modules &amp;
-                imports, and virtual environments.</p>
+                imports, virtual environments, decorators, generators, context managers, data models, regex,
+                configuration &amp; logging, testing, and the standard-library toolkit used in real projects.</p>
 
             <div class="course-toolbar">
                 <div class="course-toolbar-info">
-                    <span>18 Topics</span>
+                    <span>26 Topics</span>
                     <span class="dot">&bull;</span>
                     <span>Daily Essentials, Clean Examples &amp; Practical Questions</span>
                 </div>
@@ -295,6 +304,7 @@ print("Sum valid integers passed!")  # Sum valid integers passed!
                                         class="big-o o-great">list[str], dict[str, int]</code></li>
                                 <li><b>Union &amp; Optional (3.10+)</b> <code
                                         class="big-o o-good">str | None, int | float</code></li>
+                                <li><b>Generics &amp; Legacy Forms</b> <code class="big-o o-good">TypeVar, Optional[X], Iterable[T]</code></li>
                             </ul>
                             <p>Python is dynamically typed, but modern Python (PEP 484 and Python 3.9+) supports
                                 <strong>type hints</strong> (type annotations). Type hints do not change runtime
@@ -393,6 +403,51 @@ print(squared)  # [1, 4, 9]
 user = find_user(101)
 if user is not None:
     print(f"Found: {user['name']}")  # Found: Alice
+</code></pre>
+                            </div>
+                            <p>Type hints you will meet constantly in real codebases (and in older code written before Python 3.10):</p>
+                            <ol>
+                                <li><strong><code>from __future__ import annotations</code>:</strong> Placed at the top of a module, it postpones evaluation of all annotations, so <code>str | None</code> works on older Python versions and a class can reference itself in its own method signatures.</li>
+                                <li><strong>Legacy <code>typing</code> spellings:</strong> <code>Optional[str]</code> is <code>str | None</code>, <code>Union[int, str]</code> is <code>int | str</code>, and <code>List[str]</code> / <code>Dict[str, Any]</code> are <code>list[str]</code> / <code>dict[str, Any]</code>. Read them fluently, but prefer the modern forms in new code.</li>
+                                <li><strong><code>Any</code>:</strong> Opts a value out of type checking — handy for raw JSON (<code>dict[str, Any]</code>), but use it sparingly.</li>
+                                <li><strong><code>Iterable[T]</code> / <code>Iterator[T]</code>:</strong> Import from <code>collections.abc</code> to accept any iterable (lists, tuples, generators) instead of demanding a <code>list</code>.</li>
+                                <li><strong><code>TypeVar</code>:</strong> Links input and output types in generic functions: <code>def first(items: list[T]) -&gt; T</code>.</li>
+                                <li><strong><code>TypedDict</code> &amp; Pydantic:</strong> Describe dictionary shapes and validated models (see topic 22).</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">from __future__ import annotations
+
+from collections.abc import Iterable
+from typing import Any, Optional, TypeVar
+
+# Legacy spelling seen in older code (identical to: str | None)
+def find_city(code: str) -&gt; Optional[str]:
+    return {"BOM": "Mumbai"}.get(code)
+
+print(find_city("BOM"), find_city("XYZ"))  # Mumbai None
+
+# Accept any iterable, not just lists
+def total_tokens(counts: Iterable[int]) -&gt; int:
+    return sum(counts)
+
+print(total_tokens([120, 80]), total_tokens(n for n in (5, 5)))  # 200 10
+
+# TypeVar: the return type follows the argument type
+T = TypeVar("T")
+
+def first_or_default(items: list[T], default: T) -&gt; T:
+    return items[0] if items else default
+
+print(first_or_default(["gpt-4o", "llama3"], "none"))  # gpt-4o
+print(first_or_default([], 0))  # 0
+
+# Forward reference: a class can mention itself thanks to postponed annotations
+class Node:
+    def __init__(self, value: Any, next_node: Node | None = None):
+        self.value = value
+        self.next_node = next_node
+
+print(Node(1, Node(2)).next_node.value)  # 2
 </code></pre>
                             </div>
                             <ul class="card-grid">
@@ -674,6 +729,7 @@ print(f"Variables: {class_name}, {type_}")  # Variables: Mathematics, geometry
                                 </li>
                                 <li><b>Common Errors</b> <code class="big-o o-great">ValueError, KeyError</code></li>
                                 <li><b>Cleanup</b> <code class="big-o o-good">finally block always runs</code></li>
+                                <li><b>Custom &amp; Chained</b> <code class="big-o o-good">class AppError(Exception), raise ... from err</code></li>
                             </ul>
                             <p>Errors happen: an API returns bad text, a user types letters into a number field, or a
                                 file doesn't exist. Python uses <code>try / except</code> blocks so your program handles
@@ -731,6 +787,55 @@ def parse_percentage(val: str) -&gt; float:
 print(parse_percentage("85.5"))  # 85.5
 </code></pre>
                             </div>
+                            <p>Production code (agents, tools, APIs) relies on a few more error-handling patterns:</p>
+                            <ol>
+                                <li><strong><code>try / except / else / finally</code>:</strong> The <code>else</code> block runs only when no exception was raised, keeping the <code>try</code> block focused on the one risky line.</li>
+                                <li><strong>Custom exception classes:</strong> Subclass <code>Exception</code> to create a domain-specific hierarchy (<code>class AssessorError(Exception)</code>, <code>class LLMResponseError(AssessorError)</code>); catching the base class catches every subclass.</li>
+                                <li><strong><code>raise NewError(...) from err</code>:</strong> Chains exceptions: the original error is kept in <code>__cause__</code>, and the traceback shows both — essential when translating low-level errors into meaningful ones.</li>
+                                <li><strong>Bare <code>raise</code>:</strong> Inside <code>except</code>, re-raises the current exception unchanged after logging or cleanup.</li>
+                                <li><strong>Error boundaries:</strong> Tools called by an LLM agent should catch expected errors and return an error message (often JSON) instead of crashing the whole agent loop.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">import json
+
+# Custom exception hierarchy for a package
+class AssessorError(Exception):
+    """Base error for the assessor package."""
+
+class LLMResponseError(AssessorError):
+    def __init__(self, message: str, raw: str):
+        super().__init__(message)
+        self.raw = raw
+
+# try / except / else + exception chaining with `raise ... from`
+def parse_llm_json(raw: str) -&gt; dict:
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError as err:
+        raise LLMResponseError("Model returned invalid JSON", raw=raw) from err
+    else:  # runs only when no exception was raised
+        return data
+
+try:
+    parse_llm_json("{not valid")
+except AssessorError as err:  # the base class also catches subclasses
+    print(type(err).__name__, "|", err, "|", type(err.__cause__).__name__)
+    # LLMResponseError | Model returned invalid JSON | JSONDecodeError
+
+print(parse_llm_json('{"ok": true}'))  # {'ok': True}
+
+# Error boundary: a tool never crashes the agent loop
+def safe_tool(payload: str) -&gt; str:
+    try:
+        data = parse_llm_json(payload)
+        return json.dumps({"ok": True, "keys": sorted(data)})
+    except AssessorError as err:
+        return json.dumps({"ok": False, "error": str(err)})
+
+print(safe_tool('{"b": 1, "a": 2}'))  # {"ok": true, "keys": ["a", "b"]}
+print(safe_tool("oops"))              # {"ok": false, "error": "Model returned invalid JSON"}
+</code></pre>
+                            </div>
                             <ul class="card-grid">
                                 <li class="is-good"><b>Strength — Prevents Application Crashes:</b> Catching specific
                                     errors lets services log failures and return fallback responses without taking down
@@ -756,7 +861,7 @@ print(parse_percentage("85.5"))  # 85.5
                                         href="#4-everyday-error-handling-questions" title="Permanent link">#</a></h3>
                             </div>
                             <div class="part-header-right">
-                                <span class="part-counter">1</span>
+                                <span class="part-counter">2</span>
                                 <span class="part-arrow" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                                         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -786,6 +891,39 @@ print(safe_divide(10, 2))  # 5.0
 print(safe_divide(5, 0))   # None
 print(safe_divide(0, 5))   # 0.0
 print("Safe divide passed!")  # Safe divide passed!
+</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="worked">
+                                <b>Interview question</b>
+                                <p class="worked-q">Write <code>parse_port(value: str) -&gt; int</code> that raises a custom <code>ConfigError</code> when the value is not an integer (chained from the original <code>ValueError</code>) or is outside the range 1–65535.</p>
+                                <p>Define <code>class ConfigError(Exception)</code>. Convert with <code>int()</code> inside <code>try</code>, and in <code>except ValueError as err:</code> use <code>raise ConfigError(...) from err</code>. Check the range after a successful conversion.</p>
+                                <div class="code-tabs" data-label="Answer — Custom Exception with Chaining">
+                                    <div class="tab-pane" data-lang="python">
+                                        <pre><code data-lang="python">class ConfigError(Exception):
+    pass
+
+def parse_port(value: str) -&gt; int:
+    try:
+        port = int(value)
+    except ValueError as err:
+        raise ConfigError(f"Port must be an integer, got {value!r}") from err
+    if not 1 &lt;= port &lt;= 65535:
+        raise ConfigError(f"Port out of range: {port}")
+    return port
+
+# Test cases
+print(parse_port("8080"))  # 8080
+for bad in ["http", "70000"]:
+    try:
+        parse_port(bad)
+    except ConfigError as err:
+        cause = type(err.__cause__).__name__ if err.__cause__ else None
+        print(f"{err} | caused by: {cause}")
+# Port must be an integer, got 'http' | caused by: ValueError
+# Port out of range: 70000 | caused by: None
+print("Parse port passed!")  # Parse port passed!
 </code></pre>
                                     </div>
                                 </div>
@@ -841,6 +979,7 @@ print("Safe divide passed!")  # Safe divide passed!
                                         class="big-o o-great">.strip(), .split(), .join()</code></li>
                                 <li><b>Search &amp; Inspection</b> <code
                                         class="big-o o-good">.replace(), .startswith(), in</code></li>
+                                <li><b>Format Specifiers</b> <code class="big-o o-good">f"{x:,.2f} {r:.1%} {s:&lt;10}"</code></li>
                             </ul>
                             <p>Strings are one of the most commonly used data types in Python. Python strings are
                                 immutable (they cannot be changed in place; operations return a new string). Formatted
@@ -928,6 +1067,47 @@ if user_input is None:
 # Value equality vs identity
 status = "active"
 print(status == "active")  # True (always use == for string comparisons)
+</code></pre>
+                            </div>
+                            <p>The part after the colon in an f-string is a <strong>format specifier</strong>. These are the ones used most for reports, metrics tables, and logs:</p>
+                            <ol>
+                                <li><strong>Decimals:</strong> <code>{x:.2f}</code> fixed decimals, <code>{x:,.2f}</code> adds thousands separators, <code>{n:,}</code> for integers.</li>
+                                <li><strong>Percentages:</strong> <code>{ratio:.1%}</code> multiplies by 100 and appends <code>%</code> (<code>0.457</code> → <code>45.7%</code>).</li>
+                                <li><strong>Signs &amp; zero padding:</strong> <code>{delta:+.1f}</code> always shows the sign; <code>{n:03d}</code> pads with zeros (<code>007</code>).</li>
+                                <li><strong>Alignment:</strong> <code>{s:&lt;10}</code> left, <code>{s:&gt;10}</code> right, <code>{s:^10}</code> centre within 10 characters — ideal for aligned console tables.</li>
+                                <li><strong>Debugging:</strong> <code>{value!r}</code> uses <code>repr()</code> (shows quotes), and <code>{value=}</code> prints the expression and its value (Python 3.8+).</li>
+                                <li><strong><code>textwrap.dedent</code>:</strong> Removes common indentation from triple-quoted strings, keeping multi-line prompts readable inside functions.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">import textwrap
+
+price, ratio, big, delta = 1234.5678, 0.4567, 12_500_000, 3.27
+print(f"{price:.2f}")   # 1234.57
+print(f"{price:,.2f}")  # 1,234.57
+print(f"{big:,}")       # 12,500,000
+print(f"{ratio:.1%}")   # 45.7%
+print(f"{delta:+.1f}")  # +3.3
+print(f"{7:03d}")       # 007
+print(f"[{'id':&lt;6}|{'score':&gt;7}|{'ok':^4}]")  # [id    |  score| ok ]
+
+model = "gpt-4o"
+print(f"{model!r}")  # 'gpt-4o'
+print(f"{model=}")   # model='gpt-4o'
+
+# Aligned metrics table
+for name, score in [("faithfulness", 0.912), ("relevance", 0.78)]:
+    print(f"{name:&lt;14}{score:&gt;7.1%}")
+# faithfulness    91.2%
+# relevance       78.0%
+
+# Multi-line prompt without leading indentation
+def build_prompt(question: str) -&gt; str:
+    return textwrap.dedent(f"""\
+        You are a helpful assistant.
+        Question: {question}""")
+
+print(build_prompt("What is RAG?").splitlines())
+# ['You are a helpful assistant.', 'Question: What is RAG?']
 </code></pre>
                             </div>
                             <ul class="card-grid">
@@ -1384,6 +1564,7 @@ print("FizzBuzz passed!")  # FizzBuzz passed!
                                 <li><b>Counting Loop</b> <code class="big-o o-great">for i in range(n):</code></li>
                                 <li><b>Index &amp; Item</b> <code class="big-o o-great">enumerate(seq)</code></li>
                                 <li><b>Loop Control</b> <code class="big-o o-good">break, continue</code></li>
+                                <li><b>Loop Else</b> <code class="big-o o-good">for ... else: (runs if no break)</code></li>
                             </ul>
                             <p>Python loops iterate directly over items in a collection, rather than keeping track of an
                                 incrementing index variable. When you need the index alongside the item,
@@ -1509,6 +1690,32 @@ while count &gt; 0:
 # Countdown: 3
 # Countdown: 2
 # Countdown: 1
+</code></pre>
+                            </div>
+                            <p>Two more loop tools that appear in search and retry logic:</p>
+                            <ol>
+                                <li><strong><code>for ... else</code>:</strong> The <code>else</code> block runs only when the loop finishes without hitting <code>break</code> — a clean way to express "searched everything and found nothing".</li>
+                                <li><strong><code>reversed(seq)</code>:</strong> Iterates a sequence backwards without copying it (e.g. newest messages first).</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python"># for ... else: else runs only if the loop did NOT break
+for attempt in range(1, 4):
+    if attempt == 2:
+        print(f"Succeeded on attempt {attempt}")
+        break
+else:
+    print("All attempts failed")
+# Succeeded on attempt 2
+
+for ticker in ["AAPL", "MSFT"]:
+    if ticker == "TSLA":
+        break
+else:
+    print("TSLA not found")  # TSLA not found
+
+# reversed(): newest chat messages first
+messages = ["hi", "how are you?", "fine"]
+print([m for m in reversed(messages)])  # ['fine', 'how are you?', 'hi']
 </code></pre>
                             </div>
                             <ul class="card-grid">
@@ -1771,6 +1978,7 @@ print("Deduplicate passed!")  # Deduplicate passed!
                                 <li><b>Key Lookup</b> <code class="big-o o-great">Instant O(1) hash access</code></li>
                                 <li><b>Safe Retrieval</b> <code class="big-o o-great">d.get(key, default)</code></li>
                                 <li><b>Iteration</b> <code class="big-o o-good">for k, v in d.items():</code></li>
+                                <li><b>Specialised Dicts</b> <code class="big-o o-good">Counter, defaultdict(list), d1 | d2</code></li>
                             </ul>
                             <p>A <code>dict</code> (dictionary) stores data in key-value pairs. Looking up a value by
                                 its key is instant (O(1)) regardless of whether the dictionary has 10 items or 1,000,000
@@ -1820,6 +2028,42 @@ del user["level"]
 print("level" in user)  # False
 </code></pre>
                             </div>
+                            <p>The <code>collections</code> module and modern dict syntax remove most hand-written counting and grouping code:</p>
+                            <ol>
+                                <li><strong><code>Counter(iterable)</code>:</strong> Counts hashable items; <code>.most_common(n)</code> returns the top <code>n</code> pairs, and missing keys count as <code>0</code> instead of raising <code>KeyError</code>.</li>
+                                <li><strong><code>defaultdict(list)</code>:</strong> Creates a default value the first time a key is touched — perfect for grouping (<code>groups[key].append(item)</code>) without <code>if key not in groups</code> checks.</li>
+                                <li><strong><code>d.setdefault(key, default)</code>:</strong> Returns the existing value or inserts and returns the default.</li>
+                                <li><strong>Dict comprehension:</strong> <code>{k: v for k, v in d.items() if cond}</code> builds or filters dictionaries in one line.</li>
+                                <li><strong>Merge operators (3.9+):</strong> <code>defaults | overrides</code> returns a merged dict (right side wins); <code>config |= overrides</code> updates in place.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">from collections import Counter, defaultdict
+
+# Counting with Counter
+labels = ["bug", "billing", "bug", "feature", "bug"]
+counts = Counter(labels)
+print(counts.most_common(2))  # [('bug', 3), ('billing', 1)]
+print(counts["unknown"])      # 0 (missing keys count as zero)
+
+# Grouping with defaultdict(list)
+tickets = [("acme", "T1"), ("globex", "T2"), ("acme", "T3")]
+by_customer: defaultdict[str, list[str]] = defaultdict(list)
+for customer, ticket_id in tickets:
+    by_customer[customer].append(ticket_id)
+print(dict(by_customer))  # {'acme': ['T1', 'T3'], 'globex': ['T2']}
+
+# setdefault: get-or-insert in one call
+cache: dict[str, list[str]] = {}
+cache.setdefault("acme", []).append("T4")
+print(cache)  # {'acme': ['T4']}
+
+# Dict comprehension and the merge operator
+prices = {"apple": 1.2, "banana": 0.5, "mango": 2.0}
+print({k: v for k, v in prices.items() if v &gt;= 1})  # {'apple': 1.2, 'mango': 2.0}
+defaults = {"temperature": 0.2, "max_tokens": 512}
+print(defaults | {"temperature": 0.7})  # {'temperature': 0.7, 'max_tokens': 512}
+</code></pre>
+                            </div>
                             <ul class="card-grid">
                                 <li class="is-good"><b>Strength — Instant Key Lookups:</b> Dictionaries are the fastest
                                     and most natural way to structure associated data and configuration mappings.</li>
@@ -1844,7 +2088,7 @@ print("level" in user)  # False
                                         title="Permanent link">#</a></h3>
                             </div>
                             <div class="part-header-right">
-                                <span class="part-counter">1</span>
+                                <span class="part-counter">2</span>
                                 <span class="part-arrow" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                                         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -1874,6 +2118,31 @@ words = ["apple", "banana", "apple", "orange", "banana", "apple"]
 result = count_word_frequencies(words)
 print(result)  # {'apple': 3, 'banana': 2, 'orange': 1}
 print("Word frequency passed!")  # Word frequency passed!
+</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="worked">
+                                <b>Interview question</b>
+                                <p class="worked-q">Given evaluation records as <code>(stage, latency_ms)</code> tuples, return <code>(stage, count, average_ms)</code> for each stage, ordered by count (highest first). Average to one decimal place.</p>
+                                <p>Use <code>Counter</code> to count stages (its <code>.most_common()</code> gives the ordering) and a <code>defaultdict(int)</code> to accumulate total latency per stage, then compute averages in a list comprehension.</p>
+                                <div class="code-tabs" data-label="Answer — Group &amp; Aggregate with collections">
+                                    <div class="tab-pane" data-lang="python">
+                                        <pre><code data-lang="python">from collections import Counter, defaultdict
+
+def summarize_latency(records: list[tuple[str, int]]) -&gt; list[tuple[str, int, float]]:
+    counts = Counter(stage for stage, _ in records)
+    totals: defaultdict[str, int] = defaultdict(int)
+    for stage, ms in records:
+        totals[stage] += ms
+    return [(stage, n, round(totals[stage] / n, 1)) for stage, n in counts.most_common()]
+
+# Test cases
+records = [("retrieval", 120), ("llm", 900), ("retrieval", 80), ("tool", 300), ("llm", 1100), ("retrieval", 100)]
+print(summarize_latency(records))
+# [('retrieval', 3, 100.0), ('llm', 2, 1000.0), ('tool', 1, 300.0)]
+print(summarize_latency([]))  # []
+print("Summarize latency passed!")  # Summarize latency passed!
 </code></pre>
                                     </div>
                                 </div>
@@ -2555,7 +2824,7 @@ print("Extract successful totals passed!")  # Extract successful totals passed!
                     aria-controls="content-13-list-comprehensions">
                     <div class="topic-header-main">
                         <span class="topic-badge">13</span>
-                        <h2 id="13-list-comprehensions" class="topic-title">List Comprehensions<a class="headerlink"
+                        <h2 id="13-list-comprehensions" class="topic-title">List, Dict &amp; Set Comprehensions<a class="headerlink"
                                 href="#13-list-comprehensions" title="Permanent link">#</a></h2>
                     </div>
                     <div class="topic-header-meta">
@@ -2591,6 +2860,7 @@ print("Extract successful totals passed!")  # Extract successful totals passed!
                                 <li><b>Filtering</b> <code class="big-o o-great">[expr for x in items if cond]</code>
                                 </li>
                                 <li><b>Readability</b> <code class="big-o o-good">Replaces 4-line loops</code></li>
+                                <li><b>Dict &amp; Set Variants</b> <code class="big-o o-good">{k: v for ...}, {x for ...}</code></li>
                             </ul>
                             <p>A list comprehension provides a concise, readable way to create a new list by
                                 transforming or filtering elements from an existing collection. It replaces verbose
@@ -2623,6 +2893,33 @@ print(clean_tags)  # ['python', 'fastapi', 'sql']
 # Example 4: Inline ternary conditional inside comprehension
 labels = ["Even" if n % 2 == 0 else "Odd" for n in numbers]
 print(labels)  # ['Odd', 'Even', 'Odd', 'Even', 'Odd']
+</code></pre>
+                            </div>
+                            <p>The same syntax builds dictionaries and sets, flattens nested lists, and (without brackets) produces lazy generator expressions:</p>
+                            <ol>
+                                <li><strong>Dict comprehension:</strong> <code>{key_expr: value_expr for item in items}</code> — build lookups such as <code>{u["id"]: u for u in users}</code>.</li>
+                                <li><strong>Set comprehension:</strong> <code>{expr for item in items}</code> — unique values, e.g. distinct domains or sources.</li>
+                                <li><strong>Flattening:</strong> <code>[x for row in rows for x in row]</code> — read the <code>for</code> clauses left to right, exactly like nested loops.</li>
+                                <li><strong>Generator expression:</strong> <code>sum(len(d) for d in docs)</code> — no brackets, no intermediate list (see topic 20).</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python"># Dict comprehension: build a lookup table
+users = [{"id": 1, "name": "Ana"}, {"id": 2, "name": "Raj"}]
+by_id = {u["id"]: u["name"] for u in users}
+print(by_id)  # {1: 'Ana', 2: 'Raj'}
+
+# Set comprehension: unique values
+emails = ["A@x.com", "a@x.com", "b@y.com"]
+domains = {e.split("@")[1].lower() for e in emails}
+print(sorted(domains))  # ['x.com', 'y.com']
+
+# Flattening nested lists (outer loop first, inner loop second)
+batches = [["d1", "d2"], ["d3"], []]
+flat = [doc for batch in batches for doc in batch]
+print(flat)  # ['d1', 'd2', 'd3']
+
+# Generator expression: no brackets, no intermediate list
+print(sum(len(doc) for doc in flat))  # 6
 </code></pre>
                             </div>
                             <ul class="card-grid">
@@ -2737,6 +3034,7 @@ print("Filter CSV files passed!")  # Filter CSV files passed!
                                 <li><b>Variable Positional</b> <code class="big-o o-great">*args (tuple)</code></li>
                                 <li><b>Variable Keyword</b> <code class="big-o o-great">**kwargs (dict)</code></li>
                                 <li><b>Unpacking</b> <code class="big-o o-good">fn(*items, **opts)</code></li>
+                                <li><b>Keyword-Only &amp; Closures</b> <code class="big-o o-good">def fn(q, *, top_k=5), nonlocal</code></li>
                             </ul>
                             <p>Functions let you package code into reusable, modular blocks. Functions accept arguments,
                                 execute logic, and return values using the <code>return</code> statement (or
@@ -2842,6 +3140,59 @@ def log_call(fn, *args, **kwargs):
     return fn(*args, **kwargs)
 
 print(log_call(calculate_total, 200.0, 0.10))  # 220.0
+</code></pre>
+                            </div>
+                            <p>A few more function features used heavily in library and agent code:</p>
+                            <ol>
+                                <li><strong>Keyword-only parameters:</strong> Everything after a bare <code>*</code> must be passed by name (<code>def search(query, *, top_k=5)</code>), so call sites stay readable and argument order can change safely.</li>
+                                <li><strong><code>lambda</code>:</strong> A one-expression anonymous function for <code>key=</code> arguments, callbacks, and small dispatch tables: <code>max(docs, key=lambda d: d["score"])</code>.</li>
+                                <li><strong>Closures &amp; <code>nonlocal</code>:</strong> An inner function remembers variables from its enclosing function; <code>nonlocal</code> lets it rebind them (counters, factories, decorators).</li>
+                                <li><strong><code>global</code>:</strong> Rebinds a module-level variable from inside a function. Prefer passing values or using a class — global mutable state is hard to test.</li>
+                                <li><strong>Mutable default gotcha:</strong> Defaults are evaluated once, at definition time: <code>def add(item, items=[])</code> shares one list across calls. Use <code>items: list | None = None</code> and create the list inside.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python"># Keyword-only parameters: everything after * must be named
+def search(query: str, *, top_k: int = 5, rerank: bool = False) -&gt; str:
+    return f"{query!r} top_k={top_k} rerank={rerank}"
+
+print(search("refund policy", top_k=3))  # 'refund policy' top_k=3 rerank=False
+try:
+    search("refund policy", 3)
+except TypeError as err:
+    print(err)  # search() takes 1 positional argument but 2 were given
+
+# lambda for key= arguments and dispatch tables
+docs = [{"id": "a", "score": 0.4}, {"id": "b", "score": 0.9}]
+print(max(docs, key=lambda d: d["score"])["id"])  # b
+ops = {"add": lambda a, b: a + b, "mul": lambda a, b: a * b}
+print(ops["mul"](6, 7))  # 42
+
+# Closures: the inner function remembers `count`
+def make_counter():
+    count = 0
+    def increment() -&gt; int:
+        nonlocal count  # rebind the enclosing variable instead of creating a local one
+        count += 1
+        return count
+    return increment
+
+next_id = make_counter()
+print(next_id(), next_id(), next_id())  # 1 2 3
+
+# Mutable default gotcha and the fix
+def add_bad(item: str, items: list[str] = []) -&gt; list[str]:
+    items.append(item)
+    return items
+
+def add_good(item: str, items: list[str] | None = None) -&gt; list[str]:
+    items = [] if items is None else items
+    items.append(item)
+    return items
+
+add_bad("a")
+print(add_bad("b"))  # ['a', 'b'] (the same list is shared between calls!)
+add_good("a")
+print(add_good("b"))  # ['b']
 </code></pre>
                             </div>
                             <ul class="card-grid">
@@ -2988,6 +3339,7 @@ print("Build query URL passed!")  # Build query URL passed!
                                 <li><b>Concurrent Execution</b> <code class="big-o o-good">asyncio.gather(*tasks)</code>
                                 </li>
                                 <li><b>Event Loop Runner</b> <code class="big-o o-good">asyncio.run(main())</code></li>
+                                <li><b>Async Context &amp; Streams</b> <code class="big-o o-good">async with, async for, Semaphore</code></li>
                             </ul>
                             <p>Modern Python supports asynchronous programming via <code>async</code> and
                                 <code>await</code> and the built-in <code>asyncio</code> library. Unlike multi-threading
@@ -3073,6 +3425,67 @@ async def main():
 # Entry point to execute top-level coroutine
 if __name__ == "__main__":
     asyncio.run(main())
+</code></pre>
+                            </div>
+                            <p>Async SDKs (MCP clients, A2A agents, <code>httpx.AsyncClient</code>, streaming LLM responses) add a few more tools:</p>
+                            <ol>
+                                <li><strong><code>async with</code>:</strong> Async context managers (<code>__aenter__</code> / <code>__aexit__</code>) open and close network sessions, e.g. <code>async with ClientSession(read, write) as session:</code>.</li>
+                                <li><strong><code>async for</code>:</strong> Consumes async iterators and async generators, such as streamed LLM tokens or agent events.</li>
+                                <li><strong><code>asyncio.Semaphore(n)</code>:</strong> Limits how many coroutines run a section at once — respect API rate limits while still using <code>gather()</code>.</li>
+                                <li><strong><code>asyncio.wait_for(coro, timeout)</code>:</strong> Cancels a slow operation and raises <code>TimeoutError</code>.</li>
+                                <li><strong><code>await asyncio.to_thread(fn, *args)</code>:</strong> Runs blocking synchronous code in a worker thread without freezing the event loop.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">import asyncio
+import time
+
+class FakeSession:  # stands in for an MCP ClientSession or httpx.AsyncClient
+    async def __aenter__(self):
+        print("session opened")
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        print("session closed")
+
+    async def call_tool(self, name: str) -&gt; str:
+        await asyncio.sleep(0.01)
+        return f"{name}: ok"
+
+async def stream_tokens(text: str):  # an async generator
+    for token in text.split():
+        await asyncio.sleep(0)
+        yield token
+
+async def limited_fetch(sem: asyncio.Semaphore, i: int) -&gt; int:
+    async with sem:  # at most 2 coroutines inside this block at once
+        await asyncio.sleep(0.01)
+        return i * i
+
+def blocking_io() -&gt; str:
+    time.sleep(0.02)  # legacy synchronous call (e.g. requests.get)
+    return "legacy done"
+
+async def main():
+    async with FakeSession() as session:
+        print(await session.call_tool("search"))
+    # session opened
+    # search: ok
+    # session closed
+
+    tokens = [tok async for tok in stream_tokens("hello from the agent")]
+    print(tokens)  # ['hello', 'from', 'the', 'agent']
+
+    sem = asyncio.Semaphore(2)
+    print(await asyncio.gather(*(limited_fetch(sem, i) for i in range(5))))  # [0, 1, 4, 9, 16]
+
+    try:
+        await asyncio.wait_for(asyncio.sleep(1), timeout=0.05)
+    except TimeoutError:
+        print("timed out")  # timed out
+
+    print(await asyncio.to_thread(blocking_io))  # legacy done
+
+asyncio.run(main())
 </code></pre>
                             </div>
                             <ul class="card-grid">
@@ -3222,6 +3635,7 @@ asyncio.run(run_tests())
                                         class="big-o o-good">class Savings(BankAccount): super()</code></li>
                                 <li><b>Multiple Inheritance &amp; MRO</b> <code
                                         class="big-o o-great">class Copier(Scanner, Printer): super()</code></li>
+                                <li><b>Properties &amp; Class Methods</b> <code class="big-o o-good">@property, @classmethod, @staticmethod</code></li>
                             </ul>
                             <p>In Python, Object-Oriented Programming (OOP) is a programming paradigm that organizes
                                 code around objects rather than just isolated functions. A <strong>class</strong> is a
@@ -3373,6 +3787,68 @@ print(copier.device_id, copier.resolution_dpi, copier.print_speed_ppm, copier.is
 # DEV-101 1200 35 True
 </code></pre>
                             </div>
+                            <p>Everyday class features beyond <code>__init__</code> and inheritance:</p>
+                            <ol>
+                                <li><strong><code>@property</code>:</strong> Exposes a computed or read-only attribute accessed without parentheses (<code>doc.title</code>). Add an <code>@name.setter</code> to validate assignments.</li>
+                                <li><strong><code>@classmethod</code>:</strong> Receives the class (<code>cls</code>) instead of an instance; the standard way to write alternative constructors such as <code>Store.load(path)</code> or <code>Config.from_json(raw)</code>.</li>
+                                <li><strong><code>@staticmethod</code>:</strong> A plain helper function namespaced inside the class; it needs neither <code>self</code> nor <code>cls</code>.</li>
+                                <li><strong>Base class contract:</strong> A base class whose method raises <code>NotImplementedError</code> defines an interface that subclasses must implement (e.g. <code>Embedder.embed()</code>). <code>abc.ABC</code> with <code>@abstractmethod</code> enforces this at instantiation time.</li>
+                                <li><strong>More dunder methods:</strong> <code>__len__</code> enables <code>len(obj)</code>, <code>__eq__</code> customises <code>==</code>, and <code>__iter__</code> makes objects loopable.</li>
+                                <li><strong><code>getattr</code> / <code>hasattr</code> / <code>setattr</code>:</strong> Read or write attributes by name at runtime (<code>getattr(resp, "usage", None)</code>), common when handling optional fields on SDK response objects.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">import json
+
+class Embedder:
+    """Base class: subclasses must implement embed()."""
+    dim = 0
+
+    def embed(self, texts: list[str]) -&gt; list[list[float]]:
+        raise NotImplementedError
+
+class KeywordEmbedder(Embedder):
+    VOCAB = ("refund", "invoice", "delay")
+    dim = len(VOCAB)
+
+    def __init__(self, name: str = "keyword-v1"):
+        self._name = name
+
+    @property
+    def name(self) -&gt; str:  # read-only attribute: emb.name (no parentheses)
+        return self._name
+
+    @classmethod
+    def from_json(cls, raw: str) -&gt; "KeywordEmbedder":  # alternative constructor
+        return cls(**json.loads(raw))
+
+    @staticmethod
+    def tokenize(text: str) -&gt; list[str]:  # needs neither self nor cls
+        return text.lower().split()
+
+    def embed(self, texts: list[str]) -&gt; list[list[float]]:
+        return [[float(self.tokenize(t).count(w)) for w in self.VOCAB] for t in texts]
+
+    def __len__(self) -&gt; int:
+        return self.dim
+
+emb = KeywordEmbedder.from_json('{"name": "kw-test"}')
+print(emb.name, len(emb))                            # kw-test 3
+print(emb.embed(["Refund delayed invoice refund"]))  # [[2.0, 1.0, 0.0]]
+
+try:
+    emb.name = "other"
+except AttributeError as err:
+    print(err)  # property 'name' of 'KeywordEmbedder' object has no setter
+
+try:
+    Embedder().embed(["x"])
+except NotImplementedError:
+    print("Base class must be subclassed")  # Base class must be subclassed
+
+# Dynamic attribute access with safe defaults
+print(getattr(emb, "dim", None), hasattr(emb, "usage"), getattr(emb, "usage", "n/a"))  # 3 False n/a
+</code></pre>
+                            </div>
                             <ul class="card-grid">
                                 <li class="is-good"><b>Strength — Encapsulation &amp; Cohesion:</b> Bundling state and
                                     behavior together keeps related logic organized, avoids scattered helper functions,
@@ -3410,7 +3886,7 @@ print(copier.device_id, copier.resolution_dpi, copier.print_speed_ppm, copier.is
                                 </h3>
                             </div>
                             <div class="part-header-right">
-                                <span class="part-counter">2</span>
+                                <span class="part-counter">3</span>
                                 <span class="part-arrow" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                                         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -3590,6 +4066,49 @@ print("Diamond problem solution passed!")  # Diamond problem solution passed!
                                     </div>
                                 </div>
                             </div>
+                            <div class="worked">
+                                <b>Interview question</b>
+                                <p class="worked-q">Implement a <code>Temperature</code> class that stores Celsius, validates assignments through a property setter (nothing below absolute zero, -273.15 °C), exposes a read-only <code>fahrenheit</code> property, and provides a <code>from_fahrenheit</code> class-method constructor.</p>
+                                <p>Store the value in <code>self._celsius</code>, assign through <code>self.celsius = ...</code> in <code>__init__</code> so the setter validates it, compute <code>fahrenheit</code> in a <code>@property</code> without a setter, and return <code>cls(...)</code> from the <code>@classmethod</code>.</p>
+                                <div class="code-tabs" data-label="Answer — Properties &amp; Class Methods">
+                                    <div class="tab-pane" data-lang="python">
+                                        <pre><code data-lang="python">class Temperature:
+    def __init__(self, celsius: float):
+        self.celsius = celsius  # goes through the setter below
+
+    @property
+    def celsius(self) -&gt; float:
+        return self._celsius
+
+    @celsius.setter
+    def celsius(self, value: float) -&gt; None:
+        if value &lt; -273.15:
+            raise ValueError("Below absolute zero")
+        self._celsius = value
+
+    @property
+    def fahrenheit(self) -&gt; float:
+        return round(self._celsius * 9 / 5 + 32, 2)
+
+    @classmethod
+    def from_fahrenheit(cls, f: float) -&gt; "Temperature":
+        return cls(round((f - 32) * 5 / 9, 2))
+
+# Test cases
+t = Temperature(25)
+print(t.fahrenheit)  # 77.0
+t.celsius = 100
+print(t.fahrenheit)  # 212.0
+print(Temperature.from_fahrenheit(98.6).celsius)  # 37.0
+try:
+    Temperature(-300)
+except ValueError as err:
+    print(err)  # Below absolute zero
+print("Temperature property passed!")  # Temperature property passed!
+</code></pre>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3650,6 +4169,7 @@ print("Diamond problem solution passed!")  # Diamond problem solution passed!
                                 </li>
                                 <li><b>Standard Library</b> <code
                                         class="big-o o-good">math, os, sys, json, pathlib</code></li>
+                                <li><b>Packages &amp; Relative Imports</b> <code class="big-o o-good">from .config import settings</code></li>
                             </ul>
                             <p>A module in Python is simply a <code>.py</code> file containing functions, classes, and
                                 variables. A package is a directory containing multiple modules (often accompanied by an
@@ -3729,6 +4249,45 @@ def run_app():
 
 if __name__ == "__main__":
     run_app()
+</code></pre>
+                            </div>
+                            <p>Multi-file projects organise modules into <strong>packages</strong> — the layout used by every project folder:</p>
+                            <ol>
+                                <li><strong>Packages:</strong> A folder with an <code>__init__.py</code> file is a package; <code>__init__.py</code> can be empty or re-export the package's public names.</li>
+                                <li><strong>Relative imports:</strong> Inside a package, <code>from .config import settings</code> imports a sibling module and <code>from ..utils import chunk</code> goes up one level. They only work when the file is imported as part of a package.</li>
+                                <li><strong><code>python -m package.module</code>:</strong> Runs a module as part of its package from the project root. Running <code>python package/module.py</code> directly breaks relative imports with "attempted relative import with no known parent package".</li>
+                                <li><strong><code>sys.path</code> tweaks:</strong> Scripts and notebooks sometimes call <code>sys.path.insert(0, project_root)</code> so sibling folders become importable; prefer running from the project root with <code>-m</code> or installing the project with <code>pip install -e .</code>.</li>
+                                <li><strong>Optional / lazy imports:</strong> Import heavy optional dependencies inside the function that needs them, or wrap them in <code>try / except ImportError</code> to fall back gracefully.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="text">project/
+├── run_assessor.py          # entry point: from assessor.graph import build_graph
+└── assessor/
+    ├── __init__.py          # marks the folder as a package
+    ├── config.py
+    ├── llm.py               # from .config import settings
+    └── graph.py             # from .llm import call_llm
+</code></pre>
+                            </div>
+                            <div class="highlight">
+                                <pre><code data-lang="python"># assessor/llm.py: relative imports inside a package
+from .config import settings  # sibling module in the same package
+from . import prompts         # import a sibling module object
+
+# Run from the project root:
+#   python -m assessor.graph   -&gt; works (graph.py runs as part of the package)
+#   python assessor/graph.py   -&gt; ImportError: attempted relative import with no known parent package
+
+# Optional dependency with a graceful fallback
+try:
+    import numpy as np
+except ImportError:  # numpy not installed
+    np = None
+
+def mean(values: list[float]) -&gt; float:
+    if np is not None:
+        return float(np.mean(values))
+    return sum(values) / len(values)
 </code></pre>
                             </div>
                             <ul class="card-grid">
@@ -4053,9 +4612,1625 @@ print("Parse requirements passed!")  # Parse requirements passed!
                 </div>
             </section>
 
+            <!-- ============================================================ Unit 6 -->
+            <div class="unit-divider" id="unit-6">
+                <div class="unit-divider-badge">Unit 6</div>
+                <div class="unit-divider-text">
+                    <h2 class="unit-divider-title">Advanced Functions &amp; Data Models<a class="headerlink" href="#unit-6"
+                            title="Permanent link">#</a></h2>
+                    <p class="unit-divider-desc">Decorators, lazy generators, resource-safe context managers and file I/O, and structured data models with dataclasses, TypedDict, and Pydantic.</p>
+                </div>
+            </div>
+
+            <!-- ============================================================ 19 -->
+            <section class="topic-section is-collapsed" id="sec-19-decorators" data-topic="19-decorators">
+                <div class="topic-header" role="button" tabindex="0" aria-expanded="false"
+                    aria-controls="content-19-decorators">
+                    <div class="topic-header-main">
+                        <span class="topic-badge">19</span>
+                        <h2 id="19-decorators" class="topic-title">Decorators<a class="headerlink"
+                                href="#19-decorators" title="Permanent link">#</a></h2>
+                    </div>
+                    <div class="topic-header-meta">
+                        <span class="topic-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="topic-content" id="content-19-decorators">
+                    <div class="part-section is-collapsed" id="19-decorators-theory">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-19-decorators-theory">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-theory"></span>
+                                <h3 class="part-heading">Theory<a class="headerlink" href="#19-decorators-theory"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-19-decorators-theory">
+                            <ul class="meta-strip">
+                                <li><b>Function Wrapper</b> <code class="big-o o-great">@deco  ≡  fn = deco(fn)</code></li>
+                                <li><b>Preserve Metadata</b> <code class="big-o o-great">@functools.wraps(fn)</code></li>
+                                <li><b>Built-in Caching</b> <code class="big-o o-good">@lru_cache(maxsize=64)</code></li>
+                                <li><b>Registration</b> <code class="big-o o-good">@tool, @mcp.tool, @app.get("/")</code></li>
+                            </ul>
+                            <p>In Python, functions are first-class objects: you can pass them as arguments, return them from other functions, and store them in dictionaries. A <strong>decorator</strong> is simply a callable that takes a function and returns a replacement (usually a wrapper that adds behavior before or after the original call). Writing <code>@timer</code> above <code>def fetch():</code> is syntactic sugar for <code>fetch = timer(fetch)</code>.</p>
+                            <p>Decorators are everywhere in AI and web projects: <code>@tool</code> turns a plain function into an LLM-callable tool (its docstring becomes the tool description), <code>@mcp.tool</code> registers MCP server tools, <code>@app.get("/health")</code> maps FastAPI routes, <code>@lru_cache</code> caches expensive API calls, <code>@pytest.fixture</code> provides test setup, and <code>@dataclass</code> generates class boilerplate.</p>
+                            <div class="analogy">
+                                <span class="analogy-icon">🎬</span>
+                                <div class="analogy-body">
+                                    <b>Picture it — Gift Wrapping at the Checkout Counter</b>
+                                    <p>The gift (your function) stays exactly the same. The wrapping counter adds a box, a ribbon, and a greeting card around it (logging, timing, retries, caching). The recipient still opens the same gift — they just get some extras around it, and you can wrap any gift the same way without changing the gift itself.</p>
+                                </div>
+                            </div>
+                            <ol>
+                                <li><strong>Functions are objects:</strong> Pass them around like data: <code>handlers = {"add": add}</code>, <code>apply(fn, x)</code>.</li>
+                                <li><strong><code>@decorator</code> syntax:</strong> <code>@log_calls</code> placed above <code>def add(...)</code> is exactly <code>add = log_calls(add)</code>.</li>
+                                <li><strong>Wrapper signature:</strong> Define <code>def wrapper(*args, **kwargs):</code> and call <code>fn(*args, **kwargs)</code> so the decorator works with any function signature.</li>
+                                <li><strong><code>@functools.wraps(fn)</code>:</strong> Copies <code>__name__</code>, <code>__doc__</code>, and the signature onto the wrapper. Without it, frameworks that read the docstring (like <code>@tool</code>) and tracebacks see <code>wrapper</code> instead of your function.</li>
+                                <li><strong>Decorators with arguments:</strong> <code>@retry(times=3)</code> is a factory: <code>retry(times=3)</code> returns the actual decorator, which then receives the function (three nested levels).</li>
+                                <li><strong>Registration decorators:</strong> Store the function in a registry and return it unchanged. This is how <code>@tool</code>, <code>@mcp.tool</code>, and <code>@app.get</code> discover your functions.</li>
+                                <li><strong><code>@functools.lru_cache(maxsize=N)</code>:</strong> Memoizes results of pure functions with hashable arguments; inspect with <code>.cache_info()</code> and reset with <code>.cache_clear()</code>.</li>
+                                <li><strong>Stacking order:</strong> Decorators apply bottom-up: <code>@a</code> over <code>@b</code> over <code>def f</code> means <code>f = a(b(f))</code>.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">import functools
+
+# 1. A basic decorator: log every call and its result
+def log_calls(fn):
+    @functools.wraps(fn)  # keep fn's name and docstring on the wrapper
+    def wrapper(*args, **kwargs):
+        print(f"-&gt; {fn.__name__}{args}")
+        result = fn(*args, **kwargs)
+        print(f"&lt;- {fn.__name__} returned {result!r}")
+        return result
+    return wrapper
+
+@log_calls
+def add(a: int, b: int) -&gt; int:
+    """Add two numbers."""
+    return a + b
+
+print(add(2, 3))
+# -&gt; add(2, 3)
+# &lt;- add returned 5
+# 5
+print(add.__name__, "|", add.__doc__)  # add | Add two numbers.
+
+# 2. A decorator with arguments (factory -&gt; decorator -&gt; wrapper)
+def retry(times: int = 3, exceptions: tuple = (ConnectionError,)):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            for attempt in range(1, times + 1):
+                try:
+                    return fn(*args, **kwargs)
+                except exceptions as err:
+                    print(f"Attempt {attempt} failed: {err}")
+            raise RuntimeError(f"{fn.__name__} failed after {times} attempts")
+        return wrapper
+    return decorator
+
+calls = {"count": 0}
+
+@retry(times=3)
+def flaky_api() -&gt; str:
+    calls["count"] += 1
+    if calls["count"] &lt; 3:
+        raise ConnectionError("timeout")
+    return "200 OK"
+
+print(flaky_api())
+# Attempt 1 failed: timeout
+# Attempt 2 failed: timeout
+# 200 OK
+
+# 3. A registration decorator: how @tool / @mcp.tool / @app.get work
+TOOLS: dict[str, dict] = {}
+
+def tool(fn):
+    TOOLS[fn.__name__] = {"fn": fn, "description": (fn.__doc__ or "").strip()}
+    return fn  # returned unchanged
+
+@tool
+def get_weather(city: str) -&gt; str:
+    """Get the current weather for a city."""
+    return f"Sunny in {city}"
+
+print(list(TOOLS))                          # ['get_weather']
+print(TOOLS["get_weather"]["description"])  # Get the current weather for a city.
+print(TOOLS["get_weather"]["fn"]("Pune"))   # Sunny in Pune
+
+# 4. Built-in caching with lru_cache
+@functools.lru_cache(maxsize=64)
+def fetch_price(ticker: str) -&gt; float:
+    print(f"Calling API for {ticker}")
+    return {"AAPL": 189.5, "MSFT": 410.2}.get(ticker, 0.0)
+
+print(fetch_price("AAPL"))
+# Calling API for AAPL
+# 189.5
+print(fetch_price("AAPL"))  # 189.5 (served from cache, no API call)
+print(fetch_price.cache_info().hits)  # 1
+</code></pre>
+                            </div>
+                            <ul class="card-grid">
+                                <li class="is-good"><b>Strength — Write Cross-Cutting Logic Once:</b> Logging, timing, retries, caching, auth checks, and tool registration are written once and applied to any function with a single line, keeping business logic clean.</li>
+                                <li class="is-bad"><b>Weakness — Hidden Behavior &amp; Lost Metadata:</b> Forgetting <code>@functools.wraps</code> hides the original name and docstring (breaking <code>@tool</code> descriptions and debugging). <code>lru_cache</code> needs hashable arguments, never expires entries, and caching impure functions returns stale data.</li>
+                            </ul>
+                            <div class="callout callout-key">
+                                <p><strong>Key idea:</strong> A decorator is just <code>fn = decorator(fn)</code>. Always forward <code>*args, **kwargs</code>, always apply <code>@functools.wraps(fn)</code> to the wrapper, and only cache pure functions whose arguments are hashable.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="part-section is-collapsed" id="19-decorators-questions">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-19-decorators-questions">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-questions"></span>
+                                <h3 class="part-heading">Questions<a class="headerlink" href="#19-decorators-questions"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-counter">1</span>
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-19-decorators-questions">
+                            <div class="worked">
+                                <b>Interview question</b>
+                                <p class="worked-q">Implement a <code>memoize</code> decorator (without using <code>lru_cache</code>) that caches results for both positional and keyword arguments, preserves the function name, and exposes the cache as <code>fn.cache</code>. Use it to compute <code>fib(50)</code> instantly.</p>
+                                <p>Build a hashable key from <code>args</code> and <code>tuple(sorted(kwargs.items()))</code>, store results in a dictionary captured by the wrapper's closure, and decorate the wrapper with <code>@functools.wraps(fn)</code>.</p>
+                                <div class="code-tabs" data-label="Answer — Memoize Decorator">
+                                    <div class="tab-pane" data-lang="python">
+                                        <pre><code data-lang="python">import functools
+
+def memoize(fn):
+    cache: dict = {}
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        key = (args, tuple(sorted(kwargs.items())))
+        if key not in cache:
+            cache[key] = fn(*args, **kwargs)
+        return cache[key]
+
+    wrapper.cache = cache
+    return wrapper
+
+@memoize
+def fib(n: int) -&gt; int:
+    """Return the nth Fibonacci number."""
+    return n if n &lt; 2 else fib(n - 1) + fib(n - 2)
+
+# Test cases
+print(fib(50))         # 12586269025
+print(len(fib.cache))  # 51
+print(fib.__name__)    # fib
+print(fib.__doc__)     # Return the nth Fibonacci number.
+print("Memoize decorator passed!")  # Memoize decorator passed!
+</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================ 20 -->
+            <section class="topic-section is-collapsed" id="sec-20-generators-and-iterators" data-topic="20-generators-and-iterators">
+                <div class="topic-header" role="button" tabindex="0" aria-expanded="false"
+                    aria-controls="content-20-generators-and-iterators">
+                    <div class="topic-header-main">
+                        <span class="topic-badge">20</span>
+                        <h2 id="20-generators-and-iterators" class="topic-title">Generators &amp; Iterators<a class="headerlink"
+                                href="#20-generators-and-iterators" title="Permanent link">#</a></h2>
+                    </div>
+                    <div class="topic-header-meta">
+                        <span class="topic-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="topic-content" id="content-20-generators-and-iterators">
+                    <div class="part-section is-collapsed" id="20-generators-and-iterators-theory">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-20-generators-and-iterators-theory">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-theory"></span>
+                                <h3 class="part-heading">Theory<a class="headerlink" href="#20-generators-and-iterators-theory"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-20-generators-and-iterators-theory">
+                            <ul class="meta-strip">
+                                <li><b>Lazy Function</b> <code class="big-o o-great">yield value</code></li>
+                                <li><b>Generator Expression</b> <code class="big-o o-great">sum(x for x in items)</code></li>
+                                <li><b>First Match</b> <code class="big-o o-good">next((x for x in it if ok(x)), None)</code></li>
+                                <li><b>Delegation</b> <code class="big-o o-good">yield from other_iterable</code></li>
+                            </ul>
+                            <p>An <strong>iterable</strong> is anything you can loop over (lists, dicts, files, strings). An <strong>iterator</strong> hands out values one at a time through <code>next()</code> and raises <code>StopIteration</code> when it is exhausted. A <strong>generator</strong> is the easiest way to build an iterator: any function containing <code>yield</code> returns a generator object that produces values lazily, pausing its state between values.</p>
+                            <p>Generators let you process huge files, paginated APIs, or streaming LLM tokens with constant memory. In real projects you will see them constantly: generator expressions inside <code>sum()</code>, <code>any()</code>, <code>max()</code>, and <code>", ".join()</code>; <code>next(...)</code> to find the first matching item; batching texts before sending them to an embeddings API; and <code>yield</code> inside <code>@contextmanager</code> functions.</p>
+                            <div class="analogy">
+                                <span class="analogy-icon">🎬</span>
+                                <div class="analogy-body">
+                                    <b>Picture it — A Water Tap vs. a Water Tank</b>
+                                    <p>A list is a water tank: you must fill the whole tank before anyone drinks, and it takes space for every litre. A generator is a tap: water is produced only when someone opens it, one glass at a time, and the pipe never needs to hold the whole reservoir. Once the reservoir behind a tap is drained, though, you cannot rewind it — you need a new tap.</p>
+                                </div>
+                            </div>
+                            <ol>
+                                <li><strong><code>yield</code>:</strong> Turns a function into a generator. Calling it runs nothing yet; the body executes up to the next <code>yield</code> each time a value is requested.</li>
+                                <li><strong>Paused state:</strong> Local variables survive between yields, so a generator naturally remembers where it was.</li>
+                                <li><strong>Single-use:</strong> A generator is exhausted after one pass. Call the generator function again (or use a list) if you need to iterate twice.</li>
+                                <li><strong>Generator expressions:</strong> <code>(expr for x in items if cond)</code> is the lazy cousin of a list comprehension. Pass it straight into <code>sum()</code>, <code>any()</code>, <code>all()</code>, <code>max()</code>, <code>min()</code>, or <code>"".join()</code> without square brackets.</li>
+                                <li><strong><code>next(iterator, default)</code>:</strong> Grabs the next value, returning <code>default</code> instead of raising <code>StopIteration</code> — the idiomatic "first match or None".</li>
+                                <li><strong><code>iter(iterable)</code>:</strong> Creates an iterator from any iterable; useful to peek at the first item.</li>
+                                <li><strong><code>yield from</code>:</strong> Delegates to another iterable, yielding each of its values.</li>
+                                <li><strong>Pipelines:</strong> Chain generators (read → clean → filter → batch) so each item flows through every stage without building intermediate lists.</li>
+                                <li><strong><code>itertools</code>:</strong> Ready-made lazy helpers: <code>islice</code>, <code>chain</code>, <code>groupby</code>, and <code>batched</code> (Python 3.12+).</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">import itertools
+from collections.abc import Iterator
+
+# 1. Generator function: values are produced lazily, one per next()
+def countdown(n: int) -&gt; Iterator[int]:
+    while n &gt; 0:
+        yield n
+        n -= 1
+
+gen = countdown(3)
+print(next(gen))  # 3
+print(next(gen))  # 2
+print(list(gen))  # [1]
+print(list(gen))  # [] (exhausted - generators are single-use)
+
+# 2. Batching: the pattern used to send texts to an embeddings API in chunks
+def batched(items: list[str], size: int) -&gt; Iterator[list[str]]:
+    for i in range(0, len(items), size):
+        yield items[i:i + size]
+
+docs = ["d1", "d2", "d3", "d4", "d5"]
+for batch in batched(docs, 2):
+    print(batch)
+# ['d1', 'd2']
+# ['d3', 'd4']
+# ['d5']
+print(list(itertools.batched(docs, 2)))  # [('d1', 'd2'), ('d3', 'd4'), ('d5',)]
+
+# 3. Generator expressions feed aggregate functions without building a list
+latencies_ms = [120, 340, 95, 410]
+print(sum(ms for ms in latencies_ms if ms &gt; 100))   # 870
+print(any(ms &gt; 400 for ms in latencies_ms))         # True
+print(all(ms &lt; 500 for ms in latencies_ms))         # True
+print(max(len(w) for w in ["rag", "agent", "llm"]))  # 5
+
+# 4. next() with a default: first match or None
+tools = [{"name": "search"}, {"name": "calculator"}]
+print(next((t for t in tools if t["name"] == "calculator"), None))  # {'name': 'calculator'}
+print(next((t for t in tools if t["name"] == "weather"), None))     # None
+
+# 5. A memory-flat pipeline with yield from
+def read_lines(text: str) -&gt; Iterator[str]:
+    yield from text.splitlines()
+
+def non_empty(lines: Iterator[str]) -&gt; Iterator[str]:
+    return (line.strip() for line in lines if line.strip())
+
+raw = "alpha\n\n  beta  \ngamma\n"
+print(list(non_empty(read_lines(raw))))  # ['alpha', 'beta', 'gamma']
+</code></pre>
+                            </div>
+                            <ul class="card-grid">
+                                <li class="is-good"><b>Strength — Constant Memory &amp; Composability:</b> Generators process one item at a time, so a 10 GB log file or an endless token stream uses the same memory as a tiny one, and small generator stages compose into readable pipelines.</li>
+                                <li class="is-bad"><b>Weakness — Single-Use and Lazy Errors:</b> Generators have no <code>len()</code> or indexing, are exhausted after one loop, and defer errors until values are consumed. Printing one shows <code>&lt;generator object ...&gt;</code> instead of its contents.</li>
+                            </ul>
+                            <div class="callout callout-key">
+                                <p><strong>Key idea:</strong> Use a list when you need to reuse, index, or <code>len()</code> the result; use a generator when you stream through values once. Drop the square brackets inside <code>sum()</code>, <code>any()</code>, <code>all()</code>, <code>max()</code>, and <code>"".join()</code>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="part-section is-collapsed" id="20-generators-and-iterators-questions">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-20-generators-and-iterators-questions">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-questions"></span>
+                                <h3 class="part-heading">Questions<a class="headerlink" href="#20-generators-and-iterators-questions"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-counter">1</span>
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-20-generators-and-iterators-questions">
+                            <div class="worked">
+                                <b>Interview question</b>
+                                <p class="worked-q">Write a generator <code>read_jsonl(lines)</code> that yields parsed records from JSON Lines text (one JSON object per line), skipping blank and malformed lines. Use it to compute the average <code>total_ms</code> without loading all records into a list.</p>
+                                <p>Loop over the lines, <code>strip()</code> each one, skip empty lines, and <code>yield json.loads(line)</code> inside a <code>try / except json.JSONDecodeError</code> block. Accumulate a running total and count while iterating.</p>
+                                <div class="code-tabs" data-label="Answer — Stream JSON Lines">
+                                    <div class="tab-pane" data-lang="python">
+                                        <pre><code data-lang="python">import json
+from collections.abc import Iterable, Iterator
+
+def read_jsonl(lines: Iterable[str]) -&gt; Iterator[dict]:
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            yield json.loads(line)
+        except json.JSONDecodeError:
+            continue
+
+# Test cases
+log = """{"trace_id": "a1", "total_ms": 120}
+not-json
+
+{"trace_id": "b2", "total_ms": 80}
+{"trace_id": "c3", "total_ms": 100}"""
+
+total = count = 0
+for record in read_jsonl(log.splitlines()):
+    total += record["total_ms"]
+    count += 1
+print(count, total / count)  # 3 100.0
+
+print(next(read_jsonl(['{"ok": true}']), None))  # {'ok': True}
+print(next(read_jsonl([]), None))                # None
+print("Read JSONL generator passed!")  # Read JSONL generator passed!
+</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================ 21 -->
+            <section class="topic-section is-collapsed" id="sec-21-context-managers-and-file-io" data-topic="21-context-managers-and-file-io">
+                <div class="topic-header" role="button" tabindex="0" aria-expanded="false"
+                    aria-controls="content-21-context-managers-and-file-io">
+                    <div class="topic-header-main">
+                        <span class="topic-badge">21</span>
+                        <h2 id="21-context-managers-and-file-io" class="topic-title">Context Managers &amp; File I/O<a class="headerlink"
+                                href="#21-context-managers-and-file-io" title="Permanent link">#</a></h2>
+                    </div>
+                    <div class="topic-header-meta">
+                        <span class="topic-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="topic-content" id="content-21-context-managers-and-file-io">
+                    <div class="part-section is-collapsed" id="21-context-managers-and-file-io-theory">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-21-context-managers-and-file-io-theory">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-theory"></span>
+                                <h3 class="part-heading">Theory<a class="headerlink" href="#21-context-managers-and-file-io-theory"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-21-context-managers-and-file-io-theory">
+                            <ul class="meta-strip">
+                                <li><b>Guaranteed Cleanup</b> <code class="big-o o-great">with open(path) as f:</code></li>
+                                <li><b>Explicit Encoding</b> <code class="big-o o-great">encoding="utf-8"</code></li>
+                                <li><b>Pathlib Shortcuts</b> <code class="big-o o-good">path.read_text() / write_text()</code></li>
+                                <li><b>Custom Manager</b> <code class="big-o o-good">@contextmanager + try / yield / finally</code></li>
+                            </ul>
+                            <p>Files, database connections, locks, and network sessions must be released even when an error occurs halfway through. The <code>with</code> statement guarantees this: it calls the object's <code>__enter__</code> method at the start of the block and its <code>__exit__</code> method at the end — whether the block finishes normally, returns early, or raises an exception.</p>
+                            <p>You will see <code>with</code> everywhere in real code: <code>with open(...)</code> for files, <code>with sqlite3.connect(...)</code> for transactions, <code>with lock:</code> for threads, <code>async with ClientSession(...)</code> for MCP clients, and custom <code>@contextmanager</code> functions that time a block of code (tracing spans).</p>
+                            <div class="analogy">
+                                <span class="analogy-icon">🎬</span>
+                                <div class="analogy-body">
+                                    <b>Picture it — A Hotel Key-Card Slot</b>
+                                    <p>When you slide your key card into the slot by the door, the lights and AC switch on. When you leave — calmly, in a hurry, or during a fire alarm — pulling the card out switches everything off automatically. A <code>with</code> block is that slot: entering acquires the resource, and leaving always releases it, no matter how you leave.</p>
+                                </div>
+                            </div>
+                            <ol>
+                                <li><strong><code>with open(path, mode, encoding="utf-8") as f:</code>:</strong> Opens a file and always closes it, even if an exception is raised inside the block.</li>
+                                <li><strong>File modes:</strong> <code>"r"</code> read (default), <code>"w"</code> create/overwrite, <code>"a"</code> append, <code>"x"</code> create only (fails if the file exists); add <code>"b"</code> for binary data (<code>"rb"</code>).</li>
+                                <li><strong>Reading:</strong> <code>f.read()</code> loads everything; <code>for line in f:</code> streams line by line with constant memory.</li>
+                                <li><strong>Writing:</strong> <code>f.write(text)</code> does not add a newline — append <code>"\n"</code> yourself.</li>
+                                <li><strong>Pathlib one-liners:</strong> <code>path.read_text(encoding=...)</code>, <code>path.write_text(...)</code>, <code>path.mkdir(parents=True, exist_ok=True)</code>, <code>path.exists()</code>, <code>path.glob("*.md")</code>, and the <code>/</code> join operator.</li>
+                                <li><strong>JSON &amp; JSON Lines:</strong> <code>json.dump(obj, f, indent=2)</code> / <code>json.load(f)</code> for whole files; <code>.jsonl</code> files store one JSON object per line, ideal for append-only logs and traces.</li>
+                                <li><strong>CSV:</strong> <code>csv.DictReader</code> / <code>csv.DictWriter</code> map rows to dictionaries; open CSV files with <code>newline=""</code>. Values read from CSV are always strings.</li>
+                                <li><strong>Custom context managers:</strong> Decorate a generator with <code>@contextlib.contextmanager</code> and wrap the <code>yield</code> in <code>try / finally</code>, or implement <code>__enter__</code> / <code>__exit__</code> on a class.</li>
+                                <li><strong>Multiple resources:</strong> <code>with open(src) as fin, open(dst, "w") as fout:</code> manages both in one statement.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">import csv
+import json
+import time
+from contextlib import contextmanager
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+with TemporaryDirectory() as tmp:  # the temp folder is deleted when the block exits
+    data_dir = Path(tmp) / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. Write, append, and stream a text file (always pass an encoding)
+    notes = data_dir / "notes.txt"
+    with open(notes, "w", encoding="utf-8") as f:
+        f.write("first line\n")
+        f.write("second line\n")
+    with open(notes, "a", encoding="utf-8") as f:
+        f.write("appended line\n")
+
+    with open(notes, encoding="utf-8") as f:
+        for line in f:
+            print(line.rstrip())
+    # first line
+    # second line
+    # appended line
+
+    # 2. Pathlib one-liners
+    print(notes.read_text(encoding="utf-8").count("\n"))  # 3
+    print(notes.exists(), notes.suffix)                   # True .txt
+
+    # 3. JSON config file and an append-only JSON Lines log
+    config_file = data_dir / "config.json"
+    config_file.write_text(json.dumps({"model": "gpt-4o-mini", "temperature": 0.2}, indent=2), encoding="utf-8")
+    with open(config_file, encoding="utf-8") as f:
+        config = json.load(f)
+    print(config["model"])  # gpt-4o-mini
+
+    traces = data_dir / "traces.jsonl"
+    for i, ms in enumerate([120, 95]):
+        with traces.open("a", encoding="utf-8") as f:
+            f.write(json.dumps({"id": i, "ms": ms}) + "\n")
+    print(traces.read_text(encoding="utf-8").splitlines())
+    # ['{"id": 0, "ms": 120}', '{"id": 1, "ms": 95}']
+
+    # 4. CSV with DictWriter / DictReader
+    csv_file = data_dir / "survey.csv"
+    with open(csv_file, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["customer", "score"])
+        writer.writeheader()
+        writer.writerows([{"customer": "acme", "score": 9}, {"customer": "globex", "score": 4}])
+    with open(csv_file, newline="", encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+    print(rows[0])  # {'customer': 'acme', 'score': '9'} (CSV values are always strings)
+
+    print(sorted(p.name for p in data_dir.glob("*")))
+    # ['config.json', 'notes.txt', 'survey.csv', 'traces.jsonl']
+
+# 5. Custom context manager: try / yield / finally (a tracing span)
+@contextmanager
+def span(name: str, log: list[dict]):
+    start = time.perf_counter()
+    record = {"name": name}
+    try:
+        yield record  # the body of the with-block runs here
+    finally:
+        record["ms"] = round((time.perf_counter() - start) * 1000, 2)
+        log.append(record)
+        print(f"closed span {name}")
+
+spans: list[dict] = []
+with span("retrieve", spans) as rec:
+    rec["hits"] = 5
+# closed span retrieve
+print(spans[0]["name"], spans[0]["hits"], "ms" in spans[0])  # retrieve 5 True
+
+try:
+    with span("generate", spans):
+        raise TimeoutError("LLM timed out")
+except TimeoutError as err:
+    print(f"Caught: {err}")
+# closed span generate
+# Caught: LLM timed out
+</code></pre>
+                            </div>
+                            <ul class="card-grid">
+                                <li class="is-good"><b>Strength — Deterministic Cleanup:</b> Files are closed, locks released, and transactions committed or rolled back even when exceptions occur, with far less boilerplate than hand-written <code>try / finally</code> blocks.</li>
+                                <li class="is-bad"><b>Weakness — Encoding &amp; Overwrite Surprises:</b> Omitting <code>encoding="utf-8"</code> uses the platform default (e.g. cp1252 on Windows), causing <code>UnicodeDecodeError</code> on emojis or non-English text. Mode <code>"w"</code> silently truncates existing files, and <code>f.read()</code> loads huge files fully into memory.</li>
+                            </ul>
+                            <div class="callout callout-key">
+                                <p><strong>Key idea:</strong> Always open files with <code>with</code> and an explicit <code>encoding="utf-8"</code>. Use <code>"a"</code> for append-only logs and <code>"x"</code> when you must never overwrite. For any acquire/release pair you write yourself, use <code>@contextmanager</code> with <code>try / yield / finally</code>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="part-section is-collapsed" id="21-context-managers-and-file-io-questions">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-21-context-managers-and-file-io-questions">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-questions"></span>
+                                <h3 class="part-heading">Questions<a class="headerlink" href="#21-context-managers-and-file-io-questions"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-counter">1</span>
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-21-context-managers-and-file-io-questions">
+                            <div class="worked">
+                                <b>Interview question</b>
+                                <p class="worked-q">Write a context manager <code>atomic_write(path)</code> that yields a file handle to a temporary file and only replaces the target file if the <code>with</code> block completes without errors, so a crash never leaves a half-written config file behind.</p>
+                                <p>Write to a sibling <code>.tmp</code> file inside the <code>try</code> block, call <code>os.replace(tmp, path)</code> after the <code>yield</code> succeeds (an atomic rename on the same filesystem), and delete any leftover temp file in <code>finally</code>.</p>
+                                <div class="code-tabs" data-label="Answer — Atomic File Write">
+                                    <div class="tab-pane" data-lang="python">
+                                        <pre><code data-lang="python">import os
+from contextlib import contextmanager
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+@contextmanager
+def atomic_write(path: Path, encoding: str = "utf-8"):
+    tmp_path = path.with_name(path.name + ".tmp")
+    try:
+        with open(tmp_path, "w", encoding=encoding) as f:
+            yield f
+        os.replace(tmp_path, path)  # atomic rename on the same filesystem
+    finally:
+        if tmp_path.exists():
+            tmp_path.unlink()
+
+# Test cases
+with TemporaryDirectory() as tmp:
+    target = Path(tmp) / "settings.json"
+    with atomic_write(target) as f:
+        f.write('{"version": 1}')
+    print(target.read_text(encoding="utf-8"))  # {"version": 1}
+
+    try:
+        with atomic_write(target) as f:
+            f.write('{"version": 2, "broken": ')
+            raise RuntimeError("crash mid-write")
+    except RuntimeError:
+        pass
+    print(target.read_text(encoding="utf-8"))           # {"version": 1}
+    print(sorted(p.name for p in Path(tmp).iterdir()))  # ['settings.json']
+print("Atomic write passed!")  # Atomic write passed!
+</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================ 22 -->
+            <section class="topic-section is-collapsed" id="sec-22-dataclasses-typeddict-and-pydantic" data-topic="22-dataclasses-typeddict-and-pydantic">
+                <div class="topic-header" role="button" tabindex="0" aria-expanded="false"
+                    aria-controls="content-22-dataclasses-typeddict-and-pydantic">
+                    <div class="topic-header-main">
+                        <span class="topic-badge">22</span>
+                        <h2 id="22-dataclasses-typeddict-and-pydantic" class="topic-title">Dataclasses, TypedDict &amp; Pydantic<a class="headerlink"
+                                href="#22-dataclasses-typeddict-and-pydantic" title="Permanent link">#</a></h2>
+                    </div>
+                    <div class="topic-header-meta">
+                        <span class="topic-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="topic-content" id="content-22-dataclasses-typeddict-and-pydantic">
+                    <div class="part-section is-collapsed" id="22-dataclasses-typeddict-and-pydantic-theory">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-22-dataclasses-typeddict-and-pydantic-theory">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-theory"></span>
+                                <h3 class="part-heading">Theory<a class="headerlink" href="#22-dataclasses-typeddict-and-pydantic-theory"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-22-dataclasses-typeddict-and-pydantic-theory">
+                            <ul class="meta-strip">
+                                <li><b>Data Containers</b> <code class="big-o o-great">@dataclass</code></li>
+                                <li><b>Mutable Defaults</b> <code class="big-o o-great">field(default_factory=list)</code></li>
+                                <li><b>Dict Shapes</b> <code class="big-o o-good">class State(TypedDict)</code></li>
+                                <li><b>Runtime Validation</b> <code class="big-o o-great">class Report(BaseModel)</code></li>
+                            </ul>
+                            <p>Most application code passes structured records around: retrieved chunks, tool results, agent state, API payloads, and LLM structured outputs. Python gives you three complementary tools for describing them:</p>
+                            <p><strong><code>@dataclass</code></strong> (standard library) auto-generates <code>__init__</code>, <code>__repr__</code>, and <code>__eq__</code> from annotated fields, but performs no validation. <strong><code>TypedDict</code></strong> describes the keys and value types of a plain <code>dict</code> for type checkers, with zero runtime cost (LangGraph agent state is usually a <code>TypedDict</code>). <strong>Pydantic <code>BaseModel</code></strong> (<code>pip install pydantic</code>) validates and coerces data at runtime, parses JSON, and generates JSON Schema — the backbone of LLM structured output (<code>llm.with_structured_output(Model)</code>) and FastAPI request bodies.</p>
+                            <div class="analogy">
+                                <span class="analogy-icon">🎬</span>
+                                <div class="analogy-body">
+                                    <b>Picture it — Forms at a Government Office</b>
+                                    <p>A <code>TypedDict</code> is a sample form pinned to the wall: it shows what the boxes should contain, but nobody checks your copy. A dataclass is a pre-printed form with labelled boxes: the structure is fixed, but the clerk never reads what you wrote. Pydantic is the strict clerk at the counter: every box is checked, "29" is converted to the number 29, and an invalid form is handed back with a list of every mistake.</p>
+                                </div>
+                            </div>
+                            <ol>
+                                <li><strong><code>@dataclass</code>:</strong> Declare typed fields; get <code>__init__</code>, <code>__repr__</code>, and <code>__eq__</code> for free.</li>
+                                <li><strong><code>field(default_factory=list)</code>:</strong> Required for mutable defaults — <code>tags: list[str] = []</code> raises <code>ValueError</code> so instances never share one list.</li>
+                                <li><strong><code>__post_init__</code>:</strong> Runs after the generated <code>__init__</code>; use it for normalisation or derived fields.</li>
+                                <li><strong><code>@dataclass(frozen=True)</code>:</strong> Immutable and hashable instances (safe as dict keys); <code>asdict(obj)</code> converts to a dictionary.</li>
+                                <li><strong><code>TypedDict</code>:</strong> Type hints for dict-shaped data; at runtime it is an ordinary <code>dict</code>. <code>total=False</code> makes every key optional.</li>
+                                <li><strong>Pydantic <code>BaseModel</code>:</strong> Fields are validated and coerced on construction; bad data raises <code>ValidationError</code> listing every problem.</li>
+                                <li><strong><code>Field(...)</code>:</strong> Adds constraints (<code>ge</code>, <code>le</code>, <code>min_length</code>, <code>max_length</code>) and a <code>description</code> that is sent to the LLM in structured-output schemas.</li>
+                                <li><strong>Pydantic I/O:</strong> <code>model_dump()</code> → dict, <code>model_dump_json()</code> → JSON string, <code>Model.model_validate(dict)</code>, <code>Model.model_validate_json(text)</code>, and <code>Model.model_json_schema()</code>.</li>
+                                <li><strong>Which to choose:</strong> Dataclasses for trusted internal data, <code>TypedDict</code> for dict-based framework state, and Pydantic at trust boundaries (LLM output, HTTP requests, config files).</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">from dataclasses import asdict, dataclass, field
+from typing import Literal, TypedDict
+
+from pydantic import BaseModel, Field, ValidationError
+
+# 1. Dataclass: boilerplate-free record with safe mutable defaults
+@dataclass
+class Chunk:
+    doc_id: str
+    text: str
+    score: float = 0.0
+    metadata: dict[str, str] = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.text = self.text.strip()
+
+c = Chunk("policy-1", "  Vendors must encrypt data.  ")
+print(c)  # Chunk(doc_id='policy-1', text='Vendors must encrypt data.', score=0.0, metadata={})
+print(c == Chunk("policy-1", "Vendors must encrypt data."))  # True
+print(asdict(c)["doc_id"])  # policy-1
+
+@dataclass(frozen=True)
+class ModelConfig:
+    name: str
+    temperature: float = 0.2
+
+cfg = ModelConfig("gpt-4o-mini")
+try:
+    cfg.temperature = 0.9
+except AttributeError as err:  # FrozenInstanceError is a subclass of AttributeError
+    print(type(err).__name__)  # FrozenInstanceError
+
+# 2. TypedDict: type hints for plain dicts (e.g. LangGraph agent state)
+class AgentState(TypedDict, total=False):
+    question: str
+    documents: list[str]
+    answer: str
+
+state: AgentState = {"question": "What is RAG?"}
+state["documents"] = ["doc-a", "doc-b"]
+print(type(state).__name__, len(state))  # dict 2
+
+# 3. Pydantic: runtime validation and coercion at trust boundaries
+class RiskFinding(BaseModel):
+    vendor: str = Field(description="Vendor company name")
+    risk_level: Literal["low", "medium", "high"]
+    score: int = Field(ge=0, le=100, description="Risk score 0-100")
+    evidence: list[str] = Field(default_factory=list)
+
+finding = RiskFinding(vendor="Acme", risk_level="high", score="87")  # "87" is coerced to 87
+print(finding.score, type(finding.score).__name__)  # 87 int
+print(finding.model_dump())
+# {'vendor': 'Acme', 'risk_level': 'high', 'score': 87, 'evidence': []}
+
+llm_json = '{"vendor": "Globex", "risk_level": "low", "score": 12, "evidence": ["SOC 2 report"]}'
+parsed = RiskFinding.model_validate_json(llm_json)
+print(parsed.evidence)  # ['SOC 2 report']
+
+try:
+    RiskFinding(vendor="Initech", risk_level="critical", score=150)
+except ValidationError as err:
+    print(err.error_count())                     # 2
+    print([e["loc"][0] for e in err.errors()])  # ['risk_level', 'score']
+
+schema = RiskFinding.model_json_schema()  # what with_structured_output() sends to the LLM
+print(schema["required"])                           # ['vendor', 'risk_level', 'score']
+print(schema["properties"]["score"]["description"])  # Risk score 0-100
+</code></pre>
+                            </div>
+                            <ul class="card-grid">
+                                <li class="is-good"><b>Strength — Less Boilerplate, Safer Boundaries:</b> Dataclasses remove hand-written <code>__init__</code> / <code>__repr__</code> / <code>__eq__</code>, while Pydantic turns untrusted JSON (LLM replies, HTTP bodies, config) into typed, validated objects with precise error messages and an automatic JSON Schema.</li>
+                                <li class="is-bad"><b>Weakness — No Validation Without Pydantic:</b> Dataclasses and <code>TypedDict</code> never check types at runtime — <code>Chunk(doc_id=123, text=None)</code> is accepted silently. Pydantic adds a dependency and validation overhead, and lax coercion ("87" → 87) can hide sloppy upstream data unless you enable strict mode.</li>
+                            </ul>
+                            <div class="callout callout-key">
+                                <p><strong>Key idea:</strong> Validate at the boundary, trust inside: parse LLM responses, API payloads, and config with Pydantic once, then pass dataclasses or validated models through internal code. Never use a mutable literal (<code>[]</code>, <code>{}</code>) as a default — use <code>field(default_factory=...)</code> or <code>Field(default_factory=...)</code>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="part-section is-collapsed" id="22-dataclasses-typeddict-and-pydantic-questions">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-22-dataclasses-typeddict-and-pydantic-questions">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-questions"></span>
+                                <h3 class="part-heading">Questions<a class="headerlink" href="#22-dataclasses-typeddict-and-pydantic-questions"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-counter">1</span>
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-22-dataclasses-typeddict-and-pydantic-questions">
+                            <div class="worked">
+                                <b>Interview question</b>
+                                <p class="worked-q">An LLM returns JSON for support-ticket triage. Define a Pydantic model <code>Triage</code> with <code>category</code> (one of <code>"billing"</code>, <code>"bug"</code>, <code>"feature"</code>), <code>priority</code> (integer 1–5), and <code>summary</code> (non-empty, at most 80 characters). Write <code>parse_triage(raw: str) -&gt; Triage | None</code> that returns <code>None</code> and prints the names of the failing fields when the output is invalid.</p>
+                                <p>Use <code>Literal</code> for the category and <code>Field(ge=1, le=5)</code> / <code>Field(min_length=1, max_length=80)</code> for the constraints. Call <code>Triage.model_validate_json(raw)</code> inside <code>try / except ValidationError</code>, and read each error's <code>loc</code> tuple (an empty <code>loc</code> means the JSON itself was invalid).</p>
+                                <div class="code-tabs" data-label="Answer — Validate LLM Output">
+                                    <div class="tab-pane" data-lang="python">
+                                        <pre><code data-lang="python">from typing import Literal
+
+from pydantic import BaseModel, Field, ValidationError
+
+class Triage(BaseModel):
+    category: Literal["billing", "bug", "feature"]
+    priority: int = Field(ge=1, le=5)
+    summary: str = Field(min_length=1, max_length=80)
+
+def parse_triage(raw: str) -&gt; Triage | None:
+    try:
+        return Triage.model_validate_json(raw)
+    except ValidationError as err:
+        fields = [str(e["loc"][0]) if e["loc"] else "&lt;root&gt;" for e in err.errors()]
+        print(f"Invalid fields: {fields}")
+        return None
+
+# Test cases
+ok = parse_triage('{"category": "bug", "priority": 2, "summary": "Login button crashes app"}')
+print(ok.category, ok.priority)  # bug 2
+
+bad = parse_triage('{"category": "spam", "priority": 9, "summary": ""}')
+# Invalid fields: ['category', 'priority', 'summary']
+print(bad)  # None
+
+print(parse_triage("not json"))
+# Invalid fields: ['&lt;root&gt;']
+# None
+print("Parse triage passed!")  # Parse triage passed!
+</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================ Unit 7 -->
+            <div class="unit-divider" id="unit-7">
+                <div class="unit-divider-badge">Unit 7</div>
+                <div class="unit-divider-text">
+                    <h2 class="unit-divider-title">Production Toolkit<a class="headerlink" href="#unit-7"
+                            title="Permanent link">#</a></h2>
+                    <p class="unit-divider-desc">Regular expressions, configuration and logging, automated testing with pytest, and the everyday standard library used across real projects.</p>
+                </div>
+            </div>
+
+            <!-- ============================================================ 23 -->
+            <section class="topic-section is-collapsed" id="sec-23-regular-expressions" data-topic="23-regular-expressions">
+                <div class="topic-header" role="button" tabindex="0" aria-expanded="false"
+                    aria-controls="content-23-regular-expressions">
+                    <div class="topic-header-main">
+                        <span class="topic-badge">23</span>
+                        <h2 id="23-regular-expressions" class="topic-title">Regular Expressions<a class="headerlink"
+                                href="#23-regular-expressions" title="Permanent link">#</a></h2>
+                    </div>
+                    <div class="topic-header-meta">
+                        <span class="topic-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="topic-content" id="content-23-regular-expressions">
+                    <div class="part-section is-collapsed" id="23-regular-expressions-theory">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-23-regular-expressions-theory">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-theory"></span>
+                                <h3 class="part-heading">Theory<a class="headerlink" href="#23-regular-expressions-theory"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-23-regular-expressions-theory">
+                            <ul class="meta-strip">
+                                <li><b>Search &amp; Validate</b> <code class="big-o o-great">re.search(), re.fullmatch()</code></li>
+                                <li><b>Extract All</b> <code class="big-o o-great">re.findall(), re.finditer()</code></li>
+                                <li><b>Replace</b> <code class="big-o o-good">re.sub(pattern, repl, text)</code></li>
+                                <li><b>Precompile</b> <code class="big-o o-good">re.compile(pattern, re.I)</code></li>
+                            </ul>
+                            <p>Regular expressions (the <code>re</code> module) are a mini-language for finding, validating, extracting, and replacing text that follows a pattern. String methods like <code>in</code>, <code>.startswith()</code>, and <code>.split()</code> handle fixed text; regex handles variable text such as "any email address" or "a JSON block wrapped in markdown fences".</p>
+                            <p>In AI projects regex is used constantly: pulling JSON out of an LLM reply, redacting emails and API keys in guardrails, extracting ticker symbols or IDs, splitting documents on headings before chunking, and normalising whitespace in scraped text.</p>
+                            <div class="analogy">
+                                <span class="analogy-icon">🎬</span>
+                                <div class="analogy-body">
+                                    <b>Picture it — A Metal Detector with Custom Settings</b>
+                                    <p>Scanning a beach by hand (manual string slicing) means digging up every square metre. A metal detector tuned to "coins between 2 and 3 cm" beeps only where something matches the shape you described. A regex is that tuned detector: describe the shape once, and it finds (or replaces) every match in the text.</p>
+                                </div>
+                            </div>
+                            <ol>
+                                <li><strong>Raw strings:</strong> Always write patterns as <code>r"\d+"</code> so backslashes reach the regex engine unchanged.</li>
+                                <li><strong>Building blocks:</strong> <code>\d</code> digit, <code>\w</code> word character, <code>\s</code> whitespace, <code>.</code> any character, <code>[A-Z]</code> a character class, <code>^</code> / <code>$</code> anchors, and <code>\b</code> word boundary.</li>
+                                <li><strong>Quantifiers:</strong> <code>*</code> (0+), <code>+</code> (1+), <code>?</code> (0 or 1), <code>{2,4}</code>; add <code>?</code> for non-greedy matching (<code>.*?</code>).</li>
+                                <li><strong>Groups:</strong> <code>(...)</code> captures, <code>(?P&lt;name&gt;...)</code> captures by name, <code>(?:...)</code> groups without capturing.</li>
+                                <li><strong>search vs match vs fullmatch:</strong> <code>re.search</code> finds the first match anywhere, <code>re.match</code> only at the start, and <code>re.fullmatch</code> requires the entire string to match (use it for validation).</li>
+                                <li><strong>Extract many:</strong> <code>re.findall</code> returns strings (or tuples of groups); <code>re.finditer</code> yields <code>Match</code> objects with positions.</li>
+                                <li><strong>Replace &amp; split:</strong> <code>re.sub(pattern, repl, text)</code> where <code>repl</code> can be a string or a function; <code>re.split(pattern, text)</code> splits on any matching delimiter.</li>
+                                <li><strong>Flags:</strong> <code>re.I</code> ignore case, <code>re.S</code> (<code>re.DOTALL</code>) lets <code>.</code> match newlines, <code>re.M</code> makes <code>^</code> / <code>$</code> match on every line.</li>
+                                <li><strong><code>re.compile</code> &amp; <code>re.escape</code>:</strong> Compile patterns reused in loops once at module level; escape user input with <code>re.escape(text)</code> to match it literally.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">import json
+import re
+
+# 1. search with named groups, fullmatch for validation
+m = re.search(r"(?P&lt;ticker&gt;[A-Z]{1,5}) closed at \$(?P&lt;price&gt;\d+\.\d{2})", "Today AAPL closed at $189.50.")
+if m:
+    print(m.group("ticker"), float(m.group("price")))  # AAPL 189.5
+print(bool(re.fullmatch(r"[A-Z]{1,5}", "MSFT")))     # True
+print(bool(re.fullmatch(r"[A-Z]{1,5}", "MSFT123")))  # False
+
+# 2. findall / finditer for extraction (compile once, reuse many times)
+EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+")
+text = "Contact sales@acme.com or support@acme.io for help."
+print(EMAIL_RE.findall(text))                        # ['sales@acme.com', 'support@acme.io']
+print([m.start() for m in EMAIL_RE.finditer(text)])  # [8, 26]
+
+# 3. sub: redact PII, normalise whitespace, and mask secrets with a function
+print(EMAIL_RE.sub("[EMAIL]", text))                          # Contact [EMAIL] or [EMAIL] for help.
+print(re.sub(r"\s+", " ", "too   many \n\t spaces").strip())  # too many spaces
+masked = re.sub(r"sk-[A-Za-z0-9]{8,}", lambda m: "sk-****" + m.group()[-4:], "key=sk-abc123XYZ7890")
+print(masked)  # key=sk-****7890
+
+# 4. Flags: IGNORECASE + DOTALL to pull a JSON block out of an LLM reply
+reply = 'Sure! Here is the result:\n```JSON\n{"risk": "high",\n "score": 87}\n```'
+block = re.search(r"```json\s*(\{.*?\})\s*```", reply, re.I | re.S)
+print(json.loads(block.group(1)))  # {'risk': 'high', 'score': 87}
+
+# 5. split on several delimiters; escape user input before embedding it in a pattern
+print(re.split(r"[,;|]\s*", "rag, agents;mcp|evals"))  # ['rag', 'agents', 'mcp', 'evals']
+print(re.escape("price (USD)?"))                       # price\ \(USD\)\?
+</code></pre>
+                            </div>
+                            <ul class="card-grid">
+                                <li class="is-good"><b>Strength — Powerful Pattern Matching in One Line:</b> A single pattern replaces dozens of lines of manual slicing and looping, compiled patterns are fast, and regex is the standard tool for PII redaction, log parsing, and cleaning LLM output.</li>
+                                <li class="is-bad"><b>Weakness — Hard to Read and Easy to Over-Match:</b> Dense patterns are hard to maintain, greedy <code>.*</code> silently grabs too much, nested quantifiers can cause catastrophic backtracking, and regex is the wrong tool for parsing nested HTML or JSON — use a real parser for those.</li>
+                            </ul>
+                            <div class="callout callout-key">
+                                <p><strong>Key idea:</strong> Use raw strings, prefer <code>re.fullmatch</code> for validation, compile patterns you reuse, and reach for plain string methods first — use regex only when the text you need to match genuinely varies.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="part-section is-collapsed" id="23-regular-expressions-questions">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-23-regular-expressions-questions">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-questions"></span>
+                                <h3 class="part-heading">Questions<a class="headerlink" href="#23-regular-expressions-questions"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-counter">1</span>
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-23-regular-expressions-questions">
+                            <div class="worked">
+                                <b>Interview question</b>
+                                <p class="worked-q">Write <code>extract_json(reply: str) -&gt; dict | None</code> that extracts the first JSON object from an LLM reply. The JSON may be wrapped in a fenced code block (with or without a <code>json</code> language tag) or embedded directly in prose. Return <code>None</code> if nothing parseable is found.</p>
+                                <p>Try a fenced-block pattern first (<code>re.I | re.S</code>, non-greedy <code>\{.*?\}</code>), then fall back to the widest brace span <code>\{.*\}</code>. Attempt <code>json.loads()</code> on each candidate and catch <code>json.JSONDecodeError</code>.</p>
+                                <div class="code-tabs" data-label="Answer — Extract JSON from LLM Reply">
+                                    <div class="tab-pane" data-lang="python">
+                                        <pre><code data-lang="python">import json
+import re
+
+FENCE_RE = re.compile(r"```(?:json)?\s*(\{.*?\})\s*```", re.I | re.S)
+BRACE_RE = re.compile(r"\{.*\}", re.S)
+
+def extract_json(reply: str) -&gt; dict | None:
+    for pattern in (FENCE_RE, BRACE_RE):
+        match = pattern.search(reply)
+        if not match:
+            continue
+        candidate = match.group(1) if match.groups() else match.group(0)
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            continue
+    return None
+
+# Test cases
+print(extract_json('Here you go:\n```json\n{"answer": 42}\n```'))  # {'answer': 42}
+print(extract_json('Result: {"status": "ok", "items": [1, 2]} as requested.'))
+# {'status': 'ok', 'items': [1, 2]}
+print(extract_json('```\n{"nested": {"a": 1}}\n```'))  # {'nested': {'a': 1}}
+print(extract_json("No structured data here."))        # None
+print(extract_json('Broken: {"a": 1,,}'))               # None
+print("Extract JSON passed!")  # Extract JSON passed!
+</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================ 24 -->
+            <section class="topic-section is-collapsed" id="sec-24-environment-variables-cli-and-logging" data-topic="24-environment-variables-cli-and-logging">
+                <div class="topic-header" role="button" tabindex="0" aria-expanded="false"
+                    aria-controls="content-24-environment-variables-cli-and-logging">
+                    <div class="topic-header-main">
+                        <span class="topic-badge">24</span>
+                        <h2 id="24-environment-variables-cli-and-logging" class="topic-title">Environment Variables, CLI &amp; Logging<a class="headerlink"
+                                href="#24-environment-variables-cli-and-logging" title="Permanent link">#</a></h2>
+                    </div>
+                    <div class="topic-header-meta">
+                        <span class="topic-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="topic-content" id="content-24-environment-variables-cli-and-logging">
+                    <div class="part-section is-collapsed" id="24-environment-variables-cli-and-logging-theory">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-24-environment-variables-cli-and-logging-theory">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-theory"></span>
+                                <h3 class="part-heading">Theory<a class="headerlink" href="#24-environment-variables-cli-and-logging-theory"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-24-environment-variables-cli-and-logging-theory">
+                            <ul class="meta-strip">
+                                <li><b>Secrets &amp; Config</b> <code class="big-o o-great">os.getenv("KEY", default)</code></li>
+                                <li><b>.env Files</b> <code class="big-o o-great">load_dotenv()</code></li>
+                                <li><b>CLI Flags</b> <code class="big-o o-good">argparse.ArgumentParser()</code></li>
+                                <li><b>Diagnostics</b> <code class="big-o o-good">logging.getLogger(__name__)</code></li>
+                            </ul>
+                            <p>Real scripts need configuration (API keys, model names, temperatures), command-line options, and diagnostics that can be switched on or off. Hardcoding these makes code insecure and impossible to reuse across laptops, CI, and production.</p>
+                            <p>The standard toolkit is: environment variables via <code>os.getenv()</code> / <code>os.environ</code>, a local <code>.env</code> file loaded with <code>python-dotenv</code>, <code>argparse</code> for typed command-line flags, <code>sys.exit()</code> for failing fast, and the <code>logging</code> module for leveled diagnostics. Almost every agent, RAG pipeline, and API server in a real codebase starts with <code>load_dotenv()</code> followed by <code>os.getenv(...)</code> calls.</p>
+                            <div class="analogy">
+                                <span class="analogy-icon">🎬</span>
+                                <div class="analogy-body">
+                                    <b>Picture it — A Rental Car's Adjustable Settings</b>
+                                    <p>The engine (your code) is identical for every driver. Each driver adjusts the seat and mirrors (environment variables and CLI flags) for their trip without opening the hood, and the dashboard warning lights (logging) report what is happening at the level of detail the driver chooses.</p>
+                                </div>
+                            </div>
+                            <ol>
+                                <li><strong><code>os.getenv("NAME", "default")</code>:</strong> Returns the value or the default (<code>None</code> if omitted). <code>os.environ["NAME"]</code> raises <code>KeyError</code> when missing — use it for required secrets.</li>
+                                <li><strong>Values are strings:</strong> Convert explicitly: <code>int(os.getenv("MAX_RETRIES", "3"))</code>; parse booleans with <code>value.lower() in {"1", "true", "yes"}</code>, because <code>bool("false")</code> is <code>True</code>.</li>
+                                <li><strong><code>.env</code> files:</strong> <code>pip install python-dotenv</code>, then <code>from dotenv import load_dotenv; load_dotenv()</code> copies <code>KEY=VALUE</code> lines into <code>os.environ</code> without overriding variables that are already set (pass <code>override=True</code> to force). Commit <code>.env.example</code>, never <code>.env</code>.</li>
+                                <li><strong>Fail fast:</strong> Validate required configuration at startup; <code>sys.exit("Missing OPENAI_API_KEY")</code> prints the message to stderr and exits with status 1.</li>
+                                <li><strong><code>sys.argv</code> vs <code>argparse</code>:</strong> <code>sys.argv</code> is the raw list of arguments; <code>argparse</code> adds types, defaults, <code>choices</code>, boolean flags (<code>action="store_true"</code>), and a free <code>--help</code>.</li>
+                                <li><strong>Testable CLIs:</strong> <code>parser.parse_args(["--top-k", "8"])</code> accepts an explicit list, so tests do not need a real command line.</li>
+                                <li><strong><code>logging</code> setup:</strong> Call <code>logging.basicConfig(level=..., format=...)</code> once in the entry-point script and use <code>logger = logging.getLogger(__name__)</code> in every module.</li>
+                                <li><strong>Log levels:</strong> <code>DEBUG &lt; INFO &lt; WARNING &lt; ERROR &lt; CRITICAL</code>; messages below the configured level are dropped. Inside <code>except</code>, <code>logger.exception(...)</code> also records the traceback.</li>
+                                <li><strong><code>print</code> vs <code>logging</code>:</strong> Use <code>print()</code> for the program's actual output and <code>logging</code> (stderr by default) for diagnostics you may want to silence or redirect.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">import argparse
+import logging
+import os
+import sys
+
+# 1. Environment variables (always strings, so convert explicitly)
+os.environ["MODEL_NAME"] = "gpt-4o-mini"  # normally set by the shell or a .env file
+model = os.getenv("MODEL_NAME", "gpt-4o")
+max_retries = int(os.getenv("MAX_RETRIES", "3"))
+debug = os.getenv("DEBUG", "false").lower() in {"1", "true", "yes"}
+print(model, max_retries, debug)  # gpt-4o-mini 3 False
+
+# 2. Loading a .env file (pip install python-dotenv)
+# from dotenv import load_dotenv
+# load_dotenv()  # reads KEY=VALUE lines from .env into os.environ
+
+# 3. Fail fast when a required secret is missing
+def require_env(name: str) -&gt; str:
+    value = os.getenv(name)
+    if not value:
+        sys.exit(f"Missing required environment variable: {name}")  # exit status 1
+    return value
+
+try:
+    require_env("SOME_MISSING_KEY")
+except SystemExit as exc:  # caught here only to show the message
+    print(exc.code)  # Missing required environment variable: SOME_MISSING_KEY
+
+# 4. argparse: typed CLI options with defaults, choices, flags, and --help
+parser = argparse.ArgumentParser(description="Run the vendor risk assessor")
+parser.add_argument("vendor", help="Vendor name to assess")
+parser.add_argument("--top-k", type=int, default=5, help="Chunks to retrieve")
+parser.add_argument("--provider", choices=["openai", "groq"], default="openai")
+parser.add_argument("--verbose", action="store_true")
+
+args = parser.parse_args(["Acme Corp", "--top-k", "8", "--verbose"])  # scripts call parse_args()
+print(args.vendor, args.top_k, args.provider, args.verbose)  # Acme Corp 8 openai True
+
+# 5. logging: configure once at the entry point, then use module-level loggers
+logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+logger = logging.getLogger("assessor")
+logger.debug("Not shown: DEBUG is below the INFO level")
+logger.info("Retrieved %d chunks for %s", 8, args.vendor)
+# INFO assessor: Retrieved 8 chunks for Acme Corp
+try:
+    int("eight")
+except ValueError as err:
+    logger.warning("Bad --top-k value, using default: %s", err)
+# WARNING assessor: Bad --top-k value, using default: invalid literal for int() with base 10: 'eight'
+</code></pre>
+                            </div>
+                            <ul class="card-grid">
+                                <li class="is-good"><b>Strength — Same Code, Any Environment:</b> Separating configuration from code lets one script run locally, in CI, and in production by swapping environment variables. <code>argparse</code> gives free validation and <code>--help</code>, and log levels silence noise without deleting statements.</li>
+                                <li class="is-bad"><b>Weakness — Leaked Secrets and Stringly-Typed Config:</b> Committing <code>.env</code>, hardcoding keys in notebooks, or logging full request headers leaks credentials. Environment values are untyped strings, so <code>bool(os.getenv("DEBUG"))</code> is <code>True</code> even for <code>"false"</code>.</li>
+                            </ul>
+                            <div class="callout callout-key">
+                                <p><strong>Key idea:</strong> Read configuration from the environment, validate required values at startup, and fail fast with a clear message. Use <code>print()</code> for program output and <code>logging</code> for diagnostics, and call <code>logging.basicConfig()</code> only once, in the entry-point script.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="part-section is-collapsed" id="24-environment-variables-cli-and-logging-questions">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-24-environment-variables-cli-and-logging-questions">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-questions"></span>
+                                <h3 class="part-heading">Questions<a class="headerlink" href="#24-environment-variables-cli-and-logging-questions"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-counter">1</span>
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-24-environment-variables-cli-and-logging-questions">
+                            <div class="worked">
+                                <b>Interview question</b>
+                                <p class="worked-q">Write <code>load_settings(env)</code> that reads <code>OPENAI_API_KEY</code> (required), <code>MODEL_NAME</code> (default <code>"gpt-4o-mini"</code>), <code>TEMPERATURE</code> (float, default <code>0.2</code>, must be between 0 and 2), and <code>DEBUG</code> (true for <code>1/true/yes/on</code>). Collect every problem and raise a single <code>ValueError</code> listing them. Accept the environment as a mapping so the function is testable (pass <code>os.environ</code> in production).</p>
+                                <p>Read each key with <code>env.get(key, default)</code>, append error messages to a list instead of raising immediately, convert <code>TEMPERATURE</code> inside <code>try / except ValueError</code>, and raise once at the end if the error list is non-empty.</p>
+                                <div class="code-tabs" data-label="Answer — Validated Settings Loader">
+                                    <div class="tab-pane" data-lang="python">
+                                        <pre><code data-lang="python">from collections.abc import Mapping
+
+TRUTHY = {"1", "true", "yes", "on"}
+
+def load_settings(env: Mapping[str, str]) -&gt; dict:
+    errors = []
+    api_key = env.get("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        errors.append("OPENAI_API_KEY is required")
+
+    temperature = None
+    try:
+        temperature = float(env.get("TEMPERATURE", "0.2"))
+        if not 0 &lt;= temperature &lt;= 2:
+            errors.append("TEMPERATURE must be between 0 and 2")
+    except ValueError:
+        errors.append("TEMPERATURE must be a number")
+
+    if errors:
+        raise ValueError("; ".join(errors))
+    return {
+        "api_key": api_key,
+        "model": env.get("MODEL_NAME", "gpt-4o-mini"),
+        "temperature": temperature,
+        "debug": env.get("DEBUG", "").strip().lower() in TRUTHY,
+    }
+
+# Test cases
+settings = load_settings({"OPENAI_API_KEY": "sk-test", "DEBUG": "True"})
+print(settings["model"], settings["temperature"], settings["debug"])  # gpt-4o-mini 0.2 True
+
+try:
+    load_settings({"TEMPERATURE": "hot"})
+except ValueError as err:
+    print(err)  # OPENAI_API_KEY is required; TEMPERATURE must be a number
+
+try:
+    load_settings({"OPENAI_API_KEY": "sk-test", "TEMPERATURE": "3"})
+except ValueError as err:
+    print(err)  # TEMPERATURE must be between 0 and 2
+print("Load settings passed!")  # Load settings passed!
+</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================ 25 -->
+            <section class="topic-section is-collapsed" id="sec-25-testing-with-pytest" data-topic="25-testing-with-pytest">
+                <div class="topic-header" role="button" tabindex="0" aria-expanded="false"
+                    aria-controls="content-25-testing-with-pytest">
+                    <div class="topic-header-main">
+                        <span class="topic-badge">25</span>
+                        <h2 id="25-testing-with-pytest" class="topic-title">Testing with pytest<a class="headerlink"
+                                href="#25-testing-with-pytest" title="Permanent link">#</a></h2>
+                    </div>
+                    <div class="topic-header-meta">
+                        <span class="topic-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="topic-content" id="content-25-testing-with-pytest">
+                    <div class="part-section is-collapsed" id="25-testing-with-pytest-theory">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-25-testing-with-pytest-theory">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-theory"></span>
+                                <h3 class="part-heading">Theory<a class="headerlink" href="#25-testing-with-pytest-theory"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-25-testing-with-pytest-theory">
+                            <ul class="meta-strip">
+                                <li><b>Test Functions</b> <code class="big-o o-great">def test_x(): assert ...</code></li>
+                                <li><b>Expected Errors</b> <code class="big-o o-great">with pytest.raises(ValueError):</code></li>
+                                <li><b>Data-Driven</b> <code class="big-o o-good">@pytest.mark.parametrize</code></li>
+                                <li><b>Setup &amp; Fakes</b> <code class="big-o o-good">@pytest.fixture, monkeypatch, tmp_path</code></li>
+                            </ul>
+                            <p>Automated tests prove that parsers, scoring functions, tools, and prompts-building code still work after every change. <code>pytest</code> (<code>pip install pytest</code>) is the de-facto standard: it discovers files named <code>test_*.py</code> and functions named <code>test_*</code>, and uses plain <code>assert</code> statements while showing the actual values when an assertion fails.</p>
+                            <p>For AI applications, the key skill is isolating your logic from slow, costly, nondeterministic LLM and network calls: replace them with fakes via fixtures or <code>monkeypatch</code>, so unit tests run in milliseconds and always give the same answer. (Measuring model quality is a separate job for evaluation suites.)</p>
+                            <div class="analogy">
+                                <span class="analogy-icon">🎬</span>
+                                <div class="analogy-body">
+                                    <b>Picture it — Crash Tests at the Car Factory</b>
+                                    <p>Every new car model goes through the same crash tests before it leaves the factory, using crash-test dummies instead of real people. Your test suite is that crash-test track: every code change drives through the same checks, and fake LLMs and APIs play the role of the dummies.</p>
+                                </div>
+                            </div>
+                            <ol>
+                                <li><strong>Running tests:</strong> <code>pytest</code> runs everything; <code>pytest tests/test_rag.py -q</code> one file; <code>pytest -k "cost"</code> by name; <code>pytest -x</code> stops at the first failure; <code>-v</code> lists each test.</li>
+                                <li><strong>Naming:</strong> Files <code>test_*.py</code>, functions <code>test_*</code>, optional grouping classes <code>Test*</code> (no <code>__init__</code>).</li>
+                                <li><strong>Plain <code>assert</code>:</strong> <code>assert result == expected</code>; use <code>pytest.approx(x)</code> when comparing floats.</li>
+                                <li><strong><code>pytest.raises</code>:</strong> <code>with pytest.raises(ValueError, match="non-negative"):</code> asserts that the block raises that exception with a matching message.</li>
+                                <li><strong><code>@pytest.mark.parametrize</code>:</strong> Runs one test function over many input/expected pairs; each pair is reported as a separate test.</li>
+                                <li><strong><code>@pytest.fixture</code>:</strong> Reusable setup injected by parameter name; put shared fixtures in <code>conftest.py</code>.</li>
+                                <li><strong>Built-in fixtures:</strong> <code>tmp_path</code> (fresh temp directory), <code>monkeypatch</code> (set env vars, replace functions or attributes), and <code>capsys</code> (capture printed output).</li>
+                                <li><strong>Fake external services:</strong> Pass a fake LLM callable into your function, or <code>monkeypatch.setattr</code> the client method, so tests make zero network calls.</li>
+                                <li><strong><code>unittest</code>:</strong> The standard-library alternative (<code>class TestX(unittest.TestCase)</code> with <code>self.assertEqual</code>); pytest runs these tests too.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python"># test_pricing.py  -  run with:  pytest -q test_pricing.py
+import os
+
+import pytest
+
+# --- code under test (normally imported, e.g. from pricing import estimate_cost) ---
+def estimate_cost(input_tokens: int, output_tokens: int, usd_per_m_in: float, usd_per_m_out: float) -&gt; float:
+    if input_tokens &lt; 0 or output_tokens &lt; 0:
+        raise ValueError("token counts must be non-negative")
+    return input_tokens / 1e6 * usd_per_m_in + output_tokens / 1e6 * usd_per_m_out
+
+def summarize(text: str, llm) -&gt; str:
+    return llm(f"Summarize: {text}").strip()
+
+# 1. Plain assert + approx for floats
+def test_estimate_cost_basic():
+    assert estimate_cost(1_000_000, 0, 0.15, 0.60) == pytest.approx(0.15)
+
+# 2. Expected exceptions
+def test_negative_tokens_rejected():
+    with pytest.raises(ValueError, match="non-negative"):
+        estimate_cost(-1, 0, 0.15, 0.60)
+
+# 3. One test function, many cases
+@pytest.mark.parametrize(
+    ("inp", "out", "expected"),
+    [(0, 0, 0.0), (500_000, 0, 0.075), (0, 1_000_000, 0.60)],
+)
+def test_estimate_cost_cases(inp, out, expected):
+    assert estimate_cost(inp, out, 0.15, 0.60) == pytest.approx(expected)
+
+# 4. Fixture providing a fake LLM (no network, deterministic)
+@pytest.fixture
+def fake_llm():
+    calls = []
+
+    def _llm(prompt: str) -&gt; str:
+        calls.append(prompt)
+        return "  A short summary.  "
+
+    _llm.calls = calls
+    return _llm
+
+def test_summarize_uses_llm(fake_llm):
+    assert summarize("long text", fake_llm) == "A short summary."
+    assert fake_llm.calls == ["Summarize: long text"]
+
+# 5. Built-in fixtures: monkeypatch (env vars) and tmp_path (temp directory)
+def test_reads_config(tmp_path, monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")  # restored automatically after the test
+    cfg = tmp_path / "config.txt"
+    cfg.write_text("model=gpt-4o-mini", encoding="utf-8")
+    assert os.environ["OPENAI_API_KEY"] == "sk-test"
+    assert cfg.read_text(encoding="utf-8").split("=")[1] == "gpt-4o-mini"
+</code></pre>
+                            </div>
+                            <div class="highlight">
+                                <pre><code data-lang="bash">$ pytest -q test_pricing.py
+.......                                                                  [100%]
+7 passed in 0.02s
+</code></pre>
+                            </div>
+                            <ul class="card-grid">
+                                <li class="is-good"><b>Strength — Fast, Readable Safety Net:</b> Plain asserts, fixtures, and parametrization keep tests short. Fast deterministic tests with fake LLMs catch regressions in parsers, tools, and scoring logic before they reach users.</li>
+                                <li class="is-bad"><b>Weakness — Real API Calls and Over-Mocking:</b> Tests that call real LLMs or web APIs are slow, cost money, need secrets, and fail randomly. On the other hand, mocking too much ends up testing the mock instead of real behavior.</li>
+                            </ul>
+                            <div class="callout callout-key">
+                                <p><strong>Key idea:</strong> Unit-test pure logic (parsers, scoring, tool functions) with fast tests, replace LLM and network calls with fakes via fixtures or <code>monkeypatch</code>, use <code>pytest.approx</code> for floats and <code>pytest.raises</code> for errors, and keep model-quality checks in a separate evaluation suite.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="part-section is-collapsed" id="25-testing-with-pytest-questions">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-25-testing-with-pytest-questions">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-questions"></span>
+                                <h3 class="part-heading">Questions<a class="headerlink" href="#25-testing-with-pytest-questions"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-counter">1</span>
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-25-testing-with-pytest-questions">
+                            <div class="worked">
+                                <b>Interview question</b>
+                                <p class="worked-q">Write parametrized pytest tests for <code>classify_nps(score: int) -&gt; str</code>, which returns <code>"detractor"</code> for 0–6, <code>"passive"</code> for 7–8, and <code>"promoter"</code> for 9–10. Cover every boundary and verify that out-of-range scores raise <code>ValueError</code>.</p>
+                                <p>Use one <code>@pytest.mark.parametrize</code> test for the boundary values (0, 6, 7, 8, 9, 10) and a second parametrized test using <code>pytest.raises(ValueError, match=...)</code> for invalid scores.</p>
+                                <div class="code-tabs" data-label="Answer — Parametrized NPS Tests">
+                                    <div class="tab-pane" data-lang="python">
+                                        <pre><code data-lang="python"># test_nps.py  -  run with:  pytest -q test_nps.py
+import pytest
+
+def classify_nps(score: int) -&gt; str:
+    if not 0 &lt;= score &lt;= 10:
+        raise ValueError(f"NPS score out of range: {score}")
+    if score &gt;= 9:
+        return "promoter"
+    if score &gt;= 7:
+        return "passive"
+    return "detractor"
+
+@pytest.mark.parametrize(
+    ("score", "expected"),
+    [(0, "detractor"), (6, "detractor"), (7, "passive"), (8, "passive"), (9, "promoter"), (10, "promoter")],
+)
+def test_classify_nps_boundaries(score, expected):
+    assert classify_nps(score) == expected
+
+@pytest.mark.parametrize("bad_score", [-1, 11, 100])
+def test_classify_nps_rejects_out_of_range(bad_score):
+    with pytest.raises(ValueError, match="out of range"):
+        classify_nps(bad_score)
+
+# $ pytest -q test_nps.py
+# .........                                                              [100%]
+# 9 passed in 0.01s
+</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================ 26 -->
+            <section class="topic-section is-collapsed" id="sec-26-standard-library-toolkit" data-topic="26-standard-library-toolkit">
+                <div class="topic-header" role="button" tabindex="0" aria-expanded="false"
+                    aria-controls="content-26-standard-library-toolkit">
+                    <div class="topic-header-main">
+                        <span class="topic-badge">26</span>
+                        <h2 id="26-standard-library-toolkit" class="topic-title">Standard Library Toolkit<a class="headerlink"
+                                href="#26-standard-library-toolkit" title="Permanent link">#</a></h2>
+                    </div>
+                    <div class="topic-header-meta">
+                        <span class="topic-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div class="topic-content" id="content-26-standard-library-toolkit">
+                    <div class="part-section is-collapsed" id="26-standard-library-toolkit-theory">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-26-standard-library-toolkit-theory">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-theory"></span>
+                                <h3 class="part-heading">Theory<a class="headerlink" href="#26-standard-library-toolkit-theory"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-26-standard-library-toolkit-theory">
+                            <ul class="meta-strip">
+                                <li><b>Dates &amp; Times</b> <code class="big-o o-great">datetime.now(timezone.utc), timedelta</code></li>
+                                <li><b>Timing</b> <code class="big-o o-great">time.perf_counter()</code></li>
+                                <li><b>IDs &amp; Fingerprints</b> <code class="big-o o-good">uuid.uuid4(), hashlib.sha256()</code></li>
+                                <li><b>Local Database</b> <code class="big-o o-good">sqlite3.connect(path)</code></li>
+                                <li><b>Threads &amp; Processes</b> <code class="big-o o-good">ThreadPoolExecutor, Lock, subprocess.run</code></li>
+                            </ul>
+                            <p>Python ships with "batteries included": a large standard library that needs no <code>pip install</code>. Beyond <code>json</code>, <code>pathlib</code>, <code>re</code>, and <code>collections</code>, a handful of modules show up in almost every real project: <code>datetime</code> for timestamps, <code>time</code> for measuring latency, <code>uuid</code> and <code>hashlib</code> for IDs and content fingerprints, <code>statistics</code> for quick metrics, <code>sqlite3</code> for a zero-setup database, <code>concurrent.futures</code> / <code>threading</code> for parallel I/O, and <code>subprocess</code> for running other programs.</p>
+                            <div class="analogy">
+                                <span class="analogy-icon">🎬</span>
+                                <div class="analogy-body">
+                                    <b>Picture it — A Fully Stocked Workshop Pegboard</b>
+                                    <p>Before buying a specialised power tool (a third-party package), look at the pegboard that came with the workshop. The tape measure (<code>time</code>), calendar (<code>datetime</code>), label maker (<code>uuid</code>), fingerprint scanner (<code>hashlib</code>), filing cabinet (<code>sqlite3</code>), and extra pairs of hands (threads) are already hanging there, tested and ready to use.</p>
+                                </div>
+                            </div>
+                            <ol>
+                                <li><strong><code>datetime</code>:</strong> <code>datetime.now(timezone.utc)</code> for timezone-aware timestamps (avoid the deprecated <code>datetime.utcnow()</code>), <code>timedelta</code> arithmetic, <code>.isoformat()</code> / <code>datetime.fromisoformat()</code>, <code>strftime</code> / <code>strptime</code>, and <code>zoneinfo.ZoneInfo("Asia/Kolkata")</code> for named time zones.</li>
+                                <li><strong><code>time</code>:</strong> <code>time.perf_counter()</code> to measure durations (monotonic, high resolution); <code>time.time()</code> for wall-clock epoch timestamps; <code>time.sleep()</code> blocks the thread (use <code>asyncio.sleep</code> in async code).</li>
+                                <li><strong><code>uuid</code> &amp; <code>hashlib</code>:</strong> <code>uuid.uuid4()</code> for random unique session, trace, or thread IDs; <code>hashlib.sha256(text.encode()).hexdigest()</code> for deterministic fingerprints used in de-duplication and caching (never for storing passwords).</li>
+                                <li><strong><code>statistics</code>:</strong> <code>mean</code>, <code>median</code>, <code>stdev</code>, and <code>quantiles</code> for quick metrics without NumPy.</li>
+                                <li><strong><code>sqlite3</code>:</strong> A full SQL database in a single file (or <code>":memory:"</code>). Always use <code>?</code> placeholders for values, set <code>conn.row_factory = sqlite3.Row</code> for dict-like rows, and remember <code>with conn:</code> commits or rolls back a transaction but does not close the connection.</li>
+                                <li><strong><code>concurrent.futures</code>:</strong> <code>ThreadPoolExecutor</code> runs blocking I/O (HTTP calls, file reads) in parallel from synchronous code; <code>pool.map</code> keeps results in input order. Guard shared mutable state with <code>threading.Lock</code>.</li>
+                                <li><strong>CPU-bound work:</strong> Threads do not speed up pure-Python CPU work on the standard (GIL) interpreter; use <code>ProcessPoolExecutor</code> or <code>multiprocessing</code> instead.</li>
+                                <li><strong><code>subprocess.run</code>:</strong> Run external commands with a list of arguments, <code>capture_output=True, text=True</code>, and a <code>timeout</code>; avoid <code>shell=True</code> with untrusted input.</li>
+                            </ol>
+                            <div class="highlight">
+                                <pre><code data-lang="python">import hashlib
+import sqlite3
+import statistics
+import subprocess
+import sys
+import threading
+import time
+import uuid
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone
+
+# 1. datetime: timezone-aware timestamps and arithmetic
+created = datetime(2026, 1, 15, 9, 30, tzinfo=timezone.utc)
+expires = created + timedelta(days=30)
+print(expires.isoformat())        # 2026-02-14T09:30:00+00:00
+print((expires - created).days)   # 30
+print(datetime.fromisoformat("2026-02-14T09:30:00+00:00") == expires)  # True
+print(created.strftime("%d %b %Y"))  # 15 Jan 2026
+now = datetime.now(timezone.utc)  # prefer this over the deprecated datetime.utcnow()
+
+# 2. Measuring durations with perf_counter
+start = time.perf_counter()
+time.sleep(0.01)
+elapsed_ms = (time.perf_counter() - start) * 1000
+print(elapsed_ms &gt;= 10)  # True
+
+# 3. Unique IDs and content fingerprints
+session_id = str(uuid.uuid4())
+print(len(session_id), session_id.count("-"))  # 36 4
+fingerprint = hashlib.sha256("Vendors must encrypt data.".encode("utf-8")).hexdigest()
+print(len(fingerprint), fingerprint == hashlib.sha256(b"Vendors must encrypt data.").hexdigest())  # 64 True
+
+# 4. Quick statistics
+latencies = [120, 95, 410, 130, 101]
+print(statistics.mean(latencies), statistics.median(latencies))  # 171.2 120
+
+# 5. sqlite3: parameterized queries and dict-like rows
+conn = sqlite3.connect(":memory:")  # or a file such as "trips.db"
+conn.row_factory = sqlite3.Row
+with conn:  # commits on success, rolls back on error
+    conn.execute("CREATE TABLE bookings (id INTEGER PRIMARY KEY, city TEXT, nights INTEGER)")
+    conn.executemany("INSERT INTO bookings (city, nights) VALUES (?, ?)", [("Goa", 3), ("Pune", 2), ("Goa", 4)])
+city = "Goa"  # user input: always pass values through ? placeholders, never an f-string
+row = conn.execute("SELECT city, SUM(nights) AS total FROM bookings WHERE city = ?", (city,)).fetchone()
+print(row["city"], row["total"])  # Goa 7
+conn.close()
+
+# 6. Threads for blocking I/O, with a Lock protecting shared state
+counter = {"done": 0}
+lock = threading.Lock()
+
+def fetch(url: str) -&gt; int:
+    time.sleep(0.01)  # stands in for a blocking HTTP call
+    with lock:
+        counter["done"] += 1
+    return len(url)
+
+urls = ["https://a.dev", "https://bb.dev", "https://ccc.dev"]
+with ThreadPoolExecutor(max_workers=3) as pool:
+    sizes = list(pool.map(fetch, urls))  # results keep input order
+print(sizes, counter["done"])  # [13, 14, 15] 3
+
+# 7. subprocess: run another program safely (list args, timeout, captured output)
+result = subprocess.run(
+    [sys.executable, "-c", "print('tests passed')"], capture_output=True, text=True, timeout=30
+)
+print(result.returncode, result.stdout.strip())  # 0 tests passed
+</code></pre>
+                            </div>
+                            <ul class="card-grid">
+                                <li class="is-good"><b>Strength — Zero Dependencies, Battle-Tested:</b> Standard-library modules need no installation, are stable across versions, and cover most daily utility needs — fewer dependencies mean fewer security updates and version conflicts.</li>
+                                <li class="is-bad"><b>Weakness — Subtle Defaults:</b> Naive datetimes (no <code>tzinfo</code>) silently mix time zones and cannot be compared with aware ones (<code>TypeError</code>); <code>with sqlite3.connect()</code> does not close the connection; and threads do not speed up CPU-bound Python code on the standard interpreter.</li>
+                            </ul>
+                            <div class="callout callout-key">
+                                <p><strong>Key idea:</strong> Store and compare timestamps as timezone-aware UTC, measure durations with <code>time.perf_counter()</code>, always use <code>?</code> placeholders in SQL, and use threads for blocking I/O but processes for CPU-heavy work.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="part-section is-collapsed" id="26-standard-library-toolkit-questions">
+                        <div class="part-header" role="button" tabindex="0" aria-expanded="false"
+                            aria-controls="body-26-standard-library-toolkit-questions">
+                            <div class="part-header-left">
+                                <span class="part-indicator ind-questions"></span>
+                                <h3 class="part-heading">Questions<a class="headerlink" href="#26-standard-library-toolkit-questions"
+                                        title="Permanent link">#</a></h3>
+                            </div>
+                            <div class="part-header-right">
+                                <span class="part-counter">1</span>
+                                <span class="part-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="part-body" id="body-26-standard-library-toolkit-questions">
+                            <div class="worked">
+                                <b>Interview question</b>
+                                <p class="worked-q">Using only the standard library, implement a <code>TTLCache</code> class with <code>set(key, value)</code> and <code>get(key, default=None)</code> where entries expire <code>ttl_seconds</code> after being set (useful for caching stock prices or API responses). Make it testable without real waiting.</p>
+                                <p>Store <code>(expires_at, value)</code> tuples in a dictionary. Inject the clock as a constructor parameter that defaults to <code>time.monotonic</code>, so tests can pass a fake clock and advance time instantly. Delete expired entries lazily inside <code>get</code>.</p>
+                                <div class="code-tabs" data-label="Answer — TTL Cache with Injectable Clock">
+                                    <div class="tab-pane" data-lang="python">
+                                        <pre><code data-lang="python">import time
+from collections.abc import Callable
+from typing import Any
+
+class TTLCache:
+    def __init__(self, ttl_seconds: float, clock: Callable[[], float] = time.monotonic):
+        self.ttl = ttl_seconds
+        self.clock = clock
+        self._data: dict[str, tuple[float, Any]] = {}
+
+    def set(self, key: str, value: Any) -&gt; None:
+        self._data[key] = (self.clock() + self.ttl, value)
+
+    def get(self, key: str, default: Any = None) -&gt; Any:
+        item = self._data.get(key)
+        if item is None:
+            return default
+        expires_at, value = item
+        if self.clock() &gt;= expires_at:
+            del self._data[key]
+            return default
+        return value
+
+# Test cases with a fake clock: instant and deterministic
+fake_now = [1000.0]
+cache = TTLCache(ttl_seconds=60, clock=lambda: fake_now[0])
+cache.set("AAPL", 189.5)
+print(cache.get("AAPL"))  # 189.5
+fake_now[0] += 59
+print(cache.get("AAPL"))  # 189.5
+fake_now[0] += 1
+print(cache.get("AAPL"))  # None
+print(cache.get("MSFT", "miss"))  # miss
+print("TTL cache passed!")  # TTL cache passed!
+</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <blockquote>
-                <p>🐍 <strong>Next steps:</strong> Ready for advanced topics like decorators, generators, context
-                    managers, and CPython internals? Continue to the <a href="python-crash-course.html">Python Crash
+                <p>🐍 <strong>Next steps:</strong> Ready for deeper topics like CPython internals, memory management,
+                    and advanced concurrency? Continue to the <a href="python-crash-course.html">Python Crash
                         Course</a>, or the deep-dive <a href="python-detailed-course.html">Python Detailed Course</a>.
                     Browse all languages in the <a href="../programming-languages.html">Language Courses catalog</a>.
                 </p>

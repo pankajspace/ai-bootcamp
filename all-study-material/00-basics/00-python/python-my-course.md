@@ -1,7 +1,7 @@
 <!--
 Source: python-my-course.html
 Title: Python My Course | TechToday
-Description: Fast-track Python essentials for everyday programming — variables, type hints, keywords, strings, operators, loops, lists, dictionaries, sorting, tuples, sets, unpacking & destructuring, comprehensions, functions, async/await, OOP, error handling, modules & imports, and virtual environments.
+Description: Fast-track Python essentials for everyday programming — variables, type hints, keywords, strings, operators, loops, lists, dictionaries, sorting, tuples, sets, unpacking & destructuring, comprehensions, functions, async/await, OOP, error handling, modules & imports, virtual environments, decorators, generators, context managers & file I/O, dataclasses & Pydantic, regular expressions, environment variables & logging, testing with pytest, and the standard library toolkit.
 -->
 
 Navigation: [TechToday](../../../index.html) · [← Programming Languages](../programming-languages.html)
@@ -10,7 +10,7 @@ Navigation: [TechToday](../../../index.html) · [← Programming Languages](../p
 
 # Python My Course
 
-The high-yield Python course reference: common everyday syntax, type hints, keywords, core collections, functions, async/await concurrency, practical OOP solutions, error handling, modules & imports, and virtual environments.
+The high-yield Python course reference: common everyday syntax, type hints, keywords, core collections, functions, async/await concurrency, practical OOP solutions, error handling, modules & imports, virtual environments, decorators, generators, context managers, data models, regex, configuration & logging, testing, and the standard-library toolkit used in real projects.
 
 <a id="table-of-contents"></a>
 
@@ -28,12 +28,20 @@ The high-yield Python course reference: common everyday syntax, type hints, keyw
 10. [Tuples & Sets](#10-tuples-and-sets)
 11. [Sorting in Python](#11-sorting-in-python)
 12. [Unpacking & Destructuring](#12-unpacking-and-destructuring)
-13. [List Comprehensions](#13-list-comprehensions)
+13. [List, Dict & Set Comprehensions](#13-list-comprehensions)
 14. [Functions & Arguments](#14-functions-and-arguments)
 15. [Async / Await](#15-async-and-await)
 16. [Object-Oriented Programming (OOP)](#16-object-oriented-programming)
 17. [Modules & Imports](#17-modules-and-imports)
 18. [Virtual Environments](#18-virtual-environments)
+19. [Decorators](#19-decorators)
+20. [Generators & Iterators](#20-generators-and-iterators)
+21. [Context Managers & File I/O](#21-context-managers-and-file-io)
+22. [Dataclasses, TypedDict & Pydantic](#22-dataclasses-typeddict-and-pydantic)
+23. [Regular Expressions](#23-regular-expressions)
+24. [Environment Variables, CLI & Logging](#24-environment-variables-cli-and-logging)
+25. [Testing with pytest](#25-testing-with-pytest)
+26. [Standard Library Toolkit](#26-standard-library-toolkit)
 
 ---
 
@@ -136,6 +144,7 @@ print("Sum valid integers passed!")  # Sum valid integers passed!
 - **Variable & Return Hints** `x: int = 1, def fn() -> str:` <!-- great -->
 - **Built-in Generics (3.9+)** `list[str], dict[str, int]` <!-- great -->
 - **Union & Optional (3.10+)** `str | None, int | float` <!-- good -->
+- **Generics & Legacy Forms** `TypeVar, Optional[X], Iterable[T]` <!-- good -->
 
 Python is dynamically typed, but modern Python (PEP 484 and Python 3.9+) supports **type hints** (type annotations). Type hints do not change runtime behavior—Python will not throw an error if types don't match—but they make code self-documenting, provide rich IDE autocomplete, and allow static analysis tools like `mypy` or `pyright` to catch bugs before runtime.
 
@@ -205,6 +214,51 @@ print(squared)  # [1, 4, 9]
 user = find_user(101)
 if user is not None:
     print(f"Found: {user['name']}")  # Found: Alice
+```
+
+Type hints you will meet constantly in real codebases (and in older code written before Python 3.10):
+
+1. `from __future__ import annotations`: Placed at the top of a module, it postpones evaluation of all annotations, so `str | None` works on older Python versions and a class can reference itself in its own method signatures.
+2. Legacy `typing` spellings: `Optional[str]` is `str | None`, `Union[int, str]` is `int | str`, and `List[str]` / `Dict[str, Any]` are `list[str]` / `dict[str, Any]`. Read them fluently, but prefer the modern forms in new code.
+3. `Any`: Opts a value out of type checking — handy for raw JSON (`dict[str, Any]`), but use it sparingly.
+4. `Iterable[T]` / `Iterator[T]`: Import from `collections.abc` to accept any iterable (lists, tuples, generators) instead of demanding a `list`.
+5. `TypeVar`: Links input and output types in generic functions: `def first(items: list[T]) -> T`.
+6. `TypedDict` & Pydantic: Describe dictionary shapes and validated models (see topic 22).
+
+```python
+from __future__ import annotations
+
+from collections.abc import Iterable
+from typing import Any, Optional, TypeVar
+
+# Legacy spelling seen in older code (identical to: str | None)
+def find_city(code: str) -> Optional[str]:
+    return {"BOM": "Mumbai"}.get(code)
+
+print(find_city("BOM"), find_city("XYZ"))  # Mumbai None
+
+# Accept any iterable, not just lists
+def total_tokens(counts: Iterable[int]) -> int:
+    return sum(counts)
+
+print(total_tokens([120, 80]), total_tokens(n for n in (5, 5)))  # 200 10
+
+# TypeVar: the return type follows the argument type
+T = TypeVar("T")
+
+def first_or_default(items: list[T], default: T) -> T:
+    return items[0] if items else default
+
+print(first_or_default(["gpt-4o", "llama3"], "none"))  # gpt-4o
+print(first_or_default([], 0))  # 0
+
+# Forward reference: a class can mention itself thanks to postponed annotations
+class Node:
+    def __init__(self, value: Any, next_node: Node | None = None):
+        self.value = value
+        self.next_node = next_node
+
+print(Node(1, Node(2)).next_node.value)  # 2
 ```
 
 - **Strength — Catch Bugs Early & Instant IDE Autocomplete** Static analysis tools catch `NoneType` errors, wrong argument counts, and invalid types before code runs, while IDEs provide instant auto-completion and safe refactoring.
@@ -321,6 +375,7 @@ print(f"Variables: {class_name}, {type_}")  # Variables: Mathematics, geometry
 - **Try / Except** `Catch specific exceptions safely` <!-- great -->
 - **Common Errors** `ValueError, KeyError, FileNotFoundError` <!-- great -->
 - **Cleanup** `finally block always runs` <!-- good -->
+- **Custom & Chained** `class AppError(Exception), raise ... from err` <!-- good -->
 
 Errors happen: an API returns bad text, a user types letters into a number field, or a file doesn't exist. Python uses `try / except` blocks so your program handles errors gracefully instead of crashing abruptly.
 
@@ -380,6 +435,55 @@ def parse_percentage(val: str) -> float:
 print(parse_percentage("85.5"))  # 85.5
 ```
 
+Production code (agents, tools, APIs) relies on a few more error-handling patterns:
+
+1. `try / except / else / finally`: The `else` block runs only when no exception was raised, keeping the `try` block focused on the one risky line.
+2. Custom exception classes: Subclass `Exception` to create a domain-specific hierarchy (`class AssessorError(Exception)`, `class LLMResponseError(AssessorError)`); catching the base class catches every subclass.
+3. `raise NewError(...) from err`: Chains exceptions: the original error is kept in `__cause__`, and the traceback shows both — essential when translating low-level errors into meaningful ones.
+4. Bare `raise`: Inside `except`, re-raises the current exception unchanged after logging or cleanup.
+5. Error boundaries: Tools called by an LLM agent should catch expected errors and return an error message (often JSON) instead of crashing the whole agent loop.
+
+```python
+import json
+
+# Custom exception hierarchy for a package
+class AssessorError(Exception):
+    """Base error for the assessor package."""
+
+class LLMResponseError(AssessorError):
+    def __init__(self, message: str, raw: str):
+        super().__init__(message)
+        self.raw = raw
+
+# try / except / else + exception chaining with `raise ... from`
+def parse_llm_json(raw: str) -> dict:
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError as err:
+        raise LLMResponseError("Model returned invalid JSON", raw=raw) from err
+    else:  # runs only when no exception was raised
+        return data
+
+try:
+    parse_llm_json("{not valid")
+except AssessorError as err:  # the base class also catches subclasses
+    print(type(err).__name__, "|", err, "|", type(err.__cause__).__name__)
+    # LLMResponseError | Model returned invalid JSON | JSONDecodeError
+
+print(parse_llm_json('{"ok": true}'))  # {'ok': True}
+
+# Error boundary: a tool never crashes the agent loop
+def safe_tool(payload: str) -> str:
+    try:
+        data = parse_llm_json(payload)
+        return json.dumps({"ok": True, "keys": sorted(data)})
+    except AssessorError as err:
+        return json.dumps({"ok": False, "error": str(err)})
+
+print(safe_tool('{"b": 1, "a": 2}'))  # {"ok": true, "keys": ["a", "b"]}
+print(safe_tool("oops"))              # {"ok": false, "error": "Model returned invalid JSON"}
+```
+
 - **Strength — Prevents Application Crashes** Catching specific errors lets services log failures and return fallback responses without taking down the server.
 - **Weakness — Bare `except: pass` Anti-pattern** Writing `except: pass` silences every error, including keyboard interrupts and variable typos, making debugging impossible.
 
@@ -405,6 +509,40 @@ print(safe_divide(0, 5))   # 0.0
 print("Safe divide passed!")  # Safe divide passed!
 ```
 
+**Interview question**
+
+*Write `parse_port(value: str) -> int` that raises a custom `ConfigError` when the value is not an integer (chained from the original `ValueError`) or is outside the range 1–65535.*
+
+Define `class ConfigError(Exception)`. Convert with `int()` inside `try`, and in `except ValueError as err:` use `raise ConfigError(...) from err`. Check the range after a successful conversion.
+
+**Answer — Custom Exception with Chaining**
+
+```python
+class ConfigError(Exception):
+    pass
+
+def parse_port(value: str) -> int:
+    try:
+        port = int(value)
+    except ValueError as err:
+        raise ConfigError(f"Port must be an integer, got {value!r}") from err
+    if not 1 <= port <= 65535:
+        raise ConfigError(f"Port out of range: {port}")
+    return port
+
+# Test cases
+print(parse_port("8080"))  # 8080
+for bad in ["http", "70000"]:
+    try:
+        parse_port(bad)
+    except ConfigError as err:
+        cause = type(err.__cause__).__name__ if err.__cause__ else None
+        print(f"{err} | caused by: {cause}")
+# Port must be an integer, got 'http' | caused by: ValueError
+# Port out of range: 70000 | caused by: None
+print("Parse port passed!")  # Parse port passed!
+```
+
 > **Key idea**
 >
 > Always specify the error you expect to catch (such as `except ValueError:`, not just `except:`).
@@ -418,6 +556,7 @@ print("Safe divide passed!")  # Safe divide passed!
 - **Formatting & Operators** `f"{var}", +, *, in, not in` <!-- great -->
 - **Whitespace & Cleaning** `.strip(), .split(), .join()` <!-- great -->
 - **Search & Inspection** `.replace(), .startswith(), in` <!-- good -->
+- **Format Specifiers** `f"{x:,.2f} {r:.1%} {s:<10}"` <!-- good -->
 
 Strings are one of the most commonly used data types in Python. Python strings are immutable (they cannot be changed in place; operations return a new string). Formatted string literals (f-strings) are the modern, standard way to embed variables and expressions inside text. Python also provides native string operators like `+` for concatenation, `*` for repetition, and the membership operators `in` and `not in` to test for substrings.
 
@@ -487,6 +626,47 @@ if user_input is None:
 # Value equality vs identity
 status = "active"
 print(status == "active")  # True (always use == for string comparisons)
+```
+
+The part after the colon in an f-string is a **format specifier**. These are the ones used most for reports, metrics tables, and logs:
+
+1. Decimals: `{x:.2f}` fixed decimals, `{x:,.2f}` adds thousands separators, `{n:,}` for integers.
+2. Percentages: `{ratio:.1%}` multiplies by 100 and appends `%` (`0.457` → `45.7%`).
+3. Signs & zero padding: `{delta:+.1f}` always shows the sign; `{n:03d}` pads with zeros (`007`).
+4. Alignment: `{s:<10}` left, `{s:>10}` right, `{s:^10}` centre within 10 characters — ideal for aligned console tables.
+5. Debugging: `{value!r}` uses `repr()` (shows quotes), and `{value=}` prints the expression and its value (Python 3.8+).
+6. `textwrap.dedent`: Removes common indentation from triple-quoted strings, keeping multi-line prompts readable inside functions.
+
+```python
+import textwrap
+
+price, ratio, big, delta = 1234.5678, 0.4567, 12_500_000, 3.27
+print(f"{price:.2f}")   # 1234.57
+print(f"{price:,.2f}")  # 1,234.57
+print(f"{big:,}")       # 12,500,000
+print(f"{ratio:.1%}")   # 45.7%
+print(f"{delta:+.1f}")  # +3.3
+print(f"{7:03d}")       # 007
+print(f"[{'id':<6}|{'score':>7}|{'ok':^4}]")  # [id    |  score| ok ]
+
+model = "gpt-4o"
+print(f"{model!r}")  # 'gpt-4o'
+print(f"{model=}")   # model='gpt-4o'
+
+# Aligned metrics table
+for name, score in [("faithfulness", 0.912), ("relevance", 0.78)]:
+    print(f"{name:<14}{score:>7.1%}")
+# faithfulness    91.2%
+# relevance       78.0%
+
+# Multi-line prompt without leading indentation
+def build_prompt(question: str) -> str:
+    return textwrap.dedent(f"""\
+        You are a helpful assistant.
+        Question: {question}""")
+
+print(build_prompt("What is RAG?").splitlines())
+# ['You are a helpful assistant.', 'Question: What is RAG?']
 ```
 
 - **Strength — Clean F-strings & Native Operators** F-strings and operators like `in`, `+`, and `*` make text formatting, substring search, and visual dividers clean and readable without helper functions.
@@ -734,6 +914,7 @@ print("FizzBuzz passed!")  # FizzBuzz passed!
 - **Counting Loop** `for i in range(n):` <!-- great -->
 - **Index & Item** `for idx, item in enumerate(seq):` <!-- great -->
 - **Loop Control** `break (stop), continue (skip)` <!-- good -->
+- **Loop Else** `for ... else: (runs if no break)` <!-- good -->
 
 Python loops iterate directly over items in a collection, rather than keeping track of an incrementing index variable. When you need the index alongside the item, `enumerate()` gives you both cleanly.
 
@@ -835,6 +1016,32 @@ while count > 0:
 # Countdown: 3
 # Countdown: 2
 # Countdown: 1
+```
+
+Two more loop tools that appear in search and retry logic:
+
+1. `for ... else`: The `else` block runs only when the loop finishes without hitting `break` — a clean way to express "searched everything and found nothing".
+2. `reversed(seq)`: Iterates a sequence backwards without copying it (e.g. newest messages first).
+
+```python
+# for ... else: else runs only if the loop did NOT break
+for attempt in range(1, 4):
+    if attempt == 2:
+        print(f"Succeeded on attempt {attempt}")
+        break
+else:
+    print("All attempts failed")
+# Succeeded on attempt 2
+
+for ticker in ["AAPL", "MSFT"]:
+    if ticker == "TSLA":
+        break
+else:
+    print("TSLA not found")  # TSLA not found
+
+# reversed(): newest chat messages first
+messages = ["hi", "how are you?", "fine"]
+print([m for m in reversed(messages)])  # ['fine', 'how are you?', 'hi']
 ```
 
 - **Strength — Clean Syntax & O(1) Memory** Direct iteration prevents off-by-one errors, while `range()` generates sequences of any size without allocating memory for elements upfront.
@@ -963,6 +1170,7 @@ print("Deduplicate passed!")  # Deduplicate passed!
 - **Key Lookup** `Instant O(1) hash access` <!-- great -->
 - **Safe Retrieval** `d.get(key, default)` <!-- great -->
 - **Iteration** `for k, v in d.items():` <!-- good -->
+- **Specialised Dicts** `Counter, defaultdict(list), d1 | d2` <!-- good -->
 
 A `dict` (dictionary) stores data in key-value pairs. Looking up a value by its key is instant ($O(1)$) regardless of whether the dictionary has 10 items or 1,000,000 items. Keys must be unique and immutable (like strings, numbers, or tuples).
 
@@ -1017,6 +1225,42 @@ del user["level"]
 print("level" in user)  # False
 ```
 
+The `collections` module and modern dict syntax remove most hand-written counting and grouping code:
+
+1. `Counter(iterable)`: Counts hashable items; `.most_common(n)` returns the top `n` pairs, and missing keys count as `0` instead of raising `KeyError`.
+2. `defaultdict(list)`: Creates a default value the first time a key is touched — perfect for grouping (`groups[key].append(item)`) without `if key not in groups` checks.
+3. `d.setdefault(key, default)`: Returns the existing value or inserts and returns the default.
+4. Dict comprehension: `{k: v for k, v in d.items() if cond}` builds or filters dictionaries in one line.
+5. Merge operators (3.9+): `defaults | overrides` returns a merged dict (right side wins); `config |= overrides` updates in place.
+
+```python
+from collections import Counter, defaultdict
+
+# Counting with Counter
+labels = ["bug", "billing", "bug", "feature", "bug"]
+counts = Counter(labels)
+print(counts.most_common(2))  # [('bug', 3), ('billing', 1)]
+print(counts["unknown"])      # 0 (missing keys count as zero)
+
+# Grouping with defaultdict(list)
+tickets = [("acme", "T1"), ("globex", "T2"), ("acme", "T3")]
+by_customer: defaultdict[str, list[str]] = defaultdict(list)
+for customer, ticket_id in tickets:
+    by_customer[customer].append(ticket_id)
+print(dict(by_customer))  # {'acme': ['T1', 'T3'], 'globex': ['T2']}
+
+# setdefault: get-or-insert in one call
+cache: dict[str, list[str]] = {}
+cache.setdefault("acme", []).append("T4")
+print(cache)  # {'acme': ['T4']}
+
+# Dict comprehension and the merge operator
+prices = {"apple": 1.2, "banana": 0.5, "mango": 2.0}
+print({k: v for k, v in prices.items() if v >= 1})  # {'apple': 1.2, 'mango': 2.0}
+defaults = {"temperature": 0.2, "max_tokens": 512}
+print(defaults | {"temperature": 0.7})  # {'temperature': 0.7, 'max_tokens': 512}
+```
+
 - **Strength — Instant Key Lookups** Dictionaries are the fastest and most natural way to structure associated data and configuration mappings.
 - **Weakness — Direct Bracket KeyError** Accessing `user["missing_key"]` directly crashes with a `KeyError`; use `user.get("missing_key")` when a key might be absent.
 
@@ -1040,6 +1284,32 @@ words = ["apple", "banana", "apple", "orange", "banana", "apple"]
 result = count_word_frequencies(words)
 print(result)  # {'apple': 3, 'banana': 2, 'orange': 1}
 print("Word frequency passed!")  # Word frequency passed!
+```
+
+**Interview question**
+
+*Given evaluation records as `(stage, latency_ms)` tuples, return `(stage, count, average_ms)` for each stage, ordered by count (highest first). Average to one decimal place.*
+
+Use `Counter` to count stages (its `.most_common()` gives the ordering) and a `defaultdict(int)` to accumulate total latency per stage, then compute averages in a list comprehension.
+
+**Answer — Group & Aggregate with collections**
+
+```python
+from collections import Counter, defaultdict
+
+def summarize_latency(records: list[tuple[str, int]]) -> list[tuple[str, int, float]]:
+    counts = Counter(stage for stage, _ in records)
+    totals: defaultdict[str, int] = defaultdict(int)
+    for stage, ms in records:
+        totals[stage] += ms
+    return [(stage, n, round(totals[stage] / n, 1)) for stage, n in counts.most_common()]
+
+# Test cases
+records = [("retrieval", 120), ("llm", 900), ("retrieval", 80), ("tool", 300), ("llm", 1100), ("retrieval", 100)]
+print(summarize_latency(records))
+# [('retrieval', 3, 100.0), ('llm', 2, 1000.0), ('tool', 1, 300.0)]
+print(summarize_latency([]))  # []
+print("Summarize latency passed!")  # Summarize latency passed!
 ```
 
 > **Key idea**
@@ -1472,11 +1742,12 @@ print("Extract successful totals passed!")  # Extract successful totals passed!
 
 <a id="13-list-comprehensions"></a>
 
-## 13. List Comprehensions
+## 13. List, Dict & Set Comprehensions
 
 - **Syntax** `[expression for item in iterable]` <!-- great -->
 - **With Filter** `[expr for item in iterable if condition]` <!-- great -->
 - **Readability** `Replaces 4 lines of loop with 1 line` <!-- good -->
+- **Dict & Set Variants** `{k: v for ...}, {x for ...}` <!-- good -->
 
 A list comprehension provides a concise, readable way to create a new list by transforming or filtering elements from an existing collection. It replaces verbose multi-line `for` loops that append items one by one.
 
@@ -1510,6 +1781,33 @@ print(clean_tags)  # ['python', 'fastapi', 'sql']
 # Example 4: Inline ternary conditional inside comprehension
 labels = ["Even" if n % 2 == 0 else "Odd" for n in numbers]
 print(labels)  # ['Odd', 'Even', 'Odd', 'Even', 'Odd']
+```
+
+The same syntax builds dictionaries and sets, flattens nested lists, and (without brackets) produces lazy generator expressions:
+
+1. Dict comprehension: `{key_expr: value_expr for item in items}` — build lookups such as `{u["id"]: u for u in users}`.
+2. Set comprehension: `{expr for item in items}` — unique values, e.g. distinct domains or sources.
+3. Flattening: `[x for row in rows for x in row]` — read the `for` clauses left to right, exactly like nested loops.
+4. Generator expression: `sum(len(d) for d in docs)` — no brackets, no intermediate list (see topic 20).
+
+```python
+# Dict comprehension: build a lookup table
+users = [{"id": 1, "name": "Ana"}, {"id": 2, "name": "Raj"}]
+by_id = {u["id"]: u["name"] for u in users}
+print(by_id)  # {1: 'Ana', 2: 'Raj'}
+
+# Set comprehension: unique values
+emails = ["A@x.com", "a@x.com", "b@y.com"]
+domains = {e.split("@")[1].lower() for e in emails}
+print(sorted(domains))  # ['x.com', 'y.com']
+
+# Flattening nested lists (outer loop first, inner loop second)
+batches = [["d1", "d2"], ["d3"], []]
+flat = [doc for batch in batches for doc in batch]
+print(flat)  # ['d1', 'd2', 'd3']
+
+# Generator expression: no brackets, no intermediate list
+print(sum(len(doc) for doc in flat))  # 6
 ```
 
 - **Strength — Clean & Expressive** Turns repetitive 4-line accumulator loops into a single self-explanatory statement.
@@ -1553,6 +1851,7 @@ Writing clean reusable functions, argument packing, and non-blocking asynchronou
 - **Variable Positional** `*args (packed as tuple)` <!-- great -->
 - **Variable Keyword** `**kwargs (packed as dict)` <!-- great -->
 - **Unpacking Calls** `fn(*items, **options)` <!-- good -->
+- **Keyword-Only & Closures** `def fn(q, *, top_k=5), nonlocal` <!-- good -->
 
 Functions let you package code into reusable, modular blocks. Functions accept arguments, execute logic, and return values using the `return` statement (or `None` if omitted).
 
@@ -1627,6 +1926,59 @@ def log_call(fn, *args, **kwargs):
 print(log_call(calculate_total, 200.0, 0.10))  # 220.0
 ```
 
+A few more function features used heavily in library and agent code:
+
+1. Keyword-only parameters: Everything after a bare `*` must be passed by name (`def search(query, *, top_k=5)`), so call sites stay readable and argument order can change safely.
+2. `lambda`: A one-expression anonymous function for `key=` arguments, callbacks, and small dispatch tables: `max(docs, key=lambda d: d["score"])`.
+3. Closures & `nonlocal`: An inner function remembers variables from its enclosing function; `nonlocal` lets it rebind them (counters, factories, decorators).
+4. `global`: Rebinds a module-level variable from inside a function. Prefer passing values or using a class — global mutable state is hard to test.
+5. Mutable default gotcha: Defaults are evaluated once, at definition time: `def add(item, items=[])` shares one list across calls. Use `items: list | None = None` and create the list inside.
+
+```python
+# Keyword-only parameters: everything after * must be named
+def search(query: str, *, top_k: int = 5, rerank: bool = False) -> str:
+    return f"{query!r} top_k={top_k} rerank={rerank}"
+
+print(search("refund policy", top_k=3))  # 'refund policy' top_k=3 rerank=False
+try:
+    search("refund policy", 3)
+except TypeError as err:
+    print(err)  # search() takes 1 positional argument but 2 were given
+
+# lambda for key= arguments and dispatch tables
+docs = [{"id": "a", "score": 0.4}, {"id": "b", "score": 0.9}]
+print(max(docs, key=lambda d: d["score"])["id"])  # b
+ops = {"add": lambda a, b: a + b, "mul": lambda a, b: a * b}
+print(ops["mul"](6, 7))  # 42
+
+# Closures: the inner function remembers `count`
+def make_counter():
+    count = 0
+    def increment() -> int:
+        nonlocal count  # rebind the enclosing variable instead of creating a local one
+        count += 1
+        return count
+    return increment
+
+next_id = make_counter()
+print(next_id(), next_id(), next_id())  # 1 2 3
+
+# Mutable default gotcha and the fix
+def add_bad(item: str, items: list[str] = []) -> list[str]:
+    items.append(item)
+    return items
+
+def add_good(item: str, items: list[str] | None = None) -> list[str]:
+    items = [] if items is None else items
+    items.append(item)
+    return items
+
+add_bad("a")
+print(add_bad("b"))  # ['a', 'b'] (the same list is shared between calls!)
+add_good("a")
+print(add_good("b"))  # ['b']
+```
+
 - **Strength — Maximum API Flexibility** `*args` and `**kwargs` let you create wrappers, middleware, and flexible helper utilities that pass arguments forward without needing to redefine every parameter.
 - **Weakness — Reduced Self-Documentation When Overused** If a function signature only declares `def process(*args, **kwargs):`, callers lose IDE autocomplete, type checking, and clear documentation on what parameters are actually expected.
 
@@ -1693,6 +2045,7 @@ print("Build query URL passed!")  # Build query URL passed!
 - **Yield Control** `await coroutine()` <!-- great -->
 - **Concurrent Execution** `asyncio.gather(*tasks)` <!-- good -->
 - **Event Loop Runner** `asyncio.run(main())` <!-- good -->
+- **Async Context & Streams** `async with, async for, Semaphore` <!-- good -->
 
 Modern Python supports asynchronous programming via `async` and `await` and the built-in `asyncio` library. Unlike multi-threading which relies on the operating system to switch between threads, asynchronous programming uses **cooperative multitasking** on a single thread. When a coroutine reaches an I/O operation (such as waiting for an HTTP API response or database query), it uses `await` to yield control back to the **event loop**, allowing other tasks to run in the meantime.
 
@@ -1749,6 +2102,67 @@ async def main():
 # Entry point to execute top-level coroutine
 if __name__ == "__main__":
     asyncio.run(main())
+```
+
+Async SDKs (MCP clients, A2A agents, `httpx.AsyncClient`, streaming LLM responses) add a few more tools:
+
+1. `async with`: Async context managers (`__aenter__` / `__aexit__`) open and close network sessions, e.g. `async with ClientSession(read, write) as session:`.
+2. `async for`: Consumes async iterators and async generators, such as streamed LLM tokens or agent events.
+3. `asyncio.Semaphore(n)`: Limits how many coroutines run a section at once — respect API rate limits while still using `gather()`.
+4. `asyncio.wait_for(coro, timeout)`: Cancels a slow operation and raises `TimeoutError`.
+5. `await asyncio.to_thread(fn, *args)`: Runs blocking synchronous code in a worker thread without freezing the event loop.
+
+```python
+import asyncio
+import time
+
+class FakeSession:  # stands in for an MCP ClientSession or httpx.AsyncClient
+    async def __aenter__(self):
+        print("session opened")
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        print("session closed")
+
+    async def call_tool(self, name: str) -> str:
+        await asyncio.sleep(0.01)
+        return f"{name}: ok"
+
+async def stream_tokens(text: str):  # an async generator
+    for token in text.split():
+        await asyncio.sleep(0)
+        yield token
+
+async def limited_fetch(sem: asyncio.Semaphore, i: int) -> int:
+    async with sem:  # at most 2 coroutines inside this block at once
+        await asyncio.sleep(0.01)
+        return i * i
+
+def blocking_io() -> str:
+    time.sleep(0.02)  # legacy synchronous call (e.g. requests.get)
+    return "legacy done"
+
+async def main():
+    async with FakeSession() as session:
+        print(await session.call_tool("search"))
+    # session opened
+    # search: ok
+    # session closed
+
+    tokens = [tok async for tok in stream_tokens("hello from the agent")]
+    print(tokens)  # ['hello', 'from', 'the', 'agent']
+
+    sem = asyncio.Semaphore(2)
+    print(await asyncio.gather(*(limited_fetch(sem, i) for i in range(5))))  # [0, 1, 4, 9, 16]
+
+    try:
+        await asyncio.wait_for(asyncio.sleep(1), timeout=0.05)
+    except TimeoutError:
+        print("timed out")  # timed out
+
+    print(await asyncio.to_thread(blocking_io))  # legacy done
+
+asyncio.run(main())
 ```
 
 - **Strength — Massive I/O Concurrency with Low Overhead** A single process can easily manage tens of thousands of concurrent network connections without the high memory and context-switching overhead of OS threads.
@@ -1810,6 +2224,7 @@ Modeling real-world entities, encapsulating state, and writing clean maintainabl
 - **Special Methods** `__str__, __repr__` <!-- good -->
 - **Inheritance** `class Savings(BankAccount): super()` <!-- good -->
 - **Multiple Inheritance & MRO** `class Copier(Scanner, Printer): super()` <!-- great -->
+- **Properties & Class Methods** `@property, @classmethod, @staticmethod` <!-- good -->
 
 In Python, Object-Oriented Programming (OOP) is a programming paradigm that organizes code around objects rather than just isolated functions. A **class** is a blueprint defining attributes (data) and methods (behavior). An **object** (or instance) is a concrete realization of that blueprint with its own state.
 
@@ -1919,6 +2334,68 @@ print([cls.__name__ for cls in Copier.__mro__])
 copier = Copier(device_id="DEV-101", resolution_dpi=1200, print_speed_ppm=35, is_color=True)
 print(copier.device_id, copier.resolution_dpi, copier.print_speed_ppm, copier.is_color)
 # DEV-101 1200 35 True
+```
+
+Everyday class features beyond `__init__` and inheritance:
+
+1. `@property`: Exposes a computed or read-only attribute accessed without parentheses (`doc.title`). Add an `@name.setter` to validate assignments.
+2. `@classmethod`: Receives the class (`cls`) instead of an instance; the standard way to write alternative constructors such as `Store.load(path)` or `Config.from_json(raw)`.
+3. `@staticmethod`: A plain helper function namespaced inside the class; it needs neither `self` nor `cls`.
+4. Base class contract: A base class whose method raises `NotImplementedError` defines an interface that subclasses must implement (e.g. `Embedder.embed()`). `abc.ABC` with `@abstractmethod` enforces this at instantiation time.
+5. More dunder methods: `__len__` enables `len(obj)`, `__eq__` customises `==`, and `__iter__` makes objects loopable.
+6. `getattr` / `hasattr` / `setattr`: Read or write attributes by name at runtime (`getattr(resp, "usage", None)`), common when handling optional fields on SDK response objects.
+
+```python
+import json
+
+class Embedder:
+    """Base class: subclasses must implement embed()."""
+    dim = 0
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        raise NotImplementedError
+
+class KeywordEmbedder(Embedder):
+    VOCAB = ("refund", "invoice", "delay")
+    dim = len(VOCAB)
+
+    def __init__(self, name: str = "keyword-v1"):
+        self._name = name
+
+    @property
+    def name(self) -> str:  # read-only attribute: emb.name (no parentheses)
+        return self._name
+
+    @classmethod
+    def from_json(cls, raw: str) -> "KeywordEmbedder":  # alternative constructor
+        return cls(**json.loads(raw))
+
+    @staticmethod
+    def tokenize(text: str) -> list[str]:  # needs neither self nor cls
+        return text.lower().split()
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        return [[float(self.tokenize(t).count(w)) for w in self.VOCAB] for t in texts]
+
+    def __len__(self) -> int:
+        return self.dim
+
+emb = KeywordEmbedder.from_json('{"name": "kw-test"}')
+print(emb.name, len(emb))                            # kw-test 3
+print(emb.embed(["Refund delayed invoice refund"]))  # [[2.0, 1.0, 0.0]]
+
+try:
+    emb.name = "other"
+except AttributeError as err:
+    print(err)  # property 'name' of 'KeywordEmbedder' object has no setter
+
+try:
+    Embedder().embed(["x"])
+except NotImplementedError:
+    print("Base class must be subclassed")  # Base class must be subclassed
+
+# Dynamic attribute access with safe defaults
+print(getattr(emb, "dim", None), hasattr(emb, "usage"), getattr(emb, "usage", "n/a"))  # 3 False n/a
 ```
 
 - **Strength — Encapsulation & Cohesion** Bundling state and behavior together keeps related logic organized, avoids scattered helper functions, and protects data integrity.
@@ -2066,6 +2543,50 @@ for status in copier.diagnostics():
 print("Diamond problem solution passed!")  # Diamond problem solution passed!
 ```
 
+**Interview question**
+
+*Implement a `Temperature` class that stores Celsius, validates assignments through a property setter (nothing below absolute zero, -273.15 °C), exposes a read-only `fahrenheit` property, and provides a `from_fahrenheit` class-method constructor.*
+
+Store the value in `self._celsius`, assign through `self.celsius = ...` in `__init__` so the setter validates it, compute `fahrenheit` in a `@property` without a setter, and return `cls(...)` from the `@classmethod`.
+
+**Answer — Properties & Class Methods**
+
+```python
+class Temperature:
+    def __init__(self, celsius: float):
+        self.celsius = celsius  # goes through the setter below
+
+    @property
+    def celsius(self) -> float:
+        return self._celsius
+
+    @celsius.setter
+    def celsius(self, value: float) -> None:
+        if value < -273.15:
+            raise ValueError("Below absolute zero")
+        self._celsius = value
+
+    @property
+    def fahrenheit(self) -> float:
+        return round(self._celsius * 9 / 5 + 32, 2)
+
+    @classmethod
+    def from_fahrenheit(cls, f: float) -> "Temperature":
+        return cls(round((f - 32) * 5 / 9, 2))
+
+# Test cases
+t = Temperature(25)
+print(t.fahrenheit)  # 77.0
+t.celsius = 100
+print(t.fahrenheit)  # 212.0
+print(Temperature.from_fahrenheit(98.6).celsius)  # 37.0
+try:
+    Temperature(-300)
+except ValueError as err:
+    print(err)  # Below absolute zero
+print("Temperature property passed!")  # Temperature property passed!
+```
+
 > **Key idea**
 >
 > In Python, multiple inheritance solves the diamond problem via **C3 linearization (MRO)** and **cooperative `super()`**. Never call parent initializers explicitly by class name like `Base.__init__(self)`; always use `super().__init__(**kwargs)` and forward `**kwargs` across the entire hierarchy so every ancestor is visited exactly once in deterministic order.
@@ -2085,6 +2606,7 @@ Structuring scripts, and managing isolated project environments.
 - **Import Syntax** `import mod / from mod import fn` <!-- great -->
 - **Script Guard** `if __name__ == "__main__":` <!-- great -->
 - **Standard Library** `math, os, sys, json, pathlib` <!-- good -->
+- **Packages & Relative Imports** `from .config import settings` <!-- good -->
 
 A module in Python is simply a `.py` file containing functions, classes, and variables. A package is a directory containing multiple modules (often accompanied by an `__init__.py` file). Python's module system lets you organize code logically across files, reuse utilities, and avoid namespace pollution. The standard library provides dozens of battle-tested modules out of the box without needing third-party packages.
 
@@ -2136,6 +2658,45 @@ def run_app():
 
 if __name__ == "__main__":
     run_app()
+```
+
+Multi-file projects organise modules into **packages** — the layout used by every project folder:
+
+1. Packages: A folder with an `__init__.py` file is a package; `__init__.py` can be empty or re-export the package's public names.
+2. Relative imports: Inside a package, `from .config import settings` imports a sibling module and `from ..utils import chunk` goes up one level. They only work when the file is imported as part of a package.
+3. `python -m package.module`: Runs a module as part of its package from the project root. Running `python package/module.py` directly breaks relative imports with "attempted relative import with no known parent package".
+4. `sys.path` tweaks: Scripts and notebooks sometimes call `sys.path.insert(0, project_root)` so sibling folders become importable; prefer running from the project root with `-m` or installing the project with `pip install -e .`.
+5. Optional / lazy imports: Import heavy optional dependencies inside the function that needs them, or wrap them in `try / except ImportError` to fall back gracefully.
+
+```text
+project/
+├── run_assessor.py          # entry point: from assessor.graph import build_graph
+└── assessor/
+    ├── __init__.py          # marks the folder as a package
+    ├── config.py
+    ├── llm.py               # from .config import settings
+    └── graph.py             # from .llm import call_llm
+```
+
+```python
+# assessor/llm.py: relative imports inside a package
+from .config import settings  # sibling module in the same package
+from . import prompts         # import a sibling module object
+
+# Run from the project root:
+#   python -m assessor.graph   -> works (graph.py runs as part of the package)
+#   python assessor/graph.py   -> ImportError: attempted relative import with no known parent package
+
+# Optional dependency with a graceful fallback
+try:
+    import numpy as np
+except ImportError:  # numpy not installed
+    np = None
+
+def mean(values: list[float]) -> float:
+    if np is not None:
+        return float(np.mean(values))
+    return sum(values) / len(values)
 ```
 
 - **Strength — Clean Namespaces & Reusability** Modules separate concerns, prevent variable name collisions, and let teams share tested code across projects without duplication.
@@ -2315,28 +2876,1195 @@ print("Parse requirements passed!")  # Parse requirements passed!
 
 ---
 
+<a id="unit-6"></a>
+
+## Unit 6 — Advanced Functions & Data Models
+
+Decorators, lazy generators, resource-safe context managers and file I/O, and structured data models with dataclasses, TypedDict, and Pydantic.
+
+<a id="19-decorators"></a>
+
+## 19. Decorators
+
+- **Function Wrapper** `@deco  ≡  fn = deco(fn)` <!-- great -->
+- **Preserve Metadata** `@functools.wraps(fn)` <!-- great -->
+- **Built-in Caching** `@lru_cache(maxsize=64)` <!-- good -->
+- **Registration** `@tool, @mcp.tool, @app.get("/")` <!-- good -->
+
+In Python, functions are first-class objects: you can pass them as arguments, return them from other functions, and store them in dictionaries. A **decorator** is simply a callable that takes a function and returns a replacement (usually a wrapper that adds behavior before or after the original call). Writing `@timer` above `def fetch():` is syntactic sugar for `fetch = timer(fetch)`.
+
+Decorators are everywhere in AI and web projects: `@tool` turns a plain function into an LLM-callable tool (its docstring becomes the tool description), `@mcp.tool` registers MCP server tools, `@app.get("/health")` maps FastAPI routes, `@lru_cache` caches expensive API calls, `@pytest.fixture` provides test setup, and `@dataclass` generates class boilerplate.
+
+> **Analogy** 🎬
+>
+> **Picture it — Gift Wrapping at the Checkout Counter**
+>
+> The gift (your function) stays exactly the same. The wrapping counter adds a box, a ribbon, and a greeting card around it (logging, timing, retries, caching). The recipient still opens the same gift — they just get some extras around it, and you can wrap any gift the same way without changing the gift itself.
+
+Key everyday patterns:
+1. Functions are objects: Pass them around like data: `handlers = {"add": add}`, `apply(fn, x)`.
+2. `@decorator` syntax: `@log_calls` placed above `def add(...)` is exactly `add = log_calls(add)`.
+3. Wrapper signature: Define `def wrapper(*args, **kwargs):` and call `fn(*args, **kwargs)` so the decorator works with any function signature.
+4. `@functools.wraps(fn)`: Copies `__name__`, `__doc__`, and the signature onto the wrapper. Without it, frameworks that read the docstring (like `@tool`) and tracebacks see `wrapper` instead of your function.
+5. Decorators with arguments: `@retry(times=3)` is a factory: `retry(times=3)` returns the actual decorator, which then receives the function (three nested levels).
+6. Registration decorators: Store the function in a registry and return it unchanged. This is how `@tool`, `@mcp.tool`, and `@app.get` discover your functions.
+7. `@functools.lru_cache(maxsize=N)`: Memoizes results of pure functions with hashable arguments; inspect with `.cache_info()` and reset with `.cache_clear()`.
+8. Stacking order: Decorators apply bottom-up: `@a` over `@b` over `def f` means `f = a(b(f))`.
+
+```python
+import functools
+
+# 1. A basic decorator: log every call and its result
+def log_calls(fn):
+    @functools.wraps(fn)  # keep fn's name and docstring on the wrapper
+    def wrapper(*args, **kwargs):
+        print(f"-> {fn.__name__}{args}")
+        result = fn(*args, **kwargs)
+        print(f"<- {fn.__name__} returned {result!r}")
+        return result
+    return wrapper
+
+@log_calls
+def add(a: int, b: int) -> int:
+    """Add two numbers."""
+    return a + b
+
+print(add(2, 3))
+# -> add(2, 3)
+# <- add returned 5
+# 5
+print(add.__name__, "|", add.__doc__)  # add | Add two numbers.
+
+# 2. A decorator with arguments (factory -> decorator -> wrapper)
+def retry(times: int = 3, exceptions: tuple = (ConnectionError,)):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            for attempt in range(1, times + 1):
+                try:
+                    return fn(*args, **kwargs)
+                except exceptions as err:
+                    print(f"Attempt {attempt} failed: {err}")
+            raise RuntimeError(f"{fn.__name__} failed after {times} attempts")
+        return wrapper
+    return decorator
+
+calls = {"count": 0}
+
+@retry(times=3)
+def flaky_api() -> str:
+    calls["count"] += 1
+    if calls["count"] < 3:
+        raise ConnectionError("timeout")
+    return "200 OK"
+
+print(flaky_api())
+# Attempt 1 failed: timeout
+# Attempt 2 failed: timeout
+# 200 OK
+
+# 3. A registration decorator: how @tool / @mcp.tool / @app.get work
+TOOLS: dict[str, dict] = {}
+
+def tool(fn):
+    TOOLS[fn.__name__] = {"fn": fn, "description": (fn.__doc__ or "").strip()}
+    return fn  # returned unchanged
+
+@tool
+def get_weather(city: str) -> str:
+    """Get the current weather for a city."""
+    return f"Sunny in {city}"
+
+print(list(TOOLS))                          # ['get_weather']
+print(TOOLS["get_weather"]["description"])  # Get the current weather for a city.
+print(TOOLS["get_weather"]["fn"]("Pune"))   # Sunny in Pune
+
+# 4. Built-in caching with lru_cache
+@functools.lru_cache(maxsize=64)
+def fetch_price(ticker: str) -> float:
+    print(f"Calling API for {ticker}")
+    return {"AAPL": 189.5, "MSFT": 410.2}.get(ticker, 0.0)
+
+print(fetch_price("AAPL"))
+# Calling API for AAPL
+# 189.5
+print(fetch_price("AAPL"))  # 189.5 (served from cache, no API call)
+print(fetch_price.cache_info().hits)  # 1
+```
+
+- **Strength — Write Cross-Cutting Logic Once** Logging, timing, retries, caching, auth checks, and tool registration are written once and applied to any function with a single line, keeping business logic clean.
+- **Weakness — Hidden Behavior & Lost Metadata** Forgetting `@functools.wraps` hides the original name and docstring (breaking `@tool` descriptions and debugging). `lru_cache` needs hashable arguments, never expires entries, and caching impure functions returns stale data.
+
+**Interview question**
+
+*Implement a `memoize` decorator (without using `lru_cache`) that caches results for both positional and keyword arguments, preserves the function name, and exposes the cache as `fn.cache`. Use it to compute `fib(50)` instantly.*
+
+Build a hashable key from `args` and `tuple(sorted(kwargs.items()))`, store results in a dictionary captured by the wrapper's closure, and decorate the wrapper with `@functools.wraps(fn)`.
+
+**Answer — Memoize Decorator**
+
+```python
+import functools
+
+def memoize(fn):
+    cache: dict = {}
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        key = (args, tuple(sorted(kwargs.items())))
+        if key not in cache:
+            cache[key] = fn(*args, **kwargs)
+        return cache[key]
+
+    wrapper.cache = cache
+    return wrapper
+
+@memoize
+def fib(n: int) -> int:
+    """Return the nth Fibonacci number."""
+    return n if n < 2 else fib(n - 1) + fib(n - 2)
+
+# Test cases
+print(fib(50))         # 12586269025
+print(len(fib.cache))  # 51
+print(fib.__name__)    # fib
+print(fib.__doc__)     # Return the nth Fibonacci number.
+print("Memoize decorator passed!")  # Memoize decorator passed!
+```
+
+> **Key idea**
+>
+> A decorator is just `fn = decorator(fn)`. Always forward `*args, **kwargs`, always apply `@functools.wraps(fn)` to the wrapper, and only cache pure functions whose arguments are hashable.
+
+---
+
+<a id="20-generators-and-iterators"></a>
+
+## 20. Generators & Iterators
+
+- **Lazy Function** `yield value` <!-- great -->
+- **Generator Expression** `sum(x for x in items)` <!-- great -->
+- **First Match** `next((x for x in it if ok(x)), None)` <!-- good -->
+- **Delegation** `yield from other_iterable` <!-- good -->
+
+An **iterable** is anything you can loop over (lists, dicts, files, strings). An **iterator** hands out values one at a time through `next()` and raises `StopIteration` when it is exhausted. A **generator** is the easiest way to build an iterator: any function containing `yield` returns a generator object that produces values lazily, pausing its state between values.
+
+Generators let you process huge files, paginated APIs, or streaming LLM tokens with constant memory. In real projects you will see them constantly: generator expressions inside `sum()`, `any()`, `max()`, and `", ".join()`; `next(...)` to find the first matching item; batching texts before sending them to an embeddings API; and `yield` inside `@contextmanager` functions.
+
+> **Analogy** 🎬
+>
+> **Picture it — A Water Tap vs. a Water Tank**
+>
+> A list is a water tank: you must fill the whole tank before anyone drinks, and it takes space for every litre. A generator is a tap: water is produced only when someone opens it, one glass at a time, and the pipe never needs to hold the whole reservoir. Once the reservoir behind a tap is drained, though, you cannot rewind it — you need a new tap.
+
+Key everyday patterns:
+1. `yield`: Turns a function into a generator. Calling it runs nothing yet; the body executes up to the next `yield` each time a value is requested.
+2. Paused state: Local variables survive between yields, so a generator naturally remembers where it was.
+3. Single-use: A generator is exhausted after one pass. Call the generator function again (or use a list) if you need to iterate twice.
+4. Generator expressions: `(expr for x in items if cond)` is the lazy cousin of a list comprehension. Pass it straight into `sum()`, `any()`, `all()`, `max()`, `min()`, or `"".join()` without square brackets.
+5. `next(iterator, default)`: Grabs the next value, returning `default` instead of raising `StopIteration` — the idiomatic "first match or None".
+6. `iter(iterable)`: Creates an iterator from any iterable; useful to peek at the first item.
+7. `yield from`: Delegates to another iterable, yielding each of its values.
+8. Pipelines: Chain generators (read → clean → filter → batch) so each item flows through every stage without building intermediate lists.
+9. `itertools`: Ready-made lazy helpers: `islice`, `chain`, `groupby`, and `batched` (Python 3.12+).
+
+```python
+import itertools
+from collections.abc import Iterator
+
+# 1. Generator function: values are produced lazily, one per next()
+def countdown(n: int) -> Iterator[int]:
+    while n > 0:
+        yield n
+        n -= 1
+
+gen = countdown(3)
+print(next(gen))  # 3
+print(next(gen))  # 2
+print(list(gen))  # [1]
+print(list(gen))  # [] (exhausted - generators are single-use)
+
+# 2. Batching: the pattern used to send texts to an embeddings API in chunks
+def batched(items: list[str], size: int) -> Iterator[list[str]]:
+    for i in range(0, len(items), size):
+        yield items[i:i + size]
+
+docs = ["d1", "d2", "d3", "d4", "d5"]
+for batch in batched(docs, 2):
+    print(batch)
+# ['d1', 'd2']
+# ['d3', 'd4']
+# ['d5']
+print(list(itertools.batched(docs, 2)))  # [('d1', 'd2'), ('d3', 'd4'), ('d5',)]
+
+# 3. Generator expressions feed aggregate functions without building a list
+latencies_ms = [120, 340, 95, 410]
+print(sum(ms for ms in latencies_ms if ms > 100))   # 870
+print(any(ms > 400 for ms in latencies_ms))         # True
+print(all(ms < 500 for ms in latencies_ms))         # True
+print(max(len(w) for w in ["rag", "agent", "llm"]))  # 5
+
+# 4. next() with a default: first match or None
+tools = [{"name": "search"}, {"name": "calculator"}]
+print(next((t for t in tools if t["name"] == "calculator"), None))  # {'name': 'calculator'}
+print(next((t for t in tools if t["name"] == "weather"), None))     # None
+
+# 5. A memory-flat pipeline with yield from
+def read_lines(text: str) -> Iterator[str]:
+    yield from text.splitlines()
+
+def non_empty(lines: Iterator[str]) -> Iterator[str]:
+    return (line.strip() for line in lines if line.strip())
+
+raw = "alpha\n\n  beta  \ngamma\n"
+print(list(non_empty(read_lines(raw))))  # ['alpha', 'beta', 'gamma']
+```
+
+- **Strength — Constant Memory & Composability** Generators process one item at a time, so a 10 GB log file or an endless token stream uses the same memory as a tiny one, and small generator stages compose into readable pipelines.
+- **Weakness — Single-Use and Lazy Errors** Generators have no `len()` or indexing, are exhausted after one loop, and defer errors until values are consumed. Printing one shows `<generator object ...>` instead of its contents.
+
+**Interview question**
+
+*Write a generator `read_jsonl(lines)` that yields parsed records from JSON Lines text (one JSON object per line), skipping blank and malformed lines. Use it to compute the average `total_ms` without loading all records into a list.*
+
+Loop over the lines, `strip()` each one, skip empty lines, and `yield json.loads(line)` inside a `try / except json.JSONDecodeError` block. Accumulate a running total and count while iterating.
+
+**Answer — Stream JSON Lines**
+
+```python
+import json
+from collections.abc import Iterable, Iterator
+
+def read_jsonl(lines: Iterable[str]) -> Iterator[dict]:
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            yield json.loads(line)
+        except json.JSONDecodeError:
+            continue
+
+# Test cases
+log = """{"trace_id": "a1", "total_ms": 120}
+not-json
+
+{"trace_id": "b2", "total_ms": 80}
+{"trace_id": "c3", "total_ms": 100}"""
+
+total = count = 0
+for record in read_jsonl(log.splitlines()):
+    total += record["total_ms"]
+    count += 1
+print(count, total / count)  # 3 100.0
+
+print(next(read_jsonl(['{"ok": true}']), None))  # {'ok': True}
+print(next(read_jsonl([]), None))                # None
+print("Read JSONL generator passed!")  # Read JSONL generator passed!
+```
+
+> **Key idea**
+>
+> Use a list when you need to reuse, index, or `len()` the result; use a generator when you stream through values once. Drop the square brackets inside `sum()`, `any()`, `all()`, `max()`, and `"".join()`.
+
+---
+
+<a id="21-context-managers-and-file-io"></a>
+
+## 21. Context Managers & File I/O
+
+- **Guaranteed Cleanup** `with open(path) as f:` <!-- great -->
+- **Explicit Encoding** `encoding="utf-8"` <!-- great -->
+- **Pathlib Shortcuts** `path.read_text() / write_text()` <!-- good -->
+- **Custom Manager** `@contextmanager + try / yield / finally` <!-- good -->
+
+Files, database connections, locks, and network sessions must be released even when an error occurs halfway through. The `with` statement guarantees this: it calls the object's `__enter__` method at the start of the block and its `__exit__` method at the end — whether the block finishes normally, returns early, or raises an exception.
+
+You will see `with` everywhere in real code: `with open(...)` for files, `with sqlite3.connect(...)` for transactions, `with lock:` for threads, `async with ClientSession(...)` for MCP clients, and custom `@contextmanager` functions that time a block of code (tracing spans).
+
+> **Analogy** 🎬
+>
+> **Picture it — A Hotel Key-Card Slot**
+>
+> When you slide your key card into the slot by the door, the lights and AC switch on. When you leave — calmly, in a hurry, or during a fire alarm — pulling the card out switches everything off automatically. A `with` block is that slot: entering acquires the resource, and leaving always releases it, no matter how you leave.
+
+Key everyday patterns:
+1. `with open(path, mode, encoding="utf-8") as f:`: Opens a file and always closes it, even if an exception is raised inside the block.
+2. File modes: `"r"` read (default), `"w"` create/overwrite, `"a"` append, `"x"` create only (fails if the file exists); add `"b"` for binary data (`"rb"`).
+3. Reading: `f.read()` loads everything; `for line in f:` streams line by line with constant memory.
+4. Writing: `f.write(text)` does not add a newline — append `"\n"` yourself.
+5. Pathlib one-liners: `path.read_text(encoding=...)`, `path.write_text(...)`, `path.mkdir(parents=True, exist_ok=True)`, `path.exists()`, `path.glob("*.md")`, and the `/` join operator.
+6. JSON & JSON Lines: `json.dump(obj, f, indent=2)` / `json.load(f)` for whole files; `.jsonl` files store one JSON object per line, ideal for append-only logs and traces.
+7. CSV: `csv.DictReader` / `csv.DictWriter` map rows to dictionaries; open CSV files with `newline=""`. Values read from CSV are always strings.
+8. Custom context managers: Decorate a generator with `@contextlib.contextmanager` and wrap the `yield` in `try / finally`, or implement `__enter__` / `__exit__` on a class.
+9. Multiple resources: `with open(src) as fin, open(dst, "w") as fout:` manages both in one statement.
+
+```python
+import csv
+import json
+import time
+from contextlib import contextmanager
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+with TemporaryDirectory() as tmp:  # the temp folder is deleted when the block exits
+    data_dir = Path(tmp) / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. Write, append, and stream a text file (always pass an encoding)
+    notes = data_dir / "notes.txt"
+    with open(notes, "w", encoding="utf-8") as f:
+        f.write("first line\n")
+        f.write("second line\n")
+    with open(notes, "a", encoding="utf-8") as f:
+        f.write("appended line\n")
+
+    with open(notes, encoding="utf-8") as f:
+        for line in f:
+            print(line.rstrip())
+    # first line
+    # second line
+    # appended line
+
+    # 2. Pathlib one-liners
+    print(notes.read_text(encoding="utf-8").count("\n"))  # 3
+    print(notes.exists(), notes.suffix)                   # True .txt
+
+    # 3. JSON config file and an append-only JSON Lines log
+    config_file = data_dir / "config.json"
+    config_file.write_text(json.dumps({"model": "gpt-4o-mini", "temperature": 0.2}, indent=2), encoding="utf-8")
+    with open(config_file, encoding="utf-8") as f:
+        config = json.load(f)
+    print(config["model"])  # gpt-4o-mini
+
+    traces = data_dir / "traces.jsonl"
+    for i, ms in enumerate([120, 95]):
+        with traces.open("a", encoding="utf-8") as f:
+            f.write(json.dumps({"id": i, "ms": ms}) + "\n")
+    print(traces.read_text(encoding="utf-8").splitlines())
+    # ['{"id": 0, "ms": 120}', '{"id": 1, "ms": 95}']
+
+    # 4. CSV with DictWriter / DictReader
+    csv_file = data_dir / "survey.csv"
+    with open(csv_file, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["customer", "score"])
+        writer.writeheader()
+        writer.writerows([{"customer": "acme", "score": 9}, {"customer": "globex", "score": 4}])
+    with open(csv_file, newline="", encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+    print(rows[0])  # {'customer': 'acme', 'score': '9'} (CSV values are always strings)
+
+    print(sorted(p.name for p in data_dir.glob("*")))
+    # ['config.json', 'notes.txt', 'survey.csv', 'traces.jsonl']
+
+# 5. Custom context manager: try / yield / finally (a tracing span)
+@contextmanager
+def span(name: str, log: list[dict]):
+    start = time.perf_counter()
+    record = {"name": name}
+    try:
+        yield record  # the body of the with-block runs here
+    finally:
+        record["ms"] = round((time.perf_counter() - start) * 1000, 2)
+        log.append(record)
+        print(f"closed span {name}")
+
+spans: list[dict] = []
+with span("retrieve", spans) as rec:
+    rec["hits"] = 5
+# closed span retrieve
+print(spans[0]["name"], spans[0]["hits"], "ms" in spans[0])  # retrieve 5 True
+
+try:
+    with span("generate", spans):
+        raise TimeoutError("LLM timed out")
+except TimeoutError as err:
+    print(f"Caught: {err}")
+# closed span generate
+# Caught: LLM timed out
+```
+
+- **Strength — Deterministic Cleanup** Files are closed, locks released, and transactions committed or rolled back even when exceptions occur, with far less boilerplate than hand-written `try / finally` blocks.
+- **Weakness — Encoding & Overwrite Surprises** Omitting `encoding="utf-8"` uses the platform default (e.g. cp1252 on Windows), causing `UnicodeDecodeError` on emojis or non-English text. Mode `"w"` silently truncates existing files, and `f.read()` loads huge files fully into memory.
+
+**Interview question**
+
+*Write a context manager `atomic_write(path)` that yields a file handle to a temporary file and only replaces the target file if the `with` block completes without errors, so a crash never leaves a half-written config file behind.*
+
+Write to a sibling `.tmp` file inside the `try` block, call `os.replace(tmp, path)` after the `yield` succeeds (an atomic rename on the same filesystem), and delete any leftover temp file in `finally`.
+
+**Answer — Atomic File Write**
+
+```python
+import os
+from contextlib import contextmanager
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+@contextmanager
+def atomic_write(path: Path, encoding: str = "utf-8"):
+    tmp_path = path.with_name(path.name + ".tmp")
+    try:
+        with open(tmp_path, "w", encoding=encoding) as f:
+            yield f
+        os.replace(tmp_path, path)  # atomic rename on the same filesystem
+    finally:
+        if tmp_path.exists():
+            tmp_path.unlink()
+
+# Test cases
+with TemporaryDirectory() as tmp:
+    target = Path(tmp) / "settings.json"
+    with atomic_write(target) as f:
+        f.write('{"version": 1}')
+    print(target.read_text(encoding="utf-8"))  # {"version": 1}
+
+    try:
+        with atomic_write(target) as f:
+            f.write('{"version": 2, "broken": ')
+            raise RuntimeError("crash mid-write")
+    except RuntimeError:
+        pass
+    print(target.read_text(encoding="utf-8"))           # {"version": 1}
+    print(sorted(p.name for p in Path(tmp).iterdir()))  # ['settings.json']
+print("Atomic write passed!")  # Atomic write passed!
+```
+
+> **Key idea**
+>
+> Always open files with `with` and an explicit `encoding="utf-8"`. Use `"a"` for append-only logs and `"x"` when you must never overwrite. For any acquire/release pair you write yourself, use `@contextmanager` with `try / yield / finally`.
+
+---
+
+<a id="22-dataclasses-typeddict-and-pydantic"></a>
+
+## 22. Dataclasses, TypedDict & Pydantic
+
+- **Data Containers** `@dataclass` <!-- great -->
+- **Mutable Defaults** `field(default_factory=list)` <!-- great -->
+- **Dict Shapes** `class State(TypedDict)` <!-- good -->
+- **Runtime Validation** `class Report(BaseModel)` <!-- great -->
+
+Most application code passes structured records around: retrieved chunks, tool results, agent state, API payloads, and LLM structured outputs. Python gives you three complementary tools for describing them:
+
+**`@dataclass`** (standard library) auto-generates `__init__`, `__repr__`, and `__eq__` from annotated fields, but performs no validation. **`TypedDict`** describes the keys and value types of a plain `dict` for type checkers, with zero runtime cost (LangGraph agent state is usually a `TypedDict`). **Pydantic `BaseModel`** (`pip install pydantic`) validates and coerces data at runtime, parses JSON, and generates JSON Schema — the backbone of LLM structured output (`llm.with_structured_output(Model)`) and FastAPI request bodies.
+
+> **Analogy** 🎬
+>
+> **Picture it — Forms at a Government Office**
+>
+> A `TypedDict` is a sample form pinned to the wall: it shows what the boxes should contain, but nobody checks your copy. A dataclass is a pre-printed form with labelled boxes: the structure is fixed, but the clerk never reads what you wrote. Pydantic is the strict clerk at the counter: every box is checked, "29" is converted to the number 29, and an invalid form is handed back with a list of every mistake.
+
+Key everyday patterns:
+1. `@dataclass`: Declare typed fields; get `__init__`, `__repr__`, and `__eq__` for free.
+2. `field(default_factory=list)`: Required for mutable defaults — `tags: list[str] = []` raises `ValueError` so instances never share one list.
+3. `__post_init__`: Runs after the generated `__init__`; use it for normalisation or derived fields.
+4. `@dataclass(frozen=True)`: Immutable and hashable instances (safe as dict keys); `asdict(obj)` converts to a dictionary.
+5. `TypedDict`: Type hints for dict-shaped data; at runtime it is an ordinary `dict`. `total=False` makes every key optional.
+6. Pydantic `BaseModel`: Fields are validated and coerced on construction; bad data raises `ValidationError` listing every problem.
+7. `Field(...)`: Adds constraints (`ge`, `le`, `min_length`, `max_length`) and a `description` that is sent to the LLM in structured-output schemas.
+8. Pydantic I/O: `model_dump()` → dict, `model_dump_json()` → JSON string, `Model.model_validate(dict)`, `Model.model_validate_json(text)`, and `Model.model_json_schema()`.
+9. Which to choose: Dataclasses for trusted internal data, `TypedDict` for dict-based framework state, and Pydantic at trust boundaries (LLM output, HTTP requests, config files).
+
+```python
+from dataclasses import asdict, dataclass, field
+from typing import Literal, TypedDict
+
+from pydantic import BaseModel, Field, ValidationError
+
+# 1. Dataclass: boilerplate-free record with safe mutable defaults
+@dataclass
+class Chunk:
+    doc_id: str
+    text: str
+    score: float = 0.0
+    metadata: dict[str, str] = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.text = self.text.strip()
+
+c = Chunk("policy-1", "  Vendors must encrypt data.  ")
+print(c)  # Chunk(doc_id='policy-1', text='Vendors must encrypt data.', score=0.0, metadata={})
+print(c == Chunk("policy-1", "Vendors must encrypt data."))  # True
+print(asdict(c)["doc_id"])  # policy-1
+
+@dataclass(frozen=True)
+class ModelConfig:
+    name: str
+    temperature: float = 0.2
+
+cfg = ModelConfig("gpt-4o-mini")
+try:
+    cfg.temperature = 0.9
+except AttributeError as err:  # FrozenInstanceError is a subclass of AttributeError
+    print(type(err).__name__)  # FrozenInstanceError
+
+# 2. TypedDict: type hints for plain dicts (e.g. LangGraph agent state)
+class AgentState(TypedDict, total=False):
+    question: str
+    documents: list[str]
+    answer: str
+
+state: AgentState = {"question": "What is RAG?"}
+state["documents"] = ["doc-a", "doc-b"]
+print(type(state).__name__, len(state))  # dict 2
+
+# 3. Pydantic: runtime validation and coercion at trust boundaries
+class RiskFinding(BaseModel):
+    vendor: str = Field(description="Vendor company name")
+    risk_level: Literal["low", "medium", "high"]
+    score: int = Field(ge=0, le=100, description="Risk score 0-100")
+    evidence: list[str] = Field(default_factory=list)
+
+finding = RiskFinding(vendor="Acme", risk_level="high", score="87")  # "87" is coerced to 87
+print(finding.score, type(finding.score).__name__)  # 87 int
+print(finding.model_dump())
+# {'vendor': 'Acme', 'risk_level': 'high', 'score': 87, 'evidence': []}
+
+llm_json = '{"vendor": "Globex", "risk_level": "low", "score": 12, "evidence": ["SOC 2 report"]}'
+parsed = RiskFinding.model_validate_json(llm_json)
+print(parsed.evidence)  # ['SOC 2 report']
+
+try:
+    RiskFinding(vendor="Initech", risk_level="critical", score=150)
+except ValidationError as err:
+    print(err.error_count())                     # 2
+    print([e["loc"][0] for e in err.errors()])  # ['risk_level', 'score']
+
+schema = RiskFinding.model_json_schema()  # what with_structured_output() sends to the LLM
+print(schema["required"])                           # ['vendor', 'risk_level', 'score']
+print(schema["properties"]["score"]["description"])  # Risk score 0-100
+```
+
+- **Strength — Less Boilerplate, Safer Boundaries** Dataclasses remove hand-written `__init__` / `__repr__` / `__eq__`, while Pydantic turns untrusted JSON (LLM replies, HTTP bodies, config) into typed, validated objects with precise error messages and an automatic JSON Schema.
+- **Weakness — No Validation Without Pydantic** Dataclasses and `TypedDict` never check types at runtime — `Chunk(doc_id=123, text=None)` is accepted silently. Pydantic adds a dependency and validation overhead, and lax coercion ("87" → 87) can hide sloppy upstream data unless you enable strict mode.
+
+**Interview question**
+
+*An LLM returns JSON for support-ticket triage. Define a Pydantic model `Triage` with `category` (one of `"billing"`, `"bug"`, `"feature"`), `priority` (integer 1–5), and `summary` (non-empty, at most 80 characters). Write `parse_triage(raw: str) -> Triage | None` that returns `None` and prints the names of the failing fields when the output is invalid.*
+
+Use `Literal` for the category and `Field(ge=1, le=5)` / `Field(min_length=1, max_length=80)` for the constraints. Call `Triage.model_validate_json(raw)` inside `try / except ValidationError`, and read each error's `loc` tuple (an empty `loc` means the JSON itself was invalid).
+
+**Answer — Validate LLM Output**
+
+```python
+from typing import Literal
+
+from pydantic import BaseModel, Field, ValidationError
+
+class Triage(BaseModel):
+    category: Literal["billing", "bug", "feature"]
+    priority: int = Field(ge=1, le=5)
+    summary: str = Field(min_length=1, max_length=80)
+
+def parse_triage(raw: str) -> Triage | None:
+    try:
+        return Triage.model_validate_json(raw)
+    except ValidationError as err:
+        fields = [str(e["loc"][0]) if e["loc"] else "<root>" for e in err.errors()]
+        print(f"Invalid fields: {fields}")
+        return None
+
+# Test cases
+ok = parse_triage('{"category": "bug", "priority": 2, "summary": "Login button crashes app"}')
+print(ok.category, ok.priority)  # bug 2
+
+bad = parse_triage('{"category": "spam", "priority": 9, "summary": ""}')
+# Invalid fields: ['category', 'priority', 'summary']
+print(bad)  # None
+
+print(parse_triage("not json"))
+# Invalid fields: ['<root>']
+# None
+print("Parse triage passed!")  # Parse triage passed!
+```
+
+> **Key idea**
+>
+> Validate at the boundary, trust inside: parse LLM responses, API payloads, and config with Pydantic once, then pass dataclasses or validated models through internal code. Never use a mutable literal (`[]`, `{}`) as a default — use `field(default_factory=...)` or `Field(default_factory=...)`.
+
+---
+
+<a id="unit-7"></a>
+
+## Unit 7 — Production Toolkit
+
+Regular expressions, configuration and logging, automated testing with pytest, and the everyday standard library used across real projects.
+
+<a id="23-regular-expressions"></a>
+
+## 23. Regular Expressions
+
+- **Search & Validate** `re.search(), re.fullmatch()` <!-- great -->
+- **Extract All** `re.findall(), re.finditer()` <!-- great -->
+- **Replace** `re.sub(pattern, repl, text)` <!-- good -->
+- **Precompile** `re.compile(pattern, re.I)` <!-- good -->
+
+Regular expressions (the `re` module) are a mini-language for finding, validating, extracting, and replacing text that follows a pattern. String methods like `in`, `.startswith()`, and `.split()` handle fixed text; regex handles variable text such as "any email address" or "a JSON block wrapped in markdown fences".
+
+In AI projects regex is used constantly: pulling JSON out of an LLM reply, redacting emails and API keys in guardrails, extracting ticker symbols or IDs, splitting documents on headings before chunking, and normalising whitespace in scraped text.
+
+> **Analogy** 🎬
+>
+> **Picture it — A Metal Detector with Custom Settings**
+>
+> Scanning a beach by hand (manual string slicing) means digging up every square metre. A metal detector tuned to "coins between 2 and 3 cm" beeps only where something matches the shape you described. A regex is that tuned detector: describe the shape once, and it finds (or replaces) every match in the text.
+
+Key everyday patterns:
+1. Raw strings: Always write patterns as `r"\d+"` so backslashes reach the regex engine unchanged.
+2. Building blocks: `\d` digit, `\w` word character, `\s` whitespace, `.` any character, `[A-Z]` a character class, `^` / `$` anchors, and `\b` word boundary.
+3. Quantifiers: `*` (0+), `+` (1+), `?` (0 or 1), `{2,4}`; add `?` for non-greedy matching (`.*?`).
+4. Groups: `(...)` captures, `(?P<name>...)` captures by name, `(?:...)` groups without capturing.
+5. search vs match vs fullmatch: `re.search` finds the first match anywhere, `re.match` only at the start, and `re.fullmatch` requires the entire string to match (use it for validation).
+6. Extract many: `re.findall` returns strings (or tuples of groups); `re.finditer` yields `Match` objects with positions.
+7. Replace & split: `re.sub(pattern, repl, text)` where `repl` can be a string or a function; `re.split(pattern, text)` splits on any matching delimiter.
+8. Flags: `re.I` ignore case, `re.S` (`re.DOTALL`) lets `.` match newlines, `re.M` makes `^` / `$` match on every line.
+9. `re.compile` & `re.escape`: Compile patterns reused in loops once at module level; escape user input with `re.escape(text)` to match it literally.
+
+```python
+import json
+import re
+
+# 1. search with named groups, fullmatch for validation
+m = re.search(r"(?P<ticker>[A-Z]{1,5}) closed at \$(?P<price>\d+\.\d{2})", "Today AAPL closed at $189.50.")
+if m:
+    print(m.group("ticker"), float(m.group("price")))  # AAPL 189.5
+print(bool(re.fullmatch(r"[A-Z]{1,5}", "MSFT")))     # True
+print(bool(re.fullmatch(r"[A-Z]{1,5}", "MSFT123")))  # False
+
+# 2. findall / finditer for extraction (compile once, reuse many times)
+EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+")
+text = "Contact sales@acme.com or support@acme.io for help."
+print(EMAIL_RE.findall(text))                        # ['sales@acme.com', 'support@acme.io']
+print([m.start() for m in EMAIL_RE.finditer(text)])  # [8, 26]
+
+# 3. sub: redact PII, normalise whitespace, and mask secrets with a function
+print(EMAIL_RE.sub("[EMAIL]", text))                          # Contact [EMAIL] or [EMAIL] for help.
+print(re.sub(r"\s+", " ", "too   many \n\t spaces").strip())  # too many spaces
+masked = re.sub(r"sk-[A-Za-z0-9]{8,}", lambda m: "sk-****" + m.group()[-4:], "key=sk-abc123XYZ7890")
+print(masked)  # key=sk-****7890
+
+# 4. Flags: IGNORECASE + DOTALL to pull a JSON block out of an LLM reply
+reply = 'Sure! Here is the result:\n```JSON\n{"risk": "high",\n "score": 87}\n```'
+block = re.search(r"```json\s*(\{.*?\})\s*```", reply, re.I | re.S)
+print(json.loads(block.group(1)))  # {'risk': 'high', 'score': 87}
+
+# 5. split on several delimiters; escape user input before embedding it in a pattern
+print(re.split(r"[,;|]\s*", "rag, agents;mcp|evals"))  # ['rag', 'agents', 'mcp', 'evals']
+print(re.escape("price (USD)?"))                       # price\ \(USD\)\?
+```
+
+- **Strength — Powerful Pattern Matching in One Line** A single pattern replaces dozens of lines of manual slicing and looping, compiled patterns are fast, and regex is the standard tool for PII redaction, log parsing, and cleaning LLM output.
+- **Weakness — Hard to Read and Easy to Over-Match** Dense patterns are hard to maintain, greedy `.*` silently grabs too much, nested quantifiers can cause catastrophic backtracking, and regex is the wrong tool for parsing nested HTML or JSON — use a real parser for those.
+
+**Interview question**
+
+*Write `extract_json(reply: str) -> dict | None` that extracts the first JSON object from an LLM reply. The JSON may be wrapped in a fenced code block (with or without a `json` language tag) or embedded directly in prose. Return `None` if nothing parseable is found.*
+
+Try a fenced-block pattern first (`re.I | re.S`, non-greedy `\{.*?\}`), then fall back to the widest brace span `\{.*\}`. Attempt `json.loads()` on each candidate and catch `json.JSONDecodeError`.
+
+**Answer — Extract JSON from LLM Reply**
+
+```python
+import json
+import re
+
+FENCE_RE = re.compile(r"```(?:json)?\s*(\{.*?\})\s*```", re.I | re.S)
+BRACE_RE = re.compile(r"\{.*\}", re.S)
+
+def extract_json(reply: str) -> dict | None:
+    for pattern in (FENCE_RE, BRACE_RE):
+        match = pattern.search(reply)
+        if not match:
+            continue
+        candidate = match.group(1) if match.groups() else match.group(0)
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            continue
+    return None
+
+# Test cases
+print(extract_json('Here you go:\n```json\n{"answer": 42}\n```'))  # {'answer': 42}
+print(extract_json('Result: {"status": "ok", "items": [1, 2]} as requested.'))
+# {'status': 'ok', 'items': [1, 2]}
+print(extract_json('```\n{"nested": {"a": 1}}\n```'))  # {'nested': {'a': 1}}
+print(extract_json("No structured data here."))        # None
+print(extract_json('Broken: {"a": 1,,}'))               # None
+print("Extract JSON passed!")  # Extract JSON passed!
+```
+
+> **Key idea**
+>
+> Use raw strings, prefer `re.fullmatch` for validation, compile patterns you reuse, and reach for plain string methods first — use regex only when the text you need to match genuinely varies.
+
+---
+
+<a id="24-environment-variables-cli-and-logging"></a>
+
+## 24. Environment Variables, CLI & Logging
+
+- **Secrets & Config** `os.getenv("KEY", default)` <!-- great -->
+- **.env Files** `load_dotenv()` <!-- great -->
+- **CLI Flags** `argparse.ArgumentParser()` <!-- good -->
+- **Diagnostics** `logging.getLogger(__name__)` <!-- good -->
+
+Real scripts need configuration (API keys, model names, temperatures), command-line options, and diagnostics that can be switched on or off. Hardcoding these makes code insecure and impossible to reuse across laptops, CI, and production.
+
+The standard toolkit is: environment variables via `os.getenv()` / `os.environ`, a local `.env` file loaded with `python-dotenv`, `argparse` for typed command-line flags, `sys.exit()` for failing fast, and the `logging` module for leveled diagnostics. Almost every agent, RAG pipeline, and API server in a real codebase starts with `load_dotenv()` followed by `os.getenv(...)` calls.
+
+> **Analogy** 🎬
+>
+> **Picture it — A Rental Car's Adjustable Settings**
+>
+> The engine (your code) is identical for every driver. Each driver adjusts the seat and mirrors (environment variables and CLI flags) for their trip without opening the hood, and the dashboard warning lights (logging) report what is happening at the level of detail the driver chooses.
+
+Key everyday patterns:
+1. `os.getenv("NAME", "default")`: Returns the value or the default (`None` if omitted). `os.environ["NAME"]` raises `KeyError` when missing — use it for required secrets.
+2. Values are strings: Convert explicitly: `int(os.getenv("MAX_RETRIES", "3"))`; parse booleans with `value.lower() in {"1", "true", "yes"}`, because `bool("false")` is `True`.
+3. `.env` files: `pip install python-dotenv`, then `from dotenv import load_dotenv; load_dotenv()` copies `KEY=VALUE` lines into `os.environ` without overriding variables that are already set (pass `override=True` to force). Commit `.env.example`, never `.env`.
+4. Fail fast: Validate required configuration at startup; `sys.exit("Missing OPENAI_API_KEY")` prints the message to stderr and exits with status 1.
+5. `sys.argv` vs `argparse`: `sys.argv` is the raw list of arguments; `argparse` adds types, defaults, `choices`, boolean flags (`action="store_true"`), and a free `--help`.
+6. Testable CLIs: `parser.parse_args(["--top-k", "8"])` accepts an explicit list, so tests do not need a real command line.
+7. `logging` setup: Call `logging.basicConfig(level=..., format=...)` once in the entry-point script and use `logger = logging.getLogger(__name__)` in every module.
+8. Log levels: `DEBUG < INFO < WARNING < ERROR < CRITICAL`; messages below the configured level are dropped. Inside `except`, `logger.exception(...)` also records the traceback.
+9. `print` vs `logging`: Use `print()` for the program's actual output and `logging` (stderr by default) for diagnostics you may want to silence or redirect.
+
+```python
+import argparse
+import logging
+import os
+import sys
+
+# 1. Environment variables (always strings, so convert explicitly)
+os.environ["MODEL_NAME"] = "gpt-4o-mini"  # normally set by the shell or a .env file
+model = os.getenv("MODEL_NAME", "gpt-4o")
+max_retries = int(os.getenv("MAX_RETRIES", "3"))
+debug = os.getenv("DEBUG", "false").lower() in {"1", "true", "yes"}
+print(model, max_retries, debug)  # gpt-4o-mini 3 False
+
+# 2. Loading a .env file (pip install python-dotenv)
+# from dotenv import load_dotenv
+# load_dotenv()  # reads KEY=VALUE lines from .env into os.environ
+
+# 3. Fail fast when a required secret is missing
+def require_env(name: str) -> str:
+    value = os.getenv(name)
+    if not value:
+        sys.exit(f"Missing required environment variable: {name}")  # exit status 1
+    return value
+
+try:
+    require_env("SOME_MISSING_KEY")
+except SystemExit as exc:  # caught here only to show the message
+    print(exc.code)  # Missing required environment variable: SOME_MISSING_KEY
+
+# 4. argparse: typed CLI options with defaults, choices, flags, and --help
+parser = argparse.ArgumentParser(description="Run the vendor risk assessor")
+parser.add_argument("vendor", help="Vendor name to assess")
+parser.add_argument("--top-k", type=int, default=5, help="Chunks to retrieve")
+parser.add_argument("--provider", choices=["openai", "groq"], default="openai")
+parser.add_argument("--verbose", action="store_true")
+
+args = parser.parse_args(["Acme Corp", "--top-k", "8", "--verbose"])  # scripts call parse_args()
+print(args.vendor, args.top_k, args.provider, args.verbose)  # Acme Corp 8 openai True
+
+# 5. logging: configure once at the entry point, then use module-level loggers
+logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+logger = logging.getLogger("assessor")
+logger.debug("Not shown: DEBUG is below the INFO level")
+logger.info("Retrieved %d chunks for %s", 8, args.vendor)
+# INFO assessor: Retrieved 8 chunks for Acme Corp
+try:
+    int("eight")
+except ValueError as err:
+    logger.warning("Bad --top-k value, using default: %s", err)
+# WARNING assessor: Bad --top-k value, using default: invalid literal for int() with base 10: 'eight'
+```
+
+- **Strength — Same Code, Any Environment** Separating configuration from code lets one script run locally, in CI, and in production by swapping environment variables. `argparse` gives free validation and `--help`, and log levels silence noise without deleting statements.
+- **Weakness — Leaked Secrets and Stringly-Typed Config** Committing `.env`, hardcoding keys in notebooks, or logging full request headers leaks credentials. Environment values are untyped strings, so `bool(os.getenv("DEBUG"))` is `True` even for `"false"`.
+
+**Interview question**
+
+*Write `load_settings(env)` that reads `OPENAI_API_KEY` (required), `MODEL_NAME` (default `"gpt-4o-mini"`), `TEMPERATURE` (float, default `0.2`, must be between 0 and 2), and `DEBUG` (true for `1/true/yes/on`). Collect every problem and raise a single `ValueError` listing them. Accept the environment as a mapping so the function is testable (pass `os.environ` in production).*
+
+Read each key with `env.get(key, default)`, append error messages to a list instead of raising immediately, convert `TEMPERATURE` inside `try / except ValueError`, and raise once at the end if the error list is non-empty.
+
+**Answer — Validated Settings Loader**
+
+```python
+from collections.abc import Mapping
+
+TRUTHY = {"1", "true", "yes", "on"}
+
+def load_settings(env: Mapping[str, str]) -> dict:
+    errors = []
+    api_key = env.get("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        errors.append("OPENAI_API_KEY is required")
+
+    temperature = None
+    try:
+        temperature = float(env.get("TEMPERATURE", "0.2"))
+        if not 0 <= temperature <= 2:
+            errors.append("TEMPERATURE must be between 0 and 2")
+    except ValueError:
+        errors.append("TEMPERATURE must be a number")
+
+    if errors:
+        raise ValueError("; ".join(errors))
+    return {
+        "api_key": api_key,
+        "model": env.get("MODEL_NAME", "gpt-4o-mini"),
+        "temperature": temperature,
+        "debug": env.get("DEBUG", "").strip().lower() in TRUTHY,
+    }
+
+# Test cases
+settings = load_settings({"OPENAI_API_KEY": "sk-test", "DEBUG": "True"})
+print(settings["model"], settings["temperature"], settings["debug"])  # gpt-4o-mini 0.2 True
+
+try:
+    load_settings({"TEMPERATURE": "hot"})
+except ValueError as err:
+    print(err)  # OPENAI_API_KEY is required; TEMPERATURE must be a number
+
+try:
+    load_settings({"OPENAI_API_KEY": "sk-test", "TEMPERATURE": "3"})
+except ValueError as err:
+    print(err)  # TEMPERATURE must be between 0 and 2
+print("Load settings passed!")  # Load settings passed!
+```
+
+> **Key idea**
+>
+> Read configuration from the environment, validate required values at startup, and fail fast with a clear message. Use `print()` for program output and `logging` for diagnostics, and call `logging.basicConfig()` only once, in the entry-point script.
+
+---
+
+<a id="25-testing-with-pytest"></a>
+
+## 25. Testing with pytest
+
+- **Test Functions** `def test_x(): assert ...` <!-- great -->
+- **Expected Errors** `with pytest.raises(ValueError):` <!-- great -->
+- **Data-Driven** `@pytest.mark.parametrize` <!-- good -->
+- **Setup & Fakes** `@pytest.fixture, monkeypatch, tmp_path` <!-- good -->
+
+Automated tests prove that parsers, scoring functions, tools, and prompts-building code still work after every change. `pytest` (`pip install pytest`) is the de-facto standard: it discovers files named `test_*.py` and functions named `test_*`, and uses plain `assert` statements while showing the actual values when an assertion fails.
+
+For AI applications, the key skill is isolating your logic from slow, costly, nondeterministic LLM and network calls: replace them with fakes via fixtures or `monkeypatch`, so unit tests run in milliseconds and always give the same answer. (Measuring model quality is a separate job for evaluation suites.)
+
+> **Analogy** 🎬
+>
+> **Picture it — Crash Tests at the Car Factory**
+>
+> Every new car model goes through the same crash tests before it leaves the factory, using crash-test dummies instead of real people. Your test suite is that crash-test track: every code change drives through the same checks, and fake LLMs and APIs play the role of the dummies.
+
+Key everyday patterns:
+1. Running tests: `pytest` runs everything; `pytest tests/test_rag.py -q` one file; `pytest -k "cost"` by name; `pytest -x` stops at the first failure; `-v` lists each test.
+2. Naming: Files `test_*.py`, functions `test_*`, optional grouping classes `Test*` (no `__init__`).
+3. Plain `assert`: `assert result == expected`; use `pytest.approx(x)` when comparing floats.
+4. `pytest.raises`: `with pytest.raises(ValueError, match="non-negative"):` asserts that the block raises that exception with a matching message.
+5. `@pytest.mark.parametrize`: Runs one test function over many input/expected pairs; each pair is reported as a separate test.
+6. `@pytest.fixture`: Reusable setup injected by parameter name; put shared fixtures in `conftest.py`.
+7. Built-in fixtures: `tmp_path` (fresh temp directory), `monkeypatch` (set env vars, replace functions or attributes), and `capsys` (capture printed output).
+8. Fake external services: Pass a fake LLM callable into your function, or `monkeypatch.setattr` the client method, so tests make zero network calls.
+9. `unittest`: The standard-library alternative (`class TestX(unittest.TestCase)` with `self.assertEqual`); pytest runs these tests too.
+
+```python
+# test_pricing.py  -  run with:  pytest -q test_pricing.py
+import os
+
+import pytest
+
+# --- code under test (normally imported, e.g. from pricing import estimate_cost) ---
+def estimate_cost(input_tokens: int, output_tokens: int, usd_per_m_in: float, usd_per_m_out: float) -> float:
+    if input_tokens < 0 or output_tokens < 0:
+        raise ValueError("token counts must be non-negative")
+    return input_tokens / 1e6 * usd_per_m_in + output_tokens / 1e6 * usd_per_m_out
+
+def summarize(text: str, llm) -> str:
+    return llm(f"Summarize: {text}").strip()
+
+# 1. Plain assert + approx for floats
+def test_estimate_cost_basic():
+    assert estimate_cost(1_000_000, 0, 0.15, 0.60) == pytest.approx(0.15)
+
+# 2. Expected exceptions
+def test_negative_tokens_rejected():
+    with pytest.raises(ValueError, match="non-negative"):
+        estimate_cost(-1, 0, 0.15, 0.60)
+
+# 3. One test function, many cases
+@pytest.mark.parametrize(
+    ("inp", "out", "expected"),
+    [(0, 0, 0.0), (500_000, 0, 0.075), (0, 1_000_000, 0.60)],
+)
+def test_estimate_cost_cases(inp, out, expected):
+    assert estimate_cost(inp, out, 0.15, 0.60) == pytest.approx(expected)
+
+# 4. Fixture providing a fake LLM (no network, deterministic)
+@pytest.fixture
+def fake_llm():
+    calls = []
+
+    def _llm(prompt: str) -> str:
+        calls.append(prompt)
+        return "  A short summary.  "
+
+    _llm.calls = calls
+    return _llm
+
+def test_summarize_uses_llm(fake_llm):
+    assert summarize("long text", fake_llm) == "A short summary."
+    assert fake_llm.calls == ["Summarize: long text"]
+
+# 5. Built-in fixtures: monkeypatch (env vars) and tmp_path (temp directory)
+def test_reads_config(tmp_path, monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")  # restored automatically after the test
+    cfg = tmp_path / "config.txt"
+    cfg.write_text("model=gpt-4o-mini", encoding="utf-8")
+    assert os.environ["OPENAI_API_KEY"] == "sk-test"
+    assert cfg.read_text(encoding="utf-8").split("=")[1] == "gpt-4o-mini"
+```
+
+```bash
+$ pytest -q test_pricing.py
+.......                                                                  [100%]
+7 passed in 0.02s
+```
+
+- **Strength — Fast, Readable Safety Net** Plain asserts, fixtures, and parametrization keep tests short. Fast deterministic tests with fake LLMs catch regressions in parsers, tools, and scoring logic before they reach users.
+- **Weakness — Real API Calls and Over-Mocking** Tests that call real LLMs or web APIs are slow, cost money, need secrets, and fail randomly. On the other hand, mocking too much ends up testing the mock instead of real behavior.
+
+**Interview question**
+
+*Write parametrized pytest tests for `classify_nps(score: int) -> str`, which returns `"detractor"` for 0–6, `"passive"` for 7–8, and `"promoter"` for 9–10. Cover every boundary and verify that out-of-range scores raise `ValueError`.*
+
+Use one `@pytest.mark.parametrize` test for the boundary values (0, 6, 7, 8, 9, 10) and a second parametrized test using `pytest.raises(ValueError, match=...)` for invalid scores.
+
+**Answer — Parametrized NPS Tests**
+
+```python
+# test_nps.py  -  run with:  pytest -q test_nps.py
+import pytest
+
+def classify_nps(score: int) -> str:
+    if not 0 <= score <= 10:
+        raise ValueError(f"NPS score out of range: {score}")
+    if score >= 9:
+        return "promoter"
+    if score >= 7:
+        return "passive"
+    return "detractor"
+
+@pytest.mark.parametrize(
+    ("score", "expected"),
+    [(0, "detractor"), (6, "detractor"), (7, "passive"), (8, "passive"), (9, "promoter"), (10, "promoter")],
+)
+def test_classify_nps_boundaries(score, expected):
+    assert classify_nps(score) == expected
+
+@pytest.mark.parametrize("bad_score", [-1, 11, 100])
+def test_classify_nps_rejects_out_of_range(bad_score):
+    with pytest.raises(ValueError, match="out of range"):
+        classify_nps(bad_score)
+
+# $ pytest -q test_nps.py
+# .........                                                              [100%]
+# 9 passed in 0.01s
+```
+
+> **Key idea**
+>
+> Unit-test pure logic (parsers, scoring, tool functions) with fast tests, replace LLM and network calls with fakes via fixtures or `monkeypatch`, use `pytest.approx` for floats and `pytest.raises` for errors, and keep model-quality checks in a separate evaluation suite.
+
+---
+
+<a id="26-standard-library-toolkit"></a>
+
+## 26. Standard Library Toolkit
+
+- **Dates & Times** `datetime.now(timezone.utc), timedelta` <!-- great -->
+- **Timing** `time.perf_counter()` <!-- great -->
+- **IDs & Fingerprints** `uuid.uuid4(), hashlib.sha256()` <!-- good -->
+- **Local Database** `sqlite3.connect(path)` <!-- good -->
+- **Threads & Processes** `ThreadPoolExecutor, Lock, subprocess.run` <!-- good -->
+
+Python ships with "batteries included": a large standard library that needs no `pip install`. Beyond `json`, `pathlib`, `re`, and `collections`, a handful of modules show up in almost every real project: `datetime` for timestamps, `time` for measuring latency, `uuid` and `hashlib` for IDs and content fingerprints, `statistics` for quick metrics, `sqlite3` for a zero-setup database, `concurrent.futures` / `threading` for parallel I/O, and `subprocess` for running other programs.
+
+> **Analogy** 🎬
+>
+> **Picture it — A Fully Stocked Workshop Pegboard**
+>
+> Before buying a specialised power tool (a third-party package), look at the pegboard that came with the workshop. The tape measure (`time`), calendar (`datetime`), label maker (`uuid`), fingerprint scanner (`hashlib`), filing cabinet (`sqlite3`), and extra pairs of hands (threads) are already hanging there, tested and ready to use.
+
+Key everyday modules:
+1. `datetime`: `datetime.now(timezone.utc)` for timezone-aware timestamps (avoid the deprecated `datetime.utcnow()`), `timedelta` arithmetic, `.isoformat()` / `datetime.fromisoformat()`, `strftime` / `strptime`, and `zoneinfo.ZoneInfo("Asia/Kolkata")` for named time zones.
+2. `time`: `time.perf_counter()` to measure durations (monotonic, high resolution); `time.time()` for wall-clock epoch timestamps; `time.sleep()` blocks the thread (use `asyncio.sleep` in async code).
+3. `uuid` & `hashlib`: `uuid.uuid4()` for random unique session, trace, or thread IDs; `hashlib.sha256(text.encode()).hexdigest()` for deterministic fingerprints used in de-duplication and caching (never for storing passwords).
+4. `statistics`: `mean`, `median`, `stdev`, and `quantiles` for quick metrics without NumPy.
+5. `sqlite3`: A full SQL database in a single file (or `":memory:"`). Always use `?` placeholders for values, set `conn.row_factory = sqlite3.Row` for dict-like rows, and remember `with conn:` commits or rolls back a transaction but does not close the connection.
+6. `concurrent.futures`: `ThreadPoolExecutor` runs blocking I/O (HTTP calls, file reads) in parallel from synchronous code; `pool.map` keeps results in input order. Guard shared mutable state with `threading.Lock`.
+7. CPU-bound work: Threads do not speed up pure-Python CPU work on the standard (GIL) interpreter; use `ProcessPoolExecutor` or `multiprocessing` instead.
+8. `subprocess.run`: Run external commands with a list of arguments, `capture_output=True, text=True`, and a `timeout`; avoid `shell=True` with untrusted input.
+
+```python
+import hashlib
+import sqlite3
+import statistics
+import subprocess
+import sys
+import threading
+import time
+import uuid
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone
+
+# 1. datetime: timezone-aware timestamps and arithmetic
+created = datetime(2026, 1, 15, 9, 30, tzinfo=timezone.utc)
+expires = created + timedelta(days=30)
+print(expires.isoformat())        # 2026-02-14T09:30:00+00:00
+print((expires - created).days)   # 30
+print(datetime.fromisoformat("2026-02-14T09:30:00+00:00") == expires)  # True
+print(created.strftime("%d %b %Y"))  # 15 Jan 2026
+now = datetime.now(timezone.utc)  # prefer this over the deprecated datetime.utcnow()
+
+# 2. Measuring durations with perf_counter
+start = time.perf_counter()
+time.sleep(0.01)
+elapsed_ms = (time.perf_counter() - start) * 1000
+print(elapsed_ms >= 10)  # True
+
+# 3. Unique IDs and content fingerprints
+session_id = str(uuid.uuid4())
+print(len(session_id), session_id.count("-"))  # 36 4
+fingerprint = hashlib.sha256("Vendors must encrypt data.".encode("utf-8")).hexdigest()
+print(len(fingerprint), fingerprint == hashlib.sha256(b"Vendors must encrypt data.").hexdigest())  # 64 True
+
+# 4. Quick statistics
+latencies = [120, 95, 410, 130, 101]
+print(statistics.mean(latencies), statistics.median(latencies))  # 171.2 120
+
+# 5. sqlite3: parameterized queries and dict-like rows
+conn = sqlite3.connect(":memory:")  # or a file such as "trips.db"
+conn.row_factory = sqlite3.Row
+with conn:  # commits on success, rolls back on error
+    conn.execute("CREATE TABLE bookings (id INTEGER PRIMARY KEY, city TEXT, nights INTEGER)")
+    conn.executemany("INSERT INTO bookings (city, nights) VALUES (?, ?)", [("Goa", 3), ("Pune", 2), ("Goa", 4)])
+city = "Goa"  # user input: always pass values through ? placeholders, never an f-string
+row = conn.execute("SELECT city, SUM(nights) AS total FROM bookings WHERE city = ?", (city,)).fetchone()
+print(row["city"], row["total"])  # Goa 7
+conn.close()
+
+# 6. Threads for blocking I/O, with a Lock protecting shared state
+counter = {"done": 0}
+lock = threading.Lock()
+
+def fetch(url: str) -> int:
+    time.sleep(0.01)  # stands in for a blocking HTTP call
+    with lock:
+        counter["done"] += 1
+    return len(url)
+
+urls = ["https://a.dev", "https://bb.dev", "https://ccc.dev"]
+with ThreadPoolExecutor(max_workers=3) as pool:
+    sizes = list(pool.map(fetch, urls))  # results keep input order
+print(sizes, counter["done"])  # [13, 14, 15] 3
+
+# 7. subprocess: run another program safely (list args, timeout, captured output)
+result = subprocess.run(
+    [sys.executable, "-c", "print('tests passed')"], capture_output=True, text=True, timeout=30
+)
+print(result.returncode, result.stdout.strip())  # 0 tests passed
+```
+
+- **Strength — Zero Dependencies, Battle-Tested** Standard-library modules need no installation, are stable across versions, and cover most daily utility needs — fewer dependencies mean fewer security updates and version conflicts.
+- **Weakness — Subtle Defaults** Naive datetimes (no `tzinfo`) silently mix time zones and cannot be compared with aware ones (`TypeError`); `with sqlite3.connect()` does not close the connection; and threads do not speed up CPU-bound Python code on the standard interpreter.
+
+**Interview question**
+
+*Using only the standard library, implement a `TTLCache` class with `set(key, value)` and `get(key, default=None)` where entries expire `ttl_seconds` after being set (useful for caching stock prices or API responses). Make it testable without real waiting.*
+
+Store `(expires_at, value)` tuples in a dictionary. Inject the clock as a constructor parameter that defaults to `time.monotonic`, so tests can pass a fake clock and advance time instantly. Delete expired entries lazily inside `get`.
+
+**Answer — TTL Cache with Injectable Clock**
+
+```python
+import time
+from collections.abc import Callable
+from typing import Any
+
+class TTLCache:
+    def __init__(self, ttl_seconds: float, clock: Callable[[], float] = time.monotonic):
+        self.ttl = ttl_seconds
+        self.clock = clock
+        self._data: dict[str, tuple[float, Any]] = {}
+
+    def set(self, key: str, value: Any) -> None:
+        self._data[key] = (self.clock() + self.ttl, value)
+
+    def get(self, key: str, default: Any = None) -> Any:
+        item = self._data.get(key)
+        if item is None:
+            return default
+        expires_at, value = item
+        if self.clock() >= expires_at:
+            del self._data[key]
+            return default
+        return value
+
+# Test cases with a fake clock: instant and deterministic
+fake_now = [1000.0]
+cache = TTLCache(ttl_seconds=60, clock=lambda: fake_now[0])
+cache.set("AAPL", 189.5)
+print(cache.get("AAPL"))  # 189.5
+fake_now[0] += 59
+print(cache.get("AAPL"))  # 189.5
+fake_now[0] += 1
+print(cache.get("AAPL"))  # None
+print(cache.get("MSFT", "miss"))  # miss
+print("TTL cache passed!")  # TTL cache passed!
+```
+
+> **Key idea**
+>
+> Store and compare timestamps as timezone-aware UTC, measure durations with `time.perf_counter()`, always use `?` placeholders in SQL, and use threads for blocking I/O but processes for CPU-heavy work.
+
+---
+
 ## Daily Python Cheat Sheet
 
 A quick checklist of the most common daily syntax:
 
 1. **Variables, Types & Casting:** Python is dynamically typed. Check for emptiness with `if items:` or `if not items:`. Compare singletons with `if val is None:`. Cast explicitly with `int()`, `float()`, `str()`, `bool()`.
-2. **Type Hints:** Annotate variables and functions: `def fn(x: int) -> str | None:`. Use `list[str]` and `dict[str, int]` for generic collections.
+2. **Type Hints:** Annotate variables and functions: `def fn(x: int) -> str | None:`. Use `list[str]` and `dict[str, int]` for generic collections. Read legacy forms fluently (`Optional[X]` = `X | None`), accept `Iterable[T]` for inputs, and use `TypeVar` for generic helpers.
 3. **Keywords:** Only 35 reserved words in Python (`keyword.kwlist`). Check with `keyword.iskeyword()`. Never name variables after keywords.
-4. **Error Handling:** Catch expected issues with `try / except SpecificError:`. Use `else` for code that runs only when no exception occurs, and `finally` for cleanup. Never write bare `except: pass`.
-5. **Strings:** Format with `f"Hello {name}"`. Clean with `.strip()`, split into lists with `.split()`, join with `", ".join(list)`, and test substrings with `in` and `not in`.
+4. **Error Handling:** Catch expected issues with `try / except SpecificError:`. Use `else` for code that runs only when no exception occurs, and `finally` for cleanup. Never write bare `except: pass`. Define domain exceptions by subclassing `Exception`, and translate low-level errors with `raise AppError(...) from err`.
+5. **Strings:** Format with `f"Hello {name}"`. Clean with `.strip()`, split into lists with `.split()`, join with `", ".join(list)`, and test substrings with `in` and `not in`. Format numbers with specifiers: `{x:,.2f}`, `{ratio:.1%}`, `{name:<10}`, and debug with `{value=}`.
 6. **Conditionals & Operators:** Use `/` for float division, `//` for floor division, `%` for modulo, and `divmod()` for both. Use `is` and `is not` for identity (`val is None`), `==` and `!=` for values. Chain comparisons: `18 <= age < 65`.
 7. **Loops:** Iterate cleanly with `for item in items:` or `for i, item in enumerate(items):`. Use `zip()` for parallel iteration, and `break` / `continue` for control flow.
 8. **Lists:** Access with `items[0]` and `items[-1]`. Append with `.append()`, remove with `.pop()`. Slice with `seq[start:stop:step]` and reverse with `[::-1]`.
-9. **Dictionaries:** Use `.get(key, default)` for safe lookups that never crash with `KeyError`. Iterate over `items()` for `(key, value)` pairs.
+9. **Dictionaries:** Use `.get(key, default)` for safe lookups that never crash with `KeyError`. Iterate over `items()` for `(key, value)` pairs. Count with `Counter(items).most_common(n)`, group with `defaultdict(list)`, and merge with `defaults | overrides`.
 10. **Tuples & Sets:** Use immutable tuples for fixed records and instant hash keys. Use `set(items)` to strip duplicates with $O(1)$ membership checks, union (`|`), and intersection (`&`).
 11. **Sorting:** Sort in-place with `list.sort()` or create a new sorted list with `sorted(iterable)`. Pass `reverse=True` for descending order. Works on lists, tuples, sets, strings, and dictionaries. Supply `key=func` for $O(n)$ single-element keys, or use `from functools import cmp_to_key` with `key=cmp_to_key(compare_func)` for custom two-argument pairwise comparators (-1, 0, 1).
 12. **Unpacking & Destructuring:** Multiple assignment (`a, b = b, a`), capture leftovers with `*` (`head, *tail = items`), ignore values (`first, *_ = items`), and merge dictionaries with `{**defaults, **custom}`.
-13. **Comprehensions:** Transform and filter concisely: `[x.lower() for x in names if x]`. Use dictionary comprehensions `{k: v for ...}` and set comprehensions similarly.
-14. **Functions & Arguments:** Define with `def fn(a, b=default, *args, **kwargs):`. `*args` captures extra positional arguments into a tuple, while `**kwargs` captures keyword arguments into a dictionary.
-15. **Async & Await:** Concurrency for I/O-bound tasks. Declare with `async def`, yield with `await`, run with `asyncio.run()`, and execute concurrently with `asyncio.gather()`. Never execute blocking synchronous code inside coroutines.
-16. **Classes & OOP:** Define classes with `class Item:`, initialize attributes inside `def __init__(self, ...):`, and provide `__str__` or `__repr__` for clean display. For single or multiple inheritance (the diamond problem), resolve ancestors safely using cooperative `super().__init__(**kwargs)` and C3 Linearization MRO (`ClassName.__mro__`) rather than calling base classes directly.
-17. **Modules & Imports:** Organize code into `.py` files. Use `from module import func` or `import module as alias`. Guard scripts with `if __name__ == "__main__":` and avoid `from module import *`.
+13. **Comprehensions:** Transform and filter concisely: `[x.lower() for x in names if x]`. Use dictionary comprehensions `{k: v for ...}` and set comprehensions similarly. Flatten with `[x for row in rows for x in row]`, and drop the brackets for lazy generator expressions inside `sum()`, `any()`, and `max()`.
+14. **Functions & Arguments:** Define with `def fn(a, b=default, *args, **kwargs):`. `*args` captures extra positional arguments into a tuple, while `**kwargs` captures keyword arguments into a dictionary. Force named arguments with a bare `*` (`def search(q, *, top_k=5)`), use `lambda` for `key=` callbacks, and never use mutable defaults like `items=[]`.
+15. **Async & Await:** Concurrency for I/O-bound tasks. Declare with `async def`, yield with `await`, run with `asyncio.run()`, and execute concurrently with `asyncio.gather()`. Never execute blocking synchronous code inside coroutines. Use `async with` for sessions, `async for` for streams, `asyncio.Semaphore(n)` for rate limits, and `asyncio.to_thread()` for blocking calls.
+16. **Classes & OOP:** Define classes with `class Item:`, initialize attributes inside `def __init__(self, ...):`, and provide `__str__` or `__repr__` for clean display. For single or multiple inheritance (the diamond problem), resolve ancestors safely using cooperative `super().__init__(**kwargs)` and C3 Linearization MRO (`ClassName.__mro__`) rather than calling base classes directly. Expose computed attributes with `@property`, write alternative constructors with `@classmethod`, and define interfaces with base methods that raise `NotImplementedError`.
+17. **Modules & Imports:** Organize code into `.py` files. Use `from module import func` or `import module as alias`. Guard scripts with `if __name__ == "__main__":` and avoid `from module import *`. Inside packages, use relative imports (`from .config import settings`) and run modules from the project root with `python -m package.module`.
 18. **Virtual Environments:** Create isolated project environments with `python3 -m venv .venv`, activate with `source .venv/bin/activate` (or `.venv\Scripts\activate` on Windows), install dependencies from `requirements.txt` via `pip install -r requirements.txt`, and check with `sys.prefix != sys.base_prefix`. Never commit `.venv` to git.
+19. **Decorators:** `@deco` means `fn = deco(fn)`. Wrap with `def wrapper(*args, **kwargs)`, always add `@functools.wraps(fn)`, and cache pure functions with `@functools.lru_cache(maxsize=N)`.
+20. **Generators & Iterators:** `yield` produces values lazily with constant memory. Generators are single-use; use `next((x for x in items if ok(x)), None)` for the first match and `yield from` to delegate.
+21. **Context Managers & File I/O:** Always `with open(path, mode, encoding="utf-8") as f:`. Use `Path.read_text()` / `write_text()`, `json.load()` / `json.dump()`, `csv.DictReader`, and `@contextmanager` with `try / yield / finally` for custom cleanup.
+22. **Dataclasses, TypedDict & Pydantic:** `@dataclass` for internal records (`field(default_factory=list)` for mutable defaults), `TypedDict` for dict-shaped state, and Pydantic `BaseModel` + `Field(...)` to validate LLM output and API input with `model_validate_json()`.
+23. **Regular Expressions:** Use raw strings (`r"\d+"`), `re.fullmatch` for validation, `re.search` / `re.findall` for extraction, `re.sub` for redaction, flags `re.I | re.S`, and `re.compile` for reused patterns.
+24. **Environment Variables, CLI & Logging:** Read config with `os.getenv("KEY", default)` after `load_dotenv()`, fail fast with `sys.exit("message")`, parse flags with `argparse`, and log with `logging.getLogger(__name__)` after one `basicConfig()` call.
+25. **Testing with pytest:** Name files `test_*.py`, use plain `assert`, `pytest.approx` for floats, `pytest.raises` for errors, `@pytest.mark.parametrize` for cases, and fixtures / `monkeypatch` / `tmp_path` to fake LLMs, env vars, and files.
+26. **Standard Library Toolkit:** `datetime.now(timezone.utc)` + `timedelta`, `time.perf_counter()` for latency, `uuid.uuid4()` for IDs, `hashlib.sha256()` for fingerprints, `sqlite3` with `?` placeholders, `ThreadPoolExecutor` for blocking I/O, and `subprocess.run([...], timeout=...)`.
 
 ---
 
