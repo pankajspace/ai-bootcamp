@@ -44,3 +44,28 @@
 
 ## Kaggle Project
 1. [Vendor Verdict Kaggle Competition](https://www.kaggle.com/competitions/vendor-verdict-can-we-trust-this-ai-tool)
+
+---
+
+## ⚡ Using `uv` for a Project Folder
+
+Run all commands from inside the project folder; `uv` creates a `.venv` there.
+
+```bash
+# Install uv (one time)
+curl -LsSf https://astral.sh/uv/install.sh | sh   # or: brew install uv
+
+cd 00-basics/01-langchain-foundation
+
+# Install dependencies
+uv sync                                  # folder has pyproject.toml
+uv venv && uv pip install -r requirements.txt   # folder has only requirements.txt
+
+# Run scripts (no activation needed)
+uv run python 01_hello_world_env_setup.py
+
+# Manage packages (pyproject.toml folders)
+uv add <package>
+uv remove <package>
+```
+
