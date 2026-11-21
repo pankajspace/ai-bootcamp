@@ -4,7 +4,9 @@ Title: Python My Course | TechToday
 Description: Fast-track Python essentials for everyday programming — variables, type hints, keywords, strings, operators, loops, lists, dictionaries, sorting, tuples, sets, unpacking & destructuring, comprehensions, functions, async/await, OOP, error handling, modules & imports, virtual environments, decorators, generators, context managers & file I/O, dataclasses & Pydantic, regular expressions, environment variables & logging, testing with pytest, and the standard library toolkit.
 -->
 
+<!-- Disabled: these pages do not exist yet
 Navigation: [TechToday](../../../index.html) · [← Programming Languages](../programming-languages.html)
+-->
 
 <a id="python-my-course"></a>
 
