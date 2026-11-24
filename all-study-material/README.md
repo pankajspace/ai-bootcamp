@@ -42,6 +42,12 @@
 1. [04 Codex: Notes](./04-codex/codex-project-notes/)
 2. [04 Codex: Building an Auction Website with Codex](./04-codex/codex-project-code/)
 
+## RAG & Agent Projects
+1. [05 Production RAG](./05-production-rag/)
+2. [06 Agentic RAG](./06-agentic-rag/)
+3. [07 Deep Search Agent](./07-deep-search-agent/)
+4. [08 Capstone: AI Vendor Risk Assessor](./08-vendor-risk-assessor/)
+
 ## Kaggle Project
 1. [Vendor Verdict Kaggle Competition](https://www.kaggle.com/competitions/vendor-verdict-can-we-trust-this-ai-tool)
 

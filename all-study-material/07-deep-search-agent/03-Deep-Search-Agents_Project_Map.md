@@ -1,6 +1,6 @@
 # Deep Search Agents — Project Map
 
-> **Directory:** [`study-material/03-deep-search-agent/`](./)  
+> **Directory:** [`all-study-material/07-deep-search-agent/`](./)  
 > **Domain & Running Example:** Vendor due diligence on *NimbusPay* (fictional Indian payment gateway) over a deliberately messy 19-page corpus (`data/corpus.json`)  
 > **Course Companion:** [`03-Deep-Search-Agents-Shivank-Agrawal.html`](03-Deep-Search-Agents-Shivank-Agrawal.html) · [`03-Deep-Search-Agents_Revision_Notes.md`](03-Deep-Search-Agents_Revision_Notes.md)
 
@@ -48,7 +48,7 @@ flowchart TD
 ## 2. Annotated Directory & File Tree
 
 ```text
-study-material/03-deep-search-agent/
+all-study-material/07-deep-search-agent/
 ├── .env                                   # Active local config (defaults to LLM_PROVIDER=mock, SEARCH_PROVIDER=offline)
 ├── .env.example                           # Provider templates (Gemini, Groq, Ollama, OpenRouter, OpenAI, Anthropic, ddgs, tavily)
 ├── .gitignore                             # Ignores .venv, .env, runs/, memory/, __pycache__
@@ -129,7 +129,7 @@ study-material/03-deep-search-agent/
 
 ## 4. Quick Run & Config Reference
 
-Run commands from [`study-material/03-deep-search-agent/deep-search-agent-code/`](deep-search-agent-code/):
+Run commands from [`all-study-material/07-deep-search-agent/deep-search-agent-code/`](deep-search-agent-code/):
 
 ```bash
 python run_agent.py                # Offline NimbusPay due-diligence demo (no keys required)

@@ -122,16 +122,16 @@ For scripts that use local models (e.g. `day1/section1/03_summary_chain_ollama.p
 1. [AI Reusable Snippets](my-snippets/ai-reusable-snippets.md)
 
 ## 🗺️ Project Maps
-1. [Production RAG — Project Map](study-material/01-production-rag/01-Production_RAG_Project_Map.md)
-2. [Agentic RAG — Project Map](study-material/02-agentic-rag/02-Agentic_RAG_Project_Map.md)
-3. [Deep Search Agents — Project Map](study-material/03-deep-search-agent/03-Deep-Search-Agents_Project_Map.md)
-4. [Capstone: AI Vendor Risk Assessor — Project Map](study-material/04-vendor-risk-assessor/Capstone-AI-Vendor-Risk-Assessor_Project_Map.md)
+1. [Production RAG — Project Map](all-study-material/05-production-rag/01-Production_RAG_Project_Map.md)
+2. [Agentic RAG — Project Map](all-study-material/06-agentic-rag/02-Agentic_RAG_Project_Map.md)
+3. [Deep Search Agents — Project Map](all-study-material/07-deep-search-agent/03-Deep-Search-Agents_Project_Map.md)
+4. [Capstone: AI Vendor Risk Assessor — Project Map](all-study-material/08-vendor-risk-assessor/Capstone-AI-Vendor-Risk-Assessor_Project_Map.md)
 
 ## 📝 Quick Revision Notes (with diagrams & cheat sheets)
-1. [Production RAG](study-material/01-production-rag/01-Production_RAG_Revision_Notes.md)
-2. [Agentic RAG](study-material/02-agentic-rag/02-Agentic_RAG_Revision_Notes.md)
-3. [Deep Search Agents](study-material/03-deep-search-agent/03-Deep-Search-Agents_Revision_Notes.md)
-4. [Capstone: AI Vendor Risk Assessor](study-material/04-vendor-risk-assessor/Capstone-AI-Vendor-Risk-Assessor_Revision_Notes.md)
+1. [Production RAG](all-study-material/05-production-rag/01-Production_RAG_Revision_Notes.md)
+2. [Agentic RAG](all-study-material/06-agentic-rag/02-Agentic_RAG_Revision_Notes.md)
+3. [Deep Search Agents](all-study-material/07-deep-search-agent/03-Deep-Search-Agents_Revision_Notes.md)
+4. [Capstone: AI Vendor Risk Assessor](all-study-material/08-vendor-risk-assessor/Capstone-AI-Vendor-Risk-Assessor_Revision_Notes.md)
 
 # Notes
 1. Alphavantage API key may be required for certain financial data scripts.

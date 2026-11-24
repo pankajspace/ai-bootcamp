@@ -1,6 +1,6 @@
 # AI Vendor Risk Assessor (Capstone) — Project Map
 
-> **Directory:** [`study-material/04-vendor-risk-assessor/`](./)  
+> **Directory:** [`all-study-material/08-vendor-risk-assessor/`](./)  
 > **Organization & Domain:** *Nimbu Mart* — Automates vendor security/privacy due diligence against internal policies and open-web evidence. **AI finds & dates facts; deterministic Python judges; a human approves.**  
 > **Course Companion:** [`Capstone-AI-Vendor-Risk-Assessor-Shivank-Agrawal.html`](Capstone-AI-Vendor-Risk-Assessor-Shivank-Agrawal.html) · [`Capstone-AI-Vendor-Risk-Assessor_Revision_Notes.md`](Capstone-AI-Vendor-Risk-Assessor_Revision_Notes.md)
 
@@ -35,7 +35,7 @@ flowchart LR
 ## 2. Annotated Directory & File Tree
 
 ```text
-study-material/project-vendor-risk-assessor/
+all-study-material/08-vendor-risk-assessor/
 ├── .env                                            # Active local config (defaults to mock LLM + offline web)
 ├── .env.example                                    # Provider templates & VRA_* budget/research settings
 ├── .gitignore                                      # Ignores .venv, .env, runs/, reports/, __pycache__
@@ -131,7 +131,7 @@ study-material/project-vendor-risk-assessor/
 
 ## 4. Quick Run & Config Reference
 
-Run commands from [`study-material/04-vendor-risk-assessor/vendor-risk-assessor-code/`](vendor-risk-assessor-code/):
+Run commands from [`all-study-material/08-vendor-risk-assessor/vendor-risk-assessor-code/`](vendor-risk-assessor-code/):
 
 ```bash
 python scripts/check_setup.py      # Verify environment & offline corpus

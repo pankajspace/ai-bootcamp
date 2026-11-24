@@ -1,6 +1,6 @@
 # Agentic RAG with DeepSeek + CrewAI — Project Map
 
-> **Directory:** [`study-material/02-agentic-rag/`](./)  
+> **Directory:** [`all-study-material/06-agentic-rag/`](./)  
 > **Architecture:** 5-Agent sequential CrewAI workflow with a Two-LLM strategy (Main reasoning brain + fast Groq RAG tool brain)  
 > **Course Companion:** [`02-Agentic_RAG_Guide.html`](02-Agentic_RAG_Guide.html) · [`02-Agentic_RAG_Revision_Notes.md`](02-Agentic_RAG_Revision_Notes.md)
 
@@ -34,7 +34,7 @@ flowchart TD
 ## 2. Annotated Directory & File Tree
 
 ```text
-study-material/02-agentic-rag/
+all-study-material/06-agentic-rag/
 ├── 02-Agentic_RAG_Guide.html         # Interactive 20-section study guide explaining every concept & file
 ├── 02-Agentic_RAG_Revision_Notes.md  # Quick revision notes, metro-map diagram & troubleshooting cheat sheet
 ├── 02-Agentic_RAG_Project_Map.md     # This project map
@@ -75,7 +75,7 @@ study-material/02-agentic-rag/
 
 ## 4. Quick Run & Config Reference
 
-Run commands from [`study-material/02-agentic-rag/agentic-rag-code/`](agentic-rag-code/):
+Run commands from [`all-study-material/06-agentic-rag/agentic-rag-code/`](agentic-rag-code/):
 
 ```bash
 python step0_simulate_flow.py                              # Pure Python flow demo (no API keys needed)
