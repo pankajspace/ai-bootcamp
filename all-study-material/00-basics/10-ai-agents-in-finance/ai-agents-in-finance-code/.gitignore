@@ -1,0 +1,8 @@
+# Files the labs generate when they run
+section-1-ai-agents-in-finance/chroma_ptf_rebal/
+section-2-agent-frameworks-and-fundamentals/logs/
+section-3-deep-search-agents/output/
+section-7-evaluation-and-production/section11_evaluation/scorecard_report.md
+section-7-evaluation-and-production/section12_production/batch_checkpoint.jsonl
+section-7-evaluation-and-production/section12_production/traces.jsonl
+*.db

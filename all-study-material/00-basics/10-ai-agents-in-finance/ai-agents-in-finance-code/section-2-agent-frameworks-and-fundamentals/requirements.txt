@@ -1,0 +1,11 @@
+# Section 2 · Agent Frameworks and Fundamentals
+# fundamental_analysis_agent/ (OpenAI Agents SDK)
+openai-agents>=0.2
+yfinance>=0.2.50
+python-dotenv>=1.0
+# framework_comparison/ — only needed for the matching script
+langchain>=1.0
+langchain-openai>=1.0
+autogen-agentchat>=0.4
+autogen-ext[openai]>=0.4
+pydantic-ai>=1.0

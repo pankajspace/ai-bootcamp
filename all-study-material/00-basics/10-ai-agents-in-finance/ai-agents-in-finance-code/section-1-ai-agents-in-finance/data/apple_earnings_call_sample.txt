@@ -1,0 +1,26 @@
+[FICTIONAL SAMPLE: a made-up earnings call used only for Lab 1A. Not a real transcript.]
+
+Apple Inc. - Fiscal 2025 Third Quarter Earnings Call (illustrative)
+
+Operator: Good afternoon and welcome to Apple's fiscal third quarter conference call.
+
+CEO: Thank you. This quarter we delivered revenue of $98.7 billion, up 6 percent year over year,
+a June-quarter record. iPhone revenue grew on strong demand for our latest models, Mac grew double
+digits helped by new laptops, and iPad returned to growth. Services set an all-time revenue record,
+and our installed base of active devices reached a new high in every geographic segment.
+
+CFO: Diluted earnings per share were $1.72, up 9 percent year over year. Gross margin was
+46.5 percent, up 60 basis points, driven by a favourable Services mix. We returned over $25 billion
+to shareholders through dividends and share buybacks during the quarter.
+
+CFO: For the September quarter we expect total revenue to grow in the low to mid single digits year
+over year, gross margin between 46 and 47 percent, and operating expenses between $15.6 and
+$15.8 billion.
+
+Analyst Q&A highlights:
+- Asked about China, management noted softer demand and intense local competition.
+- Asked about regulation, management acknowledged ongoing App Store and antitrust proceedings in the
+  US and EU that could affect Services economics.
+- Asked about supply, management flagged possible component cost pressure and tariff uncertainty.
+
+CEO: We remain confident in our product roadmap and in the long-term opportunity ahead.

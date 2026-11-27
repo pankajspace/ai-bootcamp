@@ -1,0 +1,7 @@
+# Section 4 · Reasoning Paradigms (Python 3.10+)
+# notes: "pip install anthropic claude-agent-sdk yfinance anyio python-dotenv"
+anthropic>=0.40
+claude-agent-sdk>=0.1     # step03_react_agent.py and lats/step07_lats_trim.py
+yfinance>=0.2.50
+anyio>=4.0
+python-dotenv>=1.0

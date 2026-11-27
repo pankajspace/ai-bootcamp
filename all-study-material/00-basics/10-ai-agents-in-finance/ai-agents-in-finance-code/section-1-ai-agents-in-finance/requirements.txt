@@ -1,0 +1,13 @@
+# Section 1 · AI Agents in Finance  (notes: "pip install openai openai-agents google-genai yfinance
+# financetoolkit chromadb llama-index transformers torch")
+openai>=1.66
+openai-agents>=0.2
+python-dotenv>=1.0
+pandas>=2.0
+yfinance>=0.2.50
+financetoolkit>=2.0         # Labs 2A, 2F
+chromadb>=0.5               # Lab 2C
+llama-index>=0.12           # Lab 2D
+google-genai>=1.0           # Lab 1A --provider gemini
+transformers>=4.43          # step01_finbert_sentiment.py, Lab 1A --provider llama
+torch>=2.2                  # large download; only needed for the two transformers examples

@@ -1,0 +1,5 @@
+# Section 7 · Agent Evaluation and Production (Python 3.10+)
+# Everything runs offline on the standard library. These two are only for the optional
+# live-model run: python section12_production/step06_mini_analyst.py "Write a short note on ACME"
+anthropic>=0.40
+python-dotenv>=1.0

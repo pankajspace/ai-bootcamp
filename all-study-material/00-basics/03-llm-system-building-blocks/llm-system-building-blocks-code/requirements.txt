@@ -1,0 +1,4 @@
+openai>=1.40
+numpy>=1.26
+python-dotenv>=1.0
+scikit-learn>=1.4   # only for 02_rules_vs_learning.py

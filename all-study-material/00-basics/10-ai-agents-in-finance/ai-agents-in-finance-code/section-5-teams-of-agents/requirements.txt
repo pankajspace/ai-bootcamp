@@ -1,0 +1,12 @@
+# Section 5 · Teams of Agents (Python 3.10+)
+llama-index-core>=0.12          # section7_health_analyzer (LlamaIndex workflows)
+llama-index-llms-openai>=0.3
+langgraph>=0.4                  # section8_trading_committee
+langchain-anthropic>=0.3
+langchain-openai>=0.3
+yfinance>=0.2.50
+pandas>=2.0
+numpy>=1.26
+pydantic>=2.0
+python-dotenv>=1.0
+pytest>=8.0                     # section9_insurance_claims/step08_test_claims_rules.py

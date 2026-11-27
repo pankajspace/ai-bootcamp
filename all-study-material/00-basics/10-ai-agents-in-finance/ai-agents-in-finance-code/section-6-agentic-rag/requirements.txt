@@ -1,0 +1,7 @@
+# Section 6 · Agentic RAG in Finance (Python 3.10+)
+# step01_rrf_by_hand.py needs nothing beyond the standard library.
+llama-index-core>=0.12
+llama-index-llms-anthropic>=0.6
+llama-index-embeddings-openai>=0.3
+llama-index-retrievers-bm25>=0.5
+python-dotenv>=1.0
