@@ -1,6 +1,6 @@
 # Production RAG from Scratch — Project Map
 
-> **Directory:** [`study-material/01-production-rag/`](./)  
+> **Directory:** [`all-study-material/05-production-rag/`](./)  
 > **Domain & Running Example:** *Nimbu Mart* (fictional Indian online store) — 14 multi-format documents + 33 golden evaluation questions  
 > **Course Companion:** [`01-Production_RAG_Course_Shivank_Agrawal.html`](01-Production_RAG_Course_Shivank_Agrawal.html) · [`01-Production_RAG_Revision_Notes.md`](01-Production_RAG_Revision_Notes.md)
 
@@ -39,7 +39,7 @@ flowchart LR
 ## 2. Annotated Directory & File Tree
 
 ```text
-study-material/01-production-rag/
+all-study-material/05-production-rag/
 ├── 01-Production_RAG_Course_Shivank_Agrawal.html  # Interactive offline course (15 modules, 11 simulations, quizzes)
 ├── 01-Production_RAG_Revision_Notes.md            # Condensed revision notes, Mermaid diagrams & cheat sheet
 ├── 01-Production_RAG_Project_Map.md               # This project map
@@ -175,7 +175,7 @@ study-material/01-production-rag/
 
 ## 4. Quick Run & Config Reference
 
-Run all commands from [`study-material/01-production-rag/production-rag-code/`](production-rag-code/):
+Run all commands from [`all-study-material/05-production-rag/production-rag-code/`](production-rag-code/):
 
 ```bash
 python labs/lab00_check_setup.py      # Check environment (runs offline without API keys)
